@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="edi.md.mobile.SettingsMenu.Conect">
+    <item
+        android:id="@+id/action_close_conect"
+        android:icon="@drawable/close_white_48dp"
+        android:title="Close"
+        app:showAsAction="always" />
+
+</menu>

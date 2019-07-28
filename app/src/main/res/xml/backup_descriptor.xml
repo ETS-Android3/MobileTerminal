@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- TODO Remove the following "exclude" elements to make them a part of the auto backup -->
+    <!-- Exclude the shared preferences file that contains the GCM registrationId -->
+    <exclude
+        domain="sharedpref"
+        path="Sales.xml" />
+    <exclude
+        domain="sharedpref"
+        path="SaveWorkPlace.xml" />
+    <exclude
+        domain="sharedpref"
+        path="Settings.xml" />
+    <exclude
+        domain="sharedpref"
+        path="Invoice.xml" />
+    <exclude
+        domain="sharedpref"
+        path="Save setting.xml" />
+    <exclude
+        domain="sharedpref"
+        path="Save sales.xml" />
+    <exclude
+        domain="sharedpref"
+        path="Save touch assortiment.xml" />
+    <exclude
+        domain="sharedpref"
+        path="Conected printers.xml" />
+    <exclude
+        domain="sharedpref"
+        path="Ware House.xml" />
+    <exclude
+        domain="sharedpref"
+        path="User.xml" />
+    <exclude
+        domain="sharedpref"
+        path="SaveCountInventory.xml" />
+    <exclude
+        domain="sharedpref"
+        path="Ware House In.xml" />
+    <exclude
+        domain="sharedpref"
+        path="Work Place.xml" />
+    <exclude
+        domain="sharedpref"
+        path="Revision.xml" />
+    <exclude
+        domain="sharedpref"
+        path="SaveFolderFilter.xml" />
+    <exclude
+        domain="sharedpref"
+        path="StockAssortment.xml" />
+    <exclude
+        domain="sharedpref"
+        path="Transfer.xml" />
+    <exclude
+        domain="sharedpref"
+        path="Ware House Out.xml" />
+</full-backup-content>

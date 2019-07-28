@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+
+
+    <item android:title="@string/item_menu_drawable_setari">
+        <menu>
+            <item
+                android:id="@+id/menu_conect"
+                android:icon="@drawable/connect_black_36dp"
+                android:title="@string/header_conectare_activity" />
+            <item
+                android:id="@+id/menu_workplace"
+                android:icon="@drawable/work_place_black_36dp"
+                android:title="@string/header_workplace_activity" />
+            <item
+                android:id="@+id/menu_printers"
+                android:icon="@drawable/printers_black_36dp"
+                android:title="@string/header_printer_activity" />
+        </menu>
+    </item>
+    <item android:title="@string/item_menu_drawable_generale">
+        <menu>
+            <item
+                android:id="@+id/menu_securitate"
+                android:icon="@drawable/security_black_36dp"
+                android:title="@string/header_securitate_activity" />
+            <item
+                android:id="@+id/menu_about"
+                android:icon="@drawable/info_black_36dp"
+                android:title="@string/header_obout_program" />
+            <item
+                android:id="@+id/menu_exit"
+                android:icon="@drawable/exit_to_app_black_36dp"
+                android:title="@string/item_menu_drawable_exit" />
+        </menu>
+    </item>
+    <group android:checkableBehavior="single">
+
+
+    </group>
+</menu>

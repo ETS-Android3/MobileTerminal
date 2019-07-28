@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="edi.md.mobile.SettingsMenu.About">
+    <item
+        android:id="@+id/m_home"
+        android:icon="@drawable/baseline_home_white_36"
+        android:title="Home"
+        app:showAsAction="ifRoom" />
+</menu>

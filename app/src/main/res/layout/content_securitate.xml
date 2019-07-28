@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/background_constraint_securitate"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_fon"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".SettingsMenu.Securitate"
+    tools:ignore="MissingTranslation"
+    tools:showIn="@layout/app_bar_securitate">
+
+    <Button
+        android:id="@+id/btn_chek_update2"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/item_selector_button_gray_theme"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="@string/btn_donload_install_new_version"
+        android:textAllCaps="false"
+        android:textColor="@color/new_text_color"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img_dark_theme" />
+
+    <EditText
+        android:id="@+id/et_limit_count_sales_securitate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/round_corners_transparent_dark_theme"
+        android:ems="10"
+        android:gravity="center"
+        android:inputType="number"
+        android:selectAllOnFocus="true"
+        android:text="0"
+        android:textColor="@color/new_text_color"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView17" />
+
+    <Button
+        android:id="@+id/btn_verific_licenta"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/item_selector_button_gray_theme"
+        android:text="@string/btn_verificare_licenta"
+        android:textAllCaps="false"
+        android:textColor="@color/new_text_color"
+        android:textSize="24sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_input_licenta" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/txt_con_intern_licenta"
+        android:textColor="@color/new_text_color"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/txt_cod_licenta"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txt_cod_licenta"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:gravity="end"
+        android:textAllCaps="false"
+        android:textColor="@color/new_text_color"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/txt_licenta_licenta"
+        android:textColor="@color/new_text_color"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toStartOf="@+id/et_input_licenta"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <EditText
+        android:id="@+id/et_input_licenta"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/round_corners_transparent_dark_theme"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="@string/txt_hint_input_licenta_securitate"
+        android:inputType="text"
+        android:textAllCaps="true"
+        android:textColor="@color/new_text_color"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView15"
+        app:layout_constraintTop_toBottomOf="@+id/txt_cod_licenta" />
+
+    <EditText
+        android:id="@+id/et_input_pin_securitate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/round_corners_transparent_dark_theme"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="@string/txt_modificare_pincod_hint_securitate"
+        android:inputType="numberPassword"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView16"
+        app:layout_constraintTop_toBottomOf="@+id/btn_verific_licenta" />
+
+    <TextView
+        android:id="@+id/textView16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/txt_pincod_securitate"
+        android:textColor="@color/new_text_color"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toStartOf="@+id/et_input_pin_securitate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_verific_licenta" />
+
+    <TextView
+        android:id="@+id/textView17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/txt_limita_vinzare_securitate"
+        android:textColor="@color/new_text_color"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_input_pin_securitate" />
+
+    <TextView
+        android:id="@+id/textView18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="@string/txt_hint_limit_vinzare_securitate"
+        android:textColor="@color/new_text_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_limit_count_sales_securitate" />
+
+    <ImageButton
+        android:id="@+id/select_lng_ro"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/item_selector_language"
+        android:contentDescription="@string/todo"
+        android:padding="6dp"
+        android:scaleType="centerInside"
+        app:layout_constraintEnd_toStartOf="@+id/select_lng_ru"
+        app:layout_constraintTop_toBottomOf="@+id/textView50"
+        app:srcCompat="@drawable/romania" />
+
+    <ImageButton
+        android:id="@+id/select_lng_ru"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@drawable/item_selector_language"
+        android:contentDescription="@string/todo"
+        android:padding="6dp"
+        android:scaleType="centerInside"
+        app:layout_constraintEnd_toStartOf="@+id/select_lng_en"
+        app:layout_constraintTop_toBottomOf="@+id/textView50"
+        app:srcCompat="@drawable/russia" />
+
+    <ImageButton
+        android:id="@+id/select_lng_en"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        android:background="@drawable/item_selector_language"
+        android:contentDescription="@string/todo"
+        android:padding="6dp"
+        android:scaleType="centerInside"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView50"
+        app:srcCompat="@drawable/united_states" />
+
+    <ImageButton
+        android:id="@+id/img_side_theme"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/item_selector_language"
+        android:padding="6dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView48"
+        app:srcCompat="@drawable/side_tree_theme_background_item_for_selected" />
+
+    <ImageButton
+        android:id="@+id/img_dark_theme"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/item_selector_language"
+        android:padding="6dp"
+        app:layout_constraintStart_toEndOf="@+id/img_side_theme"
+        app:layout_constraintTop_toBottomOf="@+id/textView48"
+        app:srcCompat="@drawable/button_main_gray_theme" />
+
+    <ImageButton
+        android:id="@+id/img_blue_theme"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/item_selector_language"
+        android:padding="6dp"
+        app:layout_constraintStart_toEndOf="@+id/img_dark_theme"
+        app:layout_constraintTop_toBottomOf="@+id/textView48"
+        app:srcCompat="@drawable/round_corners_blue" />
+
+    <TextView
+        android:id="@+id/textView48"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:gravity="center_horizontal"
+        android:text="@string/txt_designe_theme"
+        android:textColor="@color/new_text_color"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/textView50"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView18" />
+
+    <TextView
+        android:id="@+id/textView50"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:gravity="center_horizontal"
+        android:text="@string/txt_language_securitate"
+        android:textColor="@color/new_text_color"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView48"
+        app:layout_constraintTop_toBottomOf="@+id/textView18" />
+
+
+</android.support.constraint.ConstraintLayout>

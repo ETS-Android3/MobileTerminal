@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.igor.terminalmobile.CheckPrice">
+    <item
+        android:id="@+id/action_signal_check"
+        android:icon="@drawable/signal_wi_fi_48"
+        android:title="Signal"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_close_inventory"
+        android:icon="@drawable/close_white_48dp"
+        android:title="Close"
+        app:showAsAction="always" />
+
+</menu>
