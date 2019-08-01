@@ -97,7 +97,6 @@ public class MainActivity extends AppCompatActivity
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-
         SharedPreferences Setting = getSharedPreferences("Settings", MODE_PRIVATE);
         String lang = Setting.getString("Language", "ru");
         Locale locale = new Locale(lang);

@@ -1088,9 +1088,9 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                     int ErrorCode = responseAssortiment.getInt("ErrorCode");
                     if (ErrorCode == 0) {
                         String Names = responseAssortiment.getString("Name");
-                        String Price = responseAssortiment.getString("Price");
+                        String Price = responseAssortiment.getString("mPriceAssortment");
                         String Remain = responseAssortiment.getString("Remain");
-                        String Marking = responseAssortiment.getString("Marking");
+                        String Marking = responseAssortiment.getString("mMarkingAssortment");
                         String Codes = responseAssortiment.getString("Code");
                         String Uid = responseAssortiment.getString("AssortimentID");
                         String Barcodes = responseAssortiment.getString("BarCode");
@@ -1099,11 +1099,11 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
 
                         Intent sales = new Intent(".CountTransferMobile");
                         sales.putExtra("BarCode", Barcodes);
-                        sales.putExtra("Price", Price);
-                        sales.putExtra("Names", Names);
+                        sales.putExtra("mPriceAssortment", Price);
+                        sales.putExtra("mNameAssortment", Names);
                         sales.putExtra("Remain", Remain);
-                        sales.putExtra("Marking", Marking);
-                        sales.putExtra("Codes", Codes);
+                        sales.putExtra("mMarkingAssortment", Marking);
+                        sales.putExtra("mCodeAssortment", Codes);
                         sales.putExtra("ID", Uid);
                         startActivityForResult(sales, 25);
                     } else {

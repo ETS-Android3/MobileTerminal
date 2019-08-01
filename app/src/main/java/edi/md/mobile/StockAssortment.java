@@ -310,13 +310,13 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                                 connection.open();
                                 for (int j=0; j<jsonArray_etichete.length();j++){
                                     JSONObject asl_obj = jsonArray_etichete.getJSONObject(j);
-                                    String UnitInPackage = asl_obj.getString("UnitInPackage");
-                                    String UnitPrice = asl_obj.getString("UnitPrice");
-                                    String Unit = asl_obj.getString("Unit");
+                                    String UnitInPackage = asl_obj.getString("mUnitInPackage");
+                                    String UnitPrice = asl_obj.getString("mUnitPrice");
+                                    String Unit = asl_obj.getString("mUnitAssortment");
                                     String Code = asl_obj.getString("Code");
                                     String Barcode = asl_obj.getString("Barcode");
                                     String Name= asl_obj.getString("Name");
-                                    String Price = asl_obj.getString("Price");
+                                    String Price = asl_obj.getString("mPriceAssortment");
 
                                     String price_unit;
                                     if (UnitInPackage==null){
@@ -795,17 +795,17 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                     String UidAsl= json.getString("AssortimentUid");
                     String count = json.getString("Count");
 
-                    String Price  = json.getString("Price");
+                    String Price  = json.getString("mPriceAssortment");
                     Price=Price.replace(",",".");
                     Double priceDouble = Double.valueOf(Price);
                     Price = String.format("%.2f",priceDouble);
                     Price=Price.replace(".",",");
 
-                    String UnitPrice  = json.getString("UnitPrice");
-                    String UnitInPackage  = json.getString("UnitInPackage");
+                    String UnitPrice  = json.getString("mUnitPrice");
+                    String UnitInPackage  = json.getString("mUnitInPackage");
                     String Code  = json.getString("Code");
                     String Barcode  = json.getString("Barcode");
-                    String Unit  = json.getString("Unit");
+                    String Unit  = json.getString("mUnitAssortment");
 
                     sendDocument.put("AssortimentName",NameAsl);
                     sendDocument.put("AssortimentID",UidAsl);
@@ -818,10 +818,10 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                     document_etichete.put("Name",NameAsl);
                     document_etichete.put("Code",Code);
                     document_etichete.put("Barcode",Barcode);
-                    document_etichete.put("Price",Price);
-                    document_etichete.put("Unit",Unit);
-                    document_etichete.put("UnitPrice",UnitPrice);
-                    document_etichete.put("UnitInPackage",UnitInPackage);
+                    document_etichete.put("mPriceAssortment",Price);
+                    document_etichete.put("mUnitAssortment",Unit);
+                    document_etichete.put("mUnitPrice",UnitPrice);
+                    document_etichete.put("mUnitInPackage",UnitInPackage);
 
                     boolean isExtist = false;
                     if (json_array.length()!=0) {
@@ -884,16 +884,16 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                             String count = object_from_touch.getString("Count");
                             String NameAsl= object_from_touch.getString("AssortimentName");
 
-                            String Price  = object_from_touch.getString("Price");
+                            String Price  = object_from_touch.getString("mPriceAssortment");
                             Double priceDouble = Double.valueOf(Price);
                             Price = String.format("%.2f",priceDouble);
                             Price=Price.replace(".",",");
 
-                            String UnitPrice  = object_from_touch.getString("UnitPrice");
-                            String UnitInPackage  = object_from_touch.getString("UnitInPackage");
+                            String UnitPrice  = object_from_touch.getString("mUnitPrice");
+                            String UnitInPackage  = object_from_touch.getString("mUnitInPackage");
                             String Code  = object_from_touch.getString("Code");
                             String Barcode  = object_from_touch.getString("Barcode");
-                            String Unit  = object_from_touch.getString("Unit");
+                            String Unit  = object_from_touch.getString("mUnitAssortment");
 
 
                             sendDocument=new JSONObject();
@@ -910,10 +910,10 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                             document_etichete.put("Name",NameAsl);
                             document_etichete.put("Code",Code);
                             document_etichete.put("Barcode",Barcode);
-                            document_etichete.put("Price",Price);
-                            document_etichete.put("Unit",Unit);
-                            document_etichete.put("UnitPrice",UnitPrice);
-                            document_etichete.put("UnitInPackage",UnitInPackage);
+                            document_etichete.put("mPriceAssortment",Price);
+                            document_etichete.put("mUnitAssortment",Unit);
+                            document_etichete.put("mUnitPrice",UnitPrice);
+                            document_etichete.put("mUnitInPackage",UnitInPackage);
 
                             for (int k = 0; k < json_array.length(); k++) {
                                 JSONObject object = json_array.getJSONObject(k);
@@ -950,16 +950,16 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                             String UidAsl= object_from_touch.getString("AssortimentUid");
                             String Count = object_from_touch.getString("Count");
 
-                            String Price  = object_from_touch.getString("Price");
+                            String Price  = object_from_touch.getString("mPriceAssortment");
                             Double priceDouble = Double.valueOf(Price);
                             Price = String.format("%.2f",priceDouble);
                             Price=Price.replace(".",",");
 
-                            String UnitPrice  = object_from_touch.getString("UnitPrice");
-                            String UnitInPackage  = object_from_touch.getString("UnitInPackage");
+                            String UnitPrice  = object_from_touch.getString("mUnitPrice");
+                            String UnitInPackage  = object_from_touch.getString("mUnitInPackage");
                             String Code  = object_from_touch.getString("Code");
                             String Barcode  = object_from_touch.getString("Barcode");
-                            String Unit  = object_from_touch.getString("Unit");
+                            String Unit  = object_from_touch.getString("mUnitAssortment");
 
                             sendDocument=new JSONObject();
                             document_etichete=new JSONObject();
@@ -973,10 +973,10 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                             document_etichete.put("Name",NameAsl);
                             document_etichete.put("Code",Code);
                             document_etichete.put("Barcode",Barcode);
-                            document_etichete.put("Price",Price);
-                            document_etichete.put("Unit",Unit);
-                            document_etichete.put("UnitPrice",UnitPrice);
-                            document_etichete.put("UnitInPackage",UnitInPackage);
+                            document_etichete.put("mPriceAssortment",Price);
+                            document_etichete.put("mUnitAssortment",Unit);
+                            document_etichete.put("mUnitPrice",UnitPrice);
+                            document_etichete.put("mUnitInPackage",UnitInPackage);
 
                             json_array.put(sendDocument);
                             jsonArray_etichete.put(document_etichete);
@@ -1180,14 +1180,14 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                     int ErrorCode = responseAssortiment.getInt("ErrorCode");
                     if (ErrorCode == 0) {
                         String Names = responseAssortiment.getString("Name");
-                        String Price = responseAssortiment.getString("Price");
+                        String Price = responseAssortiment.getString("mPriceAssortment");
                         String Uid = responseAssortiment.getString("AssortimentID");
                         String Remain = responseAssortiment.getString("Remain");
-                        String Marking = responseAssortiment.getString("Marking");
+                        String Marking = responseAssortiment.getString("mMarkingAssortment");
                         String Codes = responseAssortiment.getString("Code");
-                        String Unit = responseAssortiment.getString("Unit");
-                        String UnitInPackage = responseAssortiment.getString("UnitInPackage");
-                        String UnitPrice = responseAssortiment.getString("UnitPrice");
+                        String Unit = responseAssortiment.getString("mUnitAssortment");
+                        String UnitInPackage = responseAssortiment.getString("mUnitInPackage");
+                        String UnitPrice = responseAssortiment.getString("mUnitPrice");
                         Double priceDouble = Double.valueOf(Price);
                         Price = String.format("%.2f", priceDouble);
                         Price = Price.replace(".", ",");
@@ -1201,16 +1201,16 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
 
                         Intent sales = new Intent(".CountStockAssortmentMobile");
 
-                        sales.putExtra("Price", Price);
-                        sales.putExtra("Names", Names);
+                        sales.putExtra("mPriceAssortment", Price);
+                        sales.putExtra("mNameAssortment", Names);
                         sales.putExtra("ID", Uid);
                         sales.putExtra("BarCode", Barcodes);
                         sales.putExtra("Remain", Remain);
-                        sales.putExtra("Marking", Marking);
-                        sales.putExtra("Codes", Codes);
-                        sales.putExtra("UnitPrice", UnitPrice);
-                        sales.putExtra("UnitInPackage", UnitInPackage);
-                        sales.putExtra("Unit", Unit);
+                        sales.putExtra("mMarkingAssortment", Marking);
+                        sales.putExtra("mCodeAssortment", Codes);
+                        sales.putExtra("mUnitPrice", UnitPrice);
+                        sales.putExtra("mUnitInPackage", UnitInPackage);
+                        sales.putExtra("mUnitAssortment", Unit);
 
                         startActivityForResult(sales, 40);
                     } else {

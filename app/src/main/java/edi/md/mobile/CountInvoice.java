@@ -53,9 +53,9 @@ public class CountInvoice extends AppCompatActivity {
         etPriceSales=findViewById(R.id.et_price_sales_invoice);
 
         final Intent Invoice = getIntent();
-        txtNames.setText(Invoice.getStringExtra("Names"));
+        txtNames.setText(Invoice.getStringExtra("mNameAssortment"));
         etPriceInc.setText(Invoice.getStringExtra("PriceIncoming"));
-        etPriceSales.setText(Invoice.getStringExtra("Price"));
+        etPriceSales.setText(Invoice.getStringExtra("mPriceAssortment"));
 
         SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
         SharedPreferences AddedAssortment = getSharedPreferences("Invoice", MODE_PRIVATE);
@@ -79,7 +79,7 @@ public class CountInvoice extends AppCompatActivity {
                     }else{
                         JSONObject asl = new JSONObject();
                         try {
-                            asl.put("AssortimentName", Invoice.getStringExtra("Names"));
+                            asl.put("AssortimentName", Invoice.getStringExtra("mNameAssortment"));
                             asl.put("AssortimentUid", Invoice.getStringExtra("ID"));
                             asl.put("SalePrice", etPriceSales.getText().toString());
                             if (etPriceInc.getText().toString().equals("")){
@@ -108,7 +108,7 @@ public class CountInvoice extends AppCompatActivity {
                     }else{
                         JSONObject asl = new JSONObject();
                         try {
-                            asl.put("AssortimentName", Invoice.getStringExtra("Names"));
+                            asl.put("AssortimentName", Invoice.getStringExtra("mNameAssortment"));
                             asl.put("AssortimentUid", Invoice.getStringExtra("ID"));
                             asl.put("SalePrice", etPriceSales.getText().toString());
                             asl.put("IncomePrice", etPriceInc.getText().toString());
@@ -269,7 +269,7 @@ public class CountInvoice extends AppCompatActivity {
                 }else{
                     JSONObject asl = new JSONObject();
                     try {
-                        asl.put("AssortimentName", Invoice.getStringExtra("Names"));
+                        asl.put("AssortimentName", Invoice.getStringExtra("mNameAssortment"));
                         asl.put("AssortimentUid", Invoice.getStringExtra("ID"));
                         asl.put("SalePrice", etPriceSales.getText().toString());
                         asl.put("IncomePrice", etPriceInc.getText().toString());

@@ -471,12 +471,12 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                     Integer ErrorCode = responseAssortiment.getInt("ErrorCode");
                     if (ErrorCode == 0) {
                         Name = responseAssortiment.getString("Name");
-                        Marking = responseAssortiment.getString("Marking");
+                        Marking = responseAssortiment.getString("mMarkingAssortment");
                         Uid = responseAssortiment.getString("AssortimentID");
                         Remain = responseAssortiment.getString("Remain");
-                        Price = responseAssortiment.getString("Price");
+                        Price = responseAssortiment.getString("mPriceAssortment");
                         String Code = responseAssortiment.getString("Code");
-                        String Unit = responseAssortiment.getString("Unit");
+                        String Unit = responseAssortiment.getString("mUnitAssortment");
 
                         SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
                         String ExistingCount = SaveCount.getString(Uid,"0");
@@ -495,12 +495,12 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                             Intent sales = new Intent(".CountInventorytMobile");
                             sales.putExtra("BarCode", barcode);
                             sales.putExtra("Name", Name);
-                            sales.putExtra("Marking", Marking);
+                            sales.putExtra("mMarkingAssortment", Marking);
                             sales.putExtra("Remain", Remain);
-                            sales.putExtra("Price", Price);
+                            sales.putExtra("mPriceAssortment", Price);
                             sales.putExtra("Code", Code);
                             sales.putExtra("Uid", Uid);
-                            sales.putExtra("Unit", Unit);
+                            sales.putExtra("mUnitAssortment", Unit);
                             sales.putExtra("WeightPrefix",WeightPrefix);
                             startActivityForResult(sales, 20);
                             inpBarcode.setText("");
