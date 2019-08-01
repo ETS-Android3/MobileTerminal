@@ -98,11 +98,11 @@ public class Variables extends Application {
                         asl_.put("BarCode", barcode_asl);
                         asl_.put("Bar_code",getResources().getString(R.string.txt_list_asl_view_barcode) + barcode_asl);
                         asl_.put("AllowNonIntegerSale", allow_integer);
-                        asl_.put("Price", Asl_Price);
+                        asl_.put("mPriceAssortment", Asl_Price);
                         asl_.put("IncomePrice", incomePrice);
-                        asl_.put("Unit", unitary);
-                        asl_.put("UnitPrice", finalUnitPrice);
-                        asl_.put("UnitInPackage", UnitInPackage);
+                        asl_.put("mUnitAssortment", unitary);
+                        asl_.put("mUnitPrice", finalUnitPrice);
+                        asl_.put("mUnitInPackage", UnitInPackage);
                         asl_list.add(asl_);
                     } else {
                         asl_.put("Folder_is", true);
@@ -149,7 +149,7 @@ public class Variables extends Application {
 //                        String incomePrice=sal.getIncomePrice();
 //                        String unitary=sal.getUnit();
 //                        String finalUnitPrice=sal.getUnitPrice();
-//                        String UnitInPackage=sal.getUnitInPackage();
+//                        String mUnitInPackage=sal.getUnitInPackage();
 //
 //                        Double priceunit = Double.valueOf(price);
 //                        price =String.format("%.2f",priceunit);
@@ -164,11 +164,11 @@ public class Variables extends Application {
 //
 //                        asl_.put("Bar_code","Barcod: " + barcode_asl);
 //                        asl_.put("AllowNonIntegerSale", allow_integer);
-//                        asl_.put("Price", Asl_Price);
+//                        asl_.put("mPriceAssortment", Asl_Price);
 //                        asl_.put("IncomePrice", incomePrice);
-//                        asl_.put("Unit", unitary);
-//                        asl_.put("UnitPrice", finalUnitPrice);
-//                        asl_.put("UnitInPackage", UnitInPackage);
+//                        asl_.put("mUnitAssortment", unitary);
+//                        asl_.put("mUnitPrice", finalUnitPrice);
+//                        asl_.put("mUnitInPackage", mUnitInPackage);
 //                        asl_list.add(asl_);
 //                    } else {
 //                        asl_.put("Folder_is", true);
@@ -228,11 +228,11 @@ public class Variables extends Application {
                         asl_.put("BarCode", barcode_asl);
                         asl_.put("Bar_code", getResources().getString(R.string.txt_list_asl_view_barcode) + barcode_asl);
                         asl_.put("AllowNonIntegerSale", allow_integer);
-                        asl_.put("Price", Asl_Price);
+                        asl_.put("mPriceAssortment", Asl_Price);
                         asl_.put("IncomePrice", incomePrice);
-                        asl_.put("Unit", unitary);
-                        asl_.put("UnitPrice", finalUnitPrice);
-                        asl_.put("UnitInPackage", UnitInPackage);
+                        asl_.put("mUnitAssortment", unitary);
+                        asl_.put("mUnitPrice", finalUnitPrice);
+                        asl_.put("mUnitInPackage", UnitInPackage);
                         asl_list.add(asl_);
                     } else {
                         asl_.put("Folder_is", true);

@@ -55,6 +55,10 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edi.md.mobile.Settings.Assortment;
+import edi.md.mobile.Utils.Assortiment;
+import edi.md.mobile.Utils.AssortmentInActivity;
+
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetAssortiment;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetPrinters;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetWareHouseList;
@@ -90,7 +94,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
     JSONObject json_asl,sendInvoice,sendAssortiment;
     JSONArray json_array;
 
-    int limit_sales;
+    int limit_sales, REQUEST_FROM_LIST_ASSORTMENT=110;
     final boolean[] show_keyboard = {false};
 
     @Override
@@ -327,7 +331,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                             json = json_array.getJSONObject(i);
                             String Uid = json.getString("AssortimentUid");
                             String Cant = json.getString("Count");
-                            String Price = json.getString("Price");
+                            String Price = json.getString("mPriceAssortment");
                             Price= Price.replace(",",".");
                             JSONObject sendObj = new JSONObject();
                             sendObj.put("Assortiment", Uid);
@@ -526,7 +530,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==110){
+        if (requestCode==REQUEST_FROM_LIST_ASSORTMENT){
             if (resultCode==RESULT_CANCELED){
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
@@ -534,6 +538,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
                 asl_list.clear();
+
                 SharedPreferences sPref_saveASL =getSharedPreferences("Sales", MODE_PRIVATE);
                 String response = sPref_saveASL.getString("AssortmentSalesAdded","{}");
                 try {
@@ -594,6 +599,15 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
                 asl_list.clear();
+
+                Assortiment mAssortimentArray;
+                assert data != null;
+                mAssortimentArray = data.getParcelableExtra("AssortimentForSales");
+
+                for (AssortmentInActivity  assortment:mAssortimentArray) {
+                    String mName = assortment.getName();
+                }
+
                 SharedPreferences sPref_saveASL = getSharedPreferences("Sales", MODE_PRIVATE);
                 String response = sPref_saveASL.getString("AssortmentSalesAddedArray", "[]");
                 try {
@@ -803,12 +817,12 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                 String Name = json.getString("AssortimentName");
                 String Cant = json.getString("Count");
                 Cant=Cant.replace(",",".");
-                String Price = json.getString("Price");
+                String Price = json.getString("mPriceAssortment");
                 Price = Price.replace(",",".");
                 String Uid = json.getString("AssortimentUid");
                 asl_.put("Name",Name);
                 asl_.put("Cant",Cant);
-                asl_.put("Price",Price);
+                asl_.put("mPriceAssortment",Price);
                 asl_.put("Uid",Uid);
                 String suma =String.format("%.2f",Double.valueOf(Price)* Double.valueOf(Cant));
                 sumTotal=sumTotal+Double.valueOf(Price)* Double.valueOf(Cant);
@@ -936,9 +950,9 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                     int ErrorCode = responseAssortiment.getInt("ErrorCode");
                     if (ErrorCode == 0) {
                         String Names = responseAssortiment.getString("Name");
-                        String Price = responseAssortiment.getString("Price");
+                        String Price = responseAssortiment.getString("mPriceAssortment");
                         String Remain = responseAssortiment.getString("Remain");
-                        String Marking = responseAssortiment.getString("Marking");
+                        String Marking = responseAssortiment.getString("mMarkingAssortment");
                         String Codes = responseAssortiment.getString("Code");
                         String Uid = responseAssortiment.getString("AssortimentID");
                         String Barcodes = responseAssortiment.getString("BarCode");
@@ -947,14 +961,14 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
 
                         Intent sales = new Intent(".CountSalesMobile");
                         sales.putExtra("BarCode", Barcodes);
-                        sales.putExtra("Price", Price);
-                        sales.putExtra("Names", Names);
+                        sales.putExtra("mPriceAssortment", Price);
+                        sales.putExtra("mNameAssortment", Names);
                         sales.putExtra("Remain", Remain);
-                        sales.putExtra("Marking", Marking);
-                        sales.putExtra("Codes", Codes);
+                        sales.putExtra("mMarkingAssortment", Marking);
+                        sales.putExtra("mCodeAssortment", Codes);
                         sales.putExtra("ID", Uid);
                         sales.putExtra("Stock", show_stocks.isChecked());
-                        startActivityForResult(sales, 110);
+                        startActivityForResult(sales, REQUEST_FROM_LIST_ASSORTMENT);
                     } else {
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
                         txtBarcode_introdus.setText(barcode_introdus + " - " + getResources().getString(R.string.txt_depozit_nedeterminat));

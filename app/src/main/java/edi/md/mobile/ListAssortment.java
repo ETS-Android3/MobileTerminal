@@ -12,8 +12,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -31,7 +29,6 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-import org.apache.commons.validator.routines.DoubleValidator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +36,7 @@ import org.json.JSONObject;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -52,6 +50,8 @@ import java.util.concurrent.TimeUnit;
 
 import edi.md.mobile.Settings.ASL;
 import edi.md.mobile.Settings.Assortment;
+import edi.md.mobile.Utils.Assortiment;
+import edi.md.mobile.Utils.AssortmentInActivity;
 import edi.md.mobile.Utils.ServiceApi;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -69,16 +69,16 @@ public class ListAssortment extends AppCompatActivity {
     FloatingActionButton save_assortments;
     ListView list_assortments;
     SearchView search_asl;
-    String ip_,port_,guid;
+    String ip_,port_, mGUIDAssortment;
     ProgressDialog pgH;
     SimpleAdapter simpleAdapterASL;
     JSONObject _ass,sendRevision,json_item_added_inventory;
-    String asl_name_1,price_asl;
+    String mNameAssortment, mPriceAssortment;
     JSONArray jsonArray,guidSelected ,array_added_items_inventroy;
     List<String> list_clicked_item =new ArrayList<>();
     List<String> list_name_clicked_item =new ArrayList<>();
     int resultOut,index_clecked_item=0,index_clecked_item_name=1;
-    Boolean folder_asl;
+    Boolean mIsFolderAssortment;
     Handler handler;
     TimerTask timerTask;
     Timer t;
@@ -86,6 +86,9 @@ public class ListAssortment extends AppCompatActivity {
     Toolbar mToolbar;
     Variables myapp;
     boolean multi_folders = false;
+
+    Assortiment mAssortimentArray = new Assortiment();
+    Assortment mAssortment;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -162,11 +165,11 @@ public class ListAssortment extends AppCompatActivity {
                     list_name_clicked_item.remove(index_clecked_item_name);
                     //last_clicked_index_item = siz - 1;
                     index_clecked_item -= 1;
-                    guid=list_clicked_item.get(index_clecked_item);
+                    mGUIDAssortment =list_clicked_item.get(index_clecked_item);
                     asl_list.clear();
-                    init_home_assortment(guid);
+                    init_home_assortment(mGUIDAssortment);
                     simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
-                            new String[]{"Name","icon","Price","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
+                            new String[]{"Name","icon","mPriceAssortment","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
                     list_assortments.setAdapter(simpleAdapterASL);
                     list_clicked_item.remove(index_clecked_item);
                 }
@@ -214,7 +217,7 @@ public class ListAssortment extends AppCompatActivity {
 
         t = new Timer();
 
-        guid = "00000000-0000-0000-0000-000000000000";
+        mGUIDAssortment = "00000000-0000-0000-0000-000000000000";
 
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
         final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
@@ -251,7 +254,7 @@ public class ListAssortment extends AppCompatActivity {
                         });
                     }
                     simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
-                            new String[]{"Name","icon","Price","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
+                            new String[]{"Name","icon","mPriceAssortment","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
 
                     list_assortments.setAdapter(simpleAdapterASL);
                     pgH.dismiss();
@@ -268,7 +271,7 @@ public class ListAssortment extends AppCompatActivity {
 //                    }
                     order_sortAll(asl_list);
                     simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
-                            new String[]{"Name","icon","Price","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
+                            new String[]{"Name","icon","mPriceAssortment","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
                     pgH.dismiss();
                     ((Variables)getApplication()).setDownloadASLVariable(true);
                     list_assortments.setAdapter(simpleAdapterASL);
@@ -284,7 +287,7 @@ public class ListAssortment extends AppCompatActivity {
 
                     }
                     simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
-                            new String[]{"Name","icon","Price","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
+                            new String[]{"Name","icon","mPriceAssortment","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
                     list_assortments.setAdapter(simpleAdapterASL);
                 }
             }
@@ -306,40 +309,41 @@ public class ListAssortment extends AppCompatActivity {
 
 
         list_assortments.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @SuppressLint("DefaultLocale")
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SharedPreferences sPref = getSharedPreferences("Save touch assortiment", MODE_PRIVATE);
                 SharedPreferences.Editor ed = sPref.edit();
 
-                guid = (String) asl_list.get(position).get("ID");
-                folder_asl = (boolean) asl_list.get(position).get("Folder_is");
-                price_asl = (String) asl_list.get(position).get("Price");
-                asl_name_1 = (String) asl_list.get(position).get("Name");
-                String code_asl = (String) asl_list.get(position).get("Code");
-                String barcode_asl = (String) asl_list.get(position).get("BarCode");
-                String incomePrice = (String) asl_list.get(position).get("IncomePrice");
-                String Marking = (String) asl_list.get(position).get("Marking");
-                String Remain = (String) asl_list.get(position).get("Remain");
-                String Unitare = (String) asl_list.get(position).get("Unit");
-                String UnitPrice = (String) asl_list.get(position).get("UnitPrice");
-                String UnitInPackage = (String) asl_list.get(position).get("UnitInPackage");
-                if(UnitPrice!=null){
-                    UnitPrice=UnitPrice.replace(",",".");
-                    Double priceunit = Double.valueOf(UnitPrice);
-                    UnitPrice =String.format("%.2f",priceunit);
+                mGUIDAssortment = (String) asl_list.get(position).get("ID");
+                mIsFolderAssortment = (boolean) asl_list.get(position).get("Folder_is");
+                mPriceAssortment = (String) asl_list.get(position).get("mPriceAssortment");
+                mNameAssortment = (String) asl_list.get(position).get("Name");
+                String mCodeAssortment = (String) asl_list.get(position).get("Code");
+                String mBarcodeAssortment = (String) asl_list.get(position).get("BarCode");
+                String mIncomePriceAssortment = (String) asl_list.get(position).get("IncomePrice");
+                String mMarkingAssortment = (String) asl_list.get(position).get("mMarkingAssortment");
+                String mRemainAssortment = (String) asl_list.get(position).get("Remain");
+                String mUnitAssortment = (String) asl_list.get(position).get("mUnitAssortment");
+                String mUnitPriceAssortment = (String) asl_list.get(position).get("mUnitPrice");
+                String mUnitInPackageAssortment = (String) asl_list.get(position).get("mUnitInPackage");
+
+                if(mUnitPriceAssortment!=null){
+                    mUnitPriceAssortment=mUnitPriceAssortment.replace(",",".");
+                    Double priceunit = Double.valueOf(mUnitPriceAssortment);
+                    mUnitPriceAssortment =String.format("%.2f",priceunit);
                 }
+
                 String alow_integer =(String) asl_list.get(position).get("AllowNonIntegerSale");
                 final String ParentUid = (String) asl_list.get(position).get("Parent_ID");
-                if (!folder_asl) {
-                    ed.putString("Guid_Assortiment", guid);
-                    ed.putString("Code_Assortiment", code_asl);
-                    ed.putString("BarCode_Assortiment", barcode_asl);
-                    ed.putString("Name_Assortiment", asl_name_1);
-                    String price = price_asl.replace(getResources().getString(R.string.txt_list_asl_view_valuta),"");
+                if (!mIsFolderAssortment) {
+                    ed.putString("Guid_Assortiment", mGUIDAssortment);
+                    ed.putString("Code_Assortiment", mCodeAssortment);
+                    ed.putString("BarCode_Assortiment", mBarcodeAssortment);
+                    ed.putString("Name_Assortiment", mNameAssortment);
+                    String price = mPriceAssortment.replace(getResources().getString(R.string.txt_list_asl_view_valuta),"");
                     price = price.replace(getResources().getString(R.string.txt_list_asl_view_price),"");
                     ed.putString("Price_Assortiment", price);
-                    ed.putString("IncomePrice", incomePrice);
+                    ed.putString("IncomePrice", mIncomePriceAssortment);
                     ed.putString("AllowNonIntegerSale", alow_integer);
                     ed.apply();
 
@@ -350,16 +354,16 @@ public class ListAssortment extends AppCompatActivity {
                         case 141: {//stock assortment
                             _ass = new JSONObject();
                             try {
-                                _ass.put("AssortimentName", asl_name_1);
-                                _ass.put("AssortimentUid", guid);
-                                String price_list = price_asl.replace(getResources().getString(R.string.txt_list_asl_view_valuta),"");
+                                _ass.put("AssortimentName", mNameAssortment);
+                                _ass.put("AssortimentUid", mGUIDAssortment);
+                                String price_list = mPriceAssortment.replace(getResources().getString(R.string.txt_list_asl_view_valuta),"");
                                 price_list = price_list.replace(getResources().getString(R.string.txt_list_asl_view_price),"");
-                                _ass.put("Price", price_list);
-                                _ass.put("Code",code_asl);
-                                _ass.put("Barcode",barcode_asl);
-                                _ass.put("Unit",Unitare);
-                                _ass.put("UnitPrice",UnitPrice);
-                                _ass.put("UnitInPackage",UnitInPackage);
+                                _ass.put("mPriceAssortment", price_list);
+                                _ass.put("Code",mCodeAssortment);
+                                _ass.put("Barcode",mBarcodeAssortment);
+                                _ass.put("mUnitAssortment",mUnitAssortment);
+                                _ass.put("mUnitPrice",mUnitPriceAssortment);
+                                _ass.put("mUnitInPackage",mUnitInPackageAssortment);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
@@ -370,16 +374,16 @@ public class ListAssortment extends AppCompatActivity {
                         case 151: {//stock assortment
                             _ass = new JSONObject();
                             try {
-                                _ass.put("AssortimentName", asl_name_1);
-                                _ass.put("AssortimentUid", guid);
-                                String price_list = price_asl.replace(getResources().getString(R.string.txt_list_asl_view_valuta),"");
+                                _ass.put("AssortimentName", mNameAssortment);
+                                _ass.put("AssortimentUid", mGUIDAssortment);
+                                String price_list = mPriceAssortment.replace(getResources().getString(R.string.txt_list_asl_view_valuta),"");
                                 price_list = price_list.replace(getResources().getString(R.string.txt_list_asl_view_price),"");
-                                _ass.put("Price", price_list);
-                                _ass.put("Code",code_asl);
-                                _ass.put("Barcode",barcode_asl);
-                                _ass.put("Unit",Unitare);
-                                _ass.put("UnitPrice",UnitPrice);
-                                _ass.put("UnitInPackage",UnitInPackage);
+                                _ass.put("mPriceAssortment", price_list);
+                                _ass.put("Code",mCodeAssortment);
+                                _ass.put("Barcode",mBarcodeAssortment);
+                                _ass.put("mUnitAssortment",mUnitAssortment);
+                                _ass.put("mUnitPrice",mUnitPriceAssortment);
+                                _ass.put("mUnitInPackage",mUnitInPackageAssortment);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
@@ -388,34 +392,48 @@ public class ListAssortment extends AppCompatActivity {
                             startActivityForResult(count_activity, REQUEST_CODE_forCount);
                         }break;
                         case 181: {//sales
-                            _ass = new JSONObject();
-                            try {
-                                _ass.put("AssortimentName", asl_name_1);
-                                _ass.put("AssortimentUid", guid);
-                                String price_list = price_asl.replace(getResources().getString(R.string.txt_list_asl_view_valuta),"");
-                                price_list = price_list.replace(getResources().getString(R.string.txt_list_asl_view_price),"");
-                                _ass.put("Price", price_list);
-                                _ass.put("Code",code_asl);
-                                _ass.put("Barcode",barcode_asl);
-                                _ass.put("Unit",Unitare);
-                                _ass.put("UnitPrice",UnitPrice);
-                                _ass.put("UnitInPackage",UnitInPackage);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
-                            }
+                            String price_list = mPriceAssortment.replace(getResources().getString(R.string.txt_list_asl_view_valuta),"");
+                            price_list = price_list.replace(getResources().getString(R.string.txt_list_asl_view_price),"");
+
+                            mAssortment = new Assortment();
+                            mAssortment.setAssortimentID(mGUIDAssortment);
+                            mAssortment.setBarCode(mBarcodeAssortment);
+                            mAssortment.setCode(mCodeAssortment);
+                            mAssortment.setName(mNameAssortment);
+                            mAssortment.setPrice(price_list);
+                            mAssortment.setMarking(mMarkingAssortment);
+                            mAssortment.setRemain(mRemainAssortment);
+                            mAssortment.setUnit(mUnitAssortment);
+                            mAssortment.setUnitPrice(mUnitPriceAssortment);
+                            mAssortment.setUnitInPackage(mUnitInPackageAssortment);
+//                            _ass = new JSONObject();
+//                            try {
+//                                _ass.put("AssortimentName", mNameAssortment);
+//                                _ass.put("AssortimentUid", mGUIDAssortment);
+//                                String price_list = mPriceAssortment.replace(getResources().getString(R.string.txt_list_asl_view_valuta),"");
+//                                price_list = price_list.replace(getResources().getString(R.string.txt_list_asl_view_price),"");
+//                                _ass.put("mPriceAssortment", price_list);
+//                                _ass.put("Code",mCodeAssortment);
+//                                _ass.put("Barcode",mBarcodeAssortment);
+//                                _ass.put("mUnitAssortment",mUnitAssortment);
+//                                _ass.put("mUnitPrice",mUnitPriceAssortment);
+//                                _ass.put("mUnitInPackage",mUnitInPackageAssortment);
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                                ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
+//                            }
                             Intent count_activity = new Intent(".CountListAssortmentMobile");///
                             startActivityForResult(count_activity, REQUEST_CODE_forCount);
                         }break;
                         case 191: {//invoice
                             _ass = new JSONObject();
                             try {
-                                _ass.put("AssortimentName", asl_name_1);
-                                _ass.put("AssortimentUid", guid);
-                                _ass.put("IncomePrice", incomePrice);
-                                String price_list = price_asl.replace(getResources().getString(R.string.txt_list_asl_view_valuta),"");
+                                _ass.put("AssortimentName", mNameAssortment);
+                                _ass.put("AssortimentUid", mGUIDAssortment);
+                                _ass.put("IncomePrice", mIncomePriceAssortment);
+                                String price_list = mPriceAssortment.replace(getResources().getString(R.string.txt_list_asl_view_valuta),"");
                                 price_list = price_list.replace(getResources().getString(R.string.txt_list_asl_view_price),"");
-                                _ass.put("Price", price_list);
+                                _ass.put("mPriceAssortment", price_list);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
@@ -442,7 +460,7 @@ public class ListAssortment extends AppCompatActivity {
                                         String count_exist = object.getString("AssortimentUid");
                                         count_exist = count_exist.replace(",",".");
                                         double cant_exist_double = Double.valueOf(count_exist);
-                                        if (GUID.equals(guid)){
+                                        if (GUID.equals(mGUIDAssortment)){
                                             cant_exist_double = cant_exist_double +1;
                                             object.put("Quantity",String.valueOf(cant_exist_double));
                                             isExtist=true;
@@ -451,15 +469,15 @@ public class ListAssortment extends AppCompatActivity {
 
                                     }
                                     if (!isExtist){
-                                        json_item_added_inventory.put("AssortimentName", asl_name_1);
-                                        json_item_added_inventory.put("AssortimentUid", guid);
+                                        json_item_added_inventory.put("AssortimentName", mNameAssortment);
+                                        json_item_added_inventory.put("AssortimentUid", mGUIDAssortment);
                                         json_item_added_inventory.put("Quantity", "1");
 
                                         array_added_items_inventroy.put(json_item_added_inventory);
                                     }
 
 
-                                    sendRevision.put("Assortiment", guid);
+                                    sendRevision.put("Assortiment", mGUIDAssortment);
                                     sendRevision.put("Quantity", "1");
                                     sendRevision.put("RevisionID", RevisionID);
                                 } catch (JSONException e) {
@@ -474,12 +492,12 @@ public class ListAssortment extends AppCompatActivity {
                                 _ass = new JSONObject();
 
                                 try {
-                                    _ass.put("AssortimentName", asl_name_1);
-                                    _ass.put("AssortimentUid", guid);
+                                    _ass.put("AssortimentName", mNameAssortment);
+                                    _ass.put("AssortimentUid", mGUIDAssortment);
 
-                                    String price_list = price_asl.replace(getResources().getString(R.string.txt_list_asl_view_valuta),"");
+                                    String price_list = mPriceAssortment.replace(getResources().getString(R.string.txt_list_asl_view_valuta),"");
                                     price_list = price_list.replace(getResources().getString(R.string.txt_list_asl_view_price),"");
-                                    _ass.put("Price", price_list);
+                                    _ass.put("mPriceAssortment", price_list);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                     ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
@@ -489,31 +507,26 @@ public class ListAssortment extends AppCompatActivity {
                                 startActivityForResult(count_activity, 444);
                             }
                         }break;
-                        case 161: {//checkprice
-                            _ass = new JSONObject();
-                            try {
-                                _ass.put("AssortimentName", asl_name_1);
-                                _ass.put("AssortimentUid", guid);
-                                String price_list = price_asl.replace(getResources().getString(R.string.txt_list_asl_view_valuta),"");
-                                price_list = price_list.replace(getResources().getString(R.string.txt_list_asl_view_price),"");
-                                _ass.put("Price", price_list);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
-                            }
-                            Intent added = new Intent();
-                            added.putExtra("Code",code_asl);
-                            added.putExtra("BarCode",barcode_asl);
-                            added.putExtra("Name", asl_name_1);
-                            String price_list = price_asl.replace(getResources().getString(R.string.txt_list_asl_view_valuta),"");
+                        //return to check price activity
+                        case 161: {
+                            String price_list = mPriceAssortment.replace(getResources().getString(R.string.txt_list_asl_view_valuta),"");
                             price_list = price_list.replace(getResources().getString(R.string.txt_list_asl_view_price),"");
-                            added.putExtra("Price",price_list);
-                            added.putExtra("Marking",Marking);
-                            added.putExtra("Remain",Remain);
-                            added.putExtra("Unit",Unitare);
-                            added.putExtra("UnitPrice",UnitPrice);
-                            added.putExtra("UnitInPackage",UnitInPackage);
-                            setResult(RESULT_OK, added);
+
+                            Assortment assortment = new Assortment();
+                            assortment.setBarCode(mBarcodeAssortment);
+                            assortment.setCode(mCodeAssortment);
+                            assortment.setName(mNameAssortment);
+                            assortment.setPrice(price_list);
+                            assortment.setMarking(mMarkingAssortment);
+                            assortment.setRemain(mRemainAssortment);
+                            assortment.setUnit(mUnitAssortment);
+                            assortment.setUnitPrice(mUnitPriceAssortment);
+                            assortment.setUnitInPackage(mUnitInPackageAssortment);
+                            AssortmentInActivity assortmentParcelable = new AssortmentInActivity(assortment);
+
+                            Intent intent = new Intent();
+                            intent.putExtra("AssortmentInActivity",assortmentParcelable);
+                            setResult(RESULT_OK,intent);
                             finish();
                         }break;
 
@@ -521,15 +534,15 @@ public class ListAssortment extends AppCompatActivity {
                 }
                 else {
                     list_clicked_item.add(index_clecked_item, ParentUid);
-                    list_name_clicked_item.add(index_clecked_item_name,asl_name_1);
-                    setTitle(asl_name_1);
+                    list_name_clicked_item.add(index_clecked_item_name, mNameAssortment);
+                    setTitle(mNameAssortment);
                     index_clecked_item += 1;
                     index_clecked_item_name +=1;
                     asl_list.clear();
-                    asl_list = myapp.get_AssortimentFromParent(guid);
+                    asl_list = myapp.get_AssortimentFromParent(mGUIDAssortment);
                     order_sortAll(asl_list);
                     simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
-                            new String[]{"Name","icon","Price","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
+                            new String[]{"Name","icon","mPriceAssortment","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
                     list_assortments.setAdapter(simpleAdapterASL);
                 }
             }
@@ -560,12 +573,14 @@ public class ListAssortment extends AppCompatActivity {
                         finish();
                     }break;
                     case 181: {//sales
-                        SharedPreferences sPref_saveASL = getSharedPreferences("Sales", MODE_PRIVATE);
-                        final SharedPreferences.Editor inpASL = sPref_saveASL.edit();
-                        Intent added = new Intent();
-                        inpASL.putString("AssortmentSalesAddedArray", jsonArray.toString());
-                        inpASL.apply();
-                        setResult(RESULT_OK, added);
+//                        SharedPreferences sPref_saveASL = getSharedPreferences("Sales", MODE_PRIVATE);
+//                        final SharedPreferences.Editor inpASL = sPref_saveASL.edit();
+//                        Intent added = new Intent();
+//                        inpASL.putString("AssortmentSalesAddedArray", jsonArray.toString());
+//                        inpASL.apply();
+                        Intent intent = new Intent();
+                        intent.putExtra("AssortimentForSales",mAssortimentArray);
+                        setResult(RESULT_OK, intent);
                         finish();
                     }break;
                     case 191: {//invoice
@@ -613,8 +628,8 @@ public class ListAssortment extends AppCompatActivity {
                     list_name_clicked_item.add(0,getResources().getString(R.string.header_list_assortment));
                     setTitle(getResources().getString(R.string.header_list_assortment));
                     index_clecked_item=0;
-                    guid="00000000-0000-0000-0000-000000000000";
-                    init_home_assortment(guid);
+                    mGUIDAssortment ="00000000-0000-0000-0000-000000000000";
+                    init_home_assortment(mGUIDAssortment);
                 }
                 return true;
             }
@@ -725,11 +740,11 @@ public class ListAssortment extends AppCompatActivity {
                                         asl_.put("Bar_code", getResources().getString(R.string.txt_list_asl_view_barcode) + barcode_asl);
                                         asl_.put("BarCode", barcode_asl);
                                         asl_.put("AllowNonIntegerSale", allow_integer);
-                                        asl_.put("Price", Asl_Price);
+                                        asl_.put("mPriceAssortment", Asl_Price);
                                         asl_.put("IncomePrice", incomePrice);
-                                        asl_.put("Unit", unitary);
-                                        asl_.put("UnitPrice", finalUnitPrice);
-                                        asl_.put("UnitInPackage", UnitInPackage);
+                                        asl_.put("mUnitAssortment", unitary);
+                                        asl_.put("mUnitPrice", finalUnitPrice);
+                                        asl_.put("mUnitInPackage", UnitInPackage);
                                         asl_list.add(asl_);
                                     } else {
                                         asl_.put("Folder_is", true);
@@ -816,7 +831,7 @@ public class ListAssortment extends AppCompatActivity {
         }
         order_sortAll(asl_list);
         simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
-                new String[]{"Name","icon","Price","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
+                new String[]{"Name","icon","mPriceAssortment","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
         list_assortments.setAdapter(simpleAdapterASL);
     } //initASLLis
     private void onSearch(String search_text) {
@@ -829,13 +844,17 @@ public class ListAssortment extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_forCount) {
             if (resultCode == RESULT_OK) {
                 cnt = data.getStringExtra("count");
-                try {
-                    _ass.put("Count", cnt);
-                    jsonArray.put(_ass);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
-                }
+                mAssortment.setCount(cnt);
+                AssortmentInActivity assortmentParcelable = new AssortmentInActivity(mAssortment);
+                mAssortimentArray.add(assortmentParcelable);
+
+//                try {
+//                    //_ass.put("Count", cnt);
+//                    //jsonArray.put(_ass);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                    ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
+//                }
             }
         }else if (requestCode==333){
             if (resultCode == RESULT_OK) {
@@ -857,7 +876,8 @@ public class ListAssortment extends AppCompatActivity {
                     ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
                 }
             }
-        }else if (requestCode==444){
+        }
+        else if (requestCode==444){
             if (resultCode == RESULT_OK) {
                 String  Count = data.getStringExtra("count");
                 Count =Count.replace(",",".");
@@ -871,7 +891,7 @@ public class ListAssortment extends AppCompatActivity {
                         String count_exist = object.getString("Quantity");
                         count_exist = count_exist.replace(",",".");
                         double cant_exist_double = Double.valueOf(count_exist);
-                        if (GUID.equals(guid)){
+                        if (GUID.equals(mGUIDAssortment)){
                             cant_exist_double = cant_exist_double + new_count;
                             object.put("Quantity",String.valueOf(cant_exist_double));
                             isExtist=true;
@@ -880,8 +900,8 @@ public class ListAssortment extends AppCompatActivity {
 
                     }
                     if (!isExtist){
-                        json_item_added_inventory.put("AssortimentName", asl_name_1);
-                        json_item_added_inventory.put("AssortimentUid", guid);
+                        json_item_added_inventory.put("AssortimentName", mNameAssortment);
+                        json_item_added_inventory.put("AssortimentUid", mGUIDAssortment);
                         json_item_added_inventory.put("Quantity",Count);
                         array_added_items_inventroy.put(json_item_added_inventory);
                     }
@@ -1048,11 +1068,11 @@ public class ListAssortment extends AppCompatActivity {
             list_name_clicked_item.remove(index_clecked_item_name);
             //last_clicked_index_item = siz - 1;
             index_clecked_item -= 1;
-            guid=list_clicked_item.get(index_clecked_item);
+            mGUIDAssortment =list_clicked_item.get(index_clecked_item);
             asl_list.clear();
-            init_home_assortment(guid);
+            init_home_assortment(mGUIDAssortment);
             simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
-                    new String[]{"Name","icon","Price","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
+                    new String[]{"Name","icon","mPriceAssortment","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
             list_assortments.setAdapter(simpleAdapterASL);
             list_clicked_item.remove(index_clecked_item);
         }

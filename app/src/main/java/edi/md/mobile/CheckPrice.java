@@ -30,7 +30,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -70,6 +69,8 @@ import com.zebra.sdk.comm.BluetoothConnection;
 import com.zebra.sdk.comm.Connection;
 import com.zebra.sdk.comm.ConnectionException;
 
+import edi.md.mobile.Utils.AssortmentInActivity;
+
 public class CheckPrice extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
 
     Button btn_depozit;
@@ -86,8 +87,9 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
     AlertDialog.Builder builderType;
     ArrayList<HashMap<String, Object>> stock_List_array = new ArrayList<>();
 
-    String ip_,port_,UserId,Eticheta,WareUid,Names = null,Price,Remain,Marking,Codes,Unit,Barcodes,UnitPrice,UnitInPackage,WareNames;
-
+    String ip_,port_,UserId,Eticheta,WareUid, mNameAssortment = null, mPriceAssortment,Remain, mMarkingAssortment, mCodeAssortment, mUnitAssortment, mBarcodeAssortment, mUnitPrice, mUnitInPackage,WareNames;
+    
+    int REQUEST_FROM_LIST_ASSORTMENT = 666;
     Menu menu;
     Boolean onedate =false;
 
@@ -294,7 +296,7 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
                 if(WorkPlaceID.equals("0")){
                     AddingASL.putExtra("WareID",WareUid);
                 }
-                startActivityForResult(AddingASL, 666);
+                startActivityForResult(AddingASL, REQUEST_FROM_LIST_ASSORTMENT);
             }
         });
         print.setOnClickListener(new View.OnClickListener() {
@@ -306,7 +308,7 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
                 final int number_etichete =Integer.valueOf(count_lable.getText().toString());
                 Eticheta = sPrefSetting.getString("Lable",null);
                 if(adresMAC!=null) {
-                    if (Names != null) {
+                    if (mNameAssortment != null) {
                         pgH.setMessage(getResources().getString(R.string.msg_erroare_la_imrpimare));
                         pgH.setCancelable(false);
                         pgH.setIndeterminate(true);
@@ -318,10 +320,10 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
                                 try {
                                     connection.open();
                                     String price_unit;
-                                    if (UnitInPackage==null){
-                                        price_unit = UnitPrice + "/" + Unit;
+                                    if (mUnitInPackage ==null){
+                                        price_unit = mUnitPrice + "/" + mUnitAssortment;
                                     }else{
-                                        price_unit = UnitPrice + "/" + UnitInPackage;
+                                        price_unit = mUnitPrice + "/" + mUnitInPackage;
                                     }
                                     //String api_key_yandex = "trnsl.1.1.20190401T113033Z.81c7241519eea2f0.a881247269077361cbd5b905400518b250efe00b";
                                     Date datess = new Date();
@@ -338,13 +340,13 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
                                     String barcode_imprim = "barcode_imprim";
 
                                     if(Eticheta!=null){
-                                        Eticheta = Eticheta.replace(codes,Codes);
+                                        Eticheta = Eticheta.replace(codes, mCodeAssortment);
                                         Eticheta = Eticheta.replace(data_imprim,sDateInChisinau);
-                                        Eticheta = Eticheta.replace(name_imprim,Names);
+                                        Eticheta = Eticheta.replace(name_imprim, mNameAssortment);
                                         Eticheta = Eticheta.replace(rus_name_imprim,"");
-                                        Eticheta = Eticheta.replace(price_imprim,Price);
+                                        Eticheta = Eticheta.replace(price_imprim, mPriceAssortment);
                                         Eticheta = Eticheta.replace(price_unit_imprim,price_unit);
-                                        Eticheta = Eticheta.replace(barcode_imprim,Barcodes);
+                                        Eticheta = Eticheta.replace(barcode_imprim, mBarcodeAssortment);
                                         if (number_etichete>1){
                                             for (int i=0;i<number_etichete;i++){
                                                 connection.write(Eticheta.getBytes("UTF-8"));
@@ -490,32 +492,38 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==666){
-            if(resultCode==RESULT_OK){
-                if (data!=null) {
-                    txtNameAsortment.setText(data.getStringExtra("Name"));
-                    txtPriceAssortment.setText(data.getStringExtra("Price"));
-                    txtMarkingAssortment.setText(data.getStringExtra("Marking"));
-                    txtCodeAssortment.setText(data.getStringExtra("Code"));
-                    txtBarcodeAssortment.setText(data.getStringExtra("BarCode"));
+        if (requestCode == REQUEST_FROM_LIST_ASSORTMENT){
+            if(resultCode == RESULT_OK){
+                AssortmentInActivity assortment = null;
+                if (data != null) {
+                    assortment = data.getParcelableExtra("AssortmentInActivity");
+
+                mNameAssortment = assortment.getName();
+                    mPriceAssortment = assortment.getPrice();
+                    mMarkingAssortment = assortment.getMarking();
+                    mCodeAssortment = assortment.getCode();
+                    mBarcodeAssortment = assortment.getBarCode();
+                    mUnitAssortment = assortment.getUnit();
+                    mUnitPrice = assortment.getUnitPrice();
+                    if (mUnitPrice !=null){
+                        mUnitPrice = mUnitPrice.replace(".",",");
+                    }
+                    mUnitInPackage = assortment.getUnitInPackage();
+
+                    txtNameAsortment.setText(mNameAssortment);
+                    txtPriceAssortment.setText(mPriceAssortment);
+                    txtMarkingAssortment.setText(mMarkingAssortment);
+                    txtCodeAssortment.setText(mCodeAssortment);
+                    txtBarcodeAssortment.setText(mBarcodeAssortment);
                     if (show_stock.isChecked()){
-                        if(data.getStringExtra("Remain")!=null)
-                            txtStockAssortment.setText(data.getStringExtra("Remain"));
+                        if(assortment.getRemain()!=null)
+                            txtStockAssortment.setText(assortment.getRemain());
                         else
                             txtStockAssortment.setText("0");
                     }
-                    Names =data.getStringExtra("Name");
-                    Price=data.getStringExtra("Price");
-                    Marking=data.getStringExtra("Marking");
-                    Codes=data.getStringExtra("Code");
-                    Barcodes=data.getStringExtra("BarCode");
-                    Unit=data.getStringExtra("Unit");
-                    UnitPrice=data.getStringExtra("UnitPrice");
-                    if (UnitPrice!=null){
-                        UnitPrice=UnitPrice.replace(".",",");
-                    }
-                    UnitInPackage=data.getStringExtra("UnitInPackage");
                     txtInput_barcode.requestFocus();
+                }else{
+
                 }
             }
         }
@@ -523,7 +531,6 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-
         switch (event.getAction()){
             case KeyEvent.ACTION_DOWN :{
                 txtInput_barcode.requestFocus();
@@ -573,7 +580,6 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
     }
 
     public void show_WareHouse(){
-        //adapter = new ArrayAdapter<>(CheckPrice.this,android.R.layout.simple_list_item_1, stock_List_array);
         SimpleAdapter simpleAdapterType = new SimpleAdapter(CheckPrice.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
         builderType = new AlertDialog.Builder(CheckPrice.this);
         builderType.setTitle(getResources().getString(R.string.txt_header_msg_list_depozitelor));
@@ -609,7 +615,6 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         builderType.show();
     }
     public void show_WareHouseChange(){
-        //adapter = new ArrayAdapter<>(CheckPrice.this,android.R.layout.simple_list_item_1, stock_List_array);
         SimpleAdapter simpleAdapterType = new SimpleAdapter(CheckPrice.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
         builderType = new AlertDialog.Builder(CheckPrice.this);
         builderType.setTitle(getResources().getString(R.string.txt_header_msg_list_depozitelor));
@@ -682,7 +687,7 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         } finally {
             send_bill_Connection.disconnect();
         }
-        return data.toString();
+        return data;
     }
 
     private void startTimetaskSync(){
@@ -708,7 +713,6 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
                 v.clearFocus();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-
             }
         }
 
@@ -857,33 +861,33 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
                     JSONObject responseAssortiment = new JSONObject(response);
                     int ErrorCode = responseAssortiment.getInt("ErrorCode");
                     if (ErrorCode == 0) {
-                        Names = responseAssortiment.getString("Name");
-                        Price = responseAssortiment.getString("Price");
+                        mNameAssortment = responseAssortiment.getString("Name");
+                        mPriceAssortment = responseAssortiment.getString("Price");
                         Remain = responseAssortiment.getString("Remain");
-                        Marking = responseAssortiment.getString("Marking");
-                        Codes = responseAssortiment.getString("Code");
-                        Unit = responseAssortiment.getString("Unit");
-                        UnitInPackage = responseAssortiment.getString("UnitInPackage");
-                        UnitPrice = responseAssortiment.getString("UnitPrice");
-                        Double priceDouble = Double.valueOf(Price);
-                        Price = String.format("%.2f", priceDouble);
-                        Price = Price.replace(".", ",");
-                        Double priceunit = Double.valueOf(UnitPrice);
-                        UnitPrice = String.format("%.2f", priceunit);
-                        UnitPrice = UnitPrice.replace(".", ",");
-                        Barcodes = responseAssortiment.getString("BarCode");
+                        mMarkingAssortment = responseAssortiment.getString("Marking");
+                        mCodeAssortment = responseAssortiment.getString("Code");
+                        mUnitAssortment = responseAssortiment.getString("Unit");
+                        mUnitInPackage = responseAssortiment.getString("UnitInPackage");
+                        mUnitPrice = responseAssortiment.getString("UnitPrice");
+                        Double priceDouble = Double.valueOf(mPriceAssortment);
+                        mPriceAssortment = String.format("%.2f", priceDouble);
+                        mPriceAssortment = mPriceAssortment.replace(".", ",");
+                        Double priceunit = Double.valueOf(mUnitPrice);
+                        mUnitPrice = String.format("%.2f", priceunit);
+                        mUnitPrice = mUnitPrice.replace(".", ",");
+                        mBarcodeAssortment = responseAssortiment.getString("BarCode");
 
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
 
-                        txtPriceAssortment.setText(Price);
-                        txtNameAsortment.setText(Names);
-                        if (!Marking.equals("null")) {
-                            txtMarkingAssortment.setText(Marking);
+                        txtPriceAssortment.setText(mPriceAssortment);
+                        txtNameAsortment.setText(mNameAssortment);
+                        if (!mMarkingAssortment.equals("null")) {
+                            txtMarkingAssortment.setText(mMarkingAssortment);
                         } else {
                             txtMarkingAssortment.setText("-");
                         }
                         txtStockAssortment.setText(Remain);
-                        txtCodeAssortment.setText(Codes);
+                        txtCodeAssortment.setText(mCodeAssortment);
                         txtInput_barcode.requestFocus();
                     } else {
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
@@ -911,19 +915,6 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
             }
         }
     }
-//    @Override
-//    public void onWindowFocusChanged(boolean hasFocus) {
-//        super.onWindowFocusChanged(hasFocus);
-//        if (hasFocus) {
-//            View mDecorView = getWindow().getDecorView();
-//            mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-//        }
-//    }
 
     @Override
     protected void onResume() {

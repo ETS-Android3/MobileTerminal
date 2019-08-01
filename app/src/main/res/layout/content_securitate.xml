@@ -5,7 +5,6 @@
     android:id="@+id/background_constraint_securitate"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_fon"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".SettingsMenu.Securitate"
     tools:ignore="MissingTranslation"
@@ -18,15 +17,15 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/item_selector_button_gray_theme"
+        android:background="@drawable/item_selector_button_blue"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:text="@string/btn_donload_install_new_version"
         android:textAllCaps="false"
-        android:textColor="@color/new_text_color"
+        android:textColor="@android:color/background_light"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/img_dark_theme" />
+        app:layout_constraintTop_toBottomOf="@+id/textView18" />
 
     <EditText
         android:id="@+id/et_limit_count_sales_securitate"
@@ -37,13 +36,13 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/round_corners_transparent_dark_theme"
+        android:background="@drawable/round_corners_transparent"
         android:ems="10"
         android:gravity="center"
         android:inputType="number"
         android:selectAllOnFocus="true"
         android:text="0000"
-        android:textColor="@color/new_text_color"
+        android:textColor="@android:color/black"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -59,10 +58,10 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/item_selector_button_gray_theme"
+        android:background="@drawable/item_selector_button_blue"
         android:text="@string/btn_verificare_licenta"
         android:textAllCaps="false"
-        android:textColor="@color/new_text_color"
+        android:textColor="@android:color/background_light"
         android:textSize="24sp"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
@@ -80,7 +79,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text="@string/txt_con_intern_licenta"
-        android:textColor="@color/new_text_color"
+        android:textColor="@android:color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/txt_cod_licenta"
         app:layout_constraintStart_toStartOf="parent"
@@ -111,7 +110,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/txt_licenta_licenta"
-        android:textColor="@color/new_text_color"
+        android:textColor="@android:color/black"
         android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@+id/et_input_licenta"
         app:layout_constraintStart_toStartOf="parent"
@@ -126,7 +125,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/round_corners_transparent_dark_theme"
+        android:background="@drawable/round_corners_transparent"
         android:ems="10"
         android:gravity="center"
         android:hint="@string/txt_hint_input_licenta_securitate"
@@ -147,7 +146,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/round_corners_transparent_dark_theme"
+        android:background="@drawable/round_corners_transparent"
         android:ems="10"
         android:gravity="center"
         android:hint="@string/txt_modificare_pincod_hint_securitate"
@@ -167,7 +166,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text="@string/txt_pincod_securitate"
-        android:textColor="@color/new_text_color"
+        android:textColor="@android:color/black"
         android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@+id/et_input_pin_securitate"
         app:layout_constraintStart_toStartOf="parent"
@@ -181,7 +180,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/txt_limita_vinzare_securitate"
-        android:textColor="@color/new_text_color"
+        android:textColor="@android:color/black"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_input_pin_securitate" />
@@ -193,7 +192,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:text="@string/txt_hint_limit_vinzare_securitate"
-        android:textColor="@color/new_text_color"
+        android:textColor="@android:color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_limit_count_sales_securitate" />
 
@@ -209,7 +208,7 @@
         android:padding="6dp"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toStartOf="@+id/select_lng_ru"
-        app:layout_constraintTop_toBottomOf="@+id/textView50"
+        app:layout_constraintTop_toBottomOf="@+id/textView18"
         app:srcCompat="@drawable/romania" />
 
     <ImageButton
@@ -224,7 +223,7 @@
         android:padding="6dp"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toStartOf="@+id/select_lng_en"
-        app:layout_constraintTop_toBottomOf="@+id/textView50"
+        app:layout_constraintTop_toBottomOf="@+id/textView18"
         app:srcCompat="@drawable/russia" />
 
     <ImageButton
@@ -239,81 +238,8 @@
         android:padding="6dp"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView50"
+        app:layout_constraintTop_toBottomOf="@+id/textView18"
         app:srcCompat="@drawable/united_states" />
-
-    <ImageButton
-        android:id="@+id/img_side_theme"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/item_selector_language"
-        android:padding="6dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView48"
-        app:srcCompat="@drawable/side_tree_theme_background_item_for_selected" />
-
-    <ImageButton
-        android:id="@+id/img_dark_theme"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/item_selector_language"
-        android:padding="6dp"
-        app:layout_constraintStart_toEndOf="@+id/img_side_theme"
-        app:layout_constraintTop_toBottomOf="@+id/textView48"
-        app:srcCompat="@drawable/button_main_gray_theme" />
-
-    <ImageButton
-        android:id="@+id/img_blue_theme"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/item_selector_language"
-        android:padding="6dp"
-        app:layout_constraintStart_toEndOf="@+id/img_dark_theme"
-        app:layout_constraintTop_toBottomOf="@+id/textView48"
-        app:srcCompat="@drawable/round_corners_blue" />
-
-    <TextView
-        android:id="@+id/textView48"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:gravity="center_horizontal"
-        android:text="@string/txt_designe_theme"
-        android:textColor="@color/new_text_color"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/textView50"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView18" />
-
-    <TextView
-        android:id="@+id/textView50"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:gravity="center_horizontal"
-        android:text="@string/txt_language_securitate"
-        android:textColor="@color/new_text_color"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView48"
-        app:layout_constraintTop_toBottomOf="@+id/textView18" />
 
 
 </android.support.constraint.ConstraintLayout>

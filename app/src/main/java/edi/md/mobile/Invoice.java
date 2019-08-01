@@ -1021,7 +1021,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                     int ErrorCode = responseAssortiment.getInt("ErrorCode");
                     if (ErrorCode == 0) {
                         String Names = responseAssortiment.getString("Name");
-                        String Price = responseAssortiment.getString("Price");
+                        String Price = responseAssortiment.getString("mPriceAssortment");
                         String Uid = responseAssortiment.getString("AssortimentID");
                         String PriceIncoming=responseAssortiment.getString("IncomePrice");
 
@@ -1030,8 +1030,8 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
 
                         Intent sales = new Intent(".CountInvoiceMobile");
 
-                        sales.putExtra("Price", Price);
-                        sales.putExtra("Names", Names);
+                        sales.putExtra("mPriceAssortment", Price);
+                        sales.putExtra("mNameAssortment", Names);
                         sales.putExtra("PriceIncoming", PriceIncoming);
                         sales.putExtra("ID", Uid);
                         startActivityForResult(sales, 15);

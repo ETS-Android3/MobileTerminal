@@ -78,7 +78,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
     EditText key_input,et_limit,et_pin;
     Button btn_verific,btn_check_update;
     ProgressDialog pDialog;
-    ImageButton btn_ro,btn_ru,btn_en,btn_blue_theme,btn_dark_theme,btn_side_theme;
+    ImageButton btn_ro,btn_ru,btn_en;
     public static final int progress_bar_type = 0;
     private static String file_url = "http://edi.md/invoicemanager/MobileTerminal.apk";
 
@@ -108,10 +108,6 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         btn_en = findViewById(R.id.select_lng_en);
         btn_ru = findViewById(R.id.select_lng_ru);
         btn_ro = findViewById(R.id.select_lng_ro);
-
-        btn_blue_theme = findViewById(R.id.img_blue_theme);
-        btn_dark_theme = findViewById(R.id.img_dark_theme);
-        btn_side_theme = findViewById(R.id.img_side_theme);
 
         layout_back = findViewById(R.id.background_constraint_securitate);
 
@@ -175,51 +171,6 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         et_limit.setText(Setting.getString("LimitSales","0"));
 
         final String internKey = md5(code.toUpperCase() + "ENCEFALOMIELOPOLIRADICULONEVRITA");
-
-//        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(Securitate.this, android.R.layout.simple_spinner_item, categories_lng);
-//
-//        select_lng.setAdapter(dataAdapter);
-//        select_lng.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                Configuration config = new Configuration();
-//                switch (position){
-//                    case 0:{
-//                        //change_lng("RO");
-//                        //lang="ro";
-////                        inpSet.putString("Language","ro");
-////                        inpSet.apply();
-//
-//                    }break;
-//                    case 1:{
-//                       change_lng("RU");
-//
-////                        lang="ru";
-////                        inpSet.putString("Language","ru");
-////                        inpSet.apply();
-//                        Locale locale = new Locale("ru");
-//
-//                    }break;
-//                    case 2 :{
-////                        change_lng("EN");
-////                        lang="en";
-////                        inpSet.putString("Language","en");
-////                        inpSet.apply();
-//                        Locale locale = new Locale("en");
-//                        if (!locale.equals(mCurrentLocale)) {
-//                            mCurrentLocale = locale;
-//                            //recreate();
-//                        }
-//                    }break;
-//                }
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//
-//            }
-//        });
-
         btn_verific.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -335,45 +286,6 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
                 btn_en.setSelected(true);
                 ((Variables) getApplication()).setRecreate(true);
                 changeLang("en");
-            }
-        });
-        btn_side_theme.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(btn_dark_theme.isSelected()){
-                    btn_dark_theme.setSelected(false);
-                }
-                if(btn_blue_theme.isSelected()){
-                    btn_blue_theme.setSelected(false);
-                }
-                btn_side_theme.setSelected(true);
-                layout_back.setBackgroundResource(R.drawable.side_tree_theme_background);
-            }
-        });
-        btn_dark_theme.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(btn_side_theme.isSelected()){
-                    btn_side_theme.setSelected(false);
-                }
-                if(btn_blue_theme.isSelected()){
-                    btn_blue_theme.setSelected(false);
-                }
-                btn_dark_theme.setSelected(true);
-                layout_back.setBackgroundResource(R.color.background_fon);
-            }
-        });
-        btn_blue_theme.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(btn_side_theme.isSelected()){
-                    btn_side_theme.setSelected(false);
-                }
-                if(btn_dark_theme.isSelected()){
-                    btn_dark_theme.setSelected(false);
-                }
-                btn_blue_theme.setSelected(true);
-                layout_back.setBackgroundResource(R.color.color_white_new);
             }
         });
     }
