@@ -87,7 +87,8 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
     AlertDialog.Builder builderType;
     ArrayList<HashMap<String, Object>> stock_List_array = new ArrayList<>();
 
-    String ip_,port_,UserId,Eticheta,WareUid, mNameAssortment = null, mPriceAssortment,Remain, mMarkingAssortment, mCodeAssortment, mUnitAssortment, mBarcodeAssortment, mUnitPrice, mUnitInPackage,WareNames;
+    String ip_,port_,UserId,Eticheta,WareUid, mNameAssortment = null, mPriceAssortment,Remain,
+            mMarkingAssortment, mCodeAssortment, mUnitAssortment, mBarcodeAssortment, mUnitPrice, mUnitInPackage,WareNames;
     
     int REQUEST_FROM_LIST_ASSORTMENT = 666;
     Menu menu;
@@ -494,20 +495,17 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_FROM_LIST_ASSORTMENT){
             if(resultCode == RESULT_OK){
-                AssortmentInActivity assortment = null;
                 if (data != null) {
-                    assortment = data.getParcelableExtra("AssortmentInActivity");
+                    AssortmentInActivity assortment = data.getParcelableExtra("AssortmentInActivity");
 
-                mNameAssortment = assortment.getName();
+                    mNameAssortment = assortment.getName();
                     mPriceAssortment = assortment.getPrice();
                     mMarkingAssortment = assortment.getMarking();
                     mCodeAssortment = assortment.getCode();
                     mBarcodeAssortment = assortment.getBarCode();
                     mUnitAssortment = assortment.getUnit();
                     mUnitPrice = assortment.getUnitPrice();
-                    if (mUnitPrice !=null){
-                        mUnitPrice = mUnitPrice.replace(".",",");
-                    }
+                    if (mUnitPrice !=null) mUnitPrice = mUnitPrice.replace(".",",");
                     mUnitInPackage = assortment.getUnitInPackage();
 
                     txtNameAsortment.setText(mNameAssortment);
