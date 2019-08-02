@@ -28,7 +28,7 @@ public class CountInvoice extends AppCompatActivity {
 //gfudszxcvliguiljknbhvku6t7yh
     //kjhhjbhvkygukxg,v.nk.lmkgcgnfxdghhk,j. k,bkgj
 // h
-
+//hdgxfgvmhbjnk.mnbhvnfdbcvbm
     ///jkhgfxgcgbjnkml,;ljkbvcgfxdxcbhm
     Button btn_accept,btn_cancel;
     TextView txtTotalinc,txtTotalsale,txtNames,txtProfit;
