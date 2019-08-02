@@ -93,7 +93,7 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
     int REQUEST_FROM_LIST_ASSORTMENT = 666;
     Menu menu;
     Boolean onedate =false;
-//add helou in cetfhjkhdfzhkgvhk.mfdsaSdgvjmnkbhcgfxzcvbnhjhytestydgcvhbjlk;k'piouiy
+//add helou in cetfhjkhdfzhkgvhk.mjkgfdxcgvhbjlkkjhtdrzewsdgjmkl;jcxdfxgm,fdsaSdgvjmnkbhcgfxzcvbnhjhytestydgcvhbjlk;k'piouiy
 
     //sdfghjkfdggsdsfadfgjkghfuydtryujygbvaesrdxfcfhgfsdhfjh,jhkj,mgfhdfzxcvbgn
     @Override
