@@ -93,7 +93,7 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
     int REQUEST_FROM_LIST_ASSORTMENT = 666;
     Menu menu;
     Boolean onedate =false;
-//add helou in c
+//add helou in cetfhjkhdfzhkgvhk.mfdsaSdgvjmnkbhcgfxzcvbnh
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
