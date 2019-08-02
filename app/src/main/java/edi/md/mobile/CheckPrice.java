@@ -95,7 +95,7 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
     Boolean onedate =false;
 //add helou in cetfhjkhdfzhkgvhk.mfdsaSdgvjmnkbhcgfxzcvbnhjhytestydgcvhbjlk;k'piouiy
 
-    //sdfghjkfdggsdsfadfgjkghfuydtryujygbv
+    //sdfghjkfdggsdsfadfgjkghfuydtryujygbvaesrdxfcfhgfsdhfjh,jhkj,mgfhdfzxcvbgn
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
