@@ -169,7 +169,7 @@ public class ListAssortment extends AppCompatActivity {
                     asl_list.clear();
                     init_home_assortment(mGUIDAssortment);
                     simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
-                            new String[]{"Name","icon","mPriceAssortment","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
+                            new String[]{"Name","icon","Price","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
                     list_assortments.setAdapter(simpleAdapterASL);
                     list_clicked_item.remove(index_clecked_item);
                 }
@@ -351,7 +351,7 @@ public class ListAssortment extends AppCompatActivity {
                     final int id_intent = getActivity.getIntExtra("ActivityCount", 101);
                     final boolean auto_send =  getActivity.getBooleanExtra("AutoCount",false);
                     switch (id_intent){
-                        case 141: {//stock assortment
+                        case 141: {
                             _ass = new JSONObject();
                             try {
                                 _ass.put("AssortimentName", mNameAssortment);
@@ -578,9 +578,10 @@ public class ListAssortment extends AppCompatActivity {
 //                        Intent added = new Intent();
 //                        inpASL.putString("AssortmentSalesAddedArray", jsonArray.toString());
 //                        inpASL.apply();
-                        Intent intent = new Intent();
-                        intent.putExtra("AssortimentForSales",mAssortimentArray);
-                        setResult(RESULT_OK, intent);
+//                        Intent intent = new Intent();
+//                        intent.putExtra("AssortimentForSales",mAssortimentArray);
+
+                        setResult(RESULT_OK);
                         finish();
                     }break;
                     case 191: {//invoice
@@ -845,16 +846,9 @@ public class ListAssortment extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 cnt = data.getStringExtra("count");
                 mAssortment.setCount(cnt);
-                AssortmentInActivity assortmentParcelable = new AssortmentInActivity(mAssortment);
-                mAssortimentArray.add(assortmentParcelable);
 
-//                try {
-//                    //_ass.put("Count", cnt);
-//                    //jsonArray.put(_ass);
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                    ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
-//                }
+                AssortmentInActivity assortmentInActivity= new AssortmentInActivity(mAssortment);
+                ((Variables)getApplication()).addAssortimentToArray(assortmentInActivity);
             }
         }else if (requestCode==333){
             if (resultCode == RESULT_OK) {

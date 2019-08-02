@@ -600,12 +600,10 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                 txt_input_barcode.requestFocus();
                 asl_list.clear();
 
-                Assortiment mAssortimentArray;
-                assert data != null;
-                mAssortimentArray = data.getParcelableExtra("AssortimentForSales");
-
-                for (AssortmentInActivity  assortment:mAssortimentArray) {
-                    String mName = assortment.getName();
+                Assortiment assortiment = ((Variables)getApplication()).getAssortimentArray();
+                for (AssortmentInActivity assortimentInActivity:assortiment) {
+                    String mName = assortimentInActivity.getName();
+                    String Barcode = assortimentInActivity.getBarCode();
                 }
 
                 SharedPreferences sPref_saveASL = getSharedPreferences("Sales", MODE_PRIVATE);
