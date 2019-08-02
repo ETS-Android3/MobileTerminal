@@ -25,7 +25,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CountInvoice extends AppCompatActivity {
-
+//gfudszxcvliguiljknbhvku6t7yh
+    //kjhhjbhvkygukxg,v.nk.lmkgcgnfxdghhk,j. k,bkgj
+// h
     Button btn_accept,btn_cancel;
     TextView txtTotalinc,txtTotalsale,txtNames,txtProfit;
     EditText etCant,etPriceInc,etPriceSales;
