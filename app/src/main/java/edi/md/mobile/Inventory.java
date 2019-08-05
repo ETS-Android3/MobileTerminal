@@ -87,6 +87,8 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
     SimpleAdapter simpleAdapterASL;
 
     Boolean onCreat = false;
+    
+    int REQUEST_CODE_OPEN_LIST_ASSORTMENT =202;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -306,7 +308,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 Intent AddingASL = new Intent(".AssortmentMobile");
                 AddingASL.putExtra("ActivityCount", 171);
                 AddingASL.putExtra("AutoCount", auto_input_count.isChecked());
-                startActivityForResult(AddingASL, 202);
+                startActivityForResult(AddingASL, REQUEST_CODE_OPEN_LIST_ASSORTMENT);
             }
         });
 
@@ -471,12 +473,12 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                     Integer ErrorCode = responseAssortiment.getInt("ErrorCode");
                     if (ErrorCode == 0) {
                         Name = responseAssortiment.getString("Name");
-                        Marking = responseAssortiment.getString("mMarkingAssortment");
+                        Marking = responseAssortiment.getString("Marking");
                         Uid = responseAssortiment.getString("AssortimentID");
                         Remain = responseAssortiment.getString("Remain");
-                        Price = responseAssortiment.getString("mPriceAssortment");
+                        Price = responseAssortiment.getString("Price");
                         String Code = responseAssortiment.getString("Code");
-                        String Unit = responseAssortiment.getString("mUnitAssortment");
+                        String Unit = responseAssortiment.getString("Unit");
 
                         SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
                         String ExistingCount = SaveCount.getString(Uid,"0");
@@ -495,12 +497,12 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                             Intent sales = new Intent(".CountInventorytMobile");
                             sales.putExtra("BarCode", barcode);
                             sales.putExtra("Name", Name);
-                            sales.putExtra("mMarkingAssortment", Marking);
+                            sales.putExtra("Marking", Marking);
                             sales.putExtra("Remain", Remain);
-                            sales.putExtra("mPriceAssortment", Price);
+                            sales.putExtra("Price", Price);
                             sales.putExtra("Code", Code);
                             sales.putExtra("Uid", Uid);
-                            sales.putExtra("mUnitAssortment", Unit);
+                            sales.putExtra("Unit", Unit);
                             sales.putExtra("WeightPrefix",WeightPrefix);
                             startActivityForResult(sales, 20);
                             inpBarcode.setText("");
@@ -628,7 +630,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 txtTotal.setText(ExistingCount);
                 txtCountInit.setText(String.valueOf(Count_init));
             }
-        }else if (requestCode==202){
+        }else if (requestCode==REQUEST_CODE_OPEN_LIST_ASSORTMENT){
             if (resultCode==RESULT_CANCELED){
                 inpBarcode.setText("");
                 inpBarcode.requestFocus();

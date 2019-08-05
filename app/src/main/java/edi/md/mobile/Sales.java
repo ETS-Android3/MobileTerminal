@@ -331,7 +331,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                             json = json_array.getJSONObject(i);
                             String Uid = json.getString("AssortimentUid");
                             String Cant = json.getString("Count");
-                            String Price = json.getString("mPriceAssortment");
+                            String Price = json.getString("Price");
                             Price= Price.replace(",",".");
                             JSONObject sendObj = new JSONObject();
                             sendObj.put("Assortiment", Uid);
@@ -534,13 +534,12 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
             if (resultCode==RESULT_CANCELED){
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
-            }else if (resultCode==RESULT_OK){
+            }
+            else if (resultCode==RESULT_OK){
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
                 asl_list.clear();
-
-                SharedPreferences sPref_saveASL =getSharedPreferences("Sales", MODE_PRIVATE);
-                String response = sPref_saveASL.getString("AssortmentSalesAdded","{}");
+                String response = data.getStringExtra("AssortmentSalesAdded");
                 try {
                     JSONObject json= new JSONObject(response);
                     String UidAsl= json.getString("AssortimentUid");
@@ -599,12 +598,12 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
                 asl_list.clear();
-
-                Assortiment assortiment = ((Variables)getApplication()).getAssortimentArray();
-                for (AssortmentInActivity assortimentInActivity:assortiment) {
-                    String mName = assortimentInActivity.getName();
-                    String Barcode = assortimentInActivity.getBarCode();
-                }
+//
+//                Assortiment assortiment = ((Variables)getApplication()).getAssortimentArray();
+//                for (AssortmentInActivity assortimentInActivity:assortiment) {
+//                    String mName = assortimentInActivity.getName();
+//                    String Barcode = assortimentInActivity.getBarCode();
+//                }
 
                 SharedPreferences sPref_saveASL = getSharedPreferences("Sales", MODE_PRIVATE);
                 String response = sPref_saveASL.getString("AssortmentSalesAddedArray", "[]");
@@ -815,12 +814,12 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                 String Name = json.getString("AssortimentName");
                 String Cant = json.getString("Count");
                 Cant=Cant.replace(",",".");
-                String Price = json.getString("mPriceAssortment");
+                String Price = json.getString("Price");
                 Price = Price.replace(",",".");
                 String Uid = json.getString("AssortimentUid");
                 asl_.put("Name",Name);
                 asl_.put("Cant",Cant);
-                asl_.put("mPriceAssortment",Price);
+                asl_.put("Price",Price);
                 asl_.put("Uid",Uid);
                 String suma =String.format("%.2f",Double.valueOf(Price)* Double.valueOf(Cant));
                 sumTotal=sumTotal+Double.valueOf(Price)* Double.valueOf(Cant);
@@ -948,9 +947,9 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                     int ErrorCode = responseAssortiment.getInt("ErrorCode");
                     if (ErrorCode == 0) {
                         String Names = responseAssortiment.getString("Name");
-                        String Price = responseAssortiment.getString("mPriceAssortment");
+                        String Price = responseAssortiment.getString("Price");
                         String Remain = responseAssortiment.getString("Remain");
-                        String Marking = responseAssortiment.getString("mMarkingAssortment");
+                        String Marking = responseAssortiment.getString("Marking");
                         String Codes = responseAssortiment.getString("Code");
                         String Uid = responseAssortiment.getString("AssortimentID");
                         String Barcodes = responseAssortiment.getString("BarCode");
@@ -959,11 +958,11 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
 
                         Intent sales = new Intent(".CountSalesMobile");
                         sales.putExtra("BarCode", Barcodes);
-                        sales.putExtra("mPriceAssortment", Price);
-                        sales.putExtra("mNameAssortment", Names);
+                        sales.putExtra("Price", Price);
+                        sales.putExtra("Name", Names);
                         sales.putExtra("Remain", Remain);
-                        sales.putExtra("mMarkingAssortment", Marking);
-                        sales.putExtra("mCodeAssortment", Codes);
+                        sales.putExtra("Marking", Marking);
+                        sales.putExtra("Code", Codes);
                         sales.putExtra("ID", Uid);
                         sales.putExtra("Stock", show_stocks.isChecked());
                         startActivityForResult(sales, REQUEST_FROM_LIST_ASSORTMENT);
@@ -975,6 +974,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                 } catch (JSONException e) {
                     e.printStackTrace();
                     ((Variables)getApplication()).appendLog(e.getMessage(),Sales.this);
+                    Toast.makeText(Sales.this,e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }else{
                 Toast.makeText(Sales.this,"Eroare: Nu este raspuns de la serviciu!", Toast.LENGTH_SHORT).show();
@@ -1045,6 +1045,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                         } catch (JSONException e) {
                             e.printStackTrace();
                             ((Variables) getApplication()).appendLog(e.getMessage(), Sales.this);
+                            Toast.makeText(Sales.this,e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }else{
                         pgH.dismiss();
@@ -1096,6 +1097,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                             show_WareHouseChange();
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            Toast.makeText(Sales.this,e.getMessage(), Toast.LENGTH_SHORT).show();
                             ((Variables) getApplication()).appendLog(e.getMessage(), Sales.this);
                         }
                     }else{

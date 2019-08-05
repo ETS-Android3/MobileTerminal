@@ -29,37 +29,6 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
     String Name,Uid , ip_,port_,UserId,name_asl,PriceSales,PriceIncoming;
     String IntegerSales;
 
-    private boolean isDigits(String s) throws NumberFormatException {
-        try {
-            Double.parseDouble(s);
-            return true;
-        } catch (NumberFormatException e) {
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortmentInvoice.this);
-            return false;
-        }
-    }
-
-    private boolean isDigitInteger(String s) throws NumberFormatException {
-        try {
-            Integer.parseInt(s);
-            return true;
-        } catch (NumberFormatException e) {
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortmentInvoice.this);
-            return false;
-        }
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id){
-            case android.R.id.home : {
-                Intent countInc = new Intent();
-                setResult(RESULT_CANCELED,countInc);
-                finish();
-            }break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,52 +53,45 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
         etPriceInc=findViewById(R.id.et_price_inc_invoice_touch);
         etPriceSales=findViewById(R.id.et_price_sales_invoice_touch);
 
-        SharedPreferences sPref =getSharedPreferences("Settings", MODE_PRIVATE);
-        SharedPreferences sPrefTouch = getSharedPreferences("Save touch assortiment", MODE_PRIVATE);
+        SharedPreferences settings =getSharedPreferences("Settings", MODE_PRIVATE);
+        SharedPreferences save_touch_assortiment = getSharedPreferences("Save touch assortiment", MODE_PRIVATE);
         etCant.requestFocus();
-        boolean showKB = sPref.getBoolean("ShowKeyBoard",false);
+
+        boolean showKB = settings.getBoolean("ShowKeyBoard",false);
         if (showKB){
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             etCant.requestFocus();
         }
-        Name = sPrefTouch.getString("Name_Assortiment", "");
-        PriceSales = sPrefTouch.getString("Price_Assortiment", "");
-        IntegerSales = sPrefTouch.getString("AllowNonIntegerSale", "false");
-        Uid = sPrefTouch.getString("AssortimentID","");
-        PriceIncoming=sPrefTouch.getString("IncomePrice","0");
+
+        Name = save_touch_assortiment.getString("Name_Assortiment", "");
+        PriceSales = save_touch_assortiment.getString("Price_Assortiment", "");
+        IntegerSales = save_touch_assortiment.getString("AllowNonIntegerSale", "false");
+        Uid = save_touch_assortiment.getString("AssortimentID","");
+        PriceIncoming=save_touch_assortiment.getString("IncomePrice","0");
 
         if(!PriceIncoming.contains("0")){
             etPriceInc.setText(PriceIncoming.replace(",","."));
-        }else{
+        }
+        else{
             etPriceInc.setText("0");
         }
+
         etPriceSales.setText(PriceSales.replace(",","."));
         txtNames.setText(Name);
-
 
         etPriceSales.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if(etCant.getText().toString().equals("")) {
-                        Toast.makeText(CountListOfAssortmentInvoice.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-                    }else  if (etPriceInc.getText().toString().equals("")){
-                        Toast.makeText(CountListOfAssortmentInvoice.this, getResources().getString(R.string.msg_input_incoming_price_invoice), Toast.LENGTH_SHORT).show();
-                    }else{
-
-                    }
-                }else if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)){
-                    if(etCant.getText().toString().equals("")) {
-                        Toast.makeText(CountListOfAssortmentInvoice.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-                    }else  if (etPriceInc.getText().toString().equals("")){
-                        Toast.makeText(CountListOfAssortmentInvoice.this, getResources().getString(R.string.msg_input_incoming_price_invoice), Toast.LENGTH_SHORT).show();
-                    }else{
-
-                    }
+                    save_count();
+                }
+                else if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)){
+                    save_count();
                 }
                 return false;
             }
         });
+
         etCant.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -244,41 +206,14 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent countInc = new Intent();
-                setResult(RESULT_CANCELED,countInc);
+                setResult(RESULT_CANCELED);
                 finish();
             }
         });
         btn_accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(etCant.getText().toString().equals("")) {
-                    Toast.makeText(CountListOfAssortmentInvoice.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-                }else  if (etPriceInc.getText().toString().equals("")){
-                    Toast.makeText(CountListOfAssortmentInvoice.this, getResources().getString(R.string.msg_input_incoming_price_invoice), Toast.LENGTH_SHORT).show();
-                }else{
-                    if (IntegerSales.equals("true")) {
-                        if (isDigits(etCant.getText().toString())) {
-                            Intent intent = new Intent();
-                            intent.putExtra("count", etCant.getText().toString());
-                            intent.putExtra("SalePrice", etPriceSales.getText().toString());
-                            intent.putExtra("IncomePrice", etPriceInc.getText().toString());
-                            intent.putExtra("Suma", txtTotalinc.getText().toString());
-                            setResult(RESULT_OK, intent);
-                            finish();
-                        }
-                    } else {
-                        if (isDigitInteger(etCant.getText().toString())) {
-                            Intent intent = new Intent();
-                            intent.putExtra("count", etCant.getText().toString());
-                            intent.putExtra("SalePrice", etPriceSales.getText().toString());
-                            intent.putExtra("IncomePrice", etPriceInc.getText().toString());
-                            intent.putExtra("Suma", txtTotalinc.getText().toString());
-                            setResult(RESULT_OK, intent);
-                            finish();
-                        }
-                    }
-                }
+                save_count();
             }
         });
     }
@@ -295,5 +230,69 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
         }
 
         return super.dispatchTouchEvent(event);
+    }
+    private void save_count(){
+        if(etCant.getText().toString().equals("")) {
+            Toast.makeText(CountListOfAssortmentInvoice.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
+        }
+        else  if (etPriceInc.getText().toString().equals("")){
+            Toast.makeText(CountListOfAssortmentInvoice.this, getResources().getString(R.string.msg_input_incoming_price_invoice), Toast.LENGTH_SHORT).show();
+        }
+        else{
+            if (IntegerSales.equals("true")) {
+                if (isDigits(etCant.getText().toString())) {
+                    Intent intent = new Intent();
+                    intent.putExtra("count", etCant.getText().toString());
+                    intent.putExtra("SalePrice", etPriceSales.getText().toString());
+                    intent.putExtra("IncomeSum", etPriceInc.getText().toString());
+                    intent.putExtra("Suma", txtTotalinc.getText().toString());
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+            }
+            else {
+                if (isDigitInteger(etCant.getText().toString())) {
+                    Intent intent = new Intent();
+                    intent.putExtra("Count", etCant.getText().toString());
+                    intent.putExtra("SalePrice", etPriceSales.getText().toString());
+                    intent.putExtra("IncomeSum", etPriceInc.getText().toString());
+                    intent.putExtra("Suma", txtTotalinc.getText().toString());
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+            }
+        }
+    }
+    private boolean isDigits(String s) throws NumberFormatException {
+        try {
+            Double.parseDouble(s);
+            return true;
+        } catch (NumberFormatException e) {
+            ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortmentInvoice.this);
+            return false;
+        }
+    }
+
+    private boolean isDigitInteger(String s) throws NumberFormatException {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException e) {
+            ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortmentInvoice.this);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case android.R.id.home : {
+                Intent countInc = new Intent();
+                setResult(RESULT_CANCELED,countInc);
+                finish();
+            }break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

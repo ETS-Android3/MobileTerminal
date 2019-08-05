@@ -110,13 +110,13 @@ public class CountInventory extends AppCompatActivity {
         Intent countInv= getIntent();
 
         Name = countInv.getStringExtra("Name");
-        Marking = countInv.getStringExtra("mMarkingAssortment");
+        Marking = countInv.getStringExtra("Marking");
         Remain = countInv.getStringExtra("Remain");
         UidAsortiment = countInv.getStringExtra("Uid");
         Barcode= countInv.getStringExtra("BarCode");
-        Price= countInv.getStringExtra("mPriceAssortment");
+        Price= countInv.getStringExtra("Price");
         Code =countInv.getStringExtra("Code");
-        String Unit = countInv.getStringExtra("mUnitAssortment");
+        String Unit = countInv.getStringExtra("Unit");
         WeightPrefix= countInv.getIntExtra("WeightPrefix",0);
 
 

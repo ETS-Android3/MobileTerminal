@@ -49,7 +49,6 @@ public class Login extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setTitle(R.string.header_login_user_activity);
         setContentView(R.layout.activity_login);
         Toolbar toolbar = findViewById(R.id.toolbar_login);
         setSupportActionBar(toolbar);
@@ -80,6 +79,19 @@ public class Login extends AppCompatActivity {
 
         Intent getActivity = getIntent();
         final int id_ = getActivity.getIntExtra("Activity", 101);
+
+        if(id_ == 8){
+            setTitle(R.string.header_login_user_settings);
+        }
+        else if( id_ == 9) {
+            setTitle(R.string.header_login_user_settings);
+        }
+        else if( id_ == 10){
+            setTitle(R.string.header_login_user_settings);
+        }
+        else{
+            setTitle(R.string.header_login_user_activity);
+        }
 
         cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override

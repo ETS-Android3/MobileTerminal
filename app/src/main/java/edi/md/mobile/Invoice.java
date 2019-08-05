@@ -81,6 +81,8 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
     JSONObject json_asl,sendInvoice,sendAssortiment;
     JSONArray json_array;
     final boolean[] show_keyboard = {false};
+    
+    int REQUET_FROM_LIST_ASSORTMENT = 220;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -291,7 +293,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                 if(WorkPlaceID.equals("0")){
                     AddingASL.putExtra("WareID",WareUid);
                 }
-                startActivityForResult(AddingASL, 220);
+                startActivityForResult(AddingASL, REQUET_FROM_LIST_ASSORTMENT);
 
             }
         });
@@ -690,15 +692,15 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                     ((Variables)getApplication()).appendLog(e.getMessage(), Invoice.this);
                 }
             }
-        } else if (requestCode==220) {
+        } else if (requestCode==REQUET_FROM_LIST_ASSORTMENT) {
             if (resultCode == RESULT_CANCELED) {
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
-            } else if (resultCode == RESULT_OK) {
+            }
+            else if (resultCode == RESULT_OK) {
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
-                SharedPreferences sPref_saveASL = getSharedPreferences("Invoice", MODE_PRIVATE);
-                String response = sPref_saveASL.getString("AssortmentInvoiceAddedArray", "[]");
+                String response = data.getStringExtra("AssortmentInvoiceAddedArray");
                 try {
                     JSONArray array_from_touch = new JSONArray(response);
                     if (json_array.length() != 0) {
@@ -1021,7 +1023,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                     int ErrorCode = responseAssortiment.getInt("ErrorCode");
                     if (ErrorCode == 0) {
                         String Names = responseAssortiment.getString("Name");
-                        String Price = responseAssortiment.getString("mPriceAssortment");
+                        String Price = responseAssortiment.getString("Price");
                         String Uid = responseAssortiment.getString("AssortimentID");
                         String PriceIncoming=responseAssortiment.getString("IncomePrice");
 
@@ -1030,8 +1032,8 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
 
                         Intent sales = new Intent(".CountInvoiceMobile");
 
-                        sales.putExtra("mPriceAssortment", Price);
-                        sales.putExtra("mNameAssortment", Names);
+                        sales.putExtra("Price", Price);
+                        sales.putExtra("Name", Names);
                         sales.putExtra("PriceIncoming", PriceIncoming);
                         sales.putExtra("ID", Uid);
                         startActivityForResult(sales, 15);
@@ -1043,6 +1045,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                 } catch (JSONException e) {
                     e.printStackTrace();
                     ((Variables)getApplication()).appendLog(e.getMessage(),Invoice.this);
+                    Toast.makeText(Invoice.this,e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }else{
                 Toast.makeText(Invoice.this,getResources().getString(R.string.msg_nu_raspuns_server), Toast.LENGTH_SHORT).show();
@@ -1053,20 +1056,6 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
             }
         }
     }
-//    @Override
-//    public void onWindowFocusChanged(boolean hasFocus) {
-//        super.onWindowFocusChanged(hasFocus);
-//        if (hasFocus) {
-//            View mDecorView = getWindow().getDecorView();
-//            mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-//        }
-//    }
-
     @Override
     protected void onResume() {
         super.onResume();

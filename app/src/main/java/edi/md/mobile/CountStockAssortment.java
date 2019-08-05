@@ -76,15 +76,15 @@ public class CountStockAssortment extends AppCompatActivity {
         btn_cancel = findViewById(R.id.btn_cancel_count_stock_assortment);
 
         final Intent sales = getIntent();
-        txt_name.setText(sales.getStringExtra("mNameAssortment"));
+        txt_name.setText(sales.getStringExtra("Name"));
         txt_barcode.setText(sales.getStringExtra("BarCode"));
-        txt_code.setText(sales.getStringExtra("mCodeAssortment"));
-        txt_articul.setText(sales.getStringExtra("mMarkingAssortment"));
+        txt_code.setText(sales.getStringExtra("Code"));
+        txt_articul.setText(sales.getStringExtra("Marking"));
         txt_stoc.setText(sales.getStringExtra("Remain"));
-        txt_price.setText(sales.getStringExtra("mPriceAssortment"));
-        Unit = sales.getStringExtra("mUnitAssortment");
-        UnitInPackage  = sales.getStringExtra("mUnitInPackage");
-        UnitPrice  = sales.getStringExtra("mUnitPrice");
+        txt_price.setText(sales.getStringExtra("Price"));
+        Unit = sales.getStringExtra("Unit");
+        UnitInPackage  = sales.getStringExtra("UnitInPackage");
+        UnitPrice  = sales.getStringExtra("UnitPrice");
         Uid = sales.getStringExtra("ID");
 
         et_count.requestFocus();
@@ -111,14 +111,14 @@ public class CountStockAssortment extends AppCompatActivity {
                     if (!et_count.getText().toString().equals("")) {
                         JSONObject asl = new JSONObject();
                         try {
-                            asl.put("AssortimentName", sales.getStringExtra("mNameAssortment"));
+                            asl.put("AssortimentName", sales.getStringExtra("Name"));
                             asl.put("AssortimentUid", Uid);
                             asl.put("Barcode",sales.getStringExtra("BarCode"));
-                            asl.put("mPriceAssortment",sales.getStringExtra("mPriceAssortment"));
-                            asl.put("mUnitAssortment",Unit);
-                            asl.put("Code",sales.getStringExtra("mCodeAssortment"));
-                            asl.put("mUnitInPackage",UnitInPackage);
-                            asl.put("mUnitPrice",UnitPrice);
+                            asl.put("Price",sales.getStringExtra("Price"));
+                            asl.put("Unit",Unit);
+                            asl.put("Code",sales.getStringExtra("Code"));
+                            asl.put("UnitInPackage",UnitInPackage);
+                            asl.put("UnitPrice",UnitPrice);
                             asl.put("Count", et_count.getText().toString());
                         } catch (JSONException e) {
                             ((Variables)getApplication()).appendLog(e.getMessage(),CountStockAssortment.this);
@@ -137,14 +137,14 @@ public class CountStockAssortment extends AppCompatActivity {
                     if (!et_count.getText().toString().equals("")) {
                         JSONObject asl = new JSONObject();
                         try {
-                            asl.put("AssortimentName", sales.getStringExtra("mNameAssortment"));
+                            asl.put("AssortimentName", sales.getStringExtra("Name"));
                             asl.put("AssortimentUid", Uid);
                             asl.put("Barcode",sales.getStringExtra("BarCode"));
-                            asl.put("mPriceAssortment",sales.getStringExtra("mPriceAssortment"));
-                            asl.put("mUnitAssortment",Unit);
-                            asl.put("Code",sales.getStringExtra("mCodeAssortment"));
-                            asl.put("mUnitInPackage",UnitInPackage);
-                            asl.put("mUnitPrice",UnitPrice);
+                            asl.put("Price",sales.getStringExtra("Price"));
+                            asl.put("Unit",Unit);
+                            asl.put("Code",sales.getStringExtra("Code"));
+                            asl.put("UnitInPackage",UnitInPackage);
+                            asl.put("UnitPrice",UnitPrice);
                             asl.put("Count", et_count.getText().toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -181,14 +181,14 @@ public class CountStockAssortment extends AppCompatActivity {
                 if(adauga_Count && !et_count.getText().toString().equals("")) {
                     JSONObject asl = new JSONObject();
                     try {
-                        asl.put("AssortimentName", sales.getStringExtra("mNameAssortment"));
+                        asl.put("AssortimentName", sales.getStringExtra("Name"));
                         asl.put("AssortimentUid", Uid);
                         asl.put("Barcode",sales.getStringExtra("BarCode"));
-                        asl.put("mPriceAssortment",sales.getStringExtra("mPriceAssortment"));
-                        asl.put("mUnitAssortment",Unit);
-                        asl.put("Code",sales.getStringExtra("mCodeAssortment"));
-                        asl.put("mUnitInPackage",UnitInPackage);
-                        asl.put("mUnitPrice",UnitPrice);
+                        asl.put("Price",sales.getStringExtra("Price"));
+                        asl.put("Unit",Unit);
+                        asl.put("Code",sales.getStringExtra("Code"));
+                        asl.put("UnitInPackage",UnitInPackage);
+                        asl.put("UnitPrice",UnitPrice);
                         asl.put("Count", et_count.getText().toString());
                     } catch (JSONException e) {
                         e.printStackTrace();

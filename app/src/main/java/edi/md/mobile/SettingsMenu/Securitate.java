@@ -81,11 +81,8 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
     ImageButton btn_ro,btn_ru,btn_en;
     public static final int progress_bar_type = 0;
     private static String file_url = "http://edi.md/invoicemanager/MobileTerminal.apk";
-
+    private static String file_version_url = "http://edi.md/invoicemanager/MobileTerminalVersion.txt";
     private Locale myLocale;
-    String lang;
-
-    ConstraintLayout  layout_back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,8 +105,6 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         btn_en = findViewById(R.id.select_lng_en);
         btn_ru = findViewById(R.id.select_lng_ru);
         btn_ro = findViewById(R.id.select_lng_ro);
-
-        layout_back = findViewById(R.id.background_constraint_securitate);
 
         load_button();
 

@@ -26,6 +26,7 @@
     <string name="btn_verificare_licenta">Verificare</string>
     <string name="txt_pincod_securitate">Pin cod:</string>
     <string name="txt_modificare_pincod_hint_securitate">Modificare pin cod</string>
+    <string name="txt_verifica_stoc_vinzare">Verifică stoc(la vânzare)</string>
     <string name="txt_limita_vinzare_securitate">Limita pozițiilor la vânzare:</string>
     <string name="txt_hint_limit_vinzare_securitate">*0 - limita nu este setată</string>
     <string name="btn_donload_install_new_version">Descarca versiune nouă</string>
@@ -38,7 +39,8 @@
     <string name="header_printer_activity">Imprimante</string>
     <string name="header_workplace_activity">Loc de muncă</string>
     <string name="header_conectare_activity">Conexiune</string>
-    <string name="header_login_user_activity">Autentificare:</string>
+    <string name="header_login_user_activity">Autentificare in bază:</string>
+    <string name="header_login_user_settings">Autentificare locală:</string>
     <string name="header_login_client_activity">Autentificare client:</string>
     <string name="todo">TODO</string>
 
@@ -90,7 +92,7 @@
     <string name="btn_loc_de_munca_nedeterminat_workplace">Loc de muncă nedeterminat</string>
     <string name="switch_afisare_cod_workpalce">Afișare cod</string>
     <string name="switch_auto_confirmare_act_transfer">Auto confirmare(Act transfer)</string>
-    <string name="switch_afisare_tastatura_workplace">Afișare tastatură</string>
+    <string name="switch_afisare_tastatura_workplace">Afișare tastatură(dacă nu sunt butoane)</string>
     <string name="txt_grupe_pentru_vizualizare_workplace">Grupe pentru vizualizare:</string>
     <string name="btn_sterge_workplace">Șterge</string>
     <string name="txt_in_stoc_count_inventory">In stoc:</string>
@@ -156,7 +158,8 @@
     <string name="txt_list_asl_view_valuta"> lei</string>
     <string name="txt_list_asl_view_price">Pret: </string>
     <string name="txt_not_conected_printers">Nu ați conectat nici o imprimantă!</string>
-    <string name="msg_document_save_stock_asl">Documentul a fost salvat! Numarul:</string>
+    <string name="msg_document_save_stock_asl">Documentul a fost salvat! Numărul:</string>
     <string name="txt_designe_theme">Tema</string>
     <string name="txt_language_securitate">Limba</string>
+    <string name="assortment_possible_not_download">Assortimentul posibil nu este descărcat din baza de date.</string>
 </resources>

@@ -17,6 +17,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:background="@drawable/item_selector_button_blue"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
@@ -24,6 +26,7 @@
         android:textAllCaps="false"
         android:textColor="@android:color/background_light"
         android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/select_lng_ro"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView18" />
 
@@ -96,7 +99,7 @@
         android:layout_marginRight="8dp"
         android:gravity="end"
         android:textAllCaps="false"
-        android:textColor="@color/new_text_color"
+        android:textColor="@android:color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView2"
@@ -131,7 +134,7 @@
         android:hint="@string/txt_hint_input_licenta_securitate"
         android:inputType="text"
         android:textAllCaps="true"
-        android:textColor="@color/new_text_color"
+        android:textColor="@android:color/black"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView15"
@@ -208,6 +211,7 @@
         android:padding="6dp"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toStartOf="@+id/select_lng_ru"
+        app:layout_constraintStart_toEndOf="@+id/btn_chek_update2"
         app:layout_constraintTop_toBottomOf="@+id/textView18"
         app:srcCompat="@drawable/romania" />
 

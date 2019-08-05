@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity
         ((Variables)getApplication()).appendLog("Aplication starting",MainActivity.this);
         Settings = getSharedPreferences("Settings", MODE_PRIVATE);
         final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
+        final SharedPreferences.Editor editor = WorkPlace.edit();
         final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
         final SharedPreferences.Editor inpSet = Settings.edit();
 
@@ -145,6 +146,11 @@ public class MainActivity extends AppCompatActivity
         TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
         useremail.setText(User.getString("Name",""));
         TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
+        String nameWorkplace = WorkPlace.getString("Name","");
+//        if(nameWorkplace.equals("")){
+//            editor.putString("Name","Nedeterminat");
+//            editor.apply();
+//        }
         user_workplace.setText(WorkPlace.getString("Name",""));
 
         btn_check_price.setOnClickListener(new View.OnClickListener() {

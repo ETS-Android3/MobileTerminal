@@ -3,9 +3,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
 
     <string name="connection_failed_bluethoot">Connection Failed</string>
     <string name="bluetooth_not_found">Status: Bluetooth not found</string>
@@ -27,6 +25,7 @@
     <string name="txt_licenta_licenta">Licența:</string>
     <string name="btn_verificare_licenta">Verificare</string>
     <string name="txt_pincod_securitate">Pin cod:</string>
+    <string name="txt_verifica_stoc_vinzare">Verifică stoc(la vânzare)</string>
     <string name="txt_modificare_pincod_hint_securitate">Modificare pin cod</string>
     <string name="txt_limita_vinzare_securitate">Limita pozițiilor la vânzare:</string>
     <string name="txt_hint_limit_vinzare_securitate">*0 - limita nu este setată</string>
@@ -40,7 +39,8 @@
     <string name="header_printer_activity">Imprimante</string>
     <string name="header_workplace_activity">Loc de muncă</string>
     <string name="header_conectare_activity">Conexiune</string>
-    <string name="header_login_user_activity">Autentificare:</string>
+    <string name="header_login_user_activity">Autentificare in bază:</string>
+    <string name="header_login_user_settings">Autentificare locală:</string>
     <string name="header_login_client_activity">Autentificare client:</string>
     <string name="todo">TODO</string>
 
@@ -92,7 +92,7 @@
     <string name="btn_loc_de_munca_nedeterminat_workplace">Loc de muncă nedeterminat</string>
     <string name="switch_afisare_cod_workpalce">Afișare cod</string>
     <string name="switch_auto_confirmare_act_transfer">Auto confirmare(Act transfer)</string>
-    <string name="switch_afisare_tastatura_workplace">Afișare tastatură</string>
+    <string name="switch_afisare_tastatura_workplace">Afișare tastatură(dacă nu sunt butoane)</string>
     <string name="txt_grupe_pentru_vizualizare_workplace">Grupe pentru vizualizare:</string>
     <string name="btn_sterge_workplace">Șterge</string>
     <string name="txt_in_stoc_count_inventory">In stoc:</string>
@@ -161,4 +161,5 @@
     <string name="msg_document_save_stock_asl">Documentul a fost salvat! Numarul:</string>
     <string name="txt_designe_theme">Tema</string>
     <string name="txt_language_securitate">Limba</string>
+    <string name="assortment_possible_not_download">Assortimentul posibil nu este descarcat.</string>
 </resources>

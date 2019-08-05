@@ -471,12 +471,12 @@ public class CountListOfAssortment extends AppCompatActivity {
     class AsyncTask_SaveRevisionLine extends AsyncTask<URL, String, String> {
         @Override
         protected String doInBackground(URL... urls) {
-            String response="";
+            String response = "";
             try {
                 response = getResponseFromURLSaveRevisionLineAdd(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
+                ((Variables) getApplication()).appendLog(e.getMessage(), CountListOfAssortment.this);
             }
             return response;
         }
@@ -500,9 +500,9 @@ public class CountListOfAssortment extends AppCompatActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
+                    ((Variables) getApplication()).appendLog(e.getMessage(), CountListOfAssortment.this);
                 }
-            }else{
+            } else {
                 Intent intent_cancel = new Intent();
                 setResult(RESULT_CANCELED, intent_cancel);
                 finish();

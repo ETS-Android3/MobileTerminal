@@ -6,18 +6,17 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".CheckPrice"
-    tools:showIn="@layout/app_bar_check_price"
-    tools:ignore="MissingTranslation">
+    tools:ignore="MissingTranslation"
+    tools:showIn="@layout/app_bar_check_price">
 
     <ImageButton
         android:id="@+id/img_btn_delete_count_check_price"
         android:layout_width="wrap_content"
         android:layout_height="34dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
         android:layout_marginTop="8dp"
         android:background="@android:color/transparent"
         app:layout_constraintEnd_toStartOf="@+id/count_etichete_check_price"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/textView14"
         app:layout_constraintTop_toBottomOf="@+id/show_stock_check_price"
         app:srcCompat="@drawable/keyboard_arrow_left_black_48dp" />
@@ -265,6 +264,9 @@
         android:text="@string/txt_nr_etichete_checkprice"
         android:textColor="@android:color/black"
         android:textSize="24sp"
+        app:layout_constraintEnd_toStartOf="@+id/img_btn_delete_count_check_price"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/show_stock_check_price" />
 
@@ -273,7 +275,10 @@
         android:layout_width="wrap_content"
         android:layout_height="34dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/count_etichete_check_price"
         app:layout_constraintTop_toBottomOf="@+id/show_stock_check_price"
         app:srcCompat="@drawable/keyboard_arrow_right_black_48dp" />
