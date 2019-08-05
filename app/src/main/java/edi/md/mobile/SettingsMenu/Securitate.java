@@ -1,12 +1,15 @@
 package edi.md.mobile.SettingsMenu;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Application;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -52,8 +55,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -80,8 +86,8 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
     ProgressDialog pDialog;
     ImageButton btn_ro,btn_ru,btn_en;
     public static final int progress_bar_type = 0;
-    private static String file_url = "http://edi.md/invoicemanager/MobileTerminal.apk";
-    private static String file_version_url = "http://edi.md/invoicemanager/MobileTerminalVersion.txt";
+    private static String file_url = "http://edi.md/androidapps/MobileTerminal.apk";
+    private static String file_version_url = "http://edi.md/androidapps/MobileTerminalVersion.txt";
     private Locale myLocale;
 
     @Override
@@ -134,7 +140,6 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         }
 
         tmDevice = "KitKatABCDEFGHIJKLMNOPQRSTUVWXYZMars";
-        String getSubscriberId =   tm.getSubscriberId();
         androidId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         UUID deviceUuid = new UUID( androidId.hashCode(), tmDevice.hashCode());
@@ -231,7 +236,8 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         btn_check_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DownloadFileFromURL().execute(file_url);
+                //new DownloadFileFromURL().execute(file_url);
+                new DownloadVersionFileFromURL().execute(file_version_url);
             }
         });
 
@@ -510,7 +516,102 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         }
 
     }
+    class DownloadVersionFileFromURL extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showDialog(progress_bar_type);
+        }
+        @Override
+        protected String doInBackground(String... f_url) {
+            int count;
+            try {
+                URL url = new URL(f_url[0]);
+                URLConnection conection = url.openConnection();
+                conection.connect();
+                int lenghtOfFile = conection.getContentLength();
 
+                InputStream input = new BufferedInputStream(url.openStream(),
+                        8192);
+
+                OutputStream output = new FileOutputStream(Environment
+                        .getExternalStorageDirectory().toString()
+                        + "/IntelectSoft/MobileTerminalVersion.txt");
+
+                byte data[] = new byte[1024];
+
+                long total = 0;
+
+                while ((count = input.read(data)) != -1) {
+                    total += count;
+                    publishProgress("" + (int) ((total * 100) / lenghtOfFile));
+                    output.write(data, 0, count);
+                }
+                output.flush();
+                output.close();
+                input.close();
+
+            } catch (Exception e) {
+                Log.e("Error: ", e.getMessage());
+            }
+
+            return null;
+        }
+        protected void onProgressUpdate(String... progress) {
+            pDialog.setProgress(Integer.parseInt(progress[0]));
+        }
+
+        @Override
+        protected void onPostExecute(final String file_url) {
+            // dismiss the dialog after the file was downloaded
+            dismissDialog(progress_bar_type);
+
+
+
+            File file = new File(Environment.getExternalStorageDirectory()+ "/IntelectSoft","/MobileTerminalVersion.txt"); // mention apk file path here
+            StringBuilder text = new StringBuilder();
+
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                String line;
+
+                while ((line = br.readLine()) != null) {
+                    text.append(line);
+                    text.append('\n');
+                }
+                br.close();
+            }
+            catch (IOException e) {
+                Toast.makeText(Securitate.this, "Exception read file", Toast.LENGTH_SHORT).show();
+            }
+            String version ="0.0";
+            try {
+                PackageInfo pInfo = Securitate.this.getPackageManager().getPackageInfo(getPackageName(), 0);
+                version = pInfo.versionName;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+                ((Variables)getApplication()).appendLog(e.getMessage(),Securitate.this);
+            }
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(Securitate.this);
+            alertDialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+            alertDialog.setMessage(getResources().getString(R.string.versiune_server_securitate) + text.toString()+ "\n"+getResources().getString(R.string.versiune_locala_securitate) + version);
+            alertDialog.setCancelable(false);
+            alertDialog.setPositiveButton(getResources().getString(R.string.securitate_download_version), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    new DownloadFileFromURL().execute(file_url);
+                }
+            });
+            alertDialog.setNegativeButton(getResources().getString(R.string.txt_renunt_all), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            alertDialog.show();
+        }
+
+    }
 
     public void changeLang(String lang) {
         if (lang.equalsIgnoreCase(""))

@@ -26,7 +26,7 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
     Button btn_accept,btn_cancel;
     TextView txtTotalinc,txtTotalsale,txtNames,txtProfit;
     EditText etCant,etPriceInc,etPriceSales;
-    String Name,Uid , ip_,port_,UserId,name_asl,PriceSales,PriceIncoming;
+    String Name,Uid , ip_,port_,PriceSales,PriceIncoming;
     String IntegerSales;
 
     @Override

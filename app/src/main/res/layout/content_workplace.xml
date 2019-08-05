@@ -12,7 +12,7 @@
     <Button
         android:id="@+id/btn_change_workplace"
         android:layout_width="0dp"
-        android:layout_height="45dp"
+        android:layout_height="wrap_content"
 
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
@@ -23,7 +23,7 @@
         android:text="@string/btn_loc_de_munca_nedeterminat_workplace"
         android:textAllCaps="false"
         android:textColor="@android:color/background_light"
-        android:textSize="24sp"
+        android:textSize="18sp"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

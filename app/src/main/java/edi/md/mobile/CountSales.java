@@ -33,6 +33,7 @@ public class CountSales extends AppCompatActivity {
     TextView et_count;
     Button btn_add, btn_cancel;
     Boolean adauga_Count=false;
+    String mName,mPrice,mID;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -79,16 +80,33 @@ public class CountSales extends AppCompatActivity {
         final Intent sales = getIntent();
         txt_name.setText(sales.getStringExtra("Name"));
         txt_barcode.setText(sales.getStringExtra("BarCode"));
-        txt_code.setText(sales.getStringExtra("Codet"));
-        txt_articul.setText(sales.getStringExtra("Marking"));
+
+        String mMarking = sales.getStringExtra("Marking");
+        String mCode = sales.getStringExtra("Code");
+
+        if(mMarking.equals("null") || mMarking == null){
+            txt_articul.setText("-");
+        }
+        else{
+            txt_articul.setText(mMarking);
+        }
+        if(mCode.equals("null") || mCode == null){
+            txt_code.setText("-");
+        }
+        else{
+            txt_code.setText(mCode);
+        }
+
         txt_stoc.setText(sales.getStringExtra("Remain"));
         txt_price.setText(sales.getStringExtra("Price"));
+
+        mName = sales.getStringExtra("Name");
+        mID = sales.getStringExtra("ID");
+        mPrice = sales.getStringExtra("Price");
 
         et_count.requestFocus();
 
         SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
-        SharedPreferences AddedAssortment = getSharedPreferences("Sales", MODE_PRIVATE);
-        final SharedPreferences.Editor inpASL = AddedAssortment.edit();
 
         boolean ShowCode = Sestting.getBoolean("ShowCode", false);
         boolean showKB = Sestting.getBoolean("ShowKeyBoard",false);
@@ -104,52 +122,9 @@ public class CountSales extends AppCompatActivity {
 
         et_count.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction(TextView v, int keyCode,
-                                          KeyEvent event) {
-                boolean od =false;
-                if (keyCode == EditorInfo.IME_ACTION_DONE) {
-                    if (!et_count.getText().toString().equals("")) {
-                        JSONObject asl = new JSONObject();
-                        try {
-                            asl.put("AssortimentName", sales.getStringExtra("Name"));
-                            asl.put("AssortimentUid", sales.getStringExtra("ID"));
-                            asl.put("Count", et_count.getText().toString());
-                            asl.put("Price", sales.getStringExtra("Price"));
-                        } catch (JSONException e) {
-                            ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
-                            e.printStackTrace();
-                        }
-                        Intent added = new Intent();
-                        inpASL.putString("AssortmentSalesAdded", asl.toString());
-                        inpASL.apply();
-                        setResult(RESULT_OK, added);
-                        finish();
-                    }else{
-                        Toast.makeText(CountSales.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-                        et_count.requestFocus();
-                    }
-                }else if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER) {
-                    if (!et_count.getText().toString().equals("")) {
-                        JSONObject asl = new JSONObject();
-                        try {
-                            asl.put("AssortimentName", sales.getStringExtra("Name"));
-                            asl.put("AssortimentUid", sales.getStringExtra("ID"));
-                            asl.put("Count", et_count.getText().toString());
-                            asl.put("Price", sales.getStringExtra("Price"));
-                        } catch (JSONException e) {
-                            ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
-                            e.printStackTrace();
-                        }
-                        Intent added = new Intent();
-                        inpASL.putString("AssortmentSalesAdded", asl.toString());
-                        inpASL.apply();
-                        setResult(RESULT_OK, added);
-                        finish();
-                    }else{
-                        Toast.makeText(CountSales.this,getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-                        et_count.requestFocus();
-                    }
-                }
+            public boolean onEditorAction(TextView v, int keyCode, KeyEvent event) {
+                if (keyCode == EditorInfo.IME_ACTION_DONE) saveCountSales();
+                else if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER) saveCountSales();
                 return false;
             }
         });
@@ -197,35 +172,13 @@ public class CountSales extends AppCompatActivity {
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!et_count.getText().toString().equals("") && adauga_Count) {
-                    JSONObject asl = new JSONObject();
-                    try {
-                        asl.put("AssortimentName", sales.getStringExtra("Name"));
-                        asl.put("AssortimentUid", sales.getStringExtra("ID"));
-                        asl.put("Count", et_count.getText().toString());
-                        asl.put("Price", sales.getStringExtra("Price"));
-                    } catch (JSONException e) {
-                        ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
-                        e.printStackTrace();
-                    }
-                    Intent added = new Intent();
-                    inpASL.putString("AssortmentSalesAdded", asl.toString());
-                    inpASL.apply();
-                    setResult(RESULT_OK, added);
-                    finish();
-                }else{
-                    Toast.makeText(CountSales.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-                    et_count.requestFocus();
-                }
+                saveCountSales();
             }
         });
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                inpASL.putString("AssortmentSalesAdded", "{}");
-                inpASL.apply();
-                Intent finIntent = new Intent();
-                setResult(RESULT_CANCELED, finIntent);
+                setResult(RESULT_CANCELED);
                 finish();
             }
         });
@@ -298,5 +251,26 @@ public class CountSales extends AppCompatActivity {
         }
 
         return super.dispatchTouchEvent(event);
+    }
+    private void saveCountSales(){
+        if (!et_count.getText().toString().equals("")) {
+            JSONObject asl = new JSONObject();
+            try {
+                asl.put("AssortimentName", mName);
+                asl.put("AssortimentUid",mID);
+                asl.put("Count", et_count.getText().toString());
+                asl.put("Price", mPrice);
+            } catch (JSONException e) {
+                ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
+                e.printStackTrace();
+            }
+            Intent sales = new Intent();
+            sales.putExtra("AssortmentSalesAdded", asl.toString());
+            setResult(RESULT_OK, sales);
+            finish();
+        }else{
+            Toast.makeText(CountSales.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
+            et_count.requestFocus();
+        }
     }
 }

@@ -441,9 +441,6 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -495,7 +492,6 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
     }
 
     public void show_WareHouse(){
-        //adapter = new ArrayAdapter<>(CheckPrice.this,android.R.layout.simple_list_item_1, stock_List_array);
         SimpleAdapter simpleAdapterType = new SimpleAdapter(WorkPlace.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
         builderType = new AlertDialog.Builder(WorkPlace.this);
         builderType.setTitle(getResources().getString(R.string.txt_header_msg_list_depozitelor));
@@ -638,25 +634,49 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
 
         @Override
         protected void onPostExecute(String response) {
-            if(!response.equals("false")) {
+            if(!response.equals("false") || response != null) {
                 try {
                     JSONObject responseWareHouse = new JSONObject(response);
                     int ErrorCode = responseWareHouse.getInt("ErrorCode");
                     if (ErrorCode == 0) {
                         try {
-                            JSONArray ListWare = responseWareHouse.getJSONArray("Warehouses");
-                            for (int i = 0; i < ListWare.length(); i++) {
-                                JSONObject object = ListWare.getJSONObject(i);
-                                String WareCode = object.getString("Code");
-                                String WareName = object.getString("Name");
-                                String WareUid = object.getString("WarehouseID");
-                                HashMap<String, Object> WareHouse = new HashMap<>();
-                                WareHouse.put("Name", WareName);
-                                WareHouse.put("Code", WareCode);
-                                WareHouse.put("Uid", WareUid);
-                                stock_List_array.add(WareHouse);
+                            String WareHouses =  responseWareHouse.getString("Warehouses");
+                            if (WareHouses == null || WareHouses.equals("null")){
+                                pgH.dismiss();
+                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(WorkPlace.this);
+                                alertDialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+                                alertDialog.setMessage(getResources().getString(R.string.msg_list_warehouses_null));
+                                alertDialog.setCancelable(false);
+                                alertDialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
+                                        WorkPlace.edit().clear().apply();
+                                        finishAffinity();
+                                    }
+                                });
+                                alertDialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                                alertDialog.show();
+                            }else{
+                                JSONArray ListWare = responseWareHouse.getJSONArray("Warehouses");
+                                for (int i = 0; i < ListWare.length(); i++) {
+                                    JSONObject object = ListWare.getJSONObject(i);
+                                    String WareCode = object.getString("Code");
+                                    String WareName = object.getString("Name");
+                                    String WareUid = object.getString("WarehouseID");
+                                    HashMap<String, Object> WareHouse = new HashMap<>();
+                                    WareHouse.put("Name", WareName);
+                                    WareHouse.put("Code", WareCode);
+                                    WareHouse.put("Uid", WareUid);
+                                    stock_List_array.add(WareHouse);
+                                }
+                                show_WareHouse();
                             }
-                            show_WareHouse();
                         } catch (JSONException e) {
                             e.printStackTrace();
                             ((Variables)getApplication()).appendLog(e.getMessage(),WorkPlace.this);
@@ -671,7 +691,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                 }
             }else{
                 pgH.dismiss();
-                Toast.makeText(WorkPlace.this,getResources().getString(R.string.msg_document_not_saved_nu_raspuns_serviciu), Toast.LENGTH_SHORT).show();
+                Toast.makeText(WorkPlace.this,getResources().getString(R.string.msg_nu_raspuns_server), Toast.LENGTH_SHORT).show();
             }
 
         }

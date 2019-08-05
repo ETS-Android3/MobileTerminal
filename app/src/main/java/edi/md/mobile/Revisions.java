@@ -68,7 +68,6 @@ public class Revisions extends AppCompatActivity {
 
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
         final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
-        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
         final SharedPreferences Revision = getSharedPreferences("Revision", MODE_PRIVATE);
 
         UserId = User.getString("UserID","");
@@ -106,7 +105,7 @@ public class Revisions extends AppCompatActivity {
                     startActivity(stockInv);
                     finish();
                 }else{
-                    Toast.makeText(Revisions.this, "Alegeti o revizie!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Revisions.this, getResources().getString(R.string.msg_select_revizie), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -172,7 +171,7 @@ public class Revisions extends AppCompatActivity {
         listView.setAdapter(simpleAdapterASL);
     }
     public void show_WareHouse(){
-        //adapter = new ArrayAdapter<>(Sales.this,android.R.layout.simple_list_item_1, stock_List_array);
+
         SimpleAdapter simpleAdapterType = new SimpleAdapter(Revisions.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
         builderType = new AlertDialog.Builder(Revisions.this);
         builderType.setTitle(getResources().getString(R.string.txt_header_msg_list_depozitelor));
@@ -366,17 +365,4 @@ public class Revisions extends AppCompatActivity {
 
         }
     }
-//    @Override
-//    public void onWindowFocusChanged(boolean hasFocus) {
-//        super.onWindowFocusChanged(hasFocus);
-//        if (hasFocus) {
-//            View mDecorView = getWindow().getDecorView();
-//            mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-//        }
-//    }
 }

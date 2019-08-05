@@ -30,7 +30,7 @@
     <string name="txt_modificare_pincod_hint_securitate">Change pin code</string>
     <string name="txt_limita_vinzare_securitate">Limit positions on sale:</string>
     <string name="txt_hint_limit_vinzare_securitate">*0 - limit is not set</string>
-    <string name="btn_donload_install_new_version">Download new version</string>
+    <string name="btn_donload_install_new_version">Check new version</string>
     <string name="txt_hint_input_licenta_securitate">Key lic</string>
 
     <string name="txt_header_inp_count">Enter the quantity:</string>
@@ -164,4 +164,10 @@
     <string name="txt_designe_theme">Theme</string>
     <string name="txt_language_securitate">Language</string>
     <string name="assortment_possible_not_download">Maybe the assortment are not loaded from the database.</string>
+    <string name="msg_barcode_empty">Barcode is empty!</string>
+    <string name="msg_select_revizie">Choose a review!</string>
+    <string name="msg_list_warehouses_null">The list of available deposits is empty! If you have changed the connection, re-enter the program!</string>
+    <string name="securitate_download_version">Download</string>
+    <string name="versiune_server_securitate">The version on the server:</string>
+    <string name="versiune_locala_securitate">Installed version:</string>
 </resources>

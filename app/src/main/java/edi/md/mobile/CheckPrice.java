@@ -93,9 +93,8 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
     int REQUEST_FROM_LIST_ASSORTMENT = 666;
     Menu menu;
     Boolean onedate =false;
-//add helou in cetfhjkhdfzhkgvhk.mjkgfdxcgvhbjlkkjhtdrzewsdgjmkl;jcxdfxgm,fdsaSdgvjmnkbhcgfxzcvbnhjhytestydgcvhbjlk;k'piouiy
+    final boolean[] show_keyboard = {false};
 
-    //sdfghjkfdggsdsfadfgjkghfuydtryujygbvaesrdxfcfhgfsdhfjh,jhkj,mgfhdfzxcvbgn
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,7 +139,7 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
         final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
 
-        boolean ShowCode = WorkPlace.getBoolean("ShowCode",false);
+        boolean ShowCode = Settings.getBoolean("ShowCode",false);
         if (!ShowCode){
             txtCodeAssortment.setVisibility(View.INVISIBLE);
         }
@@ -203,7 +202,7 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         startTimetaskSync();
         sync.schedule(timerTaskSync,100,2000);
         txtInput_barcode.requestFocus();
-        final boolean[] show_keyboard = {false};
+
         write_barcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,7 +219,6 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
                 }
             }
         });
-
 
         show_stock.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -248,46 +246,9 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         txtInput_barcode.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    pgBar.setVisibility(ProgressBar.VISIBLE);
-                    show_keyboard[0] = false;
-                    sendAssortiment = new JSONObject();
-                    try {
-                        sendAssortiment.put("AssortmentIdentifier", txtInput_barcode.getText().toString());
-                        sendAssortiment.put("ShowStocks", show_stock.isChecked());
-                        sendAssortiment.put("UserID", UserId);
-                        sendAssortiment.put("WarehouseID", WareUid);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(),CheckPrice.this);
-                    }
-                    URL getASL = GetAssortiment(ip_, port_);
-                    new AsyncTask_GetAssortiment().execute(getASL);
+                if (actionId == EditorInfo.IME_ACTION_DONE) getAssortmentFromService();
+                else if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) getAssortmentFromService();
 
-                    txtBarcodeAssortment.setText(txtInput_barcode.getText().toString());
-                    txtInput_barcode.setText("");
-                }
-                else if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                    if (!onedate) {
-                        pgBar.setVisibility(ProgressBar.VISIBLE);
-                        sendAssortiment = new JSONObject();
-                        try {
-                            sendAssortiment.put("AssortmentIdentifier", txtInput_barcode.getText().toString());
-                            sendAssortiment.put("ShowStocks", show_stock.isChecked());
-                            sendAssortiment.put("UserID", UserId);
-                            sendAssortiment.put("WarehouseID", WareUid);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(),CheckPrice.this);
-                        }
-                        URL getASL = GetAssortiment(ip_, port_);
-                        new AsyncTask_GetAssortiment().execute(getASL);
-
-                        txtBarcodeAssortment.setText(txtInput_barcode.getText().toString());
-                        txtInput_barcode.setText("");
-                        onedate=true;
-                    }
-                }
                 return false;
             }
         });
@@ -406,14 +367,12 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
-
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (!isDigitInteger(count_lable.getText().toString())) {
                     count_lable.setError(getResources().getString(R.string.msg_only_number_integer));
                 }
             }
-
             @Override
             public void afterTextChanged(Editable editable) {
             }
@@ -429,18 +388,14 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
             super.onBackPressed();
         }
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menus) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_check_price, menus);
         this.menu = menus;
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
         if (id == R.id.action_close) {
            finish();
@@ -448,8 +403,6 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
 
         return super.onOptionsItemSelected(item);
     }
-
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -481,7 +434,6 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
     private boolean isDigitInteger(String s) throws NumberFormatException {
         try {
             Integer.parseInt(s);
@@ -491,7 +443,6 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
             return false;
         }
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -499,7 +450,6 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
             if(resultCode == RESULT_OK){
                 if (data != null) {
                     AssortmentInActivity assortment = data.getParcelableExtra("AssortmentInActivity");
-
                     mNameAssortment = assortment.getName();
                     mPriceAssortment = assortment.getPrice();
                     mMarkingAssortment = assortment.getMarking();
@@ -512,7 +462,12 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
 
                     txtNameAsortment.setText(mNameAssortment);
                     txtPriceAssortment.setText(mPriceAssortment);
-                    txtMarkingAssortment.setText(mMarkingAssortment);
+
+                    if (mMarkingAssortment != null) {
+                        txtMarkingAssortment.setText(mMarkingAssortment);
+                    } else {
+                        txtMarkingAssortment.setText("-");
+                    }
                     txtCodeAssortment.setText(mCodeAssortment);
                     txtBarcodeAssortment.setText(mBarcodeAssortment);
                     if (show_stock.isChecked()){
@@ -522,13 +477,10 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
                             txtStockAssortment.setText("0");
                     }
                     txtInput_barcode.requestFocus();
-                }else{
-
                 }
             }
         }
     }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (event.getAction()){
@@ -579,6 +531,46 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        final SharedPreferences WorkPlace = getSharedPreferences("Settings", MODE_PRIVATE);
+        boolean ShowCode = WorkPlace.getBoolean("ShowCode", false);
+        if (ShowCode) {
+            txtCodeAssortment.setVisibility(View.VISIBLE);
+        } else {
+            txtCodeAssortment.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
+        String WorkPlaceID = WorkPlace.getString("Uid","0");
+        String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
+
+        if(!WorkPlaceID.equals(WareUid)){
+            btn_depozit.setText(WorkPlaceName);
+        }
+        if(WorkPlaceName.equals("Nedeterminat")){
+            btn_depozit.setText(WareNames);
+        }
+
+    }
+    @Override
+    public boolean dispatchTouchEvent(@NonNull MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (v instanceof EditText) {
+                v.clearFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
+        }
+
+        return super.dispatchTouchEvent(event);
+    }
     public void show_WareHouse(){
         SimpleAdapter simpleAdapterType = new SimpleAdapter(CheckPrice.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
         builderType = new AlertDialog.Builder(CheckPrice.this);
@@ -689,7 +681,6 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         }
         return data;
     }
-
     private void startTimetaskSync(){
         timerTaskSync = new TimerTask() {
             @Override
@@ -705,21 +696,26 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         };
 
     }
-    @Override
-    public boolean dispatchTouchEvent(@NonNull MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            View v = getCurrentFocus();
-            if (v instanceof EditText) {
-                v.clearFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-            }
+    private void getAssortmentFromService(){
+        pgBar.setVisibility(ProgressBar.VISIBLE);
+        show_keyboard[0] = false;
+        sendAssortiment = new JSONObject();
+        try {
+            sendAssortiment.put("AssortmentIdentifier", txtInput_barcode.getText().toString());
+            sendAssortiment.put("ShowStocks", show_stock.isChecked());
+            sendAssortiment.put("UserID", UserId);
+            sendAssortiment.put("WarehouseID", WareUid);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            ((Variables)getApplication()).appendLog(e.getMessage(),CheckPrice.this);
         }
+        URL getASL = GetAssortiment(ip_, port_);
+        new AsyncTask_GetAssortiment().execute(getASL);
 
-        return super.dispatchTouchEvent(event);
+        txtBarcodeAssortment.setText(txtInput_barcode.getText().toString());
+        txtInput_barcode.setText("");
     }
     class AsyncTask_Ping extends AsyncTask<URL, String, String> {
-
         @Override
         protected String doInBackground(URL... urls) {
             String ping="";
@@ -740,7 +736,6 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
             }
         }
     }
-
     class AsyncTask_WareHouse extends AsyncTask<URL, String, String> {
         @Override
         protected String doInBackground(URL... urls) {
@@ -847,7 +842,6 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
 
         }
     }
-
     class AsyncTask_GetAssortiment extends AsyncTask<URL, String, String> {
         @Override
         protected String doInBackground(URL... urls) {
@@ -887,7 +881,13 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
                             txtMarkingAssortment.setText("-");
                         }
                         txtStockAssortment.setText(Remain);
-                        txtCodeAssortment.setText(mCodeAssortment);
+                        txtNameAsortment.setText(mNameAssortment);
+
+                        if (!mCodeAssortment.equals("null")) {
+                            txtCodeAssortment.setText(mCodeAssortment);
+                        } else {
+                            txtCodeAssortment.setText("-");
+                        }
                         txtInput_barcode.requestFocus();
                     } else {
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
@@ -916,18 +916,4 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
-        String WorkPlaceID = WorkPlace.getString("Uid","0");
-        String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
-
-        if(!WorkPlaceID.equals(WareUid)){
-            btn_depozit.setText(WorkPlaceName);
-        }
-        if(WorkPlaceName.equals("Nedeterminat")){
-            btn_depozit.setText(WareNames);
-        }
-    }
 }

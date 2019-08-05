@@ -43,7 +43,6 @@ import com.zebra.sdk.comm.BluetoothConnection;
 import com.zebra.sdk.comm.Connection;
 import com.zebra.sdk.comm.ConnectionException;
 
-import org.apache.commons.validator.Var;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,7 +57,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -89,12 +87,13 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
     Timer sync;
     private Handler mHandler;
 
-    JSONObject  sendDocument,document_etichete;
-    JSONArray json_array,jsonArray_etichete;
+    JSONObject  sendDocument,document_etichete,sendAssortiment;
+    JSONArray mArrayAssortment, mArrayForEtichete;
 
     Menu menu;
-    JSONObject json_asl,sendAssortiment;
     final boolean[] show_keyboard = {false};
+    
+    int REQUEST_FROM_LIST_ASSORTMENT = 225,REQUEST_FROM_COUNT_STOCK = 40;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,9 +135,8 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
         ip_=Settings.getString("IP","");
         port_=Settings.getString("Port","");
 
-        json_array=new JSONArray();
-        json_asl=new JSONObject();
-        jsonArray_etichete=new JSONArray();
+        mArrayAssortment =new JSONArray();
+        mArrayForEtichete =new JSONArray();
 
         final String WorkPlaceID = WorkPlace.getString("Uid","0");
         final String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
@@ -199,49 +197,9 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
 
         txt_input_barcode.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId,
-                                          KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    txt_input_barcode.requestFocus();
-                    pgBar.setVisibility(ProgressBar.VISIBLE);
-                    show_keyboard[0] = false;
-                    sendAssortiment = new JSONObject();
-                    try {
-                        sendAssortiment.put("AssortmentIdentifier", txt_input_barcode.getText().toString());
-                        sendAssortiment.put("ShowStocks",true);
-                        sendAssortiment.put("UserID", UserId);
-                        sendAssortiment.put("WarehouseID", WareUid);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
-                    }
-                    barcode_introdus = txt_input_barcode.getText().toString();
-                    txt_input_barcode.setText("");
-                    URL getASL = GetAssortiment(ip_, port_);
-                    new AsyncTask_GetAssortiment().execute(getASL);
-                }
-                else if(event.getKeyCode()==KeyEvent.KEYCODE_ENTER){
-                    txt_input_barcode.requestFocus();
-                    if (!txt_input_barcode.getText().toString().equals("")) {
-                        txt_input_barcode.requestFocus();
-                        pgBar.setVisibility(ProgressBar.VISIBLE);
-                        show_keyboard[0] = false;
-                        sendAssortiment = new JSONObject();
-                        try {
-                            sendAssortiment.put("AssortmentIdentifier", txt_input_barcode.getText().toString());
-                            sendAssortiment.put("ShowStocks",true);
-                            sendAssortiment.put("UserID", UserId);
-                            sendAssortiment.put("WarehouseID", WareUid);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
-                        }
-                        barcode_introdus = txt_input_barcode.getText().toString();
-                        txt_input_barcode.setText("");
-                        URL getASL = GetAssortiment(ip_, port_);
-                        new AsyncTask_GetAssortiment().execute(getASL);
-                    }
-                }
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) getAssortment();
+                else if(event.getKeyCode()==KeyEvent.KEYCODE_ENTER) getAssortment();
                 return false;
             }
         });
@@ -256,21 +214,20 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
             public void onClick(View v) {
                 if(uid_selected!=null){
                     try {
-                        for (int i=0;i<json_array.length();i++) {
-                            JSONObject json = json_array.getJSONObject(i);
+                        for (int i = 0; i< mArrayAssortment.length(); i++) {
+                            JSONObject json = mArrayAssortment.getJSONObject(i);
                             String Uid = json.getString("AssortimentID");
                             if (uid_selected.contains(Uid)) {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                    json_array.remove(i);
+                                    mArrayAssortment.remove(i);
                                 }
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                    jsonArray_etichete.remove(i);
+                                    mArrayForEtichete.remove(i);
                                 }
                             }
                             asl_list.clear();
-                            initList_asl();
+                            showAssortment();
                         }
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                         ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
@@ -308,8 +265,8 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                             Connection connection = new BluetoothConnection(adresMAC);
                             try {
                                 connection.open();
-                                for (int j=0; j<jsonArray_etichete.length();j++){
-                                    JSONObject asl_obj = jsonArray_etichete.getJSONObject(j);
+                                for (int j = 0; j< mArrayForEtichete.length(); j++){
+                                    JSONObject asl_obj = mArrayForEtichete.getJSONObject(j);
                                     String UnitInPackage = asl_obj.getString("UnitInPackage");
                                     String UnitPrice = asl_obj.getString("UnitPrice");
                                     String Unit = asl_obj.getString("Unit");
@@ -392,7 +349,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                 if(WorkPlaceID.equals("0")){
                     AddingASL.putExtra("WareID",WareUid);
                 }
-                startActivityForResult(AddingASL, 225);
+                startActivityForResult(AddingASL, REQUEST_FROM_LIST_ASSORTMENT);
             }
         });
         btn_write_barcode.setOnClickListener(new View.OnClickListener() {
@@ -415,28 +372,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(json_array.length()==0){
-                    finish();
-                }
-                else{
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(StockAssortment.this);
-                    dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                    dialog.setCancelable(false);
-                    dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
-                    dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    });
-                    dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    dialog.show();
-                }
+                exitDialog();
             }
         });
         btn_change_stock.setOnClickListener(new View.OnClickListener() {
@@ -448,38 +384,41 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
         });
 
     }
+    private void exitDialog(){
+        if(mArrayAssortment.length()==0){
+            finish();
+        }
+        else{
+            AlertDialog.Builder dialog = new AlertDialog.Builder(StockAssortment.this);
+            dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+            dialog.setCancelable(false);
+            dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
+            dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout_stock_assortment);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if(json_array.length()==0){
-                finish();
-            }else{
-                AlertDialog.Builder dialog = new AlertDialog.Builder(StockAssortment.this);
-                dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                dialog.setCancelable(false);
-                dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
-                dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-                dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-            }
+            exitDialog();
         }
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menus) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_stock_assortment, menus);
         this.menu = menus;
         return true;
@@ -489,34 +428,12 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
 
         int id = item.getItemId();
         if (id == R.id.action_close_stock_assortment) {
-            if(json_array.length()==0){
-                finish();
-            }else{
-                AlertDialog.Builder dialog = new AlertDialog.Builder(StockAssortment.this);
-                dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                dialog.setCancelable(false);
-                dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
-                dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-                dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-            }
+            exitDialog();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -541,34 +458,13 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
             Intent MenuConnect = new Intent(".MenuAbout");
             startActivity(MenuConnect);
         } else if (id == R.id.menu_exit) {
-            if(json_array.length()==0){
-                finish();
-            }else{
-                AlertDialog.Builder dialog = new AlertDialog.Builder(StockAssortment.this);
-                dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                dialog.setCancelable(false);
-                dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
-                dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-                dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-            }
+            exitDialog();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout_stock_assortment);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
     private void startTimetaskSync(){
         timerTaskSync = new TimerTask() {
             @Override
@@ -584,9 +480,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
         };
 
     }
-
     public void show_WareHouse(){
-        //adapter = new ArrayAdapter<>(Sales.this,android.R.layout.simple_list_item_1, stock_List_array);
         SimpleAdapter simpleAdapterType = new SimpleAdapter(StockAssortment.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
         builderType = new AlertDialog.Builder(StockAssortment.this);
         builderType.setTitle(getResources().getString(R.string.txt_header_msg_list_depozitelor));
@@ -664,11 +558,10 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
         URL getWareHouse = GetWareHouseList(ip_,port_,UserId);
         new AsyncTask_WareHouseChange().execute(getWareHouse);
     }
-
-    public void initList_asl(){
+    public void showAssortment(){
         try {
-            for (int i=0;i<json_array.length();i++){
-                JSONObject json= json_array.getJSONObject(i);
+            for (int i = 0; i< mArrayAssortment.length(); i++){
+                JSONObject json= mArrayAssortment.getJSONObject(i);
                 HashMap<String, Object> asl_ = new HashMap<>();
                 String Name = json.getString("AssortimentName");
                 String Cant = json.getString("Quantity");
@@ -688,55 +581,26 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                 new int[]{R.id.textName_stock_asl,R.id.textCantitate_stock_asl,R.id.txtStockAsl_stock_asl});
         list_of_stock_assortment.setAdapter(simpleAdapterASL);
     }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (event.getAction()){
-            case KeyEvent.ACTION_DOWN :{
-                txt_input_barcode.requestFocus();
-                switch (event.getKeyCode()) {
-                    case KeyEvent.KEYCODE_1 : {
-                        txt_input_barcode.append("1");
-                    }break;
-                    case KeyEvent.KEYCODE_2 : {
-                        txt_input_barcode.append("2");
-                    }break;
-                    case KeyEvent.KEYCODE_3 : {
-                        txt_input_barcode.append("3");
-                    }break;
-                    case KeyEvent.KEYCODE_4 : {
-                        txt_input_barcode.append("4");
-                    }break;
-                    case KeyEvent.KEYCODE_5 : {
-                        txt_input_barcode.append("5");
-                    }break;
-                    case KeyEvent.KEYCODE_6 : {
-                        txt_input_barcode.append("6");
-                    }break;
-                    case KeyEvent.KEYCODE_7 : {
-                        txt_input_barcode.append("7");
-                    }break;
-                    case KeyEvent.KEYCODE_8 : {
-                        txt_input_barcode.append("8");
-                    }break;
-                    case KeyEvent.KEYCODE_9 : {
-                        txt_input_barcode.append("9");
-                    }break;
-                    case KeyEvent.KEYCODE_0 : {
-                        txt_input_barcode.append("0");
-                    }break;
-                    case KeyEvent.KEYCODE_DEL : {
-                        String test = txt_input_barcode.getText().toString();
-                        if(!txt_input_barcode.getText().toString().equals("")) {
-                            txt_input_barcode.setText(test.substring(0, test.length() - 1));
-                            txt_input_barcode.requestFocus();
-                        }
-                    }break;
-                    default:break;
-                }
-            }break;
+    private void getAssortment(){
+        txt_input_barcode.requestFocus();
+        if (!txt_input_barcode.getText().toString().equals("")) {
+            pgBar.setVisibility(ProgressBar.VISIBLE);
+            show_keyboard[0] = false;
+            sendAssortiment = new JSONObject();
+            try {
+                sendAssortiment.put("AssortmentIdentifier", txt_input_barcode.getText().toString());
+                sendAssortiment.put("ShowStocks", true);
+                sendAssortiment.put("UserID", UserId);
+                sendAssortiment.put("WarehouseID", WareUid);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                ((Variables) getApplication()).appendLog(e.getMessage(), StockAssortment.this);
+            }
+            barcode_introdus = txt_input_barcode.getText().toString();
+            txt_input_barcode.setText("");
+            URL getASL = GetAssortiment(ip_, port_);
+            new AsyncTask_GetAssortiment().execute(getASL);
         }
-        return super.onKeyDown(keyCode, event);
     }
     public String getResponse_from_GetAssortiment(URL send_bills) {
         String data = "";
@@ -771,246 +635,6 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
         }
         return data.toString();
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==40){
-            if (resultCode==RESULT_CANCELED){
-                txt_input_barcode.setText("");
-                txt_input_barcode.requestFocus();
-            }else if (resultCode==RESULT_OK){
-                txt_input_barcode.setText("");
-                txt_input_barcode.requestFocus();
-                asl_list.clear();
-                SharedPreferences sPref_saveASL =getSharedPreferences("StockAssortment", MODE_PRIVATE);
-                String response = sPref_saveASL.getString("AssortmentStockAdded","{}");
-                try {
-                    sendDocument=new JSONObject();
-                    document_etichete=new JSONObject();
-
-                    JSONObject json= new JSONObject(response);
-
-                    String NameAsl= json.getString("AssortimentName");
-                    String UidAsl= json.getString("AssortimentUid");
-                    String count = json.getString("Count");
-
-                    String Price  = json.getString("Price");
-                    Price=Price.replace(",",".");
-                    Double priceDouble = Double.valueOf(Price);
-                    Price = String.format("%.2f",priceDouble);
-                    Price=Price.replace(".",",");
-
-                    String UnitPrice  = json.getString("UnitPrice");
-                    String UnitInPackage  = json.getString("UnitInPackage");
-                    String Code  = json.getString("Code");
-                    String Barcode  = json.getString("Barcode");
-                    String Unit  = json.getString("Unit");
-
-                    sendDocument.put("AssortimentName",NameAsl);
-                    sendDocument.put("AssortimentID",UidAsl);
-                    sendDocument.put("Quantity",count);
-                    sendDocument.put("WarehouseID",WareUid);
-                    sendDocument.put("WarehouseName",WareName);
-
-                    document_etichete.put("AssortimentID",UidAsl);
-                    document_etichete.put("Count",count);
-                    document_etichete.put("Name",NameAsl);
-                    document_etichete.put("Code",Code);
-                    document_etichete.put("Barcode",Barcode);
-                    document_etichete.put("Price",Price);
-                    document_etichete.put("Unit",Unit);
-                    document_etichete.put("UnitPrice",UnitPrice);
-                    document_etichete.put("UnitInPackage",UnitInPackage);
-
-                    boolean isExtist = false;
-                    if (json_array.length()!=0) {
-                        for (int i = 0; i < json_array.length(); i++) {
-                            JSONObject object = json_array.getJSONObject(i);
-                            JSONObject jsonObject = jsonArray_etichete.getJSONObject(i);
-                            String AssortimentUid = object.getString("AssortimentID");
-                            String CountExist = object.getString("Quantity");
-                            String CountExist_etichete = jsonObject.getString("Count");
-                            String AssortimentUit_etichete = jsonObject.getString("AssortimentID");
-
-                            if (AssortimentUid.contains(UidAsl) && AssortimentUit_etichete.contains(UidAsl)) {
-                                Integer countInt = Integer.valueOf(CountExist);
-                                int CountEtichete_exist =Integer.valueOf(CountExist_etichete);
-                                Integer CountAdd = Integer.valueOf(count);
-                                Integer CountNew = CountAdd + countInt;
-                                int CountNew_etichete = CountAdd  +CountEtichete_exist;
-                                String countStr = String.valueOf(CountNew);
-                                String coutStr_etichete = String.valueOf(CountNew_etichete);
-
-                                object.put("Quantity", countStr);
-                                jsonObject.put("Count", coutStr_etichete);
-                                isExtist=true;
-                            }
-                        }
-                        if (!isExtist){
-                            json_array.put(sendDocument);
-                            jsonArray_etichete.put(document_etichete);
-                        }
-                    }else{
-                        json_array.put(sendDocument);
-                        jsonArray_etichete.put(document_etichete);
-                    }
-                    asl_list.clear();
-                    initList_asl();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
-                }
-
-            }
-        }else if(requestCode==225) {
-            if (resultCode == RESULT_CANCELED) {
-                txt_input_barcode.setText("");
-                txt_input_barcode.requestFocus();
-            } else if (resultCode == RESULT_OK) {
-                txt_input_barcode.setText("");
-                txt_input_barcode.requestFocus();
-                asl_list.clear();
-                SharedPreferences sPref_saveASL = getSharedPreferences("StockAssortment", MODE_PRIVATE);
-                String response = sPref_saveASL.getString("AssortmentStockAddedArray", "[]");
-                try {
-                    JSONArray array_from_touch = new JSONArray(response);
-
-                    if (json_array.length() != 0) {
-                        boolean isExtist = false;
-                        for (int i = 0; i < array_from_touch.length(); i++) {
-                            JSONObject object_from_touch = array_from_touch.getJSONObject(i);
-                            String AssortimentUid_from_touch = object_from_touch.getString("AssortimentUid");
-                            String count = object_from_touch.getString("Count");
-                            String NameAsl= object_from_touch.getString("AssortimentName");
-
-                            String Price  = object_from_touch.getString("Price");
-                            Price=Price.replace(",",".");
-
-                            Double priceDouble = Double.valueOf(Price);
-                            Price = String.format("%.2f",priceDouble);
-
-                            String UnitPrice  = object_from_touch.getString("UnitPrice");
-                            String UnitInPackage  = object_from_touch.getString("UnitInPackage");
-                            String Code  = object_from_touch.getString("Code");
-                            String Barcode  = object_from_touch.getString("Barcode");
-                            String Unit  = object_from_touch.getString("Unit");
-
-
-                            sendDocument=new JSONObject();
-                            document_etichete=new JSONObject();
-
-                            sendDocument.put("AssortimentName",NameAsl);
-                            sendDocument.put("AssortimentID",AssortimentUid_from_touch);
-                            sendDocument.put("Quantity",count);
-                            sendDocument.put("WarehouseID",WareUid);
-                            sendDocument.put("WarehouseName",WareName);
-
-                            document_etichete.put("AssortimentID",AssortimentUid_from_touch);
-                            document_etichete.put("Count",count);
-                            document_etichete.put("Name",NameAsl);
-                            document_etichete.put("Code",Code);
-                            document_etichete.put("Barcode",Barcode);
-                            document_etichete.put("Price",Price);
-                            document_etichete.put("Unit",Unit);
-                            document_etichete.put("UnitPrice",UnitPrice);
-                            document_etichete.put("UnitInPackage",UnitInPackage);
-
-                            for (int k = 0; k < json_array.length(); k++) {
-                                JSONObject object = json_array.getJSONObject(k);
-                                JSONObject jsonObject = jsonArray_etichete.getJSONObject(i);
-                                String AssortimentUid = object.getString("AssortimentID");
-                                String CountExist = object.getString("Quantity");
-                                String CountExist_etichete = jsonObject.getString("Count");
-                                String AssortimentUit_etichete = jsonObject.getString("AssortimentID");
-
-                                if (AssortimentUid.contains(AssortimentUid_from_touch)  && AssortimentUit_etichete.contains(AssortimentUid_from_touch)) {
-                                    Integer countInt = Integer.valueOf(CountExist);
-                                    int CountEtichete_exist =Integer.valueOf(CountExist_etichete);
-                                    Integer CountAdd = Integer.valueOf(count);
-                                    int CountNew = CountAdd + countInt;
-                                    int CountNew_etichete = CountAdd  +CountEtichete_exist;
-
-                                    String countStr = String.valueOf(CountNew);
-                                    String coutStr_etichete = String.valueOf(CountNew_etichete);
-
-                                    object.put("Quantity", countStr);
-                                    jsonObject.put("Count", coutStr_etichete);
-                                    isExtist = true;
-                                }
-                            }
-                            if (!isExtist) {
-                                json_array.put(sendDocument);
-                                jsonArray_etichete.put(document_etichete);
-                            }
-                        }
-                    } else {
-                        for (int i = 0; i < array_from_touch.length(); i++) {
-                            JSONObject object_from_touch = array_from_touch.getJSONObject(i);
-                            String NameAsl= object_from_touch.getString("AssortimentName");
-                            String UidAsl= object_from_touch.getString("AssortimentUid");
-                            String Count = object_from_touch.getString("Count");
-
-                            String Price  = object_from_touch.getString("Price");
-                            Price=Price.replace(",",".");
-                            Double priceDouble = Double.valueOf(Price);
-                            Price = String.format("%.2f",priceDouble);
-
-
-                            String UnitPrice  = object_from_touch.getString("UnitPrice");
-                            String UnitInPackage  = object_from_touch.getString("UnitInPackage");
-                            String Code  = object_from_touch.getString("Code");
-                            String Barcode  = object_from_touch.getString("Barcode");
-                            String Unit  = object_from_touch.getString("Unit");
-
-                            sendDocument=new JSONObject();
-                            document_etichete=new JSONObject();
-
-                            sendDocument.put("AssortimentName",NameAsl);
-                            sendDocument.put("AssortimentID",UidAsl);
-                            sendDocument.put("Quantity",Count);
-                            sendDocument.put("WarehouseID",WareUid);
-                            sendDocument.put("WarehouseName",WareName);
-
-                            document_etichete.put("Name",NameAsl);
-                            document_etichete.put("AssortimentID",UidAsl);
-                            document_etichete.put("Code",Code);
-                            document_etichete.put("Barcode",Barcode);
-                            document_etichete.put("Price",Price);
-                            document_etichete.put("Unit",Unit);
-                            document_etichete.put("UnitPrice",UnitPrice);
-                            document_etichete.put("UnitInPackage",UnitInPackage);
-                            document_etichete.put("Count",Count);
-
-                            json_array.put(sendDocument);
-                            jsonArray_etichete.put(document_etichete);
-                        }
-                    }
-                    asl_list.clear();
-                    initList_asl();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
-                }
-            }
-        }
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(@NonNull MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            View v = getCurrentFocus();
-            if (v instanceof EditText) {
-                v.clearFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-
-            }
-        }
-
-        return super.dispatchTouchEvent(event);
-    }
     public String getResponseFromURLSendAccumulatedAssortiment(URL send_bills) throws IOException {
         String data = "";
         HttpURLConnection send_bill_Connection = null;
@@ -1022,7 +646,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
             send_bill_Connection.setDoOutput(true);
             DataOutputStream wr = new DataOutputStream(send_bill_Connection.getOutputStream());
 
-            wr.writeBytes(String.valueOf(json_array));
+            wr.writeBytes(String.valueOf(mArrayAssortment));
             wr.flush();
             wr.close();
 
@@ -1216,7 +840,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                         sales.putExtra("UnitInPackage", UnitInPackage);
                         sales.putExtra("Unit", Unit);
 
-                        startActivityForResult(sales, 40);
+                        startActivityForResult(sales, REQUEST_FROM_COUNT_STOCK);
                     } else {
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
                         txtBarcode_introdus.setText(barcode_introdus + " - " + getResources().getString(R.string.txt_depozit_nedeterminat));
@@ -1299,20 +923,293 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
             }
         }
     }
-//    @Override
-//    public void onWindowFocusChanged(boolean hasFocus) {
-//        super.onWindowFocusChanged(hasFocus);
-//        if (hasFocus) {
-//            View mDecorView = getWindow().getDecorView();
-//            mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-//        }
-//    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (event.getAction()){
+            case KeyEvent.ACTION_DOWN :{
+                txt_input_barcode.requestFocus();
+                switch (event.getKeyCode()) {
+                    case KeyEvent.KEYCODE_1 : {
+                        txt_input_barcode.append("1");
+                    }break;
+                    case KeyEvent.KEYCODE_2 : {
+                        txt_input_barcode.append("2");
+                    }break;
+                    case KeyEvent.KEYCODE_3 : {
+                        txt_input_barcode.append("3");
+                    }break;
+                    case KeyEvent.KEYCODE_4 : {
+                        txt_input_barcode.append("4");
+                    }break;
+                    case KeyEvent.KEYCODE_5 : {
+                        txt_input_barcode.append("5");
+                    }break;
+                    case KeyEvent.KEYCODE_6 : {
+                        txt_input_barcode.append("6");
+                    }break;
+                    case KeyEvent.KEYCODE_7 : {
+                        txt_input_barcode.append("7");
+                    }break;
+                    case KeyEvent.KEYCODE_8 : {
+                        txt_input_barcode.append("8");
+                    }break;
+                    case KeyEvent.KEYCODE_9 : {
+                        txt_input_barcode.append("9");
+                    }break;
+                    case KeyEvent.KEYCODE_0 : {
+                        txt_input_barcode.append("0");
+                    }break;
+                    case KeyEvent.KEYCODE_DEL : {
+                        String test = txt_input_barcode.getText().toString();
+                        if(!txt_input_barcode.getText().toString().equals("")) {
+                            txt_input_barcode.setText(test.substring(0, test.length() - 1));
+                            txt_input_barcode.requestFocus();
+                        }
+                    }break;
+                    default:break;
+                }
+            }break;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_FROM_COUNT_STOCK){
+            if (resultCode==RESULT_CANCELED){
+                txt_input_barcode.setText("");
+                txt_input_barcode.requestFocus();
+            }else if (resultCode==RESULT_OK){
+                txt_input_barcode.setText("");
+                txt_input_barcode.requestFocus();
+                asl_list.clear();
+                String response = data.getStringExtra("AssortmentStockAdded");
+                try {
+                    sendDocument=new JSONObject();
+                    document_etichete=new JSONObject();
 
+                    JSONObject json= new JSONObject(response);
+
+                    String NameAsl= json.getString("AssortimentName");
+                    String UidAsl= json.getString("AssortimentUid");
+                    String count = json.getString("Count");
+
+                    String Price  = json.getString("Price");
+                    Price=Price.replace(",",".");
+                    Double priceDouble = Double.valueOf(Price);
+                    Price = String.format("%.2f",priceDouble);
+                    Price=Price.replace(".",",");
+
+                    String UnitPrice  = json.getString("UnitPrice");
+                    String UnitInPackage  = json.getString("UnitInPackage");
+                    String Code  = json.getString("Code");
+                    String Barcode  = json.getString("Barcode");
+                    String Unit  = json.getString("Unit");
+
+                    sendDocument.put("AssortimentName",NameAsl);
+                    sendDocument.put("AssortimentID",UidAsl);
+                    sendDocument.put("Quantity",count);
+                    sendDocument.put("WarehouseID",WareUid);
+                    sendDocument.put("WarehouseName",WareName);
+
+                    document_etichete.put("AssortimentID",UidAsl);
+                    document_etichete.put("Count",count);
+                    document_etichete.put("Name",NameAsl);
+                    document_etichete.put("Code",Code);
+                    document_etichete.put("Barcode",Barcode);
+                    document_etichete.put("Price",Price);
+                    document_etichete.put("Unit",Unit);
+                    document_etichete.put("UnitPrice",UnitPrice);
+                    document_etichete.put("UnitInPackage",UnitInPackage);
+
+                    boolean isExtist = false;
+                    if (mArrayAssortment.length()!=0) {
+                        for (int i = 0; i < mArrayAssortment.length(); i++) {
+                            JSONObject object = mArrayAssortment.getJSONObject(i);
+                            JSONObject jsonObject = mArrayForEtichete.getJSONObject(i);
+                            String AssortimentUid = object.getString("AssortimentID");
+                            String CountExist = object.getString("Quantity");
+                            String CountExist_etichete = jsonObject.getString("Count");
+                            String AssortimentUit_etichete = jsonObject.getString("AssortimentID");
+
+                            if (AssortimentUid.contains(UidAsl) && AssortimentUit_etichete.contains(UidAsl)) {
+                                Integer countInt = Integer.valueOf(CountExist);
+                                int CountEtichete_exist =Integer.valueOf(CountExist_etichete);
+                                Integer CountAdd = Integer.valueOf(count);
+                                Integer CountNew = CountAdd + countInt;
+                                int CountNew_etichete = CountAdd  +CountEtichete_exist;
+                                String countStr = String.valueOf(CountNew);
+                                String coutStr_etichete = String.valueOf(CountNew_etichete);
+
+                                object.put("Quantity", countStr);
+                                jsonObject.put("Count", coutStr_etichete);
+                                isExtist=true;
+                            }
+                        }
+                        if (!isExtist){
+                            mArrayAssortment.put(sendDocument);
+                            mArrayForEtichete.put(document_etichete);
+                        }
+                    }else{
+                        mArrayAssortment.put(sendDocument);
+                        mArrayForEtichete.put(document_etichete);
+                    }
+                    asl_list.clear();
+                    showAssortment();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
+                }
+
+            }
+        }
+        else if(requestCode==REQUEST_FROM_LIST_ASSORTMENT) {
+            if (resultCode == RESULT_CANCELED) {
+                txt_input_barcode.setText("");
+                txt_input_barcode.requestFocus();
+            } 
+            else if (resultCode == RESULT_OK) {
+                txt_input_barcode.setText("");
+                txt_input_barcode.requestFocus();
+                asl_list.clear();
+                String response = data.getStringExtra("AssortmentStockAddedArray");
+                try {
+                    JSONArray array_from_touch = new JSONArray(response);
+
+                    if (mArrayAssortment.length() != 0) {
+                        boolean isExtist = false;
+                        for (int i = 0; i < array_from_touch.length(); i++) {
+                            JSONObject object_from_touch = array_from_touch.getJSONObject(i);
+                            String AssortimentUid_from_touch = object_from_touch.getString("AssortimentUid");
+                            String count = object_from_touch.getString("Count");
+                            String NameAsl= object_from_touch.getString("AssortimentName");
+
+                            String Price  = object_from_touch.getString("Price");
+                            Price=Price.replace(",",".");
+
+                            Double priceDouble = Double.valueOf(Price);
+                            Price = String.format("%.2f",priceDouble);
+
+                            String UnitPrice  = object_from_touch.getString("UnitPrice");
+                            String UnitInPackage  = object_from_touch.getString("UnitInPackage");
+                            String Code  = object_from_touch.getString("Code");
+                            String Barcode  = object_from_touch.getString("Barcode");
+                            String Unit  = object_from_touch.getString("Unit");
+
+
+                            sendDocument=new JSONObject();
+                            document_etichete=new JSONObject();
+
+                            sendDocument.put("AssortimentName",NameAsl);
+                            sendDocument.put("AssortimentID",AssortimentUid_from_touch);
+                            sendDocument.put("Quantity",count);
+                            sendDocument.put("WarehouseID",WareUid);
+                            sendDocument.put("WarehouseName",WareName);
+
+                            document_etichete.put("AssortimentID",AssortimentUid_from_touch);
+                            document_etichete.put("Count",count);
+                            document_etichete.put("Name",NameAsl);
+                            document_etichete.put("Code",Code);
+                            document_etichete.put("Barcode",Barcode);
+                            document_etichete.put("Price",Price);
+                            document_etichete.put("Unit",Unit);
+                            document_etichete.put("UnitPrice",UnitPrice);
+                            document_etichete.put("UnitInPackage",UnitInPackage);
+
+                            for (int k = 0; k < mArrayAssortment.length(); k++) {
+                                JSONObject object = mArrayAssortment.getJSONObject(k);
+                                JSONObject jsonObject = mArrayForEtichete.getJSONObject(i);
+                                String AssortimentUid = object.getString("AssortimentID");
+                                String CountExist = object.getString("Quantity");
+                                String CountExist_etichete = jsonObject.getString("Count");
+                                String AssortimentUit_etichete = jsonObject.getString("AssortimentID");
+
+                                if (AssortimentUid.contains(AssortimentUid_from_touch)  && AssortimentUit_etichete.contains(AssortimentUid_from_touch)) {
+                                    Integer countInt = Integer.valueOf(CountExist);
+                                    int CountEtichete_exist =Integer.valueOf(CountExist_etichete);
+                                    Integer CountAdd = Integer.valueOf(count);
+                                    int CountNew = CountAdd + countInt;
+                                    int CountNew_etichete = CountAdd  +CountEtichete_exist;
+
+                                    String countStr = String.valueOf(CountNew);
+                                    String coutStr_etichete = String.valueOf(CountNew_etichete);
+
+                                    object.put("Quantity", countStr);
+                                    jsonObject.put("Count", coutStr_etichete);
+                                    isExtist = true;
+                                }
+                            }
+                            if (!isExtist) {
+                                mArrayAssortment.put(sendDocument);
+                                mArrayForEtichete.put(document_etichete);
+                            }
+                        }
+                    } else {
+                        for (int i = 0; i < array_from_touch.length(); i++) {
+                            JSONObject object_from_touch = array_from_touch.getJSONObject(i);
+                            String NameAsl= object_from_touch.getString("AssortimentName");
+                            String UidAsl= object_from_touch.getString("AssortimentUid");
+                            String Count = object_from_touch.getString("Count");
+
+                            String Price  = object_from_touch.getString("Price");
+                            Price=Price.replace(",",".");
+                            Double priceDouble = Double.valueOf(Price);
+                            Price = String.format("%.2f",priceDouble);
+
+
+                            String UnitPrice  = object_from_touch.getString("UnitPrice");
+                            String UnitInPackage  = object_from_touch.getString("UnitInPackage");
+                            String Code  = object_from_touch.getString("Code");
+                            String Barcode  = object_from_touch.getString("Barcode");
+                            String Unit  = object_from_touch.getString("Unit");
+
+                            sendDocument=new JSONObject();
+                            document_etichete=new JSONObject();
+
+                            sendDocument.put("AssortimentName",NameAsl);
+                            sendDocument.put("AssortimentID",UidAsl);
+                            sendDocument.put("Quantity",Count);
+                            sendDocument.put("WarehouseID",WareUid);
+                            sendDocument.put("WarehouseName",WareName);
+
+                            document_etichete.put("Name",NameAsl);
+                            document_etichete.put("AssortimentID",UidAsl);
+                            document_etichete.put("Code",Code);
+                            document_etichete.put("Barcode",Barcode);
+                            document_etichete.put("Price",Price);
+                            document_etichete.put("Unit",Unit);
+                            document_etichete.put("UnitPrice",UnitPrice);
+                            document_etichete.put("UnitInPackage",UnitInPackage);
+                            document_etichete.put("Count",Count);
+
+                            mArrayAssortment.put(sendDocument);
+                            mArrayForEtichete.put(document_etichete);
+                        }
+                    }
+                    asl_list.clear();
+                    showAssortment();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
+                }
+            }
+        }
+    }
+    @Override
+    public boolean dispatchTouchEvent(@NonNull MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (v instanceof EditText) {
+                v.clearFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+            }
+        }
+
+        return super.dispatchTouchEvent(event);
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -1327,4 +1224,5 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
             btn_change_stock.setText(WareName);
         }
     }
+
 }

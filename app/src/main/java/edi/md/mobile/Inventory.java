@@ -72,7 +72,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
     TimerTask timerTaskSync;
     Timer sync;
     JSONArray json_array,array_added_manual;
-    JSONObject sendAssortiment,json_asl,sendRevision;
+    JSONObject sendAssortiment,sendRevision;
 
     ProgressDialog pgH;
     ProgressBar pgB;
@@ -88,7 +88,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
 
     Boolean onCreat = false;
     
-    int REQUEST_CODE_OPEN_LIST_ASSORTMENT =202;
+    int REQUEST_CODE_OPEN_LIST_ASSORTMENT = 202,REQUEST_FROM_COUNT_INV = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +144,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
         int type = getRevisions.getInt("Type",2);
         WeightPrefix = getRevisions.getInt("WeightPrefix",0);
 
-        setTitle(getResources().getString(R.string.txt_header_revizia_inventory) +RevisionNumber);
+        setTitle(RevisionNumber);
 
         View headerLayout = navigationView.getHeaderView(0);
         TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
@@ -203,9 +203,8 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
         UserId = User.getString("UserID","Non");
         ip_=Settings.getString("IP","");
         port_=Settings.getString("Port","");
+        
         json_array=new JSONArray();
-        json_asl=new JSONObject();
-
         array_added_manual = new JSONArray();
 
         sync=new Timer();
@@ -220,56 +219,10 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 asl_list_added.clear();
                 list_added_touch.setAdapter(simpleAdapterASL);
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    show_keyboard[0] = false;
-                    pgB.setVisibility(View.VISIBLE);
-                    barcode = inpBarcode.getText().toString();
-                    String aftercur = barcode.substring(0,2);
-                    Integer toInt = Integer.valueOf(aftercur);
-                    sendAssortiment = new JSONObject();
-                    try {
-                        if(toInt.equals(WeightPrefix)) {
-                            sendAssortiment.put("AssortmentIdentifier", barcode.substring(0,7));
-                        }else{
-                            sendAssortiment.put("AssortmentIdentifier", inpBarcode.getText().toString());
-                        }
-                        sendAssortiment.put("ShowStocks", true);
-                        sendAssortiment.put("UserID", User.getString("UserID", ""));
-                        sendAssortiment.put("WarehouseID",WareID );
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(), Inventory.this);
-                    }
-                    txtInpBarcode.setText(inpBarcode.getText().toString());
-                    inpBarcode.setText("");
-                    inpBarcode.requestFocus();
-                    URL getASL = GetAssortiment(ip_, port_);
-                    new AsyncTask_GetAssortiment().execute(getASL);
+                    getAssortment(User.getString("UserID", ""));
 
                 }else if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER) {
-                    show_keyboard[0] = false;
-                    pgB.setVisibility(View.VISIBLE);
-                    barcode = inpBarcode.getText().toString();
-                    String aftercur = barcode.substring(0,2);
-                    Integer toInt = Integer.valueOf(aftercur);
-                    sendAssortiment = new JSONObject();
-                    try {
-                        if(toInt.equals(WeightPrefix)) {
-                            sendAssortiment.put("AssortmentIdentifier", barcode.substring(0,7));
-                        }else{
-                            sendAssortiment.put("AssortmentIdentifier", inpBarcode.getText().toString());
-                        }
-                        sendAssortiment.put("ShowStocks", true);
-                        sendAssortiment.put("UserID", User.getString("UserID", ""));
-                        sendAssortiment.put("WarehouseID",WareID);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(), Inventory.this);
-                    }
-                    txtInpBarcode.setText(inpBarcode.getText().toString());
-                    inpBarcode.setText("");
-                    inpBarcode.requestFocus();
-                    URL getASL = GetAssortiment(ip_, port_);
-                    new AsyncTask_GetAssortiment().execute(getASL);
+                    getAssortment(User.getString("UserID", ""));
                 }
                 return false;
             }
@@ -312,6 +265,32 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
             }
         });
 
+    }
+    private void getAssortment(String user){
+        show_keyboard[0] = false;
+        pgB.setVisibility(View.VISIBLE);
+        barcode = inpBarcode.getText().toString();
+        String aftercur = barcode.substring(0,2);
+        Integer toInt = Integer.valueOf(aftercur);
+        sendAssortiment = new JSONObject();
+        try {
+            if(toInt.equals(WeightPrefix)) {
+                sendAssortiment.put("AssortmentIdentifier", barcode.substring(0,7));
+            }else{
+                sendAssortiment.put("AssortmentIdentifier", inpBarcode.getText().toString());
+            }
+            sendAssortiment.put("ShowStocks", true);
+            sendAssortiment.put("UserID", user);
+            sendAssortiment.put("WarehouseID",WareID );
+        } catch (JSONException e) {
+            e.printStackTrace();
+            ((Variables)getApplication()).appendLog(e.getMessage(), Inventory.this);
+        }
+        txtInpBarcode.setText(inpBarcode.getText().toString());
+        inpBarcode.setText("");
+        inpBarcode.requestFocus();
+        URL getASL = GetAssortiment(ip_, port_);
+        new AsyncTask_GetAssortiment().execute(getASL);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menus) {
@@ -504,7 +483,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                             sales.putExtra("Uid", Uid);
                             sales.putExtra("Unit", Unit);
                             sales.putExtra("WeightPrefix",WeightPrefix);
-                            startActivityForResult(sales, 20);
+                            startActivityForResult(sales, REQUEST_FROM_COUNT_INV);
                             inpBarcode.setText("");
                             inpBarcode.requestFocus();
                         }else{
@@ -529,9 +508,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                     } else {
                         txtNames.setText(getResources().getString(R.string.txt_depozit_nedeterminat));
                         txtArticol.setText("--");
-                        //txtCountInit.setText("0");
                         txtCount.setText("0");
-                        //txtTotal.setText("0");
                         txtCode.setText("-");
                     }
                 } catch (JSONException e) {
@@ -611,7 +588,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==20){
+        if (requestCode==REQUEST_FROM_COUNT_INV){
             if (resultCode==RESULT_CANCELED){
                 inpBarcode.setText("");
                 inpBarcode.requestFocus();
@@ -637,13 +614,13 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
             }else if (resultCode==RESULT_OK) {
                 inpBarcode.setText("");
                 inpBarcode.requestFocus();
-
                 try {
-                    JSONArray esult_added_touch = new JSONArray(data.getStringExtra("ArrayAdded"));
+                    JSONArray esult_added_touch = new JSONArray(data.getStringExtra("AssortmentInventoryAddedArray"));
                     for(int k=0; k<esult_added_touch.length();k++){
                         JSONObject json= esult_added_touch.getJSONObject(k);
                         String Name = json.getString("AssortimentName");
                         String Cant = json.getString("Quantity");
+
                         HashMap<String, Object> asl_ = new HashMap<>();
                         asl_.put("Name",Name);
                         asl_.put("Cant",Cant);

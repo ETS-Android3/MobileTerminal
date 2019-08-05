@@ -145,7 +145,7 @@
     <string name="msg_count_added_inventory">Добавлено!</string>
     <string name="msg_login_cod_incorect">Не правильный код!</string>
     <string name="msg_dialog_list_asl_document_not_saved">Хотите сохранить добавленные товары?\nЧтобы закрыть данное окно нажмите в любую точку экрана.</string>
-    <string name="header_list_assortment">Ассортимент для продажи</string>
+    <string name="header_list_assortment">Ассортимент</string>
     <string name="msg_eroare_download_asl">Ошибка при загрузке ассортимента.Код ошибки:</string>
     <string name="msdownload_assortment">Загрузка ассортимента..</string>
     <string name="msg_reload_download_asl">Попробовать еще раз?</string>
@@ -158,8 +158,14 @@
     <string name="txt_list_asl_view_valuta"> лей</string>
     <string name="txt_list_asl_view_price">Цена: </string>
     <string name="txt_not_conected_printers">Ни один принтер не подключен!</string>
-    <string name="msg_document_save_stock_asl">Documentul a fost salvat! Numarul:</string>
+    <string name="msg_document_save_stock_asl">Документ был сохранен! Номер:</string>
     <string name="txt_designe_theme">Оформление</string>
     <string name="txt_language_securitate">Язык</string>
     <string name="assortment_possible_not_download">Возможно товары не загружены из базы данных.</string>
+    <string name="msg_barcode_empty">Штрих-код не настроен!</string>
+    <string name="msg_select_revizie">Вы не выбрали ревизию!</string>
+    <string name="msg_list_warehouses_null">Список доступных складов пуст! Если вы поменяли подключение в другую базу,необходимо перезайти в программу!</string>
+    <string name="securitate_download_version">Скачать</string>
+    <string name="versiune_server_securitate">Версия на сервере:</string>
+    <string name="versiune_locala_securitate">Версия на вашем устройстве:</string>
 </resources>

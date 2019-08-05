@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -132,7 +131,7 @@ public class ListAssortment extends AppCompatActivity {
         return true;
     }
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -175,22 +174,7 @@ public class ListAssortment extends AppCompatActivity {
 
         handler = new Handler() {
             public void handleMessage(android.os.Message msg) {
-                if (msg.what == 0) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        asl_list.sort(new Comparator<HashMap<String, Object>>() {
-                            @Override
-                            public int compare(HashMap<String, Object> o1, HashMap<String, Object> o2) {
-                                return o1.get("Name").toString().compareTo(o2.get("Name").toString());
-                            }
-                        });
-                    }
-                    simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
-                            new String[]{"Name","icon","Price","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
-
-                    list_assortments.setAdapter(simpleAdapterASL);
-                    pgH.dismiss();
-                }
-                else if(msg.what == 10) {
+                if(msg.what == 10) {
                     SortAssortmentList(asl_list);
                     simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
                             new String[]{"Name","icon","Price","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
@@ -254,6 +238,8 @@ public class ListAssortment extends AppCompatActivity {
                     ed.putString("Price_Assortiment", price_replaced);
                     ed.putString("IncomePrice", mIncomePriceAssortment);
                     ed.putString("AllowNonIntegerSale", alow_integer);
+                    ed.putString("Remain",mRemainAssortment);
+                    ed.putString("Marking",mMarkingAssortment);
                     ed.apply();
 
                     Intent getActivity = getIntent();
@@ -261,56 +247,17 @@ public class ListAssortment extends AppCompatActivity {
                     final boolean auto_send =  getActivity.getBooleanExtra("AutoCount",false);
 
                     if(id_intent == ACTIVITY_TRANSFER){
-                        mNewAdd_Assortemnt = new JSONObject();
-                        try {
-                            mNewAdd_Assortemnt.put("AssortimentName", mNameAssortment);
-                            mNewAdd_Assortemnt.put("AssortimentUid", mGUIDAssortment);
-                            mNewAdd_Assortemnt.put("Price", price_replaced);
-                            mNewAdd_Assortemnt.put("Code",mCodeAssortment);
-                            mNewAdd_Assortemnt.put("Barcode",mBarcodeAssortment);
-                            mNewAdd_Assortemnt.put("Unit",mUnitAssortment);
-                            mNewAdd_Assortemnt.put("UnitPrice",mUnitPriceAssortment);
-                            mNewAdd_Assortemnt.put("UnitInPackage",mUnitInPackageAssortment);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
-                        }
+                        addAssortmentClicked(mNameAssortment,mGUIDAssortment,price_replaced,mCodeAssortment,mBarcodeAssortment,mUnitAssortment,mUnitPriceAssortment,mUnitInPackageAssortment);
                         Intent count_activity = new Intent(".CountListAssortmentMobile");///
                         startActivityForResult(count_activity, REQUEST_CODE_Count_LIST_ASSORTMENT);
                     }
                     else if (id_intent == ACTIVITY_STOCK_ASSORTMENT){
-                        mNewAdd_Assortemnt = new JSONObject();
-                        try {
-                            mNewAdd_Assortemnt.put("AssortimentName", mNameAssortment);
-                            mNewAdd_Assortemnt.put("AssortimentUid", mGUIDAssortment);
-                            mNewAdd_Assortemnt.put("Price", price_replaced);
-                            mNewAdd_Assortemnt.put("Code",mCodeAssortment);
-                            mNewAdd_Assortemnt.put("Barcode",mBarcodeAssortment);
-                            mNewAdd_Assortemnt.put("Unit",mUnitAssortment);
-                            mNewAdd_Assortemnt.put("UnitPrice",mUnitPriceAssortment);
-                            mNewAdd_Assortemnt.put("UnitInPackage",mUnitInPackageAssortment);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
-                        }
+                        addAssortmentClicked(mNameAssortment,mGUIDAssortment,price_replaced,mCodeAssortment,mBarcodeAssortment,mUnitAssortment,mUnitPriceAssortment,mUnitInPackageAssortment);
                         Intent count_activity = new Intent(".CountListAssortmentMobile");///
                         startActivityForResult(count_activity, REQUEST_CODE_Count_LIST_ASSORTMENT);
                     }
                     else if (id_intent == ACTIVITY_SALES){
-                        mNewAdd_Assortemnt = new JSONObject();
-                        try {
-                            mNewAdd_Assortemnt.put("AssortimentName", mNameAssortment);
-                            mNewAdd_Assortemnt.put("AssortimentUid", mGUIDAssortment);
-                            mNewAdd_Assortemnt.put("Price", price_replaced);
-                            mNewAdd_Assortemnt.put("Code",mCodeAssortment);
-                            mNewAdd_Assortemnt.put("Barcode",mBarcodeAssortment);
-                            mNewAdd_Assortemnt.put("Unit",mUnitAssortment);
-                            mNewAdd_Assortemnt.put("UnitPrice",mUnitPriceAssortment);
-                            mNewAdd_Assortemnt.put("UnitInPackage",mUnitInPackageAssortment);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
-                        }
+                        addAssortmentClicked(mNameAssortment,mGUIDAssortment,price_replaced,mCodeAssortment,mBarcodeAssortment,mUnitAssortment,mUnitPriceAssortment,mUnitInPackageAssortment);
                         Intent count_activity = new Intent(".CountListAssortmentMobile");
                         startActivityForResult(count_activity, REQUEST_CODE_Count_LIST_ASSORTMENT);
                     }
@@ -329,6 +276,9 @@ public class ListAssortment extends AppCompatActivity {
                         startActivityForResult(count_activity, REQUEST_CODE_COUNT_INVOICE);
                     }
                     else if (id_intent == ACTIVITY_INVENTORY){
+                        SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
+                        SharedPreferences.Editor add_count = SaveCount.edit();
+
                         if(auto_send) {
                             json_item_added_inventory = new JSONObject();
                             sendRevision = new JSONObject();
@@ -351,6 +301,7 @@ public class ListAssortment extends AppCompatActivity {
                                     if (GUID.equals(mGUIDAssortment)){
                                         cant_exist_double = cant_exist_double +1;
                                         object.put("Quantity",String.valueOf(cant_exist_double));
+
                                         isExtist=true;
                                         break;
                                     }
@@ -359,9 +310,14 @@ public class ListAssortment extends AppCompatActivity {
                                     json_item_added_inventory.put("AssortimentName", mNameAssortment);
                                     json_item_added_inventory.put("AssortimentUid", mGUIDAssortment);
                                     json_item_added_inventory.put("Quantity", "1");
-
                                     array_added_items_inventroy.put(json_item_added_inventory);
                                 }
+                                String ExistingCount = SaveCount.getString(mGUIDAssortment,"0");
+                                ExistingCount = ExistingCount.replace(",",".");
+                                Double countExist = Double.valueOf(ExistingCount);
+                                Double total_count = countExist + 1;
+                                add_count.putString(mGUIDAssortment,String.format("%.2f",total_count));
+                                add_count.apply();
                                 sendRevision.put("Assortiment", mGUIDAssortment);
                                 sendRevision.put("Quantity", "1");
                                 sendRevision.put("RevisionID", RevisionID);
@@ -385,7 +341,7 @@ public class ListAssortment extends AppCompatActivity {
                                 ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
                             }
                             Intent count_activity = new Intent(".CountListAssortmentMobile");
-                            count_activity.putExtra("NonAutoCount", 717);
+                            count_activity.putExtra("NonAutoCount_from_Inventory", 717);
                             startActivityForResult(count_activity, REQUEST_CODE_COUNT_INVENTORY);
                         }
                     }
@@ -434,34 +390,19 @@ public class ListAssortment extends AppCompatActivity {
                 final int id_intent = getActivity.getIntExtra("ActivityCount", 101);
 
                 if (id_intent == ACTIVITY_TRANSFER){
-                    Intent transfer = new Intent();
-                    transfer.putExtra("AssortmentTransferAddedArray",mArrayAdded_Assortments.toString());
-                    setResult(RESULT_OK, transfer);
-                    finish();
+                    saveCloseActivity("AssortmentTransferAddedArray",mArrayAdded_Assortments.toString());
                 }
                 else if (id_intent == ACTIVITY_STOCK_ASSORTMENT){
-                    Intent stockAssortment = new Intent();
-                    stockAssortment.putExtra("AssortmentStockAddedArray",mArrayAdded_Assortments.toString());
-                    setResult(RESULT_OK, stockAssortment);
-                    finish();
+                    saveCloseActivity("AssortmentStockAddedArray",mArrayAdded_Assortments.toString());
                 }
                 else if (id_intent == ACTIVITY_SALES){
-                    Intent sales = new Intent();
-                    sales.putExtra("AssortmentSalesAddedArray",mArrayAdded_Assortments.toString());
-                    setResult(RESULT_OK,sales);
-                    finish();
+                    saveCloseActivity("AssortmentSalesAddedArray",mArrayAdded_Assortments.toString());
                 }
                 else if (id_intent == ACTIVITY_INVOICE){
-                    Intent invoice = new Intent();
-                    invoice.putExtra("AssortmentInvoiceAddedArray", mArrayAdded_Assortments.toString());
-                    setResult(RESULT_OK, invoice);
-                    finish();
+                    saveCloseActivity("AssortmentInvoiceAddedArray",mArrayAdded_Assortments.toString());
                 }
                 else if (id_intent == ACTIVITY_INVENTORY){
-                    Intent added = new Intent();
-                    added.putExtra("AssortmentInventoryAddedArray",array_added_items_inventroy.toString());
-                    setResult(RESULT_OK, added);
-                    finish();
+                    saveCloseActivity("AssortmentInventoryAddedArray",array_added_items_inventroy.toString());
                 }
                 else if (id_intent == ACTIVITY_CHECK_PRICE){
                     setResult(RESULT_OK);
@@ -623,7 +564,6 @@ public class ListAssortment extends AppCompatActivity {
                         }
                         handler.obtainMessage(10, 12).sendToTarget();
                     }
-
                     @Override
                     public void onFailure(Call<ASL> call, Throwable t) {
                         pgH.dismiss();
@@ -738,6 +678,8 @@ public class ListAssortment extends AppCompatActivity {
         }
         else if (requestCode==REQUEST_CODE_COUNT_INVENTORY){
             if (resultCode == RESULT_OK) {
+                SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
+                SharedPreferences.Editor add_count = SaveCount.edit();
                 String  Count = data.getStringExtra("count");
                 Count =Count.replace(",",".");
                 double new_count = Double.valueOf(Count);
@@ -764,6 +706,12 @@ public class ListAssortment extends AppCompatActivity {
                         json_item_added_inventory.put("Quantity",Count);
                         array_added_items_inventroy.put(json_item_added_inventory);
                     }
+                    String ExistingCount = SaveCount.getString(mGUIDAssortment,"0");
+                    ExistingCount = ExistingCount.replace(",",".");
+                    Double countExist = Double.valueOf(ExistingCount);
+                    Double total_count = countExist + new_count;
+                    add_count.putString(mGUIDAssortment,String.format("%.2f",total_count));
+                    add_count.apply();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -806,7 +754,6 @@ public class ListAssortment extends AppCompatActivity {
 
         return data.toString();
     }
-
     public boolean dispatchTouchEvent(@NonNull MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
@@ -909,7 +856,7 @@ public class ListAssortment extends AppCompatActivity {
 
                 if (id_intent == ACTIVITY_SALES){
                     Intent sales = new Intent();
-                    sales.putExtra("AssortmentSalesAdded", mArrayAdded_Assortments.toString());
+                    sales.putExtra("AssortmentSalesAddedArray", mArrayAdded_Assortments.toString());
                     setResult(RESULT_OK, sales);
                     finish();
                 }
@@ -926,5 +873,27 @@ public class ListAssortment extends AppCompatActivity {
             }
         });
         exit.show();
+    }
+    private void addAssortmentClicked(String name,String id,String price,String code,String barcode,String unit,String unitPrice,String unitInPackage){
+        mNewAdd_Assortemnt = new JSONObject();
+        try {
+            mNewAdd_Assortemnt.put("AssortimentName", name);
+            mNewAdd_Assortemnt.put("AssortimentUid", id);
+            mNewAdd_Assortemnt.put("Price", price);
+            mNewAdd_Assortemnt.put("Code",code);
+            mNewAdd_Assortemnt.put("Barcode",barcode);
+            mNewAdd_Assortemnt.put("Unit",unit);
+            mNewAdd_Assortemnt.put("UnitPrice",unitPrice);
+            mNewAdd_Assortemnt.put("UnitInPackage",unitInPackage);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
+        }
+    }
+    private void saveCloseActivity(String nameKey,String value){
+        Intent intent = new Intent();
+        intent.putExtra(nameKey, value);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }
