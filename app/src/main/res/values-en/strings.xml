@@ -26,6 +26,7 @@
     <string name="txt_licenta_licenta">License:</string>
     <string name="btn_verificare_licenta">Check</string>
     <string name="txt_pincod_securitate">Pin code:</string>
+    <string name="txt_verifica_stoc_vinzare">Check remain(on salles)</string>
     <string name="txt_modificare_pincod_hint_securitate">Change pin code</string>
     <string name="txt_limita_vinzare_securitate">Limit positions on sale:</string>
     <string name="txt_hint_limit_vinzare_securitate">*0 - limit is not set</string>
@@ -39,7 +40,8 @@
     <string name="header_printer_activity">Printers</string>
     <string name="header_workplace_activity">Workplace</string>
     <string name="header_conectare_activity">Connection</string>
-    <string name="header_login_user_activity">Authentication:</string>
+    <string name="header_login_user_activity">Authentication in base:</string>
+    <string name="header_login_user_settings">Authentication local:</string>
     <string name="header_login_client_activity">Client Authentication:</string>
     <string name="todo">TODO</string>
 
@@ -92,7 +94,7 @@
     <string name="btn_loc_de_munca_nedeterminat_workplace">Workplace undetermined</string>
     <string name="switch_afisare_cod_workpalce">Show code</string>
     <string name="switch_auto_confirmare_act_transfer">Auto confirm(Internal moving)</string>
-    <string name="switch_afisare_tastatura_workplace">Keyboard display</string>
+    <string name="switch_afisare_tastatura_workplace">Keyboard display(if is not buttons)</string>
     <string name="txt_grupe_pentru_vizualizare_workplace">Folders for viewing:</string>
     <string name="btn_sterge_workplace">Delete</string>
     <string name="txt_in_stoc_count_inventory">In stock:</string>
@@ -161,4 +163,5 @@
     <string name="msg_document_save_stock_asl">Documentul a fost salvat! Numarul:</string>
     <string name="txt_designe_theme">Theme</string>
     <string name="txt_language_securitate">Language</string>
+    <string name="assortment_possible_not_download">Maybe the assortment are not loaded from the database.</string>
 </resources>

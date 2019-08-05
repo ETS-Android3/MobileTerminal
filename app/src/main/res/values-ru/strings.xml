@@ -27,7 +27,7 @@
     <string name="txt_pincod_securitate">Пин-код:</string>
     <string name="txt_modificare_pincod_hint_securitate">Модификация пин-кода</string>
     <string name="txt_limita_vinzare_securitate">Ограничения кол-во при продаже:</string>
-    <string name="txt_hint_limit_vinzare_securitate">*0 - огроничение не установленно</string>
+    <string name="txt_hint_limit_vinzare_securitate">*0 - ограничение не установленно</string>
     <string name="btn_donload_install_new_version">Загрузка новой версией</string>
     <string name="txt_hint_input_licenta_securitate">Ключ лицензий</string>
 
@@ -38,13 +38,14 @@
     <string name="header_printer_activity">Принтера</string>
     <string name="header_workplace_activity">Рабочее место</string>
     <string name="header_conectare_activity">Подключение</string>
-    <string name="header_login_user_activity">Аутентификация:</string>
+    <string name="header_login_user_activity">Аутентификация в базу:</string>
+    <string name="header_login_user_settings">Аутентификация локально:</string>
     <string name="header_login_client_activity">Аутентификация клиента:</string>
     <string name="todo">TODO</string>
 
     <string name="item_menu_drawable_generale">Общие</string>
     <string name="item_menu_drawable_exit">Выход</string>
-    <string name="item_menu_drawable_setari">Настройкм</string>
+    <string name="item_menu_drawable_setari">Настройки</string>
     <string name="txt_telefon_de_contact_abou">Телефон:</string>
     <string name="txt_support_tehnic_about">Тех. поддержка:</string>
     <string name="txt_departament_vinzari_about">Отдел продаж:</string>
@@ -64,7 +65,7 @@
     <string name="txt_cant_initiala_inventory">Начальное кол-во</string>
     <string name="txt_cant_adaugata_inventory">Добавленное кол-во</string>
     <string name="txt_total_all">Итого</string>
-    <string name="txt_accept_all">Применить</string>
+    <string name="txt_accept_all">Принять</string>
     <string name="txt_factura_invoice">Документ:</string>
     <string name="txt_save_document">OK</string>
     <string name="txt_renunt_all">Отмена</string>
@@ -81,6 +82,7 @@
     <string name="toggle_btn_check_remain_nu">Нет</string>
     <string name="toggle_btn_check_remain_da">Да</string>
     <string name="txt_verifica_stoc_sales">Показ остатка</string>
+    <string name="txt_verifica_stoc_vinzare">Проверить остаток(при продаже)</string>
     <string name="btn_imprimare_sales">Печать</string>
     <string name="btn_adauga_client_sales">Добавить клиента</string>
     <string name="txt_header_list_suma_sales">Сумма</string>
@@ -90,7 +92,7 @@
     <string name="btn_loc_de_munca_nedeterminat_workplace">Раб. место не выбрано</string>
     <string name="switch_afisare_cod_workpalce">Показать код</string>
     <string name="switch_auto_confirmare_act_transfer">Авто. проведение(Перемещениие)</string>
-    <string name="switch_afisare_tastatura_workplace">Показать клавиатуру</string>
+    <string name="switch_afisare_tastatura_workplace">Показать клавиатуру(если нет кнопок)</string>
     <string name="txt_grupe_pentru_vizualizare_workplace">Отображаемые папки:</string>
     <string name="btn_sterge_workplace">Удалить</string>
     <string name="txt_in_stoc_count_inventory">В остатке:</string>
@@ -159,4 +161,5 @@
     <string name="msg_document_save_stock_asl">Documentul a fost salvat! Numarul:</string>
     <string name="txt_designe_theme">Оформление</string>
     <string name="txt_language_securitate">Язык</string>
+    <string name="assortment_possible_not_download">Возможно товары не загружены из базы данных.</string>
 </resources>

@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
@@ -133,7 +134,23 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
         TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
         user_workplace.setText(WorkPlace.getString("Name",""));
 
-        getWareHouse();
+        final String WorkPlaceUID = WorkPlace.getString("Uid","0");
+        final String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
+
+        if (WorkPlaceName.equals("Nedeterminat")){
+            pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
+            pgH.setCancelable(false);
+            pgH.setIndeterminate(true);
+            pgH.show();
+            ((Variables)getApplication()).setDownloadASLVariable(false);
+            getWareHouse();
+        }
+        else{
+            txt_out.setText(WorkPlaceName);
+            WareUid = WorkPlaceID;
+            getWareHouseINC();
+        }
+        //getWareHouse();
         initList_asl();
         sync=new Timer();
         startTimetaskSync();
@@ -305,6 +322,30 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                 new AsyncTask_SaveTransfer().execute(generateSave);
             }
         });
+        btn_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(uid_selected!=null){
+                    try {
+                        for (int i=0;i<json_array.length();i++) {
+                            JSONObject json = json_array.getJSONObject(i);
+                            String Uid = json.getString("AssortimentUid");
+                            if (uid_selected.contains(Uid)) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                    json_array.remove(i);
+                                }
+                            }
+                            asl_list.clear();
+                            initList_asl();
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
+                    }
+                }
+            }
+        });
 
     }
     public void show_WareHouse(){
@@ -344,6 +385,12 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
     }
     public void show_stockOutClick(){
         //adapter = new ArrayAdapter<>(Sales.this,android.R.layout.simple_list_item_1, stock_List_array);
+        for (int i=0; i <stock_List_array.size();i++) {
+            HashMap<String, Object> hashMap = stock_List_array.get(i);
+            String uidWareHouse =(String)hashMap.get("Uid");
+            if(uidWareHouse.equals(WareIDIn))
+                stock_List_array.remove(i);
+        }
         SimpleAdapter simpleAdapterType = new SimpleAdapter(Transfer.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
         builderType = new AlertDialog.Builder(Transfer.this);
         builderType.setTitle(getResources().getString(R.string.msg_transfer_from_depozit));
@@ -369,7 +416,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
 
                 txt_out.setText(WareName);
                 WareUid = WareGUid;
-
+                stock_List_array.clear();
             }
         });
         builderType.setCancelable(false);
@@ -378,6 +425,12 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
     }
     public void show_stockIn(){
         //adapter = new ArrayAdapter<>(Sales.this,android.R.layout.simple_list_item_1, stock_List_array);
+        for (int i=0; i <stock_List_array.size();i++) {
+            HashMap<String, Object> hashMap = stock_List_array.get(i);
+            String uidWareHouse =(String)hashMap.get("Uid");
+            if(uidWareHouse.equals(WareUid))
+                stock_List_array.remove(i);
+        }
         SimpleAdapter simpleAdapterType = new SimpleAdapter(Transfer.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
         builderType = new AlertDialog.Builder(Transfer.this);
         builderType.setTitle(getResources().getString(R.string.msg_transfer_to_depozit));
@@ -403,6 +456,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                 addWareHouse.apply();
                 txt_inc.setText(WareName);
                 WareIDIn = WareGUid;
+                stock_List_array.clear();
             }
         });
         builderType.setCancelable(false);
@@ -410,7 +464,12 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
         builderType.show();
     }
     public void show_stockInClick(){
-        //adapter = new ArrayAdapter<>(Sales.this,android.R.layout.simple_list_item_1, stock_List_array);
+        for (int i=0; i <stock_List_array.size();i++) {
+            HashMap<String, Object> hashMap = stock_List_array.get(i);
+            String uidWareHouse =(String)hashMap.get("Uid");
+            if(uidWareHouse.equals(WareUid))
+                stock_List_array.remove(i);
+        }
         SimpleAdapter simpleAdapterType = new SimpleAdapter(Transfer.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
         builderType = new AlertDialog.Builder(Transfer.this);
         builderType.setTitle(getResources().getString(R.string.msg_transfer_to_depozit));
@@ -435,6 +494,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                 addWareHouse.apply();
                 txt_inc.setText(WareName);
                 WareIDIn = WareGUid;
+                stock_List_array.clear();
             }
         });
         builderType.setCancelable(false);
@@ -1088,9 +1148,9 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                     int ErrorCode = responseAssortiment.getInt("ErrorCode");
                     if (ErrorCode == 0) {
                         String Names = responseAssortiment.getString("Name");
-                        String Price = responseAssortiment.getString("mPriceAssortment");
+                        String Price = responseAssortiment.getString("Price");
                         String Remain = responseAssortiment.getString("Remain");
-                        String Marking = responseAssortiment.getString("mMarkingAssortment");
+                        String Marking = responseAssortiment.getString("Marking");
                         String Codes = responseAssortiment.getString("Code");
                         String Uid = responseAssortiment.getString("AssortimentID");
                         String Barcodes = responseAssortiment.getString("BarCode");
@@ -1099,11 +1159,11 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
 
                         Intent sales = new Intent(".CountTransferMobile");
                         sales.putExtra("BarCode", Barcodes);
-                        sales.putExtra("mPriceAssortment", Price);
-                        sales.putExtra("mNameAssortment", Names);
+                        sales.putExtra("Price", Price);
+                        sales.putExtra("Name", Names);
                         sales.putExtra("Remain", Remain);
-                        sales.putExtra("mMarkingAssortment", Marking);
-                        sales.putExtra("mCodeAssortment", Codes);
+                        sales.putExtra("Marking", Marking);
+                        sales.putExtra("Code", Codes);
                         sales.putExtra("ID", Uid);
                         startActivityForResult(sales, 25);
                     } else {

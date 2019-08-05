@@ -292,9 +292,9 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                 }else{
                     AlertDialog.Builder failureAsl = new AlertDialog.Builder(WorkPlace.this);
                     failureAsl.setCancelable(false);
-                    failureAsl.setTitle("Atentie !");
-                    failureAsl.setMessage("Assortimentul posibil nu este descarcat.");
-                    failureAsl.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                    failureAsl.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+                    failureAsl.setMessage(getResources().getString(R.string.assortment_possible_not_download));
+                    failureAsl.setPositiveButton(getResources().getString(R.string.txt_accept_all), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.dismiss();
@@ -386,15 +386,15 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                     ((Variables)getApplication()).setDownloadASLVariable(false);
                     android.app.AlertDialog.Builder failureAsl = new android.app.AlertDialog.Builder(WorkPlace.this);
                     failureAsl.setCancelable(false);
-                    failureAsl.setTitle("Atentie eroare!");
-                    failureAsl.setMessage("Eroare la descarcarea asortimentului.Mesajul erorii: " + t + "\n" + "Doriti sa incercati din nou?");
-                    failureAsl.setPositiveButton("Da", new DialogInterface.OnClickListener() {
+                    failureAsl.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+                    failureAsl.setMessage(getResources().getString(R.string.msg_eroare_download_asl) + t + "\n" + getResources().getString(R.string.msg_reload_download_asl));
+                    failureAsl.setPositiveButton(getResources().getString(R.string.toggle_btn_check_remain_da), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             DownloadASL();
                         }
                     });
-                    failureAsl.setNegativeButton("Nu", new DialogInterface.OnClickListener() {
+                    failureAsl.setNegativeButton(getResources().getString(R.string.toggle_btn_check_remain_nu), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.dismiss();
@@ -419,7 +419,6 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                 getWareHouse();
             }else{
                 pgH.dismiss();
-                Toast.makeText(WorkPlace.this,"Result from Login canceled", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -499,8 +498,8 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         //adapter = new ArrayAdapter<>(CheckPrice.this,android.R.layout.simple_list_item_1, stock_List_array);
         SimpleAdapter simpleAdapterType = new SimpleAdapter(WorkPlace.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
         builderType = new AlertDialog.Builder(WorkPlace.this);
-        builderType.setTitle("Lista de depozite");
-        builderType.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builderType.setTitle(getResources().getString(R.string.txt_header_msg_list_depozitelor));
+        builderType.setNegativeButton(getResources().getString(R.string.txt_renunt_all), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 stock_List_array.clear();
@@ -536,8 +535,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         new AsyncTask_WareHouse().execute(getWareHouse);
     }
     public void DownloadASL(){
-        pgH.setTitle("Descarcerea asortimentului");
-        pgH.setMessage("asteptati..");
+        pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
         pgH.setIndeterminate(true);
         pgH.setCancelable(false);
         pgH.show();
@@ -587,7 +585,6 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                             if (unitin_package==null)
                                 assortmentListData.get(i).setUnitInPackage("null");
                             String uid_asl = assortmentListData.get(i).getAssortimentID();
-                            String parent_uid_asl = assortmentListData.get(i).getAssortimentParentID();
 
                             myapp.add_AssortimentID(uid_asl,assortmentListData.get(i));
                             if(is_folder){
@@ -666,7 +663,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                         }
                     }else{
                         pgH.dismiss();
-                        Toast.makeText(WorkPlace.this,"Eroare!Codul: " + ErrorCode, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(WorkPlace.this,getResources().getString(R.string.msg_error_code) + ErrorCode, Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -674,23 +671,9 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                 }
             }else{
                 pgH.dismiss();
-                Toast.makeText(WorkPlace.this,"Nu este raspuns de la serviciu!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(WorkPlace.this,getResources().getString(R.string.msg_document_not_saved_nu_raspuns_serviciu), Toast.LENGTH_SHORT).show();
             }
 
         }
     }
-
-//    @Override
-//    public void onWindowFocusChanged(boolean hasFocus) {
-//        super.onWindowFocusChanged(hasFocus);
-//        if (hasFocus) {
-//            View mDecorView = getWindow().getDecorView();
-//            mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-//        }
-//    }
 }

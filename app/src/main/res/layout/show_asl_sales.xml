@@ -37,16 +37,16 @@
 
     <TextView
         android:id="@+id/textSuma"
-        android:layout_width="wrap_content"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.5"
+        android:layout_weight="0.3"
         android:gravity="end"
+        android:paddingRight="10dp"
         android:textAlignment="textEnd"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         android:textColor="@color/design_default_color_primary_dark"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:fontFamily="monospace"
-        android:paddingRight="10dp" />
+        app:fontFamily="monospace" />
 
     </LinearLayout>

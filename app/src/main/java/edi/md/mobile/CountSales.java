@@ -77,12 +77,12 @@ public class CountSales extends AppCompatActivity {
         btn_cancel = findViewById(R.id.btn_cancel_count_sales);
 
         final Intent sales = getIntent();
-        txt_name.setText(sales.getStringExtra("mNameAssortment"));
+        txt_name.setText(sales.getStringExtra("Name"));
         txt_barcode.setText(sales.getStringExtra("BarCode"));
-        txt_code.setText(sales.getStringExtra("mCodeAssortment"));
-        txt_articul.setText(sales.getStringExtra("mMarkingAssortment"));
+        txt_code.setText(sales.getStringExtra("Codet"));
+        txt_articul.setText(sales.getStringExtra("Marking"));
         txt_stoc.setText(sales.getStringExtra("Remain"));
-        txt_price.setText(sales.getStringExtra("mPriceAssortment"));
+        txt_price.setText(sales.getStringExtra("Price"));
 
         et_count.requestFocus();
 
@@ -111,10 +111,10 @@ public class CountSales extends AppCompatActivity {
                     if (!et_count.getText().toString().equals("")) {
                         JSONObject asl = new JSONObject();
                         try {
-                            asl.put("AssortimentName", sales.getStringExtra("mNameAssortment"));
+                            asl.put("AssortimentName", sales.getStringExtra("Name"));
                             asl.put("AssortimentUid", sales.getStringExtra("ID"));
                             asl.put("Count", et_count.getText().toString());
-                            asl.put("mPriceAssortment", sales.getStringExtra("mPriceAssortment"));
+                            asl.put("Price", sales.getStringExtra("Price"));
                         } catch (JSONException e) {
                             ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
                             e.printStackTrace();
@@ -132,10 +132,10 @@ public class CountSales extends AppCompatActivity {
                     if (!et_count.getText().toString().equals("")) {
                         JSONObject asl = new JSONObject();
                         try {
-                            asl.put("AssortimentName", sales.getStringExtra("mNameAssortment"));
+                            asl.put("AssortimentName", sales.getStringExtra("Name"));
                             asl.put("AssortimentUid", sales.getStringExtra("ID"));
                             asl.put("Count", et_count.getText().toString());
-                            asl.put("mPriceAssortment", sales.getStringExtra("mPriceAssortment"));
+                            asl.put("Price", sales.getStringExtra("Price"));
                         } catch (JSONException e) {
                             ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
                             e.printStackTrace();
@@ -200,10 +200,10 @@ public class CountSales extends AppCompatActivity {
                 if (!et_count.getText().toString().equals("") && adauga_Count) {
                     JSONObject asl = new JSONObject();
                     try {
-                        asl.put("AssortimentName", sales.getStringExtra("mNameAssortment"));
+                        asl.put("AssortimentName", sales.getStringExtra("Name"));
                         asl.put("AssortimentUid", sales.getStringExtra("ID"));
                         asl.put("Count", et_count.getText().toString());
-                        asl.put("mPriceAssortment", sales.getStringExtra("mPriceAssortment"));
+                        asl.put("Price", sales.getStringExtra("Price"));
                     } catch (JSONException e) {
                         ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
                         e.printStackTrace();
