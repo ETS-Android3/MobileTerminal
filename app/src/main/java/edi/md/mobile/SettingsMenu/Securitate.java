@@ -86,7 +86,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
     ProgressDialog pDialog;
     ImageButton btn_ro,btn_ru,btn_en;
     public static final int progress_bar_type = 0;
-    private static String file_url = "http://edi.md/androidapps/MobileTerminal.apk";
+    private static String file_url_apk = "http://edi.md/androidapps/MobileTerminal.apk";
     private static String file_version_url = "http://edi.md/androidapps/MobileTerminalVersion.txt";
     private Locale myLocale;
 
@@ -599,7 +599,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
             alertDialog.setPositiveButton(getResources().getString(R.string.securitate_download_version), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    new DownloadFileFromURL().execute(file_url);
+                    new DownloadFileFromURL().execute(file_url_apk);
                 }
             });
             alertDialog.setNegativeButton(getResources().getString(R.string.txt_renunt_all), new DialogInterface.OnClickListener() {
