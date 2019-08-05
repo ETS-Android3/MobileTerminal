@@ -81,14 +81,12 @@ public class CountInventory extends AppCompatActivity {
         final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
         final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
-        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
-        final SharedPreferences WareHouse = getSharedPreferences("Ware House", MODE_PRIVATE);
 
-        Boolean ShowCode = Settings.getBoolean("ShowCode",false);
+        boolean ShowCode = Settings.getBoolean("ShowCode",false);
         if (!ShowCode){
             txtCode.setVisibility(View.INVISIBLE);
         }
-        Boolean showKB = Settings.getBoolean("ShowKeyBoard",false);
+        boolean showKB = Settings.getBoolean("ShowKeyBoard",false);
         inpCount.requestFocus();
         if (showKB){
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -127,7 +125,6 @@ public class CountInventory extends AppCompatActivity {
 
         double countAdded = Double.valueOf(ExistingCount);
         double Remain_in_program =Double.valueOf(Remain);
-
 
         if (Remain_in_program!=0.0){
             double remain_scan=  Remain_in_program - countAdded;
@@ -181,26 +178,7 @@ public class CountInventory extends AppCompatActivity {
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!inpCount.getText().toString().equals("")) {
-                    pgH.setMessage("loading..");
-                    pgH.setIndeterminate(true);
-                    pgH.setCancelable(false);
-                    pgH.show();
-                    sendAssortiment = new JSONObject();
-                    try {
-                        sendAssortiment.put("Assortiment", UidAsortiment);
-                        sendAssortiment.put("FinalQuantity", cant_final.isChecked());
-                        sendAssortiment.put("Quantity", inpCount.getText().toString());
-                        sendAssortiment.put("RevisionID", RevisionID);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(),CountInventory.this);
-                    }
-                    URL generateSaveLine = SaveRevisionLine(ip_, port_);
-                    new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
-                }else if (inpCount.getText().toString().equals("")){
-                    inpCount.setError(getResources().getString(R.string.txt_header_inp_count));
-                }
+                saveCount();
             }
         });
 
@@ -208,53 +186,35 @@ public class CountInventory extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if (!inpCount.getText().toString().equals("")) {
-                        pgH.setMessage("loading..");
-                        pgH.setIndeterminate(true);
-                        pgH.setCancelable(false);
-                        pgH.show();
-                        sendAssortiment = new JSONObject();
-                        try {
-                            sendAssortiment.put("Assortiment", UidAsortiment);
-                            sendAssortiment.put("Quantity", inpCount.getText().toString());
-                            sendAssortiment.put("RevisionID", RevisionID);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(),CountInventory.this);
-                        }
-
-                        URL generateSaveLine = SaveRevisionLine(ip_, port_);
-                        new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
-                    }else {
-                        Toast.makeText(CountInventory.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-                        inpCount.requestFocus();
-                    }
+                    saveCount();
                 }else if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER){
-                    if (!inpCount.getText().toString().equals("")) {
-                        pgH.setMessage("loading..");
-                        pgH.setIndeterminate(true);
-                        pgH.setCancelable(false);
-                        pgH.show();
-                        sendAssortiment = new JSONObject();
-                        try {
-                            sendAssortiment.put("Assortiment", UidAsortiment);
-                            sendAssortiment.put("Quantity", inpCount.getText().toString());
-                            sendAssortiment.put("RevisionID", RevisionID);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(),CountInventory.this);
-                        }
-
-                        URL generateSaveLine = SaveRevisionLine(ip_, port_);
-                        new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
-                    }else {
-                        Toast.makeText(CountInventory.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-                        inpCount.requestFocus();
-                    }
+                    saveCount();
                 }
                 return false;
             }
         });
+    }
+    private void saveCount(){
+        if(!inpCount.getText().toString().equals("")) {
+            pgH.setMessage("loading..");
+            pgH.setIndeterminate(true);
+            pgH.setCancelable(false);
+            pgH.show();
+            sendAssortiment = new JSONObject();
+            try {
+                sendAssortiment.put("Assortiment", UidAsortiment);
+                sendAssortiment.put("FinalQuantity", cant_final.isChecked());
+                sendAssortiment.put("Quantity", inpCount.getText().toString());
+                sendAssortiment.put("RevisionID", RevisionID);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                ((Variables)getApplication()).appendLog(e.getMessage(),CountInventory.this);
+            }
+            URL generateSaveLine = SaveRevisionLine(ip_, port_);
+            new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
+        }else if (inpCount.getText().toString().equals("")){
+            inpCount.setError(getResources().getString(R.string.txt_header_inp_count));
+        }
     }
     public String getResponseFromURLSaveRevisionLine(URL send_bills) throws IOException {
         String data = "";

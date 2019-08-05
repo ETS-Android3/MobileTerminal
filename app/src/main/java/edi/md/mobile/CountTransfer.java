@@ -31,7 +31,7 @@ public class CountTransfer extends AppCompatActivity {
     TextView et_count;
     Button btn_add, btn_cancel;
     Boolean adauga_Count=false;
-
+    String mName,mID;
 
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -81,13 +81,16 @@ public class CountTransfer extends AppCompatActivity {
         txt_stoc.setText(sales.getStringExtra("Remain"));
         txt_price.setText(sales.getStringExtra("Price"));
 
+        mName = sales.getStringExtra("Name");
+        mID = sales.getStringExtra("ID");
+
         et_count.requestFocus();
         SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
-        SharedPreferences AddedAssortment = getSharedPreferences("Transfer", MODE_PRIVATE);
-        final SharedPreferences.Editor inpASL = AddedAssortment.edit();
 
         boolean ShowCode = Sestting.getBoolean("ShowCode", false);
         boolean showKB = Sestting.getBoolean("ShowKeyBoard",false);
+        final boolean checkStock = Sestting.getBoolean("CheckStockInput", false);
+
         if (!ShowCode) {
             txt_code.setVisibility(View.INVISIBLE);
         }
@@ -95,54 +98,12 @@ public class CountTransfer extends AppCompatActivity {
             et_count.requestFocus();
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
-        final boolean checkStock = Sestting.getBoolean("CheckStockInput", false);
-
         et_count.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction(TextView v, int keyCode,
-                                          KeyEvent event) {
-                boolean od =false;
-                if (keyCode == EditorInfo.IME_ACTION_DONE) {
-                    if (!et_count.getText().toString().equals("")) {
-                        JSONObject asl = new JSONObject();
-                        try {
-                            asl.put("AssortimentName", sales.getStringExtra("Name"));
-                            asl.put("AssortimentUid", sales.getStringExtra("ID"));
-                            asl.put("Count", et_count.getText().toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
-                        }
-                        Intent added = new Intent();
-                        inpASL.putString("AssortmentTransferAdded", asl.toString());
-                        inpASL.apply();
-                        setResult(RESULT_OK, added);
-                        finish();
-                    }else{
-                        Toast.makeText(CountTransfer.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-                        et_count.requestFocus();
-                    }
-                }else if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER) {
-                    if (!et_count.getText().toString().equals("")) {
-                        JSONObject asl = new JSONObject();
-                        try {
-                            asl.put("AssortimentName", sales.getStringExtra("Name"));
-                            asl.put("AssortimentUid", sales.getStringExtra("ID"));
-                            asl.put("Count", et_count.getText().toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
-                        }
-                        Intent added = new Intent();
-                        inpASL.putString("AssortmentTransferAdded", asl.toString());
-                        inpASL.apply();
-                        setResult(RESULT_OK, added);
-                        finish();
-                    }else{
-                        Toast.makeText(CountTransfer.this,getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-                        et_count.requestFocus();
-                    }
-                }
+            public boolean onEditorAction(TextView v, int keyCode, KeyEvent event) {
+                if (keyCode == EditorInfo.IME_ACTION_DONE) saveCount();
+                else if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER) saveCount();
+
                 return false;
             }
         });
@@ -181,41 +142,42 @@ public class CountTransfer extends AppCompatActivity {
 
             }
         });
+
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(adauga_Count && !et_count.getText().toString().equals("")) {
-                    JSONObject asl = new JSONObject();
-                    try {
-                        asl.put("AssortimentName", sales.getStringExtra("Name"));
-                        asl.put("AssortimentUid", sales.getStringExtra("ID"));
-                        asl.put("Count", et_count.getText().toString());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
-                    }
-                    inpASL.putString("AssortmentTransferAdded", asl.toString());
-                    inpASL.apply();
-                    Intent countInc = new Intent();
-                    setResult(RESULT_OK, countInc);
-                    finish();
-                }else{
-                    Toast.makeText(CountTransfer.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-                    et_count.requestFocus();
-                }
+                saveCount();
             }
         });
+
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                inpASL.putString("AssortmentTransferAdded", "{}");
-                inpASL.apply();
-                Intent finIntent = new Intent();
-                setResult(RESULT_CANCELED, finIntent);
+                setResult(RESULT_CANCELED);
                 finish();
             }
         });
 
+    }
+    private void saveCount(){
+        if (adauga_Count && !et_count.getText().toString().equals("")) {
+            JSONObject asl = new JSONObject();
+            try {
+                asl.put("AssortimentName",mName);
+                asl.put("AssortimentUid", mID);
+                asl.put("Count", et_count.getText().toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+                ((Variables)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
+            }
+            Intent transfer = new Intent();
+            transfer.putExtra("AssortmentTransferAdded",asl.toString());
+            setResult(RESULT_OK, transfer);
+            finish();
+        }else{
+            Toast.makeText(CountTransfer.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
+            et_count.requestFocus();
+        }
     }
     public boolean dispatchTouchEvent(@NonNull MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {

@@ -27,7 +27,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -77,9 +76,10 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
     Timer sync;
 
     Menu menu;
-    JSONObject json_asl,sendInvoice,sendAssortiment;
-    JSONArray json_array;
+    JSONObject sendInvoice,sendAssortiment;
+    JSONArray mAddedAssortmentArray;
     final boolean[] show_keyboard = {false};
+    int REQUEST_COUNT_TRANSFER = 25, REQUEST_FROM_LIST_ASSORTMENT = 222;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,9 +123,9 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
         port_=Settings.getString("Port","");
 
         final String WorkPlaceID = WorkPlace.getString("Uid","0");
+        final String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
 
-        json_array=new JSONArray();
-        json_asl=new JSONObject();
+        mAddedAssortmentArray =new JSONArray();
 
         View headerLayout = navigationView.getHeaderView(0);
         TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
@@ -133,9 +133,6 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
 
         TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
         user_workplace.setText(WorkPlace.getString("Name",""));
-
-        final String WorkPlaceUID = WorkPlace.getString("Uid","0");
-        final String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
 
         if (WorkPlaceName.equals("Nedeterminat")){
             pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
@@ -148,10 +145,9 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
         else{
             txt_out.setText(WorkPlaceName);
             WareUid = WorkPlaceID;
-            getWareHouseINC();
+            getWareHouseIN();
         }
-        //getWareHouse();
-        initList_asl();
+        showAssortmentList();
         sync=new Timer();
         startTimetaskSync();
         sync.schedule(timerTaskSync,2000,2000);
@@ -159,14 +155,14 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
         txt_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getWareHouseOUT();
+                getWareHouseOUTClick();
             }
         });
 
         txt_inc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getWareHouseINC();
+                getWareHouseINCClick();
             }
         });
 
@@ -187,79 +183,19 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
             }
         });
 
-
         txt_input_barcode.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId,
                                           KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    txt_input_barcode.requestFocus();
-                    pgBar.setVisibility(ProgressBar.VISIBLE);
-                    show_keyboard[0] = false;
-                    sendAssortiment = new JSONObject();
-                    try {
-                        sendAssortiment.put("AssortmentIdentifier", txt_input_barcode.getText().toString());
-                        sendAssortiment.put("UserID", UserId);
-                        sendAssortiment.put("WarehouseID", WareUid);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
-                    }
-                    barcode_introdus = txt_input_barcode.getText().toString();
-                    txt_input_barcode.setText("");
-                    URL getASL = GetAssortiment(ip_, port_);
-                    new AsyncTask_GetAssortiment().execute(getASL);
-                }
-                else if(event.getKeyCode()==KeyEvent.KEYCODE_ENTER){
-                    txt_input_barcode.requestFocus();
-                    if (!txt_input_barcode.getText().toString().equals("")) {
-                        txt_input_barcode.requestFocus();
-                        pgBar.setVisibility(ProgressBar.VISIBLE);
-                        show_keyboard[0] = false;
-                        sendAssortiment = new JSONObject();
-                        try {
-                            sendAssortiment.put("AssortmentIdentifier", txt_input_barcode.getText().toString());
-                            sendAssortiment.put("UserID", UserId);
-                            sendAssortiment.put("ShowStocks",true);
-                            sendAssortiment.put("WarehouseID", WareUid);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
-                        }
-                        barcode_introdus = txt_input_barcode.getText().toString();
-                        txt_input_barcode.setText("");
-                        URL getASL = GetAssortiment(ip_, port_);
-                        new AsyncTask_GetAssortiment().execute(getASL);
-                    }
-                }
+                if (actionId == EditorInfo.IME_ACTION_DONE) getAssortmentFromService();
+                else if(event.getKeyCode()==KeyEvent.KEYCODE_ENTER) getAssortmentFromService();
                 return false;
             }
         });
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(json_array.length()==0){
-                    finish();
-                }
-                else{
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(Transfer.this);
-                    dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                    dialog.setCancelable(false);
-                    dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
-                    dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    });
-                    dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    dialog.show();
-                }
+                exitDialog();
             }
         });
         list_of_transfer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -276,8 +212,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                 if(WorkPlaceID.equals("0")){
                     AddingASL.putExtra("WareID",WareUid);
                 }
-                startActivityForResult(AddingASL, 222);
-
+                startActivityForResult(AddingASL, REQUEST_FROM_LIST_ASSORTMENT);
             }
         });
 
@@ -290,10 +225,10 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                 pgH.show();
 
                 JSONArray sendArr= new JSONArray();
-                for (int i = 0; i < json_array.length(); i++) {
+                for (int i = 0; i < mAddedAssortmentArray.length(); i++) {
                     JSONObject json = null;
                     try {
-                        json = json_array.getJSONObject(i);
+                        json = mAddedAssortmentArray.getJSONObject(i);
                         String Uid = json.getString("AssortimentUid");
                         String Cant = json.getString("Count");
                         JSONObject sendObj = new JSONObject();
@@ -327,18 +262,17 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
             public void onClick(View v) {
                 if(uid_selected!=null){
                     try {
-                        for (int i=0;i<json_array.length();i++) {
-                            JSONObject json = json_array.getJSONObject(i);
+                        for (int i = 0; i< mAddedAssortmentArray.length(); i++) {
+                            JSONObject json = mAddedAssortmentArray.getJSONObject(i);
                             String Uid = json.getString("AssortimentUid");
                             if (uid_selected.contains(Uid)) {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                    json_array.remove(i);
+                                    mAddedAssortmentArray.remove(i);
                                 }
                             }
                             asl_list.clear();
-                            initList_asl();
+                            showAssortmentList();
                         }
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                         ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
@@ -349,7 +283,6 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
 
     }
     public void show_WareHouse(){
-        //adapter = new ArrayAdapter<>(Sales.this,android.R.layout.simple_list_item_1, stock_List_array);
         SimpleAdapter simpleAdapterType = new SimpleAdapter(Transfer.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
         builderType = new AlertDialog.Builder(Transfer.this);
         builderType.setTitle(getResources().getString(R.string.msg_transfer_from_depozit));
@@ -424,44 +357,56 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
         builderType.show();
     }
     public void show_stockIn(){
-        //adapter = new ArrayAdapter<>(Sales.this,android.R.layout.simple_list_item_1, stock_List_array);
         for (int i=0; i <stock_List_array.size();i++) {
             HashMap<String, Object> hashMap = stock_List_array.get(i);
             String uidWareHouse =(String)hashMap.get("Uid");
             if(uidWareHouse.equals(WareUid))
                 stock_List_array.remove(i);
         }
-        SimpleAdapter simpleAdapterType = new SimpleAdapter(Transfer.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
-        builderType = new AlertDialog.Builder(Transfer.this);
-        builderType.setTitle(getResources().getString(R.string.msg_transfer_to_depozit));
-        builderType.setNegativeButton(getResources().getString(R.string.txt_renunt_all), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                stock_List_array.clear();
-                finish();
-            }
-        });
-        builderType.setAdapter(simpleAdapterType, new DialogInterface.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int wich) {
-                String WareGUid= String.valueOf(stock_List_array.get(wich).get("Uid"));
-                String WareName= String.valueOf(stock_List_array.get(wich).get("Name"));
-                String WareCode= String.valueOf(stock_List_array.get(wich).get("Code"));
+        if(stock_List_array.size() == 0){
+            AlertDialog.Builder alertDialog =  new AlertDialog.Builder(this);
+            alertDialog.setTitle("Atentie!Nu puteti continua :(");
+            alertDialog.setMessage("Deserviti doar un depozit! Actul de transfer nu poate fi efectuat de la unul si acelasi depozit!\nEste necesar sa deserviti cel putin 2 depozite.");
+            alertDialog.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            alertDialog.show();
+        }else{
+            SimpleAdapter simpleAdapterType = new SimpleAdapter(Transfer.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
+            builderType = new AlertDialog.Builder(Transfer.this);
+            builderType.setTitle(getResources().getString(R.string.msg_transfer_to_depozit));
+            builderType.setNegativeButton(getResources().getString(R.string.txt_renunt_all), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    stock_List_array.clear();
+                    finish();
+                }
+            });
+            builderType.setAdapter(simpleAdapterType, new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int wich) {
+                    String WareGUid= String.valueOf(stock_List_array.get(wich).get("Uid"));
+                    String WareName= String.valueOf(stock_List_array.get(wich).get("Name"));
+                    String WareCode= String.valueOf(stock_List_array.get(wich).get("Code"));
 
-                SharedPreferences WareHouse = getSharedPreferences("Ware House In", MODE_PRIVATE);
-                SharedPreferences.Editor addWareHouse = WareHouse.edit();
-                addWareHouse.putString("WareName",WareName);
-                addWareHouse.putString("WareUid",WareGUid);
-                addWareHouse.putString("WareCode",WareCode);
-                addWareHouse.apply();
-                txt_inc.setText(WareName);
-                WareIDIn = WareGUid;
-                stock_List_array.clear();
-            }
-        });
-        builderType.setCancelable(false);
-        pgH.dismiss();
-        builderType.show();
+                    SharedPreferences WareHouse = getSharedPreferences("Ware House In", MODE_PRIVATE);
+                    SharedPreferences.Editor addWareHouse = WareHouse.edit();
+                    addWareHouse.putString("WareName",WareName);
+                    addWareHouse.putString("WareUid",WareGUid);
+                    addWareHouse.putString("WareCode",WareCode);
+                    addWareHouse.apply();
+                    txt_inc.setText(WareName);
+                    WareIDIn = WareGUid;
+                    stock_List_array.clear();
+                }
+            });
+            builderType.setCancelable(false);
+            pgH.dismiss();
+            builderType.show();
+        }
     }
     public void show_stockInClick(){
         for (int i=0; i <stock_List_array.size();i++) {
@@ -505,86 +450,86 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
         URL getWareHouse = GetWareHouseList(ip_,port_,UserId);
         new AsyncTask_WareHouse().execute(getWareHouse);
     }
-    public void getWareHouseINC(){
+    public void getWareHouseIN(){
+        URL getWareHouse = GetWareHouseList(ip_,port_,UserId);
+        new AsyncTask_WareHouseIN().execute(getWareHouse);
+    }
+    public void getWareHouseINCClick(){
         URL getWareHouse = GetWareHouseList(ip_,port_,UserId);
         new AsyncTask_WareHouseINC().execute(getWareHouse);
     }
-    public void getWareHouseOUT(){
+    public void getWareHouseOUTClick(){
         URL getWareHouse = GetWareHouseList(ip_,port_,UserId);
         new AsyncTask_WareHouseOUT().execute(getWareHouse);
     }
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout_transfer);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if(json_array.length()==0){
-                finish();
-            }else{
-                AlertDialog.Builder dialog = new AlertDialog.Builder(Transfer.this);
-                dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                dialog.setCancelable(false);
-                dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
-                dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-                dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-            }
+            exitDialog();
         }
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menus) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_transfer, menus);
         this.menu = menus;
         return true;
     }
-
+    private void exitDialog(){
+        if(mAddedAssortmentArray.length()==0){
+            finish();
+        }else{
+            AlertDialog.Builder dialog = new AlertDialog.Builder(Transfer.this);
+            dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+            dialog.setCancelable(false);
+            dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
+            dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    }
+    private void getAssortmentFromService(){
+        if (!txt_input_barcode.getText().toString().equals("")) {
+            txt_input_barcode.requestFocus();
+            pgBar.setVisibility(ProgressBar.VISIBLE);
+            show_keyboard[0] = false;
+            sendAssortiment = new JSONObject();
+            try {
+                sendAssortiment.put("AssortmentIdentifier", txt_input_barcode.getText().toString());
+                sendAssortiment.put("UserID", UserId);
+                sendAssortiment.put("ShowStocks",true);
+                sendAssortiment.put("WarehouseID", WareUid);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
+            }
+            barcode_introdus = txt_input_barcode.getText().toString();
+            txt_input_barcode.setText("");
+            URL getASL = GetAssortiment(ip_, port_);
+            new AsyncTask_GetAssortiment().execute(getASL);
+        }
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
         if (id == R.id.action_close_transfer) {
-            if(json_array.length()==0){
-                finish();
-            }else{
-                AlertDialog.Builder dialog = new AlertDialog.Builder(Transfer.this);
-                dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                dialog.setCancelable(false);
-                dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
-                dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-                dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-            }
-            return true;
+           exitDialog();
         }
-
         return super.onOptionsItemSelected(item);
     }
-
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -609,34 +554,12 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
             Intent MenuConnect = new Intent(".MenuAbout");
             startActivity(MenuConnect);
         } else if (id == R.id.menu_exit) {
-            if(json_array.length()==0){
-                finish();
-            }else{
-                AlertDialog.Builder dialog = new AlertDialog.Builder(Transfer.this);
-                dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                dialog.setCancelable(false);
-                dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
-                dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-                dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-            }
+            exitDialog();
         }
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout_transfer);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
     private void startTimetaskSync(){
         timerTaskSync = new TimerTask() {
             @Override
@@ -652,10 +575,10 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
         };
 
     }
-    public void initList_asl(){
+    public void showAssortmentList(){
         try {
-            for (int i=0;i<json_array.length();i++){
-                JSONObject json= json_array.getJSONObject(i);
+            for (int i = 0; i< mAddedAssortmentArray.length(); i++){
+                JSONObject json= mAddedAssortmentArray.getJSONObject(i);
                 HashMap<String, Object> asl_ = new HashMap<>();
                 String Name = json.getString("AssortimentName");
                 String Cant = json.getString("Count");
@@ -707,11 +630,10 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
         }
         return data.toString();
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 25) {
+        if (requestCode == REQUEST_COUNT_TRANSFER) {
             txt_input_barcode.requestFocus();
             if (resultCode == RESULT_CANCELED) {
                 txt_input_barcode.setText("");
@@ -720,16 +642,17 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
                 asl_list.clear();
-                SharedPreferences sPref_saveASL = getSharedPreferences("Transfer", MODE_PRIVATE);
-                String response = sPref_saveASL.getString("AssortmentTransferAdded", "{}");
+                
+                String response = data.getStringExtra("AssortmentTransferAdded");
+
                 try {
                     JSONObject json = new JSONObject(response);
                     String UidAsl= json.getString("AssortimentUid");
                     String count = json.getString("Count");
                     boolean isExtist = false;
-                    if (json_array.length()!=0) {
-                        for (int i = 0; i < json_array.length(); i++) {
-                            JSONObject object = json_array.getJSONObject(i);
+                    if (mAddedAssortmentArray.length()!=0) {
+                        for (int i = 0; i < mAddedAssortmentArray.length(); i++) {
+                            JSONObject object = mAddedAssortmentArray.getJSONObject(i);
                             String AssortimentUid = object.getString("AssortimentUid");
                             String CountExist = object.getString("Count");
                             Integer countInt = Integer.valueOf(CountExist);
@@ -743,19 +666,19 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                             }
                         }
                         if (!isExtist){
-                            json_array.put(json);
+                            mAddedAssortmentArray.put(json);
                         }
                     }else{
-                        json_array.put(json);
+                        mAddedAssortmentArray.put(json);
                     }
                     asl_list.clear();
-                    initList_asl();
+                    showAssortmentList();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 txt_input_barcode.requestFocus();
             }
-        }else if(requestCode==222) {
+        }else if(requestCode==REQUEST_FROM_LIST_ASSORTMENT) {
             if (resultCode == RESULT_CANCELED) {
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
@@ -763,18 +686,17 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
                 asl_list.clear();
-                SharedPreferences sPref_saveASL = getSharedPreferences("Transfer", MODE_PRIVATE);
-                String response = sPref_saveASL.getString("AssortmentTransferAddedArray", "[]");
+                String response = data.getStringExtra("AssortmentTransferAddedArray");
                 try {
                     JSONArray array_from_touch = new JSONArray(response);
-                    if (json_array.length() != 0) {
+                    if (mAddedAssortmentArray.length() != 0) {
                         boolean isExtist = false;
                         for (int i = 0; i < array_from_touch.length(); i++) {
                             JSONObject object_from_touch = array_from_touch.getJSONObject(i);
                             String AssortimentUid_from_touch = object_from_touch.getString("AssortimentUid");
                             String count = object_from_touch.getString("Count");
-                            for (int k = 0; k < json_array.length(); k++) {
-                                JSONObject object = json_array.getJSONObject(k);
+                            for (int k = 0; k < mAddedAssortmentArray.length(); k++) {
+                                JSONObject object = mAddedAssortmentArray.getJSONObject(k);
                                 String AssortimentUid = object.getString("AssortimentUid");
                                 String CountExist = object.getString("Count");
                                 Integer countInt = Integer.valueOf(CountExist);
@@ -789,17 +711,17 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                                 }
                             }
                             if (!isExtist) {
-                                json_array.put(object_from_touch);
+                                mAddedAssortmentArray.put(object_from_touch);
                             }
                         }
                     } else {
                         for (int i = 0; i < array_from_touch.length(); i++) {
                             JSONObject object_from_touch = array_from_touch.getJSONObject(i);
-                            json_array.put(object_from_touch);
+                            mAddedAssortmentArray.put(object_from_touch);
                         }
                     }
                     asl_list.clear();
-                    initList_asl();
+                    showAssortmentList();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1031,6 +953,58 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
             }
         }
     }
+    class AsyncTask_WareHouseIN extends AsyncTask<URL, String, String> {
+        @Override
+        protected String doInBackground(URL... urls) {
+            String response="false";
+            try {
+                response = Response_from_GetWareHouse(urls[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+                ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
+            }
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            if (!response.equals("false")) {
+                try {
+                    JSONObject responseWareHouse = new JSONObject(response);
+                    Integer ErrorCode = responseWareHouse.getInt("ErrorCode");
+                    if (ErrorCode == 0) {
+                        try {
+                            JSONArray ListWare = responseWareHouse.getJSONArray("Warehouses");
+                            for (int i = 0; i < ListWare.length(); i++) {
+                                JSONObject object = ListWare.getJSONObject(i);
+                                String WareCode = object.getString("Code");
+                                String WareName = object.getString("Name");
+                                String WareUid = object.getString("WarehouseID");
+                                HashMap<String, Object> WareHouse = new HashMap<>();
+                                WareHouse.put("Name", WareName);
+                                WareHouse.put("Code", WareCode);
+                                WareHouse.put("Uid", WareUid);
+                                stock_List_array.add(WareHouse);
+                            }
+                            show_stockIn();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            ((Variables) getApplication()).appendLog(e.getMessage(), Transfer.this);
+                        }
+                    }else{
+                        pgH.dismiss();
+                        Toast.makeText(Transfer.this,getResources().getString(R.string.msg_error_code) + ErrorCode, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    ((Variables) getApplication()).appendLog(e.getMessage(), Transfer.this);
+                }
+            }else{
+                pgH.dismiss();
+                Toast.makeText(Transfer.this,getResources().getString(R.string.msg_nu_raspuns_server), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     class AsyncTask_WareHouseINC extends AsyncTask<URL, String, String> {
         @Override
         protected String doInBackground(URL... urls) {
@@ -1165,7 +1139,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                         sales.putExtra("Marking", Marking);
                         sales.putExtra("Code", Codes);
                         sales.putExtra("ID", Uid);
-                        startActivityForResult(sales, 25);
+                        startActivityForResult(sales, REQUEST_COUNT_TRANSFER);
                     } else {
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
                         txtBarcode_introdus.setText(barcode_introdus +" - " +getResources().getString(R.string.txt_depozit_nedeterminat));
@@ -1184,18 +1158,4 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
             }
         }
     }
-//    @Override
-//    public void onWindowFocusChanged(boolean hasFocus) {
-//        super.onWindowFocusChanged(hasFocus);
-//        if (hasFocus) {
-//            View mDecorView = getWindow().getDecorView();
-//            mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-//        }
-//    }
-
 }

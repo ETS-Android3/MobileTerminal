@@ -55,10 +55,6 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import edi.md.mobile.Settings.Assortment;
-import edi.md.mobile.Utils.Assortiment;
-import edi.md.mobile.Utils.AssortmentInActivity;
-
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetAssortiment;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetPrinters;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetWareHouseList;
@@ -91,10 +87,10 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
     Boolean invoiceSaved=false;
 
     Menu menu;
-    JSONObject json_asl,sendInvoice,sendAssortiment;
-    JSONArray json_array;
+    JSONObject sendInvoice,sendAssortiment;
+    JSONArray mAssortmentArray;
 
-    int limit_sales, REQUEST_FROM_LIST_ASSORTMENT=110;
+    int limit_sales, REQUEST_FROM_COUNT_ACTIVITY=110,REQUEST_FROM_LIST_ASSORTMENT = 210,REQUEST_FROM_GET_CLIENT = 30;
     final boolean[] show_keyboard = {false};
 
     @Override
@@ -141,8 +137,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         ip_=Settings.getString("IP","");
         port_=Settings.getString("Port","");
 
-        json_array=new JSONArray();
-        json_asl=new JSONObject();
+        mAssortmentArray =new JSONArray();
 
         View headerLayout = navigationView.getHeaderView(0);
         TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
@@ -182,28 +177,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(json_array.length()==0){
-                    finish();
-                }
-                else{
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(Sales.this);
-                    dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                    dialog.setCancelable(false);
-                    dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
-                    dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    });
-                    dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    dialog.show();
-                }
+               exitDialog();
             }
         });
         btn_write_barcode.setOnClickListener(new View.OnClickListener() {
@@ -220,68 +194,17 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(txt_input_barcode.getWindowToken(), 0);
                     }
-                }else{
+                }
+                else{
                     Toast.makeText(Sales.this,getResources().getString(R.string.msg_sales_is_saved), Toast.LENGTH_SHORT).show();
                 }
             }
         });
         txt_input_barcode.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId,
-                                          KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if (!invoiceSaved) {
-                        txt_input_barcode.requestFocus();
-                        pgBar.setVisibility(ProgressBar.VISIBLE);
-                        show_keyboard[0] = false;
-                        sendAssortiment = new JSONObject();
-                        try {
-                            sendAssortiment.put("AssortmentIdentifier", txt_input_barcode.getText().toString());
-                            sendAssortiment.put("ShowStocks", show_stocks.isChecked());
-                            sendAssortiment.put("UserID", UserId);
-                            sendAssortiment.put("WarehouseID", WareUid);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(),Sales.this);
-                        }
-                        txtBarcode_introdus.setText(txt_input_barcode.getText().toString());
-                        barcode_introdus = txt_input_barcode.getText().toString();
-                        txt_input_barcode.setText("");
-                        URL getASL = GetAssortiment(ip_, port_);
-                        new AsyncTask_GetAssortiment().execute(getASL);
-                    } else {
-                        txt_input_barcode.setText("");
-                        Toast.makeText(Sales.this,getResources().getString(R.string.msg_sales_is_saved), Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else if(event.getKeyCode()==KeyEvent.KEYCODE_ENTER){
-                    txt_input_barcode.requestFocus();
-                    if (!txt_input_barcode.getText().toString().equals("")) {
-                        if (!invoiceSaved) {
-                            txt_input_barcode.requestFocus();
-                            pgBar.setVisibility(ProgressBar.VISIBLE);
-                            show_keyboard[0] = false;
-                            sendAssortiment = new JSONObject();
-                            try {
-                                sendAssortiment.put("AssortmentIdentifier", txt_input_barcode.getText().toString());
-                                sendAssortiment.put("ShowStocks", show_stocks.isChecked());
-                                sendAssortiment.put("UserID", UserId);
-                                sendAssortiment.put("WarehouseID", WareUid);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                ((Variables)getApplication()).appendLog(e.getMessage(),Sales.this);
-                            }
-                            txtBarcode_introdus.setText(txt_input_barcode.getText().toString());
-                            barcode_introdus = txt_input_barcode.getText().toString();
-                            txt_input_barcode.setText("");
-                            URL getASL = GetAssortiment(ip_, port_);
-                            new AsyncTask_GetAssortiment().execute(getASL);
-                        } else {
-                            txt_input_barcode.setText("");
-                            Toast.makeText(Sales.this,getResources().getString(R.string.msg_sales_is_saved), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) getAssortmentSales();
+                else if(event.getKeyCode()==KeyEvent.KEYCODE_ENTER)getAssortmentSales();
                 return false;
             }
         });
@@ -296,16 +219,16 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
             public void onClick(View v) {
                 if(uid_selected!=null){
                     try {
-                        for (int i=0;i<json_array.length();i++) {
-                            JSONObject json = json_array.getJSONObject(i);
+                        for (int i = 0; i< mAssortmentArray.length(); i++) {
+                            JSONObject json = mAssortmentArray.getJSONObject(i);
                             String Uid = json.getString("AssortimentUid");
                             if (uid_selected.contains(Uid)) {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                    json_array.remove(i);
+                                    mAssortmentArray.remove(i);
                                 }
                             }
                             asl_list.clear();
-                            initList_asl();
+                            showAssortmentList();
                         }
 
                     } catch (JSONException e) {
@@ -325,10 +248,10 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                     pgH.show();
 
                     JSONArray sendArr = new JSONArray();
-                    for (int i = 0; i < json_array.length(); i++) {
+                    for (int i = 0; i < mAssortmentArray.length(); i++) {
                         JSONObject json = null;
                         try {
-                            json = json_array.getJSONObject(i);
+                            json = mAssortmentArray.getJSONObject(i);
                             String Uid = json.getString("AssortimentUid");
                             String Cant = json.getString("Count");
                             String Price = json.getString("Price");
@@ -385,7 +308,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
             @Override
             public void onClick(View v) {
                 Intent Logins = new Intent(".GetClientMobile");
-                startActivityForResult(Logins, 30);
+                startActivityForResult(Logins, REQUEST_FROM_GET_CLIENT);
             }
         });
         btn_open_asl_list.setOnClickListener(new View.OnClickListener() {
@@ -397,8 +320,9 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                     if(WorkPlaceID.equals("0")){
                        AddingASL.putExtra("WareID",WareUid);
                     }
-                    startActivityForResult(AddingASL, 210);
-                }else{
+                    startActivityForResult(AddingASL, REQUEST_FROM_LIST_ASSORTMENT);
+                }
+                else{
                     Toast.makeText(Sales.this,getResources().getString(R.string.msg_sales_is_saved), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -410,76 +334,28 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if(json_array.length()==0){
-                finish();
-            }else{
-                AlertDialog.Builder dialog = new AlertDialog.Builder(Sales.this);
-                dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                dialog.setCancelable(false);
-                dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
-                dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-                dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-            }
+            exitDialog();
         }
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menus) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_sales, menus);
         this.menu = menus;
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
         if (id == R.id.action_close_sales) {
-            if(json_array.length()==0){
-                finish();
-            }else{
-                AlertDialog.Builder dialog = new AlertDialog.Builder(Sales.this);
-                dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                dialog.setCancelable(false);
-                dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
-                dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-                dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-            }
-            return true;
+            exitDialog();
         }
 
         return super.onOptionsItemSelected(item);
     }
-
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         if (id == R.id.menu_conect) {
             Intent MenuConnect = new Intent(".MenuConnect");
             startActivity(MenuConnect);
@@ -499,39 +375,18 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
             Intent MenuConnect = new Intent(".MenuAbout");
             startActivity(MenuConnect);
         } else if (id == R.id.menu_exit) {
-            if(json_array.length()==0){
-                finish();
-            }else{
-                AlertDialog.Builder dialog = new AlertDialog.Builder(Sales.this);
-                dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                dialog.setCancelable(false);
-                dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
-                dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-                dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-            }
+            exitDialog();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout_sales);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==REQUEST_FROM_LIST_ASSORTMENT){
-            if (resultCode==RESULT_CANCELED){
+        if (requestCode == REQUEST_FROM_COUNT_ACTIVITY){
+            if (resultCode == RESULT_CANCELED){
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
             }
@@ -539,15 +394,16 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
                 asl_list.clear();
+
                 String response = data.getStringExtra("AssortmentSalesAdded");
                 try {
                     JSONObject json= new JSONObject(response);
                     String UidAsl= json.getString("AssortimentUid");
                     String count = json.getString("Count");
                     boolean isExtist = false;
-                    if (json_array.length()!=0) {
-                        for (int i = 0; i < json_array.length(); i++) {
-                            JSONObject object = json_array.getJSONObject(i);
+                    if (mAssortmentArray.length()!=0) {
+                        for (int i = 0; i < mAssortmentArray.length(); i++) {
+                            JSONObject object = mAssortmentArray.getJSONObject(i);
                             String AssortimentUid = object.getString("AssortimentUid");
                             String CountExist = object.getString("Count");
                             Integer countInt = Integer.valueOf(CountExist);
@@ -562,61 +418,57 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                             }
                         }
                         if (!isExtist){
-                            if (json_array.length()<limit_sales)
-                                json_array.put(json);
+                            if (mAssortmentArray.length()<limit_sales)
+                                mAssortmentArray.put(json);
                             else
                                 Toast.makeText(Sales.this,getResources().getString(R.string.msg_depasirea_limitei_vinzare), Toast.LENGTH_SHORT).show();
                         }
                     }else{
-                        if (json_array.length()<limit_sales)
-                            json_array.put(json);
+                        if (mAssortmentArray.length()<limit_sales)
+                            mAssortmentArray.put(json);
                         else
                             Toast.makeText(Sales.this,getResources().getString(R.string.msg_depasirea_limitei_vinzare), Toast.LENGTH_SHORT).show();
                     }
                     asl_list.clear();
-                    initList_asl();
+                    showAssortmentList();
                 } catch (JSONException e) {
                     e.printStackTrace();
                     ((Variables)getApplication()).appendLog(e.getMessage(),Sales.this);
                 }
             }
-        }else if (requestCode==30){
+        }
+        else if (requestCode == REQUEST_FROM_GET_CLIENT){
             if (resultCode==RESULT_CANCELED){
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
-            }else if (resultCode==RESULT_OK){
+            }
+            else if (resultCode==RESULT_OK){
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
                 ClientID= data.getStringExtra("ClientID");
                 btn_add_Client.setText(data.getStringExtra("ClientName"));
             }
-        }else if(requestCode==210) {
+        }
+        else if(requestCode == REQUEST_FROM_LIST_ASSORTMENT) {
             if (resultCode == RESULT_CANCELED) {
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
-            } else if (resultCode == RESULT_OK) {
+            }
+            else if (resultCode == RESULT_OK) {
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
                 asl_list.clear();
-//
-//                Assortiment assortiment = ((Variables)getApplication()).getAssortimentArray();
-//                for (AssortmentInActivity assortimentInActivity:assortiment) {
-//                    String mName = assortimentInActivity.getName();
-//                    String Barcode = assortimentInActivity.getBarCode();
-//                }
-
-                SharedPreferences sPref_saveASL = getSharedPreferences("Sales", MODE_PRIVATE);
-                String response = sPref_saveASL.getString("AssortmentSalesAddedArray", "[]");
+                String response = data.getStringExtra("AssortmentSalesAddedArray");
                 try {
                     JSONArray array_from_touch = new JSONArray(response);
-                    if (json_array.length() != 0) {
+                    if (mAssortmentArray.length() != 0) {
                         boolean isExtist = false;
                         for (int i = 0; i < array_from_touch.length(); i++) {
                             JSONObject object_from_touch = array_from_touch.getJSONObject(i);
                             String AssortimentUid_from_touch = object_from_touch.getString("AssortimentUid");
                             String count = object_from_touch.getString("Count");
-                            for (int k = 0; k < json_array.length(); k++) {
-                                JSONObject object = json_array.getJSONObject(k);
+                            for (int k = 0; k < mAssortmentArray.length(); k++) {
+                                JSONObject object = mAssortmentArray.getJSONObject(k);
                                 String AssortimentUid = object.getString("AssortimentUid");
                                 String CountExist = object.getString("Count");
                                 Integer countInt = Integer.valueOf(CountExist);
@@ -631,8 +483,8 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                                 }
                             }
                             if (!isExtist) {
-                                if (json_array.length()<limit_sales)
-                                    json_array.put(object_from_touch);
+                                if (mAssortmentArray.length()<limit_sales)
+                                    mAssortmentArray.put(object_from_touch);
                                 else
                                     Toast.makeText(Sales.this,getResources().getString(R.string.msg_depasirea_limitei_vinzare), Toast.LENGTH_SHORT).show();
                             }
@@ -640,18 +492,19 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                     } else {
                         for (int i = 0; i < array_from_touch.length(); i++) {
                             JSONObject object_from_touch = array_from_touch.getJSONObject(i);
-                            if (json_array.length()<limit_sales)
-                                json_array.put(object_from_touch);
+                            if (mAssortmentArray.length()<limit_sales)
+                                mAssortmentArray.put(object_from_touch);
                             else
                                 Toast.makeText(Sales.this,getResources().getString(R.string.msg_depasirea_limitei_vinzare), Toast.LENGTH_SHORT).show();
                         }
                     }
                     asl_list.clear();
-                    initList_asl();
+                    showAssortmentList();
                 } catch (JSONException e) {
                     e.printStackTrace();
                     ((Variables)getApplication()).appendLog(e.getMessage(),Sales.this);
                 }
+
             }
         }
     }
@@ -704,8 +557,109 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         }
         return super.onKeyDown(keyCode, event);
     }
+    private void exitDialog(){
+        if(mAssortmentArray.length()==0){
+            finish();
+        }
+        else{
+            AlertDialog.Builder dialog = new AlertDialog.Builder(Sales.this);
+            dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+            dialog.setCancelable(false);
+            dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
+            dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    }
+    private void getAssortmentSales(){
+        txt_input_barcode.requestFocus();
+        if (!txt_input_barcode.getText().toString().equals("")) {
+            if (!invoiceSaved) {
+                txt_input_barcode.requestFocus();
+                pgBar.setVisibility(ProgressBar.VISIBLE);
+                show_keyboard[0] = false;
+                sendAssortiment = new JSONObject();
+                try {
+                    sendAssortiment.put("AssortmentIdentifier", txt_input_barcode.getText().toString());
+                    sendAssortiment.put("ShowStocks", show_stocks.isChecked());
+                    sendAssortiment.put("UserID", UserId);
+                    sendAssortiment.put("WarehouseID", WareUid);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    ((Variables)getApplication()).appendLog(e.getMessage(),Sales.this);
+                }
+                txtBarcode_introdus.setText(txt_input_barcode.getText().toString());
+                barcode_introdus = txt_input_barcode.getText().toString();
+                txt_input_barcode.setText("");
+                URL getASL = GetAssortiment(ip_, port_);
+                new AsyncTask_GetAssortiment().execute(getASL);
+            } else {
+                txt_input_barcode.setText("");
+                Toast.makeText(Sales.this,getResources().getString(R.string.msg_sales_is_saved), Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            txt_input_barcode.setText("");
+            Toast.makeText(Sales.this,getResources().getString(R.string.msg_barcode_empty), Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void onResultActivities (String response,int type){
+        if (type == 0){
+
+        }else{
+
+        }
+        try {
+            JSONObject json= new JSONObject(response);
+            String UidAsl= json.getString("AssortimentUid");
+            String count = json.getString("Count");
+            boolean isExtist = false;
+            if (mAssortmentArray.length()!=0) {
+                for (int i = 0; i < mAssortmentArray.length(); i++) {
+                    JSONObject object = mAssortmentArray.getJSONObject(i);
+                    String AssortimentUid = object.getString("AssortimentUid");
+                    String CountExist = object.getString("Count");
+                    Integer countInt = Integer.valueOf(CountExist);
+                    Integer CountAdd = Integer.valueOf(count);
+
+                    if (AssortimentUid.contains(UidAsl)) {
+                        Integer CountNew = CountAdd + countInt;
+                        String countStr = String.valueOf(CountNew);
+                        object.put("Count", countStr);
+                        isExtist=true;
+                        break;
+                    }
+                }
+                if (!isExtist){
+                    if (mAssortmentArray.length()<limit_sales)
+                        mAssortmentArray.put(json);
+                    else
+                        Toast.makeText(Sales.this,getResources().getString(R.string.msg_depasirea_limitei_vinzare), Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                if (mAssortmentArray.length()<limit_sales)
+                    mAssortmentArray.put(json);
+                else
+                    Toast.makeText(Sales.this,getResources().getString(R.string.msg_depasirea_limitei_vinzare), Toast.LENGTH_SHORT).show();
+            }
+            asl_list.clear();
+            showAssortmentList();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            ((Variables)getApplication()).appendLog(e.getMessage(),Sales.this);
+        }
+    }
     public void show_WareHouse(){
-        //adapter = new ArrayAdapter<>(Sales.this,android.R.layout.simple_list_item_1, stock_List_array);
+
         SimpleAdapter simpleAdapterType = new SimpleAdapter(Sales.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
         builderType = new AlertDialog.Builder(Sales.this);
         builderType.setTitle(getResources().getString(R.string.txt_header_msg_list_depozitelor));
@@ -741,7 +695,6 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         builderType.show();
     }
     public void show_WareHouseChange(){
-        //adapter = new ArrayAdapter<>(Sales.this,android.R.layout.simple_list_item_1, stock_List_array);
         SimpleAdapter simpleAdapterType = new SimpleAdapter(Sales.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
         builderType = new AlertDialog.Builder(Sales.this);
         builderType.setTitle(getResources().getString(R.string.txt_header_msg_list_depozitelor));
@@ -783,7 +736,6 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         new AsyncTask_WareHouseChange().execute(getWareHouse);
     }
     public void show_printers(){
-        //adapterPrinter = new ArrayAdapter<>(Sales.this,android.R.layout.select_dialog_singlechoice, printers_List_array);
         SimpleAdapter simpleAdapterType = new SimpleAdapter(Sales.this, printers_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
         builderTypePrinters = new AlertDialog.Builder(Sales.this);
         builderTypePrinters.setTitle(getResources().getString(R.string.txt_header_msg_sales_printers));
@@ -805,11 +757,11 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         builderTypePrinters.setCancelable(false);
         builderTypePrinters.show();
     }
-    public void initList_asl(){
-        Double sumTotal=0.0;
+    public void showAssortmentList(){
+        double sumTotal=0.0;
         try {
-            for (int i=0;i<json_array.length();i++){
-                JSONObject json= json_array.getJSONObject(i);
+            for (int i = 0; i< mAssortmentArray.length(); i++){
+                JSONObject json= mAssortmentArray.getJSONObject(i);
                 HashMap<String, Object> asl_ = new HashMap<>();
                 String Name = json.getString("AssortimentName");
                 String Cant = json.getString("Count");
@@ -850,7 +802,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         };
 
     }
-    public String getResponseSaveInvoice(URL send_bills) throws IOException {
+    public String getResponseSaveInvoice(URL send_bills) {
         String data = "";
         HttpURLConnection send_bill_Connection = null;
         try {
@@ -965,7 +917,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                         sales.putExtra("Code", Codes);
                         sales.putExtra("ID", Uid);
                         sales.putExtra("Stock", show_stocks.isChecked());
-                        startActivityForResult(sales, REQUEST_FROM_LIST_ASSORTMENT);
+                        startActivityForResult(sales, REQUEST_FROM_COUNT_ACTIVITY);
                     } else {
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
                         txtBarcode_introdus.setText(barcode_introdus + " - " + getResources().getString(R.string.txt_depozit_nedeterminat));
@@ -1251,14 +1203,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
 
         @Override
         protected String doInBackground(URL... urls) {
-            String responseINC="";
-            try {
-                responseINC=getResponseSaveInvoice(urls[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),Sales.this);
-            }
-            return responseINC;
+            return getResponseSaveInvoice(urls[0]);
         }
 
         @Override
@@ -1266,8 +1211,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
             if(!response.equals("")) {
                 try {
                     JSONObject respo = new JSONObject(response);
-                    Integer errCode = respo.getInt("ErrorCode");
-                    final SharedPreferences GetWorkPlace = getSharedPreferences("SaveWorkPlace", MODE_PRIVATE);
+                    int errCode = respo.getInt("ErrorCode");
                     if (errCode == 0) {
                         pgH.dismiss();
                         invoiceSaved = true;
@@ -1328,21 +1272,6 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
 
         }
     }
-//    @Override
-//    public void onWindowFocusChanged(boolean hasFocus) {
-//        super.onWindowFocusChanged(hasFocus);
-//        if (hasFocus) {
-//            View mDecorView = getWindow().getDecorView();
-//            mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-//                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-//        }
-//    }
-
-
     @Override
     protected void onResume() {
         super.onResume();

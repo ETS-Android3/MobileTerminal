@@ -33,23 +33,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 import static edi.md.mobile.NetworkUtils.NetworkUtils.SaveRevisionLine;
 
 public class CountListOfAssortment extends AppCompatActivity {
     final Context context = this;
-    String name_asl,price_asl,code,barcode,ip_,port_,UserId,IntegerSales;
-
+    String name_asl,code,ip_,port_;
+    boolean mIntegerSales;
     EditText Count_enter;
     ImageButton btn_plus,btn_del;
-    TextView name_forasl,price_forasl,ViewCom,btn_save,btn_cancel,txtCode,txtBarCode;
-    int h,k,g=1;
-    int i = 0;
+    TextView name_forasl,price_forasl,btn_save,btn_cancel,txtCode,txtBarCode,txtMarking,txtRemain;
+    int FROM_INVENTORY_ACTIVITY = 717;
     JSONObject sendRevision;
-    ArrayList com_lists;
     ProgressDialog pgH;
-    private Toolbar mToolbar;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -59,7 +55,6 @@ public class CountListOfAssortment extends AppCompatActivity {
                 Activity activity=CountListOfAssortment.this;
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 View view = activity.getCurrentFocus();
-                //If no view currently has focus, create a new one, just so we can grab a window token from it
                 if (view == null) {
                     view = new View(activity);
                 }
@@ -77,7 +72,7 @@ public class CountListOfAssortment extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_count_list_of_assortment);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar_count_list_asl);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar_count_list_asl);
         setSupportActionBar(mToolbar);
 
         Count_enter = findViewById(R.id.edt_cnt_list_asl);
@@ -89,17 +84,16 @@ public class CountListOfAssortment extends AppCompatActivity {
         price_forasl = findViewById(R.id.txtPrice_asortment_count_list_asl);
         txtCode = findViewById(R.id.txtcode_assortment_count_list_asl);
         txtBarCode = findViewById(R.id.txtBarcode_assortment_count_list_asl);
+        txtMarking = findViewById(R.id.txtMarking_asortment_count_list_asl);
+        txtRemain = findViewById(R.id.txtStoc_asortment_count_list_asl);
         pgH = new ProgressDialog(CountListOfAssortment.this);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
-        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
-        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
         SharedPreferences sPref = getSharedPreferences("Save touch assortiment", MODE_PRIVATE);
 
-        UserId = User.getString("UserID","");
         ip_=Settings.getString("IP","");
         port_=Settings.getString("Port","");
 
@@ -108,17 +102,44 @@ public class CountListOfAssortment extends AppCompatActivity {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             Count_enter.requestFocus();
         }
+        boolean ShowCode = Settings.getBoolean("ShowCode", false);
+        if (!ShowCode) {
+            txtCode.setVisibility(View.INVISIBLE);
+        }
         final String uid_save = sPref.getString("Guid_Assortiment", "");
         name_asl = sPref.getString("Name_Assortiment", "");
-        price_asl = sPref.getString("Price_Assortiment", "");
-        IntegerSales = sPref.getString("AllowNonIntegerSale", "false");
-        code = sPref.getString("Code_Assortiment", "");
-        barcode = sPref.getString("BarCode_Assortiment", "");
+        if(sPref.getString("AllowNonIntegerSale", "false").equals("true"))
+            mIntegerSales = true;
+        else
+            mIntegerSales = false;
 
         name_forasl.setText(name_asl);
-        price_forasl.setText(price_asl);
-        txtCode.setText(code);
-        txtBarCode.setText(barcode);
+        price_forasl.setText(sPref.getString("Price_Assortiment", ""));
+        String mCode = sPref.getString("Code_Assortiment", "");
+        String mMarking = sPref.getString("Marking", "");
+        String mRemain = sPref.getString("Remain", "");
+        String mBarcode = sPref.getString("BarCode_Assortiment", "");
+
+        if(mCode.equals("") || mCode.equals("null") || mCode==null){
+            txtCode.setText("-");
+        }else{
+            txtCode.setText(mCode);
+        }
+        if(mMarking.equals("") || mMarking.equals("null") || mMarking==null){
+            txtMarking.setText("-");
+        }else{
+            txtMarking.setText(mCode);
+        }
+        if(mRemain.equals("") || mRemain.equals("null") || mRemain==null){
+            txtRemain.setText("-");
+        }else{
+            txtRemain.setText(mRemain);
+        }
+        if(mBarcode.equals("") || mBarcode.equals("null") || mBarcode==null){
+            txtBarCode.setText("-");
+        }else{
+            txtBarCode.setText(mBarcode);
+        }
 
         Count_enter.addTextChangedListener(new TextWatcher() {
             @Override
@@ -127,16 +148,11 @@ public class CountListOfAssortment extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (IntegerSales.equals("true")) {
-                    if (isDigits(String.valueOf(charSequence))) {
-                    } else {
-                        Count_enter.setError(getResources().getString(R.string.msg_format_number_incorect));
-                    }
-                } else {
-                    if (isDigitInteger(Count_enter.getText().toString())) {
-                    } else {
-                        Count_enter.setError(getResources().getString(R.string.msg_only_number_integer));
-                    }
+                if (mIntegerSales) {
+                    if (!isDouble(String.valueOf(charSequence))) Count_enter.setError(getResources().getString(R.string.msg_format_number_incorect));
+                }
+                else {
+                    if (!isInteger(Count_enter.getText().toString())) Count_enter.setError(getResources().getString(R.string.msg_only_number_integer));
                 }
             }
 
@@ -147,132 +163,8 @@ public class CountListOfAssortment extends AppCompatActivity {
         Count_enter.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    Intent getIntetn = getIntent();
-                    int type = getIntetn.getIntExtra("NonAutoCount",777);
-                    if(type==717){
-                        SharedPreferences Revision = getSharedPreferences("Revision", MODE_PRIVATE);
-                        String revisions =Revision.getString("RevisionID","");
-                        if (IntegerSales.equals("true")) {
-                            if (isDigits(Count_enter.getText().toString())) {
-                                pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
-                                pgH.setIndeterminate(true);
-                                pgH.setCancelable(false);
-                                pgH.show();
-                                sendRevision = new JSONObject();
-                                try {
-                                    sendRevision.put("Assortiment", uid_save);
-                                    sendRevision.put("Quantity", "1");
-                                    sendRevision.put("RevisionID", revisions);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                    ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
-                                }
-                                URL generateSaveLine = SaveRevisionLine(ip_, port_);
-                                new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
-                            }
-                        }else {
-                            if (isDigitInteger(Count_enter.getText().toString())) {
-                                pgH.setMessage("loading..");
-                                pgH.setIndeterminate(true);
-                                pgH.setCancelable(false);
-                                pgH.show();
-                                sendRevision = new JSONObject();
-                                try {
-                                    sendRevision.put("Assortiment", uid_save);
-                                    sendRevision.put("Quantity", "1");
-                                    sendRevision.put("RevisionID", revisions);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                    ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
-                                }
-                                URL generateSaveLine = SaveRevisionLine(ip_, port_);
-                                new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
-                            }
-                        }
-                    }else{
-                        if (IntegerSales.equals("true")) {
-                            if (isDigits(Count_enter.getText().toString())) {
-                                Intent intent = new Intent();
-                                intent.putExtra("Name", name_asl);
-                                intent.putExtra("count", String.valueOf(Count_enter.getText()));
-                                setResult(RESULT_OK, intent);
-                                finish();
-                            }
-                        } else {
-                            if (isDigitInteger(Count_enter.getText().toString())) {
-                                Intent intent = new Intent();
-                                intent.putExtra("Name", name_asl);
-                                intent.putExtra("count", String.valueOf(Count_enter.getText()));
-                                setResult(RESULT_OK, intent);
-                                finish();
-                            }
-                        }
-                    }
-                }
-                else if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER){
-                    Intent getIntetn = getIntent();
-                    int type = getIntetn.getIntExtra("NonAutoCount",777);
-                    if(type==717){
-                        SharedPreferences Revision = getSharedPreferences("Revision", MODE_PRIVATE);
-                        String revisions =Revision.getString("RevisionID","");
-                        if (IntegerSales.equals("true")) {
-                            if (isDigits(Count_enter.getText().toString())) {
-                                pgH.setMessage("loading..");
-                                pgH.setIndeterminate(true);
-                                pgH.setCancelable(false);
-                                pgH.show();
-                                sendRevision = new JSONObject();
-                                try {
-                                    sendRevision.put("Assortiment", uid_save);
-                                    sendRevision.put("Quantity", Count_enter.getText().toString());
-                                    sendRevision.put("RevisionID", revisions);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                    ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
-                                }
-                                URL generateSaveLine = SaveRevisionLine(ip_, port_);
-                                new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
-                            }
-                        }else {
-                            if (isDigitInteger(Count_enter.getText().toString())) {
-                                pgH.setMessage("loading..");
-                                pgH.setIndeterminate(true);
-                                pgH.setCancelable(false);
-                                pgH.show();
-                                sendRevision = new JSONObject();
-                                try {
-                                    sendRevision.put("Assortiment", uid_save);
-                                    sendRevision.put("Quantity", Count_enter.getText().toString());
-                                    sendRevision.put("RevisionID", revisions);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                    ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
-                                }
-                                URL generateSaveLine = SaveRevisionLine(ip_, port_);
-                                new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
-                            }
-                        }
-                    }else{
-                        if (IntegerSales.equals("true")) {
-                            if (isDigits(Count_enter.getText().toString())) {
-                                Intent intent = new Intent();
-                                intent.putExtra("Name", name_asl);
-                                intent.putExtra("count", String.valueOf(Count_enter.getText()));
-                                setResult(RESULT_OK, intent);
-                                finish();
-                            }
-                        } else {
-                            if (isDigitInteger(Count_enter.getText().toString())) {
-                                Intent intent = new Intent();
-                                intent.putExtra("Name", name_asl);
-                                intent.putExtra("count", String.valueOf(Count_enter.getText()));
-                                setResult(RESULT_OK, intent);
-                                finish();
-                            }
-                        }
-                    }
-                }
+                if (actionId == EditorInfo.IME_ACTION_DONE) saveCount(uid_save);
+                else if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER) saveCount(uid_save);
                 return false;
             }
         });
@@ -280,75 +172,14 @@ public class CountListOfAssortment extends AppCompatActivity {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent getIntetn = getIntent();
-                int type = getIntetn.getIntExtra("NonAutoCount",777);
-                if(type==717){
-                    SharedPreferences Revision = getSharedPreferences("Revision", MODE_PRIVATE);
-                    String revisions =Revision.getString("RevisionID","");
-                    if (IntegerSales.equals("true")) {
-                        if (isDigits(Count_enter.getText().toString())) {
-                            pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
-                            pgH.setIndeterminate(true);
-                            pgH.setCancelable(false);
-                            pgH.show();
-                            sendRevision = new JSONObject();
-                            try {
-                                sendRevision.put("Assortiment", uid_save);
-                                sendRevision.put("Quantity", Count_enter.getText().toString());
-                                sendRevision.put("RevisionID", revisions);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
-                            }
-                            URL generateSaveLine = SaveRevisionLine(ip_, port_);
-                            new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
-                        }
-                    }else {
-                        if (isDigitInteger(Count_enter.getText().toString())) {
-                            pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
-                            pgH.setIndeterminate(true);
-                            pgH.setCancelable(false);
-                            pgH.show();
-                            sendRevision = new JSONObject();
-                            try {
-                                sendRevision.put("Assortiment", uid_save);
-                                sendRevision.put("Quantity", Count_enter.getText().toString());
-                                sendRevision.put("RevisionID", revisions);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
-                            }
-                            URL generateSaveLine = SaveRevisionLine(ip_, port_);
-                            new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
-                        }
-                    }
-                }else{
-                    if (IntegerSales.equals("true")) {
-                        if (isDigits(Count_enter.getText().toString())) {
-                            Intent intent = new Intent();
-                            intent.putExtra("Name", name_asl);
-                            intent.putExtra("count", String.valueOf(Count_enter.getText()));
-                            setResult(RESULT_OK, intent);
-                            finish();
-                        }
-                    } else {
-                        if (isDigitInteger(Count_enter.getText().toString())) {
-                            Intent intent = new Intent();
-                            intent.putExtra("Name", name_asl);
-                            intent.putExtra("count", String.valueOf(Count_enter.getText()));
-                            setResult(RESULT_OK, intent);
-                            finish();
-                        }
-                    }
-                }
+                saveCount(uid_save);
             }
         });
 
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent_cancel = new Intent();
-                setResult(RESULT_CANCELED, intent_cancel);
+                setResult(RESULT_CANCELED);
                 finish();
             }
         });
@@ -356,14 +187,15 @@ public class CountListOfAssortment extends AppCompatActivity {
         btn_plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (IntegerSales.equals("true")) {
-                    if (isDigits(Count_enter.getText().toString())) {
+                if (mIntegerSales) {
+                    if (isDouble(Count_enter.getText().toString())) {
                         Double curr = Double.valueOf(String.valueOf(Count_enter.getText()));
                         curr += 1;
                         Count_enter.setText(String.valueOf(curr));
                     }
-                } else {
-                    if (isDigitInteger(Count_enter.getText().toString())) {
+                }
+                else {
+                    if (isInteger(Count_enter.getText().toString())) {
                         Integer curr = Integer.valueOf(Count_enter.getText().toString());
                         curr += 1;
                         Count_enter.setText(String.valueOf(curr));
@@ -375,8 +207,8 @@ public class CountListOfAssortment extends AppCompatActivity {
         btn_del.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (IntegerSales.equals("true")) {
-                    if (isDigits(Count_enter.getText().toString())) {
+                if (mIntegerSales) {
+                    if (isDouble(Count_enter.getText().toString())) {
                         Double curr = Double.valueOf(String.valueOf(Count_enter.getText()));
                         if (curr - 1 <= 0) {
 
@@ -385,8 +217,9 @@ public class CountListOfAssortment extends AppCompatActivity {
                         }
                         Count_enter.setText(String.valueOf(curr));
                     }
-                } else {
-                    if (isDigitInteger(Count_enter.getText().toString())) {
+                }
+                else {
+                    if (isInteger(Count_enter.getText().toString())) {
                         Integer curr = Integer.valueOf(Count_enter.getText().toString());
                         if (curr - 1 <= 0) {
 
@@ -399,8 +232,72 @@ public class CountListOfAssortment extends AppCompatActivity {
             }
         });
     }
-
-    private boolean isDigits(String s) throws NumberFormatException {
+    private void saveCount(String uid_save){
+        Intent getIntetn = getIntent();
+        int type = getIntetn.getIntExtra("NonAutoCount_from_Inventory",777);
+        if(type== FROM_INVENTORY_ACTIVITY){
+            SharedPreferences Revision = getSharedPreferences("Revision", MODE_PRIVATE);
+            String revisions =Revision.getString("RevisionID","");
+            if (mIntegerSales) {
+                if (isDouble(Count_enter.getText().toString())) {
+                    pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
+                    pgH.setIndeterminate(true);
+                    pgH.setCancelable(false);
+                    pgH.show();
+                    sendRevision = new JSONObject();
+                    try {
+                        sendRevision.put("Assortiment", uid_save);
+                        sendRevision.put("Quantity", Count_enter.getText().toString());
+                        sendRevision.put("RevisionID", revisions);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
+                    }
+                    URL generateSaveLine = SaveRevisionLine(ip_, port_);
+                    new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
+                }
+            }
+            else {
+                if (isInteger(Count_enter.getText().toString())) {
+                    pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
+                    pgH.setIndeterminate(true);
+                    pgH.setCancelable(false);
+                    pgH.show();
+                    sendRevision = new JSONObject();
+                    try {
+                        sendRevision.put("Assortiment", uid_save);
+                        sendRevision.put("Quantity", Count_enter.getText().toString());
+                        sendRevision.put("RevisionID", revisions);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
+                    }
+                    URL generateSaveLine = SaveRevisionLine(ip_, port_);
+                    new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
+                }
+            }
+        }
+        else{
+            if (mIntegerSales) {
+                if (isDouble(Count_enter.getText().toString())) {
+                    Intent intent = new Intent();
+                    intent.putExtra("Name", name_asl);
+                    intent.putExtra("count", String.valueOf(Count_enter.getText()));
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+            } else {
+                if (isInteger(Count_enter.getText().toString())) {
+                    Intent intent = new Intent();
+                    intent.putExtra("Name", name_asl);
+                    intent.putExtra("count", String.valueOf(Count_enter.getText()));
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+            }
+        }
+    }
+    private boolean isDouble(String s) throws NumberFormatException {
         try {
             Double.parseDouble(s);
             return true;
@@ -410,8 +307,7 @@ public class CountListOfAssortment extends AppCompatActivity {
             return false;
         }
     }
-
-    private boolean isDigitInteger(String s) throws NumberFormatException {
+    private boolean isInteger(String s) throws NumberFormatException {
         try {
             Integer.parseInt(s);
             return true;
@@ -420,7 +316,6 @@ public class CountListOfAssortment extends AppCompatActivity {
             return false;
         }
     }
-
     public String getResponseFromURLSaveRevisionLineAdd(URL send_bills) throws IOException {
         String data = "";
         HttpURLConnection send_bill_Connection = null;
@@ -453,7 +348,6 @@ public class CountListOfAssortment extends AppCompatActivity {
         }
         return data;
     }
-
     public boolean dispatchTouchEvent(@NonNull MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
@@ -487,11 +381,11 @@ public class CountListOfAssortment extends AppCompatActivity {
             if (!response.equals("")) {
                 try {
                     JSONObject responseAssortiment = new JSONObject(response);
-                    Integer ErrorCode = responseAssortiment.getInt("ErrorCode");
+                    int ErrorCode = responseAssortiment.getInt("ErrorCode");
                     if (ErrorCode == 0) {
-                        Intent intent_cancel = new Intent();
-                        intent_cancel.putExtra("count", String.valueOf(Count_enter.getText()));
-                        setResult(RESULT_OK, intent_cancel);
+                        Intent intent = new Intent();
+                        intent.putExtra("count", String.valueOf(Count_enter.getText()));
+                        setResult(RESULT_OK, intent);
                         finish();
                     } else {
                         Intent intent_cancel = new Intent();

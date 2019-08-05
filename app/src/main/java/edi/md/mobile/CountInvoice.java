@@ -58,8 +58,6 @@ public class CountInvoice extends AppCompatActivity {
         etPriceSales.setText(Invoice.getStringExtra("Price"));
 
         SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
-        SharedPreferences AddedAssortment = getSharedPreferences("Invoice", MODE_PRIVATE);
-        final SharedPreferences.Editor inpASL = AddedAssortment.edit();
 
         etCant.requestFocus();
         boolean showKB = Sestting.getBoolean("ShowKeyBoard",false);
@@ -71,60 +69,8 @@ public class CountInvoice extends AppCompatActivity {
         etPriceSales.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if(etCant.getText().toString().equals("")) {
-                        Toast.makeText(CountInvoice.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-                    }else  if (etPriceInc.getText().toString().equals("")){
-                        Toast.makeText(CountInvoice.this, getResources().getString(R.string.msg_input_incoming_price_invoice), Toast.LENGTH_SHORT).show();
-                    }else{
-                        JSONObject asl = new JSONObject();
-                        try {
-                            asl.put("AssortimentName", Invoice.getStringExtra("mNameAssortment"));
-                            asl.put("AssortimentUid", Invoice.getStringExtra("ID"));
-                            asl.put("SalePrice", etPriceSales.getText().toString());
-                            if (etPriceInc.getText().toString().equals("")){
-                                asl.put("IncomePrice", "0");
-                            }
-                            else{
-                                asl.put("IncomePrice", etPriceInc.getText().toString());
-                            }
-                            asl.put("Suma", txtTotalinc.getText().toString());
-                            asl.put("Count", etCant.getText().toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(),CountInvoice.this);
-                        }
-                        inpASL.putString("AssortmentInvoiceAdded", asl.toString());
-                        inpASL.apply();
-                        Intent countInc = new Intent();
-                        setResult(RESULT_OK, countInc);
-                        finish();
-                    }
-                }else if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)){
-                    if(etCant.getText().toString().equals("")) {
-                        Toast.makeText(CountInvoice.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-                    }else  if (etPriceInc.getText().toString().equals("")){
-                        Toast.makeText(CountInvoice.this, getResources().getString(R.string.msg_input_incoming_price_invoice), Toast.LENGTH_SHORT).show();
-                    }else{
-                        JSONObject asl = new JSONObject();
-                        try {
-                            asl.put("AssortimentName", Invoice.getStringExtra("Name"));
-                            asl.put("AssortimentUid", Invoice.getStringExtra("ID"));
-                            asl.put("SalePrice", etPriceSales.getText().toString());
-                            asl.put("IncomePrice", etPriceInc.getText().toString());
-                            asl.put("Suma", txtTotalinc.getText().toString());
-                            asl.put("Count", etCant.getText().toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(),CountInvoice.this);
-                        }
-                        inpASL.putString("AssortmentInvoiceAdded", asl.toString());
-                        inpASL.apply();
-                        Intent countInc = new Intent();
-                        setResult(RESULT_OK, countInc);
-                        finish();
-                    }
-                }
+                if (actionId == EditorInfo.IME_ACTION_DONE) saveCount(Invoice.getStringExtra("Name"),Invoice.getStringExtra("ID"));
+                else if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) saveCount(Invoice.getStringExtra("Name"),Invoice.getStringExtra("ID"));
                 return false;
             }
         });
@@ -168,7 +114,6 @@ public class CountInvoice extends AppCompatActivity {
 
             }
         });
-
         etPriceInc.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -208,7 +153,6 @@ public class CountInvoice extends AppCompatActivity {
 
             }
         });
-
         etPriceSales.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -254,37 +198,14 @@ public class CountInvoice extends AppCompatActivity {
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent countInc = new Intent();
-                setResult(RESULT_CANCELED,countInc);
+                setResult(RESULT_CANCELED);
                 finish();
             }
         });
         btn_accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(etCant.getText().toString().equals("")) {
-                    Toast.makeText(CountInvoice.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-                }else  if (etPriceInc.getText().toString().equals("")){
-                    Toast.makeText(CountInvoice.this, getResources().getString(R.string.msg_input_incoming_price_invoice), Toast.LENGTH_SHORT).show();
-                }else{
-                    JSONObject asl = new JSONObject();
-                    try {
-                        asl.put("AssortimentName", Invoice.getStringExtra("Name"));
-                        asl.put("AssortimentUid", Invoice.getStringExtra("ID"));
-                        asl.put("SalePrice", etPriceSales.getText().toString());
-                        asl.put("IncomePrice", etPriceInc.getText().toString());
-                        asl.put("Suma", txtTotalinc.getText().toString());
-                        asl.put("Count", etCant.getText().toString());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(),CountInvoice.this);
-                    }
-                    inpASL.putString("AssortmentInvoiceAdded", asl.toString());
-                    inpASL.apply();
-                    Intent countInc = new Intent();
-                    setResult(RESULT_OK, countInc);
-                    finish();
-                }
+                saveCount(Invoice.getStringExtra("Name"),Invoice.getStringExtra("ID"));
             }
         });
     }
@@ -301,5 +222,29 @@ public class CountInvoice extends AppCompatActivity {
         }
 
         return super.dispatchTouchEvent(event);
+    }
+    private void saveCount(String name,String id){
+        if(etCant.getText().toString().equals("")) {
+            Toast.makeText(CountInvoice.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
+        }else  if (etPriceInc.getText().toString().equals("")){
+            Toast.makeText(CountInvoice.this, getResources().getString(R.string.msg_input_incoming_price_invoice), Toast.LENGTH_SHORT).show();
+        }else{
+            JSONObject asl = new JSONObject();
+            try {
+                asl.put("AssortimentName", name);
+                asl.put("AssortimentUid", id);
+                asl.put("SalePrice", etPriceSales.getText().toString());
+                asl.put("IncomeSum", etPriceInc.getText().toString());
+                asl.put("Suma", txtTotalinc.getText().toString());
+                asl.put("Count", etCant.getText().toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+                ((Variables)getApplication()).appendLog(e.getMessage(),CountInvoice.this);
+            }
+            Intent intent = new Intent();
+            intent.putExtra("AssortmentInvoiceAdded", asl.toString());
+            setResult(RESULT_OK, intent);
+            finish();
+        }
     }
 }

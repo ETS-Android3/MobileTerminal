@@ -286,7 +286,7 @@
     <Button
         android:id="@+id/btn_change_stock_sales"
         android:layout_width="0dp"
-        android:layout_height="35dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
         android:layout_marginLeft="2dp"
         android:layout_marginEnd="2dp"
@@ -296,7 +296,7 @@
         android:text="@string/txt_depozit_nedeterminat"
         android:textAllCaps="false"
         android:textColor="@android:color/background_light"
-        android:textSize="24sp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/btn_ok_sales"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

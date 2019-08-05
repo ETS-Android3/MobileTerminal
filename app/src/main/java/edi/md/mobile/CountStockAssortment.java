@@ -35,18 +35,15 @@ public class CountStockAssortment extends AppCompatActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id){
-            case android.R.id.home : {
-                Activity activity=CountStockAssortment.this;
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                View view = activity.getCurrentFocus();
-                //If no view currently has focus, create a new one, just so we can grab a window token from it
-                if (view == null) {
-                    view = new View(activity);
-                }
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                finish();
-            }break;
+        if (id == android.R.id.home) {
+            Activity activity = CountStockAssortment.this;
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            View view = activity.getCurrentFocus();
+            if (view == null) {
+                view = new View(activity);
+            }
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -82,6 +79,7 @@ public class CountStockAssortment extends AppCompatActivity {
         txt_articul.setText(sales.getStringExtra("Marking"));
         txt_stoc.setText(sales.getStringExtra("Remain"));
         txt_price.setText(sales.getStringExtra("Price"));
+
         Unit = sales.getStringExtra("Unit");
         UnitInPackage  = sales.getStringExtra("UnitInPackage");
         UnitPrice  = sales.getStringExtra("UnitPrice");
@@ -90,8 +88,6 @@ public class CountStockAssortment extends AppCompatActivity {
         et_count.requestFocus();
 
         SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
-        SharedPreferences AddedAssortment = getSharedPreferences("StockAssortment", MODE_PRIVATE);
-        final SharedPreferences.Editor inpASL = AddedAssortment.edit();
 
         boolean ShowCode = Sestting.getBoolean("ShowCode", false);
         boolean showKB = Sestting.getBoolean("ShowKeyBoard",false);
@@ -105,61 +101,9 @@ public class CountStockAssortment extends AppCompatActivity {
 
         et_count.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction(TextView v, int keyCode,
-                                          KeyEvent event) {
-                if (keyCode == EditorInfo.IME_ACTION_DONE) {
-                    if (!et_count.getText().toString().equals("")) {
-                        JSONObject asl = new JSONObject();
-                        try {
-                            asl.put("AssortimentName", sales.getStringExtra("Name"));
-                            asl.put("AssortimentUid", Uid);
-                            asl.put("Barcode",sales.getStringExtra("BarCode"));
-                            asl.put("Price",sales.getStringExtra("Price"));
-                            asl.put("Unit",Unit);
-                            asl.put("Code",sales.getStringExtra("Code"));
-                            asl.put("UnitInPackage",UnitInPackage);
-                            asl.put("UnitPrice",UnitPrice);
-                            asl.put("Count", et_count.getText().toString());
-                        } catch (JSONException e) {
-                            ((Variables)getApplication()).appendLog(e.getMessage(),CountStockAssortment.this);
-                            e.printStackTrace();
-                        }
-                        Intent added = new Intent();
-                        inpASL.putString("AssortmentStockAdded", asl.toString());
-                        inpASL.apply();
-                        setResult(RESULT_OK, added);
-                        finish();
-                    }else{
-                        Toast.makeText(CountStockAssortment.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-                        et_count.requestFocus();
-                    }
-                }else if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER) {
-                    if (!et_count.getText().toString().equals("")) {
-                        JSONObject asl = new JSONObject();
-                        try {
-                            asl.put("AssortimentName", sales.getStringExtra("Name"));
-                            asl.put("AssortimentUid", Uid);
-                            asl.put("Barcode",sales.getStringExtra("BarCode"));
-                            asl.put("Price",sales.getStringExtra("Price"));
-                            asl.put("Unit",Unit);
-                            asl.put("Code",sales.getStringExtra("Code"));
-                            asl.put("UnitInPackage",UnitInPackage);
-                            asl.put("UnitPrice",UnitPrice);
-                            asl.put("Count", et_count.getText().toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(),CountStockAssortment.this);
-                        }
-                        Intent added = new Intent();
-                        inpASL.putString("AssortmentStockAdded", asl.toString());
-                        inpASL.apply();
-                        setResult(RESULT_OK, added);
-                        finish();
-                    }else{
-                        Toast.makeText(CountStockAssortment.this,getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-                        et_count.requestFocus();
-                    }
-                }
+            public boolean onEditorAction(TextView v, int keyCode, KeyEvent event) {
+                if (keyCode == EditorInfo.IME_ACTION_DONE) saveCount(sales.getStringExtra("Name"),sales.getStringExtra("Code"),sales.getStringExtra("Price"),sales.getStringExtra("BarCode"));
+                else if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER) saveCount(sales.getStringExtra("Name"),sales.getStringExtra("Code"),sales.getStringExtra("Price"),sales.getStringExtra("BarCode"));
                 return false;
             }
         });
@@ -167,10 +111,7 @@ public class CountStockAssortment extends AppCompatActivity {
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                inpASL.putString("AssortmentStockAdded","{}");
-                inpASL.apply();
-                Intent finIntent = new Intent();
-                setResult(RESULT_CANCELED,finIntent);
+                setResult(RESULT_CANCELED);
                 finish();
             }
         });
@@ -178,31 +119,7 @@ public class CountStockAssortment extends AppCompatActivity {
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(adauga_Count && !et_count.getText().toString().equals("")) {
-                    JSONObject asl = new JSONObject();
-                    try {
-                        asl.put("AssortimentName", sales.getStringExtra("Name"));
-                        asl.put("AssortimentUid", Uid);
-                        asl.put("Barcode",sales.getStringExtra("BarCode"));
-                        asl.put("Price",sales.getStringExtra("Price"));
-                        asl.put("Unit",Unit);
-                        asl.put("Code",sales.getStringExtra("Code"));
-                        asl.put("UnitInPackage",UnitInPackage);
-                        asl.put("UnitPrice",UnitPrice);
-                        asl.put("Count", et_count.getText().toString());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(),CountStockAssortment.this);
-                    }
-                    Intent added = new Intent();
-                    inpASL.putString("AssortmentStockAdded", asl.toString());
-                    inpASL.apply();
-                    setResult(RESULT_OK, added);
-                    finish();
-                }else {
-                    Toast.makeText(CountStockAssortment.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-                    et_count.requestFocus();
-                }
+                saveCount(sales.getStringExtra("Name"),sales.getStringExtra("Code"),sales.getStringExtra("Price"),sales.getStringExtra("BarCode"));
             }
         });
 
@@ -234,7 +151,6 @@ public class CountStockAssortment extends AppCompatActivity {
             }
         });
     }
-
     @Override
     public boolean dispatchTouchEvent(@NonNull MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -248,5 +164,31 @@ public class CountStockAssortment extends AppCompatActivity {
         }
 
         return super.dispatchTouchEvent(event);
+    }
+    private void saveCount(String name,String code,String price,String barcode){
+        if(adauga_Count && !et_count.getText().toString().equals("")) {
+            JSONObject asl = new JSONObject();
+            try {
+                asl.put("AssortimentName", name);
+                asl.put("AssortimentUid", Uid);
+                asl.put("Barcode",barcode);
+                asl.put("Price",price);
+                asl.put("Unit",Unit);
+                asl.put("Code",code);
+                asl.put("UnitInPackage",UnitInPackage);
+                asl.put("UnitPrice",UnitPrice);
+                asl.put("Count", et_count.getText().toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+                ((Variables)getApplication()).appendLog(e.getMessage(),CountStockAssortment.this);
+            }
+            Intent stock_asl = new Intent();
+            stock_asl.putExtra("AssortmentStockAdded", asl.toString());
+            setResult(RESULT_OK, stock_asl);
+            finish();
+        }else {
+            Toast.makeText(CountStockAssortment.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
+            et_count.requestFocus();
+        }
     }
 }

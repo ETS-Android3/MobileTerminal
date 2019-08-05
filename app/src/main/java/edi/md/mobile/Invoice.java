@@ -35,7 +35,6 @@ import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,7 +48,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -82,7 +80,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
     JSONArray json_array;
     final boolean[] show_keyboard = {false};
     
-    int REQUET_FROM_LIST_ASSORTMENT = 220;
+    int REQUET_FROM_LIST_ASSORTMENT = 220,REQUEST_FROM_COUNT = 15;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +168,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
             }
         });
         AlertDialog dialog = input.create();
+
         boolean showKB = Settings.getBoolean("ShowKeyBoard",false);
         if (showKB){
             dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -184,46 +183,12 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
 
         txt_input_barcode.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId,
-                                          KeyEvent event) {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        txt_input_barcode.requestFocus();
-                        pgBar.setVisibility(ProgressBar.VISIBLE);
-                        show_keyboard[0] = false;
-                        sendAssortiment = new JSONObject();
-                        try {
-                            sendAssortiment.put("AssortmentIdentifier", txt_input_barcode.getText().toString());
-                            sendAssortiment.put("UserID", UserId);
-                            sendAssortiment.put("WarehouseID", WareUid);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(),Invoice.this);
-                        }
-                        barcode_introdus = txt_input_barcode.getText().toString();
-                        txt_input_barcode.setText("");
-                        URL getASL = GetAssortiment(ip_, port_);
-                        new AsyncTask_GetAssortiment().execute(getASL);
+                    getAssortiment();
                 }
                 else if(event.getKeyCode()==KeyEvent.KEYCODE_ENTER){
-                    txt_input_barcode.requestFocus();
-                    if (!txt_input_barcode.getText().toString().equals("")) {
-                            txt_input_barcode.requestFocus();
-                            pgBar.setVisibility(ProgressBar.VISIBLE);
-                            show_keyboard[0] = false;
-                            sendAssortiment = new JSONObject();
-                            try {
-                                sendAssortiment.put("AssortmentIdentifier", txt_input_barcode.getText().toString());
-                                sendAssortiment.put("UserID", UserId);
-                                sendAssortiment.put("WarehouseID", WareUid);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                ((Variables)getApplication()).appendLog(e.getMessage(),Invoice.this);
-                            }
-                            barcode_introdus = txt_input_barcode.getText().toString();
-                            txt_input_barcode.setText("");
-                            URL getASL = GetAssortiment(ip_, port_);
-                            new AsyncTask_GetAssortiment().execute(getASL);
-                    }
+                    getAssortiment();
                 }
                 return false;
             }
@@ -231,28 +196,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(json_array.length()==0){
-                    finish();
-                }
-                else{
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(Invoice.this);
-                    dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                    dialog.setCancelable(false);
-                    dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
-                    dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    });
-                    dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    dialog.show();
-                }
+                exitDialog();
             }
         });
         btn_write_barcode.setOnClickListener(new View.OnClickListener() {
@@ -354,7 +298,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                                 }
                             }
                             asl_list.clear();
-                            initList_asl();
+                            showAssortment();
                         }
 
                     } catch (JSONException e) {
@@ -366,9 +310,28 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
         });
 
     }
-
+    private void getAssortiment(){
+        txt_input_barcode.requestFocus();
+        if (!txt_input_barcode.getText().toString().equals("")) {
+            txt_input_barcode.requestFocus();
+            pgBar.setVisibility(ProgressBar.VISIBLE);
+            show_keyboard[0] = false;
+            sendAssortiment = new JSONObject();
+            try {
+                sendAssortiment.put("AssortmentIdentifier", txt_input_barcode.getText().toString());
+                sendAssortiment.put("UserID", UserId);
+                sendAssortiment.put("WarehouseID", WareUid);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                ((Variables)getApplication()).appendLog(e.getMessage(),Invoice.this);
+            }
+            barcode_introdus = txt_input_barcode.getText().toString();
+            txt_input_barcode.setText("");
+            URL getASL = GetAssortiment(ip_, port_);
+            new AsyncTask_GetAssortiment().execute(getASL);
+        }
+    }
     public void show_WareHouse(){
-        //adapter = new ArrayAdapter<>(Sales.this,android.R.layout.simple_list_item_1, stock_List_array);
         SimpleAdapter simpleAdapterType = new SimpleAdapter(Invoice.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
         builderType = new AlertDialog.Builder(Invoice.this);
         builderType.setTitle(getResources().getString(R.string.txt_header_msg_list_depozitelor));
@@ -404,7 +367,6 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
         builderType.show();
     }
     public void show_WareHouseChange(){
-        //adapter = new ArrayAdapter<>(Sales.this,android.R.layout.simple_list_item_1, stock_List_array);
         SimpleAdapter simpleAdapterType = new SimpleAdapter(Invoice.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
         builderType = new AlertDialog.Builder(Invoice.this);
         builderType.setTitle(getResources().getString(R.string.txt_header_msg_list_depozitelor));
@@ -453,30 +415,32 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if(json_array.length()==0){
-                finish();
-            }else{
-                AlertDialog.Builder dialog = new AlertDialog.Builder(Invoice.this);
-                dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                dialog.setCancelable(false);
-                dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
-                dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-                dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-            }
+            exitDialog();
         }
     }
-
+    private void exitDialog(){
+        if(json_array.length()==0){
+            finish();
+        }else{
+            AlertDialog.Builder dialog = new AlertDialog.Builder(Invoice.this);
+            dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+            dialog.setCancelable(false);
+            dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
+            dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menus) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -484,43 +448,19 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
         this.menu = menus;
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
         if (id == R.id.action_close_invoice) {
-            if(json_array.length()==0){
-                finish();
-            }else{
-                AlertDialog.Builder dialog = new AlertDialog.Builder(Invoice.this);
-                dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                dialog.setCancelable(false);
-                dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
-                dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-                dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-            }
+            exitDialog();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.menu_conect) {
@@ -542,27 +482,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
             Intent MenuConnect = new Intent(".MenuAbout");
             startActivity(MenuConnect);
         } else if (id == R.id.menu_exit) {
-            if(json_array.length()==0){
-                finish();
-            }else{
-                AlertDialog.Builder dialog = new AlertDialog.Builder(Invoice.this);
-                dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                dialog.setCancelable(false);
-                dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
-                dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-                dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-            }
+            exitDialog();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout_invoice);
@@ -585,7 +505,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
         };
 
     }
-    public void initList_asl(){
+    public void showAssortment(){
         double sumTotal=0.0;
         try {
             for (int i=0;i<json_array.length();i++){
@@ -646,10 +566,9 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
         }
         return data.toString();
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode==15) {
+        if (requestCode==REQUEST_FROM_COUNT) {
             if (resultCode == RESULT_CANCELED) {
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
@@ -657,8 +576,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
                 asl_list.clear();
-                SharedPreferences sPref_saveASL = getSharedPreferences("Invoice", MODE_PRIVATE);
-                String response = sPref_saveASL.getString("AssortmentInvoiceAdded", "{}");
+                String response = data.getStringExtra("AssortmentInvoiceAdded");
                 try {
                     JSONObject json = new JSONObject(response);
                     String UidAsl = json.getString("AssortimentUid");
@@ -686,7 +604,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                         json_array.put(json);
                     }
                     asl_list.clear();
-                    initList_asl();
+                    showAssortment();
                 } catch (JSONException e) {
                     e.printStackTrace();
                     ((Variables)getApplication()).appendLog(e.getMessage(), Invoice.this);
@@ -732,7 +650,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                         }
                     }
                     asl_list.clear();
-                    initList_asl();
+                    showAssortment();
                 } catch (JSONException e) {
                     e.printStackTrace();
                     ((Variables)getApplication()).appendLog(e.getMessage(), Invoice.this);
@@ -789,7 +707,6 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
         }
         return super.onKeyDown(keyCode, event);
     }
-
     public String getResponse_from_GetAssortiment(URL send_bills) {
         String data = "";
         HttpURLConnection send_bill_Connection = null;
@@ -1036,7 +953,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                         sales.putExtra("Name", Names);
                         sales.putExtra("PriceIncoming", PriceIncoming);
                         sales.putExtra("ID", Uid);
-                        startActivityForResult(sales, 15);
+                        startActivityForResult(sales, REQUEST_FROM_COUNT);
                     } else {
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
                         txtBarcode_introdus.setText(barcode_introdus + " - "+ getResources().getString(R.string.txt_depozit_nedeterminat));
