@@ -45,6 +45,7 @@
         android:layout_height="62dp"
         android:layout_marginTop="8dp"
         android:inputType="numberDecimal"
+        android:maxLength="6"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:text="1"

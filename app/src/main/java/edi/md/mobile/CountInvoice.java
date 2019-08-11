@@ -247,4 +247,58 @@ public class CountInvoice extends AppCompatActivity {
             finish();
         }
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        switch (event.getAction()){
+            case KeyEvent.ACTION_DOWN :{
+                etCant.requestFocus();
+                switch (event.getKeyCode()) {
+                    case KeyEvent.KEYCODE_1 : {
+                        etCant.append("1");
+                    }break;
+                    case KeyEvent.KEYCODE_2 : {
+                        etCant.append("2");
+                    }break;
+                    case KeyEvent.KEYCODE_3 : {
+                        etCant.append("3");
+                    }break;
+                    case KeyEvent.KEYCODE_4 : {
+                        etCant.append("4");
+                    }break;
+                    case KeyEvent.KEYCODE_5 : {
+                        etCant.append("5");
+                    }break;
+                    case KeyEvent.KEYCODE_6 : {
+                        etCant.append("6");
+                    }break;
+                    case KeyEvent.KEYCODE_7 : {
+                        etCant.append("7");
+                    }break;
+                    case KeyEvent.KEYCODE_8 : {
+                        etCant.append("8");
+                    }break;
+                    case KeyEvent.KEYCODE_9 : {
+                        etCant.append("9");
+                    }break;
+                    case KeyEvent.KEYCODE_0 : {
+                        etCant.append("0");
+                    }break;
+                    case KeyEvent.KEYCODE_STAR : {
+                        etCant.append(".");
+                    }break;
+                    case KeyEvent.KEYCODE_DEL : {
+                        String test = etCant.getText().toString();
+                        if(!etCant.getText().toString().equals("")) {
+                            etCant.setText(test.substring(0, test.length() - 1));
+                            etCant.requestFocus();
+                        }
+                    }break;
+                    default:break;
+                }
+            }break;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }

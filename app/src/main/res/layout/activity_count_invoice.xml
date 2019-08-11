@@ -36,7 +36,7 @@
         android:ems="10"
         android:gravity="end"
         android:inputType="numberDecimal"
-        android:maxLength="4"
+        android:maxLength="6"
         android:paddingRight="8dp"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"

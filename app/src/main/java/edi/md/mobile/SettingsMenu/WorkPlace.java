@@ -179,7 +179,10 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                 txtFolders.setText("");
                 SharedPreferences SaveFolders =getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
                 SharedPreferences.Editor test = SaveFolders.edit();
-                test.putString("boolean_Array", "[]");//boolJSON
+                test.putString("b" +
+                        "" +
+                        "" +
+                        "oolean_Array", "[]");//boolJSON
                 test.putString("selected_Uid_Array","[]");//selectedUidJSON
                 test.putString("selected_Name_Array", "[]");//selectedJSON
                 test.apply();
@@ -188,120 +191,129 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         btn_add_folder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int mas=0;
-                Variables myapp =(Variables)getApplication();
-                asl_list =myapp.get_AssortimentFolders();
-                mas=asl_list.size();
-                kit_lists=new String[mas];
-                checkedItems = new boolean[mas];
-                for (int i=0;i<mas;i++){
-                    checkedItems[i]=false;
-                    kit_lists[i]=(String)asl_list.get(i).get("Name");
-                }
-                if(asl_list.size()>0){
-                    SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
-                    AlertDialog.Builder builder = new AlertDialog.Builder(WorkPlace.this);
-                    builder.setTitle("Choose items");
-                    String selected = CheckUidFolder.getString("selected_Name_Array","[]");
-                    String bolrns = CheckUidFolder.getString("boolean_Array","[]");
-                    String selectedUidJSON = CheckUidFolder.getString("selected_Uid_Array","[]");
+                boolean dwnlASL =((Variables)getApplication()).getDownloadASLVariable();
+                if(dwnlASL){
+                    int mas=0;
+                    Variables myapp =(Variables)getApplication();
+                    asl_list =myapp.get_AssortimentFolders();
+                    mas=asl_list.size();
+                    kit_lists=new String[mas];
+                    checkedItems = new boolean[mas];
+                    for (int i=0;i<mas;i++){
+                        checkedItems[i]=false;
+                        kit_lists[i]=(String)asl_list.get(i).get("Name");
+                    }
+                    if(asl_list.size()>0){
+                        SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(WorkPlace.this);
+                        builder.setTitle("Choose items");
+                        String selected = CheckUidFolder.getString("selected_Name_Array","[]");
+                        String bolrns = CheckUidFolder.getString("boolean_Array","[]");
+                        String selectedUidJSON = CheckUidFolder.getString("selected_Uid_Array","[]");
 
-                    try {
-                        myJSONArrayBool = new JSONArray(bolrns);
-                        myJSONArray = new JSONArray(selected);
-                        myJSONArrayUid = new JSONArray(selectedUidJSON);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if(!bolrns.equals("[]")) {
-                        checkedItems = new boolean[myJSONArrayBool.length()];
-                        for (int o = 0; o < myJSONArrayBool.length(); o++) {
-                            try {
-                                checkedItems[o] = myJSONArrayBool.getBoolean(o);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                        try {
+                            myJSONArrayBool = new JSONArray(bolrns);
+                            myJSONArray = new JSONArray(selected);
+                            myJSONArrayUid = new JSONArray(selectedUidJSON);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    }
-                    builder.setMultiChoiceItems(kit_lists,checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                            String name_asl = (String)asl_list.get(which).get("Name");
-                            String uid_asl =  (String)asl_list.get(which).get("ID");
-                            if(isChecked){
-                                myJSONArray.put(name_asl);
-                                myJSONArrayUid.put(uid_asl);
-                            }else{
-                                for (int i=0;i<myJSONArray.length();i++){
-                                    try {
-                                        String namesArray = myJSONArray.getString(i);
-                                        if(namesArray.equals(name_asl)){
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                                myJSONArray.remove(i);
-                                            }
-                                        }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                for (int i=0;i<myJSONArrayUid.length();i++){
-                                    try {
-                                        String uid_aslArray = myJSONArrayUid.getString(i);
-                                        if(uid_aslArray.equals(uid_asl)){
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                                myJSONArrayUid.remove(i);
-                                            }
-                                        }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        }
-                    });
-                    builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            txtFolders.setText("");
-                            for(int i=0; i<myJSONArray.length();i++){
-                                if (i!=0){
-                                    txtFolders.append(",");
-                                }
+                        if(!bolrns.equals("[]")) {
+                            checkedItems = new boolean[myJSONArrayBool.length()];
+                            for (int o = 0; o < myJSONArrayBool.length(); o++) {
                                 try {
-                                    txtFolders.append(myJSONArray.getString(i));
+                                    checkedItems[o] = myJSONArrayBool.getBoolean(o);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                             }
-                            SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
-                            SharedPreferences.Editor test = CheckUidFolder.edit();
-                            JSONArray booleab = new JSONArray();
-                            for (boolean checkedItem : checkedItems) {
-                                booleab.put(checkedItem);
+                        }
+                        builder.setMultiChoiceItems(kit_lists,checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                                String name_asl = (String)asl_list.get(which).get("Name");
+                                String uid_asl =  (String)asl_list.get(which).get("ID");
+                                if(isChecked){
+                                    myJSONArray.put(name_asl);
+                                    myJSONArrayUid.put(uid_asl);
+                                }else{
+                                    for (int i=0;i<myJSONArray.length();i++){
+                                        try {
+                                            String namesArray = myJSONArray.getString(i);
+                                            if(namesArray.equals(name_asl)){
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                                    myJSONArray.remove(i);
+                                                }
+                                            }
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    for (int i=0;i<myJSONArrayUid.length();i++){
+                                        try {
+                                            String uid_aslArray = myJSONArrayUid.getString(i);
+                                            if(uid_aslArray.equals(uid_asl)){
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                                    myJSONArrayUid.remove(i);
+                                                }
+                                            }
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
                             }
-                            test.putString("boolean_Array", booleab.toString());
-                            test.putString("selected_Uid_Array", myJSONArrayUid.toString());
-                            test.putString("selected_Name_Array", myJSONArray.toString());
-                            test.apply();
-                            dialog.dismiss();
-                        }
-                    });
+                        });
+                        builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                txtFolders.setText("");
+                                for(int i=0; i<myJSONArray.length();i++){
+                                    if (i!=0){
+                                        txtFolders.append(",");
+                                    }
+                                    try {
+                                        txtFolders.append(myJSONArray.getString(i));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
+                                SharedPreferences.Editor test = CheckUidFolder.edit();
+                                JSONArray booleab = new JSONArray();
+                                for (boolean checkedItem : checkedItems) {
+                                    booleab.put(checkedItem);
+                                }
+                                test.putString("boolean_Array", booleab.toString());
+                                test.putString("selected_Uid_Array", myJSONArrayUid.toString());
+                                test.putString("selected_Name_Array", myJSONArray.toString());
+                                test.apply();
+                                dialog.dismiss();
+                            }
+                        });
 
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
                 }else{
-                    AlertDialog.Builder failureAsl = new AlertDialog.Builder(WorkPlace.this);
-                    failureAsl.setCancelable(false);
-                    failureAsl.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                    failureAsl.setMessage(getResources().getString(R.string.assortment_possible_not_download));
-                    failureAsl.setPositiveButton(getResources().getString(R.string.txt_accept_all), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    });
-                    failureAsl.show();
+                    DownloadASL();
                 }
+//
+//
+//
+//                if{
+//                    AlertDialog.Builder failureAsl = new AlertDialog.Builder(WorkPlace.this);
+//                    failureAsl.setCancelable(false);
+//                    failureAsl.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+//                    failureAsl.setMessage(getResources().getString(R.string.assortment_possible_not_download));
+//                    failureAsl.setPositiveButton(getResources().getString(R.string.txt_accept_all), new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialogInterface, int i) {
+//                            dialogInterface.dismiss();
+//                        }
+//                    });
+//                    failureAsl.show();
+//                }
 
             }
         });
@@ -379,6 +391,108 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                     if (msg.arg1 == 12) {
                         pgH.dismiss();
                         ((Variables)getApplication()).setDownloadASLVariable(true);
+                        int mas=0;
+                        Variables myapp =(Variables)getApplication();
+                        asl_list =myapp.get_AssortimentFolders();
+                        mas=asl_list.size();
+                        kit_lists=new String[mas];
+                        checkedItems = new boolean[mas];
+                        for (int i=0;i<mas;i++){
+                            checkedItems[i]=false;
+                            kit_lists[i]=(String)asl_list.get(i).get("Name");
+                        }
+                        if(asl_list.size()>0){
+                            SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(WorkPlace.this);
+                            builder.setTitle("Choose items");
+                            String selected = CheckUidFolder.getString("selected_Name_Array","[]");
+                            String bolrns = CheckUidFolder.getString("boolean_Array","[]");
+                            String selectedUidJSON = CheckUidFolder.getString("selected_Uid_Array","[]");
+
+                            try {
+                                myJSONArrayBool = new JSONArray(bolrns);
+                                myJSONArray = new JSONArray(selected);
+                                myJSONArrayUid = new JSONArray(selectedUidJSON);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            if(!bolrns.equals("[]")) {
+                                checkedItems = new boolean[myJSONArrayBool.length()];
+                                for (int o = 0; o < myJSONArrayBool.length(); o++) {
+                                    try {
+                                        checkedItems[o] = myJSONArrayBool.getBoolean(o);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                            builder.setMultiChoiceItems(kit_lists,checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                                    String name_asl = (String)asl_list.get(which).get("Name");
+                                    String uid_asl =  (String)asl_list.get(which).get("ID");
+                                    if(isChecked){
+                                        myJSONArray.put(name_asl);
+                                        myJSONArrayUid.put(uid_asl);
+                                    }else{
+                                        for (int i=0;i<myJSONArray.length();i++){
+                                            try {
+                                                String namesArray = myJSONArray.getString(i);
+                                                if(namesArray.equals(name_asl)){
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                                        myJSONArray.remove(i);
+                                                    }
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                        for (int i=0;i<myJSONArrayUid.length();i++){
+                                            try {
+                                                String uid_aslArray = myJSONArrayUid.getString(i);
+                                                if(uid_aslArray.equals(uid_asl)){
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                                        myJSONArrayUid.remove(i);
+                                                    }
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                            builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    txtFolders.setText("");
+                                    for(int i=0; i<myJSONArray.length();i++){
+                                        if (i!=0){
+                                            txtFolders.append(",");
+                                        }
+                                        try {
+                                            txtFolders.append(myJSONArray.getString(i));
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
+                                    SharedPreferences.Editor test = CheckUidFolder.edit();
+                                    JSONArray booleab = new JSONArray();
+                                    for (boolean checkedItem : checkedItems) {
+                                        booleab.put(checkedItem);
+                                    }
+                                    test.putString("boolean_Array", booleab.toString());
+                                    test.putString("selected_Uid_Array", myJSONArrayUid.toString());
+                                    test.putString("selected_Name_Array", myJSONArray.toString());
+                                    test.apply();
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+                        }
                     }
                 }else{
                     String t = msg.obj.toString();
@@ -481,8 +595,8 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
             startActivity(MenuConnect);
             finish();
         } else if (id == R.id.menu_exit) {
-            SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
-            WorkPlace.edit().clear().apply();
+//            SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
+//            WorkPlace.edit().clear().apply();
             finishAffinity();
         }
 
@@ -518,8 +632,6 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
 
                 btn_get_workplace.setText(WareName);
                 stock_List_array.clear();
-
-                DownloadASL();
             }
         });
         builderType.setCancelable(false);

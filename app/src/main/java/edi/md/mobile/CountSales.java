@@ -32,7 +32,7 @@ public class CountSales extends AppCompatActivity {
     TextView txt_barcode,txt_code,txt_articul,txt_stoc,txt_price,txt_name;
     TextView et_count;
     Button btn_add, btn_cancel;
-    Boolean adauga_Count=false;
+    Boolean adauga_Count=false,mAllowNotIntegerSales;
     String mName,mPrice,mID;
 
     @Override
@@ -83,6 +83,7 @@ public class CountSales extends AppCompatActivity {
 
         String mMarking = sales.getStringExtra("Marking");
         String mCode = sales.getStringExtra("Code");
+        mAllowNotIntegerSales = sales.getBooleanExtra("AllowNonInteger",false);
 
         if(mMarking.equals("null") || mMarking == null){
             txt_articul.setText("-");
@@ -143,7 +144,11 @@ public class CountSales extends AppCompatActivity {
                         if (et_count.getText().toString().equals("")) {
                             input = 0.0;
                         } else {
-                            input = Double.valueOf(et_count.getText().toString());
+                            try{
+                                input = Double.valueOf(et_count.getText().toString());
+                            }catch (Exception e){
+                                input = Double.valueOf(et_count.getText().toString().replace(".",","));
+                            }
                         }
                         Double Stock = Double.valueOf(sales.getStringExtra("Remain"));
                         if (input > Stock) {
@@ -221,6 +226,9 @@ public class CountSales extends AppCompatActivity {
                     case KeyEvent.KEYCODE_0 : {
                         et_count.append("0");
                     }break;
+                    case KeyEvent.KEYCODE_STAR : {
+                        et_count.append(".");
+                    }break;
                     case KeyEvent.KEYCODE_DEL : {
                         String test = et_count.getText().toString();
                         if(!et_count.getText().toString().equals("")) {
@@ -254,23 +262,66 @@ public class CountSales extends AppCompatActivity {
     }
     private void saveCountSales(){
         if (!et_count.getText().toString().equals("")) {
-            JSONObject asl = new JSONObject();
-            try {
-                asl.put("AssortimentName", mName);
-                asl.put("AssortimentUid",mID);
-                asl.put("Count", et_count.getText().toString());
-                asl.put("Price", mPrice);
-            } catch (JSONException e) {
-                ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
-                e.printStackTrace();
+            if(!mAllowNotIntegerSales){
+                if (isInteger(et_count.getText().toString())) {
+                    JSONObject asl = new JSONObject();
+                    try {
+                        asl.put("AssortimentName", mName);
+                        asl.put("AssortimentUid",mID);
+                        asl.put("Count", et_count.getText().toString());
+                        asl.put("Price", mPrice);
+                    } catch (JSONException e) {
+                        ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
+                        e.printStackTrace();
+                    }
+                    Intent sales = new Intent();
+                    sales.putExtra("AssortmentSalesAdded", asl.toString());
+                    setResult(RESULT_OK, sales);
+                    finish();
+                }else{
+                    et_count.setError(getResources().getString(R.string.sales_count_only_integer));
+                    et_count.requestFocus();
+                }
+            }else{
+                JSONObject asl = new JSONObject();
+                try {
+                    asl.put("AssortimentName", mName);
+                    asl.put("AssortimentUid",mID);
+                    asl.put("Count", et_count.getText().toString());
+                    asl.put("Price", mPrice);
+                } catch (JSONException e) {
+                    ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
+                    e.printStackTrace();
+                }
+                Intent sales = new Intent();
+                sales.putExtra("AssortmentSalesAdded", asl.toString());
+                setResult(RESULT_OK, sales);
+                finish();
             }
-            Intent sales = new Intent();
-            sales.putExtra("AssortmentSalesAdded", asl.toString());
-            setResult(RESULT_OK, sales);
-            finish();
+
         }else{
             Toast.makeText(CountSales.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
             et_count.requestFocus();
+        }
+    }
+
+    private boolean isDouble(String s) throws NumberFormatException {
+        try {
+            Double.parseDouble(s);
+            return true;
+        } catch (NumberFormatException e) {
+
+            ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
+            return false;
+        }
+    }
+    private boolean isInteger(String s) throws NumberFormatException {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException e) {
+            ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
+            return false;
         }
     }
 }

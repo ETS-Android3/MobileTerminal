@@ -200,9 +200,9 @@
 
     <EditText
         android:id="@+id/et_count_sales"
+        style="@android:style/Widget.DeviceDefault.Light.AutoCompleteTextView"
         android:layout_width="0dp"
         android:layout_height="45dp"
-        style="@android:style/Widget.DeviceDefault.Light.AutoCompleteTextView"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
@@ -212,8 +212,8 @@
         android:ems="10"
         android:gravity="center"
         android:imeOptions="actionDone"
-        android:inputType="number"
-        android:maxLength="4"
+        android:inputType="numberDecimal"
+        android:maxLength="6"
         android:singleLine="true"
         android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@+id/btn_add_count_sales"

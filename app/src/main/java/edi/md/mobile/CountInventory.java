@@ -295,6 +295,10 @@ public class CountInventory extends AppCompatActivity {
                         inpCount.append("0");
                         inpCount.requestFocus();
                     }break;
+                    case KeyEvent.KEYCODE_STAR : {
+                        inpCount.append(".");
+                        inpCount.requestFocus();
+                    }break;
                     case KeyEvent.KEYCODE_DEL : {
                         String test = inpCount.getText().toString();
                         if(!inpCount.getText().toString().equals("")) {

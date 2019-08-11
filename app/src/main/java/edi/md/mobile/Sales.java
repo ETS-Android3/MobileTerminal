@@ -406,11 +406,11 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                             JSONObject object = mAssortmentArray.getJSONObject(i);
                             String AssortimentUid = object.getString("AssortimentUid");
                             String CountExist = object.getString("Count");
-                            Integer countInt = Integer.valueOf(CountExist);
-                            Integer CountAdd = Integer.valueOf(count);
+                            Double countInt = Double.valueOf(CountExist);
+                            Double CountAdd = Double.valueOf(count);
 
                             if (AssortimentUid.contains(UidAsl)) {
-                                Integer CountNew = CountAdd + countInt;
+                                Double CountNew = CountAdd + countInt;
                                 String countStr = String.valueOf(CountNew);
                                 object.put("Count", countStr);
                                 isExtist=true;
@@ -471,11 +471,11 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                                 JSONObject object = mAssortmentArray.getJSONObject(k);
                                 String AssortimentUid = object.getString("AssortimentUid");
                                 String CountExist = object.getString("Count");
-                                Integer countInt = Integer.valueOf(CountExist);
-                                Integer CountAdd = Integer.valueOf(count);
+                                Double countInt = Double.valueOf(CountExist);
+                                Double CountAdd = Double.valueOf(count);
 
                                 if (AssortimentUid.contains(AssortimentUid_from_touch)) {
-                                    Integer CountNew = CountAdd + countInt;
+                                    Double CountNew = CountAdd + countInt;
                                     String countStr = String.valueOf(CountNew);
                                     object.put("Count", countStr);
                                     isExtist = true;
@@ -558,28 +558,33 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         return super.onKeyDown(keyCode, event);
     }
     private void exitDialog(){
-        if(mAssortmentArray.length()==0){
+        if(invoiceSaved){
             finish();
+        }else{
+            if(mAssortmentArray.length()==0){
+                finish();
+            }
+            else{
+                AlertDialog.Builder dialog = new AlertDialog.Builder(Sales.this);
+                dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+                dialog.setCancelable(false);
+                dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
+                dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+                dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+            }
         }
-        else{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(Sales.this);
-            dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-            dialog.setCancelable(false);
-            dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
-            dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    finish();
-                }
-            });
-            dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();
-        }
+
     }
     private void getAssortmentSales(){
         txt_input_barcode.requestFocus();
@@ -628,11 +633,11 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                     JSONObject object = mAssortmentArray.getJSONObject(i);
                     String AssortimentUid = object.getString("AssortimentUid");
                     String CountExist = object.getString("Count");
-                    Integer countInt = Integer.valueOf(CountExist);
-                    Integer CountAdd = Integer.valueOf(count);
+                    Double countInt = Double.valueOf(CountExist);
+                    Double CountAdd = Double.valueOf(count);
 
                     if (AssortimentUid.contains(UidAsl)) {
-                        Integer CountNew = CountAdd + countInt;
+                        Double CountNew = CountAdd + countInt;
                         String countStr = String.valueOf(CountNew);
                         object.put("Count", countStr);
                         isExtist=true;
@@ -905,6 +910,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                         String Codes = responseAssortiment.getString("Code");
                         String Uid = responseAssortiment.getString("AssortimentID");
                         String Barcodes = responseAssortiment.getString("BarCode");
+                        boolean allowInteger = responseAssortiment.getBoolean("AllowNonIntegerSale");
 
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
 
@@ -916,6 +922,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                         sales.putExtra("Marking", Marking);
                         sales.putExtra("Code", Codes);
                         sales.putExtra("ID", Uid);
+                        sales.putExtra("AllowNonInteger",allowInteger);
                         sales.putExtra("Stock", show_stocks.isChecked());
                         startActivityForResult(sales, REQUEST_FROM_COUNT_ACTIVITY);
                     } else {
