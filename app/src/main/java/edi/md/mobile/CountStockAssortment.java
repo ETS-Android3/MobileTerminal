@@ -191,4 +191,57 @@ public class CountStockAssortment extends AppCompatActivity {
             et_count.requestFocus();
         }
     }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        switch (event.getAction()){
+            case KeyEvent.ACTION_DOWN :{
+                et_count.requestFocus();
+                switch (event.getKeyCode()) {
+                    case KeyEvent.KEYCODE_1 : {
+                        et_count.append("1");
+                    }break;
+                    case KeyEvent.KEYCODE_2 : {
+                        et_count.append("2");
+                    }break;
+                    case KeyEvent.KEYCODE_3 : {
+                        et_count.append("3");
+                    }break;
+                    case KeyEvent.KEYCODE_4 : {
+                        et_count.append("4");
+                    }break;
+                    case KeyEvent.KEYCODE_5 : {
+                        et_count.append("5");
+                    }break;
+                    case KeyEvent.KEYCODE_6 : {
+                        et_count.append("6");
+                    }break;
+                    case KeyEvent.KEYCODE_7 : {
+                        et_count.append("7");
+                    }break;
+                    case KeyEvent.KEYCODE_8 : {
+                        et_count.append("8");
+                    }break;
+                    case KeyEvent.KEYCODE_9 : {
+                        et_count.append("9");
+                    }break;
+                    case KeyEvent.KEYCODE_0 : {
+                        et_count.append("0");
+                    }break;
+                    case KeyEvent.KEYCODE_STAR : {
+                        et_count.append(".");
+                    }break;
+                    case KeyEvent.KEYCODE_DEL : {
+                        String test = et_count.getText().toString();
+                        if(!et_count.getText().toString().equals("")) {
+                            et_count.setText(test.substring(0, test.length() - 1));
+                            et_count.requestFocus();
+                        }
+                    }break;
+                    default:break;
+                }
+            }break;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }

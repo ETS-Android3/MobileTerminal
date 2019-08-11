@@ -168,4 +168,5 @@
     <string name="securitate_download_version">Скачать</string>
     <string name="versiune_server_securitate">Версия на сервере:</string>
     <string name="versiune_locala_securitate">Версия на вашем устройстве:</string>
+    <string name="sales_count_only_integer">Только целые числа</string>
 </resources>

@@ -405,4 +405,58 @@ public class CountListOfAssortment extends AppCompatActivity {
 
         }
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        switch (event.getAction()){
+            case KeyEvent.ACTION_DOWN :{
+                Count_enter.requestFocus();
+                switch (event.getKeyCode()) {
+                    case KeyEvent.KEYCODE_1 : {
+                        Count_enter.append("1");
+                    }break;
+                    case KeyEvent.KEYCODE_2 : {
+                        Count_enter.append("2");
+                    }break;
+                    case KeyEvent.KEYCODE_3 : {
+                        Count_enter.append("3");
+                    }break;
+                    case KeyEvent.KEYCODE_4 : {
+                        Count_enter.append("4");
+                    }break;
+                    case KeyEvent.KEYCODE_5 : {
+                        Count_enter.append("5");
+                    }break;
+                    case KeyEvent.KEYCODE_6 : {
+                        Count_enter.append("6");
+                    }break;
+                    case KeyEvent.KEYCODE_7 : {
+                        Count_enter.append("7");
+                    }break;
+                    case KeyEvent.KEYCODE_8 : {
+                        Count_enter.append("8");
+                    }break;
+                    case KeyEvent.KEYCODE_9 : {
+                        Count_enter.append("9");
+                    }break;
+                    case KeyEvent.KEYCODE_0 : {
+                        Count_enter.append("0");
+                    }break;
+                    case KeyEvent.KEYCODE_STAR : {
+                        Count_enter.append(".");
+                    }break;
+                    case KeyEvent.KEYCODE_DEL : {
+                        String test = Count_enter.getText().toString();
+                        if(!Count_enter.getText().toString().equals("")) {
+                            Count_enter.setText(test.substring(0, test.length() - 1));
+                            Count_enter.requestFocus();
+                        }
+                    }break;
+                    default:break;
+                }
+            }break;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }

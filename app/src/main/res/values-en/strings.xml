@@ -170,4 +170,5 @@
     <string name="securitate_download_version">Download</string>
     <string name="versiune_server_securitate">The version on the server:</string>
     <string name="versiune_locala_securitate">Installed version:</string>
+    <string name="sales_count_only_integer">Only integer number</string>
 </resources>

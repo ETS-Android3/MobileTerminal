@@ -85,7 +85,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
     Button btn_verific,btn_check_update;
     ProgressDialog pDialog;
     ImageButton btn_ro,btn_ru,btn_en;
-    public static final int progress_bar_type = 0;
+    public static final int progress_bar_type = 11;
     private static String file_url_apk = "http://edi.md/androidapps/MobileTerminal.apk";
     private static String file_version_url = "http://edi.md/androidapps/MobileTerminalVersion.txt";
     private Locale myLocale;
@@ -417,9 +417,6 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         }
     }
 
-    /**
-     * Background Async Task to download file
-     * */
     class DownloadFileFromURL extends AsyncTask<String, String, String> {
 
         /**
@@ -498,8 +495,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         protected void onPostExecute(String file_url) {
             // dismiss the dialog after the file was downloaded
             dismissDialog(progress_bar_type);
-
-
+            pDialog.dismiss();
 
             File file = new File(Environment.getExternalStorageDirectory()+ "/IntelectSoft","/MobileTerminal.apk"); // mention apk file path here
             Uri uri = FileProvider.getUriForFile(Securitate.this, BuildConfig.APPLICATION_ID + ".provider",file);
@@ -528,8 +524,10 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
             try {
                 URL url = new URL(f_url[0]);
                 URLConnection conection = url.openConnection();
+                conection.setConnectTimeout(2000);
                 conection.connect();
-                int lenghtOfFile = conection.getContentLength();
+
+                    int lenghtOfFile = conection.getContentLength();
 
                 InputStream input = new BufferedInputStream(url.openStream(),
                         8192);
@@ -553,8 +551,9 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
 
             } catch (Exception e) {
                 Log.e("Error: ", e.getMessage());
+            }finally{
+                pDialog.dismiss();
             }
-
             return null;
         }
         protected void onProgressUpdate(String... progress) {
@@ -563,11 +562,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
 
         @Override
         protected void onPostExecute(final String file_url) {
-            // dismiss the dialog after the file was downloaded
             dismissDialog(progress_bar_type);
-
-
-
             File file = new File(Environment.getExternalStorageDirectory()+ "/IntelectSoft","/MobileTerminalVersion.txt"); // mention apk file path here
             StringBuilder text = new StringBuilder();
 
@@ -584,6 +579,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
             catch (IOException e) {
                 Toast.makeText(Securitate.this, "Exception read file", Toast.LENGTH_SHORT).show();
             }
+            pDialog.dismiss();
             String version ="0.0";
             try {
                 PackageInfo pInfo = Securitate.this.getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -606,6 +602,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
+                    pDialog.dismiss();
                 }
             });
             alertDialog.show();
@@ -638,10 +635,5 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
                 btn_en.setSelected(true);
                 break;
         }
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
     }
 }

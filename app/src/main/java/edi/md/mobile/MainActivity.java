@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+
 import io.fabric.sdk.android.Fabric;
 import java.io.IOException;
 import java.net.URL;
@@ -41,8 +42,7 @@ import static edi.md.mobile.NetworkUtils.NetworkUtils.Ping;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.Response_from_Ping;
 
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     Button btn_check_price,btn_sales,btn_invoice,btn_transfer,btn_inventory,btn_stock_asortment;
     Integer checkPrice=1,salesDoc=2, invoiceDoc =3,transferIntern=4,inventAr=5,stock_asl=7,workplaces=8,printers=9,securitate = 10;
     TimerTask timerTaskSync;
@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity
     Boolean checkPin;
     private Menu menu;
     NavigationView navigationView;
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -93,6 +94,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -146,11 +148,6 @@ public class MainActivity extends AppCompatActivity
         TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
         useremail.setText(User.getString("Name",""));
         TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
-        String nameWorkplace = WorkPlace.getString("Name","");
-//        if(nameWorkplace.equals("")){
-//            editor.putString("Name","Nedeterminat");
-//            editor.apply();
-//        }
         user_workplace.setText(WorkPlace.getString("Name",""));
 
         btn_check_price.setOnClickListener(new View.OnClickListener() {
@@ -386,7 +383,6 @@ public class MainActivity extends AppCompatActivity
         timerTaskSync = new TimerTask() {
             @Override
             public void run() {
-
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
