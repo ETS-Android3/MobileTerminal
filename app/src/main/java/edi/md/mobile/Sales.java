@@ -40,6 +40,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.RT_Printer.BluetoothPrinter.BLUETOOTH.BluetoothPrintDriver;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,10 +53,16 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edi.md.mobile.Settings.Assortment;
+import edi.md.mobile.Utils.AssortmentInActivity;
+import edi.md.mobile.Utils.BTUtils;
+
+import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetAssortiment;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetPrinters;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetWareHouseList;
@@ -68,9 +76,8 @@ import static edi.md.mobile.NetworkUtils.NetworkUtils.SaveInvoice;
 public class Sales extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     ImageButton btn_write_barcode,btn_delete,btn_open_asl_list;
-    TextView txt_input_barcode,txt_nr_comanda,txt_total_sales,txtBarcode_introdus;
+    TextView txt_input_barcode,txt_total_sales,txtBarcode_introdus;
     ProgressBar pgBar;
-    ToggleButton show_stocks;
     Button btn_print,btn_ok,btn_cancel,btn_change_stock,btn_add_Client;
     ListView list_of_sales;
 
@@ -80,7 +87,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
     ArrayList<HashMap<String, Object>> printers_List_array = new ArrayList<>();
     ArrayList<HashMap<String, Object>> asl_list = new ArrayList<>();
 
-    String ip_,port_,UserId,WareUid,InvoiceID,PrinterID,ClientID,uid_selected,barcode_introdus,WareName;
+    String ip_,port_,UserId,WareUid,InvoiceID,PrinterID,ClientID,uid_selected,barcode_introdus,WareName,InvoiceCode;
     ProgressDialog pgH;
     TimerTask timerTaskSync;
     Timer sync;
@@ -99,6 +106,9 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        setTitle(getResources().getString(R.string.btn_sales_main_activity));
+
         setContentView(R.layout.activity_sales);
         Toolbar toolbar = findViewById(R.id.toolbar_sales);
         setSupportActionBar(toolbar);
@@ -107,8 +117,6 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         txt_input_barcode=findViewById(R.id.txt_input_barcodes_sales);
         btn_delete=findViewById(R.id.btn_delete_sales);
         btn_open_asl_list=findViewById(R.id.btn_touch_open_asl_sales);
-        show_stocks=findViewById(R.id.show_stock_sales);
-        txt_nr_comanda=findViewById(R.id.txtnumar_comanda_sales);
         txt_total_sales=findViewById(R.id.txtTotal_sales);
         pgBar=findViewById(R.id.progressBar_sales);
         txtBarcode_introdus=findViewById(R.id.txtBarcode_introdus_sales);
@@ -149,7 +157,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         final String WorkPlaceID = WorkPlace.getString("Uid","0");
         final String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
 
-        if (WorkPlaceName.equals("Nedeterminat")){
+        if (WorkPlaceName.equals("Nedeterminat") || WorkPlaceName.equals("")){
             pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
             pgH.setCancelable(false);
             pgH.setIndeterminate(true);
@@ -288,9 +296,33 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         btn_print.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                printers_List_array.clear();
-                URL getWareHouse = GetPrinters(ip_,port_,WareUid);
-                new AsyncTask_GetPrinters().execute(getWareHouse);
+                final SharedPreferences SharedPrinters = getSharedPreferences("Printers", MODE_PRIVATE);
+                int positionType = SharedPrinters.getInt("Type",0);
+                String UserName = User.getString("Name","Nullevoi");
+                Date current = new Date();
+                String date = current.toString();
+
+                if(positionType == 1){
+                    if(BluetoothPrintDriver.IsNoConnection()){
+                        Toast.makeText(Sales.this,"BT printer is not conect",Toast.LENGTH_SHORT).show();
+                    }
+                    BluetoothPrintDriver.BT_Write("Contul spre plata NR: " + InvoiceCode);
+                    BluetoothPrintDriver.BT_Write("\r");
+                    BluetoothPrintDriver.BT_Write("Creat de " +UserName );
+                    BluetoothPrintDriver.BT_Write("\r");
+                    BluetoothPrintDriver.BT_Write("Data crearii" +date );
+                    BluetoothPrintDriver.BT_Write("\r");
+                    BluetoothPrintDriver.Begin();
+                    BluetoothPrintDriver.AddCodePrint(BluetoothPrintDriver.CODE39, InvoiceCode);
+                    BluetoothPrintDriver.BT_Write(InvoiceCode);
+                    BluetoothPrintDriver.BT_Write("\n");
+                }
+                else {
+                    printers_List_array.clear();
+                    URL getWareHouse = GetPrinters(ip_,port_,WareUid);
+                    new AsyncTask_GetPrinters().execute(getWareHouse);
+                }
+
             }
         });
         btn_change_stock.setOnClickListener(new View.OnClickListener() {
@@ -317,7 +349,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                 if (!invoiceSaved) {
                     Intent AddingASL = new Intent(".AssortmentMobile");
                     AddingASL.putExtra("ActivityCount", 181);
-                    if(WorkPlaceID.equals("0")){
+                    if(WorkPlaceID.equals("") || WorkPlaceID.equals("0")){
                        AddingASL.putExtra("WareID",WareUid);
                     }
                     startActivityForResult(AddingASL, REQUEST_FROM_LIST_ASSORTMENT);
@@ -596,7 +628,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                 sendAssortiment = new JSONObject();
                 try {
                     sendAssortiment.put("AssortmentIdentifier", txt_input_barcode.getText().toString());
-                    sendAssortiment.put("ShowStocks", show_stocks.isChecked());
+                    sendAssortiment.put("ShowStocks", true);
                     sendAssortiment.put("UserID", UserId);
                     sendAssortiment.put("WarehouseID", WareUid);
                 } catch (JSONException e) {
@@ -617,52 +649,6 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
             Toast.makeText(Sales.this,getResources().getString(R.string.msg_barcode_empty), Toast.LENGTH_SHORT).show();
         }
     }
-    private void onResultActivities (String response,int type){
-        if (type == 0){
-
-        }else{
-
-        }
-        try {
-            JSONObject json= new JSONObject(response);
-            String UidAsl= json.getString("AssortimentUid");
-            String count = json.getString("Count");
-            boolean isExtist = false;
-            if (mAssortmentArray.length()!=0) {
-                for (int i = 0; i < mAssortmentArray.length(); i++) {
-                    JSONObject object = mAssortmentArray.getJSONObject(i);
-                    String AssortimentUid = object.getString("AssortimentUid");
-                    String CountExist = object.getString("Count");
-                    Double countInt = Double.valueOf(CountExist);
-                    Double CountAdd = Double.valueOf(count);
-
-                    if (AssortimentUid.contains(UidAsl)) {
-                        Double CountNew = CountAdd + countInt;
-                        String countStr = String.valueOf(CountNew);
-                        object.put("Count", countStr);
-                        isExtist=true;
-                        break;
-                    }
-                }
-                if (!isExtist){
-                    if (mAssortmentArray.length()<limit_sales)
-                        mAssortmentArray.put(json);
-                    else
-                        Toast.makeText(Sales.this,getResources().getString(R.string.msg_depasirea_limitei_vinzare), Toast.LENGTH_SHORT).show();
-                }
-            }else{
-                if (mAssortmentArray.length()<limit_sales)
-                    mAssortmentArray.put(json);
-                else
-                    Toast.makeText(Sales.this,getResources().getString(R.string.msg_depasirea_limitei_vinzare), Toast.LENGTH_SHORT).show();
-            }
-            asl_list.clear();
-            showAssortmentList();
-        } catch (JSONException e) {
-            e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(),Sales.this);
-        }
-    }
     public void show_WareHouse(){
 
         SimpleAdapter simpleAdapterType = new SimpleAdapter(Sales.this, stock_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
@@ -678,9 +664,9 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         builderType.setAdapter(simpleAdapterType, new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int wich) {
-                String WareGUid= String.valueOf(stock_List_array.get(wich).get("Uid"));
-                String WareNames= String.valueOf(stock_List_array.get(wich).get("Name"));
-                String WareCode= String.valueOf(stock_List_array.get(wich).get("Code"));
+                String WareGUid  = String.valueOf(stock_List_array.get(wich).get("Uid"));
+                String WareNames = String.valueOf(stock_List_array.get(wich).get("Name"));
+                String WareCode  = String.valueOf(stock_List_array.get(wich).get("Code"));
 
                 SharedPreferences WareHouse = getSharedPreferences("Ware House", MODE_PRIVATE);
                 SharedPreferences.Editor addWareHouse = WareHouse.edit();
@@ -771,16 +757,18 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                 String Name = json.getString("AssortimentName");
                 String Cant = json.getString("Count");
                 Cant=Cant.replace(",",".");
+                double count_to_double = Double.parseDouble(Cant);
+                String count_to_string =String.format("%.2f",count_to_double);
                 String Price = json.getString("Price");
                 Price = Price.replace(",",".");
                 String Uid = json.getString("AssortimentUid");
                 asl_.put("Name",Name);
-                asl_.put("Cant",Cant);
+                asl_.put("Cant",count_to_string);
                 asl_.put("Price",Price);
                 asl_.put("Uid",Uid);
-                String suma =String.format("%.2f",Double.valueOf(Price)* Double.valueOf(Cant));
+                String suma =String.format("%.2f",Double.valueOf(Price)* count_to_double );
                 sumTotal=sumTotal+Double.valueOf(Price)* Double.valueOf(Cant);
-                asl_.put("Suma",suma);
+                asl_.put("Suma",suma.replace(",","."));
                 asl_list.add(asl_);
             }
         } catch (JSONException e) {
@@ -913,17 +901,19 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                         boolean allowInteger = responseAssortiment.getBoolean("AllowNonIntegerSale");
 
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
+                        Assortment assortment = new Assortment();
+                        assortment.setBarCode(Barcodes);
+                        assortment.setCode(Codes);
+                        assortment.setName(Names);
+                        assortment.setPrice(Price);
+                        assortment.setMarking(Marking);
+                        assortment.setRemain(Remain);
+                        assortment.setAssortimentID(Uid);
+                        assortment.setAllowNonIntegerSale(String.valueOf(allowInteger));
+                        final AssortmentInActivity assortmentParcelable = new AssortmentInActivity(assortment);
 
                         Intent sales = new Intent(".CountSalesMobile");
-                        sales.putExtra("BarCode", Barcodes);
-                        sales.putExtra("Price", Price);
-                        sales.putExtra("Name", Names);
-                        sales.putExtra("Remain", Remain);
-                        sales.putExtra("Marking", Marking);
-                        sales.putExtra("Code", Codes);
-                        sales.putExtra("ID", Uid);
-                        sales.putExtra("AllowNonInteger",allowInteger);
-                        sales.putExtra("Stock", show_stocks.isChecked());
+                        sales.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
                         startActivityForResult(sales, REQUEST_FROM_COUNT_ACTIVITY);
                     } else {
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
@@ -1222,15 +1212,14 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                     if (errCode == 0) {
                         pgH.dismiss();
                         invoiceSaved = true;
-                        String InvoiceCode = respo.getString("InvoiceCode");
+                        InvoiceCode = respo.getString("InvoiceCode");
                         InvoiceID = respo.getString("InvoiceID");
-                        txt_nr_comanda.setText(InvoiceCode);
+                        setTitle(getResources().getString(R.string.btn_sales_main_activity) + ": " + InvoiceCode);
                         btn_print.setEnabled(true);
                         btn_cancel.setEnabled(false);
                         btn_add_Client.setEnabled(false);
-                        show_stocks.setEnabled(false);
 
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(Sales.this);
+                        final AlertDialog.Builder dialog = new AlertDialog.Builder(Sales.this);
                         dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
                         dialog.setCancelable(false);
                         dialog.setMessage(getResources().getString(R.string.txt_sales_invoice_saved) + InvoiceCode);
@@ -1238,9 +1227,33 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                printers_List_array.clear();
-                                URL getWareHouse = GetPrinters(ip_, port_, WareUid);
-                                new AsyncTask_GetPrinters().execute(getWareHouse);
+                                final SharedPreferences SharedPrinters = getSharedPreferences("Printers", MODE_PRIVATE);
+                                SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
+                                int positionType = SharedPrinters.getInt("Type",0);
+                                if(positionType == 1) {
+                                    String UserName = User.getString("Name", "Nullevoi");
+                                    Date current = new Date();
+                                    String date = current.toString();
+
+                                    if (BluetoothPrintDriver.IsNoConnection()) {
+                                        Toast.makeText(Sales.this, "BT printer is not conect", Toast.LENGTH_SHORT).show();
+                                    }
+                                    BluetoothPrintDriver.BT_Write("Contul spre plata NR: " + InvoiceCode);
+                                    BluetoothPrintDriver.BT_Write("\r");
+                                    BluetoothPrintDriver.BT_Write("Creat de " + UserName);
+                                    BluetoothPrintDriver.BT_Write("\r");
+                                    BluetoothPrintDriver.BT_Write("Data crearii" + date);
+                                    BluetoothPrintDriver.BT_Write("\r");
+                                    BluetoothPrintDriver.Begin();
+                                    BluetoothPrintDriver.AddCodePrint(BluetoothPrintDriver.CODE39, InvoiceCode);
+                                    BluetoothPrintDriver.BT_Write(InvoiceCode.getBytes());
+                                    BluetoothPrintDriver.BT_Write("\n");
+                                }
+                                else {
+                                    printers_List_array.clear();
+                                    URL getWareHouse = GetPrinters(ip_, port_, WareUid);
+                                    new AsyncTask_GetPrinters().execute(getWareHouse);
+                                }
                             }
                         });
                         dialog.show();
@@ -1288,7 +1301,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         if(!WorkPlaceID.equals(WareUid)){
             btn_change_stock.setText(WorkPlaceName);
         }
-        if(WorkPlaceName.equals("Nedeterminat")){
+        if(WorkPlaceName.equals("Nedeterminat") || WorkPlaceName.equals("") ){
             btn_change_stock.setText(WareName);
         }
 

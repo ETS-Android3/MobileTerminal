@@ -24,11 +24,17 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edi.md.mobile.Utils.AssortmentInActivity;
+
+import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
+
 public class CountInvoice extends AppCompatActivity {
 
     Button btn_accept,btn_cancel;
     TextView txtTotalinc,txtTotalsale,txtNames,txtProfit;
     EditText etCant,etPriceInc,etPriceSales;
+    String mNameAssortment,mPriceAssortment,mIncomePrice,mIDAssortment;
+    boolean mAllowNotIntegerSales;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,12 +58,21 @@ public class CountInvoice extends AppCompatActivity {
         etPriceInc=findViewById(R.id.et_price_inc_invoice);
         etPriceSales=findViewById(R.id.et_price_sales_invoice);
 
-        final Intent Invoice = getIntent();
-        txtNames.setText(Invoice.getStringExtra("Name"));
-        etPriceInc.setText(Invoice.getStringExtra("PriceIncoming"));
-        etPriceSales.setText(Invoice.getStringExtra("Price"));
-
         SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
+
+        final Intent Invoice = getIntent();
+        AssortmentInActivity assortment = Invoice.getParcelableExtra(AssortimentClickentSendIntent);
+        mNameAssortment = assortment.getName();
+        mPriceAssortment = assortment.getPrice();
+        mIncomePrice = assortment.getIncomePrice();
+        mIDAssortment = assortment.getAssortimentID();
+        mAllowNotIntegerSales =Boolean.parseBoolean(assortment.getAllowNonIntegerSale());
+
+        txtNames.setText(mNameAssortment);
+        etPriceInc.setText(mIncomePrice);
+        etPriceSales.setText(mPriceAssortment);
+
+
 
         etCant.requestFocus();
         boolean showKB = Sestting.getBoolean("ShowKeyBoard",false);
@@ -69,8 +84,8 @@ public class CountInvoice extends AppCompatActivity {
         etPriceSales.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) saveCount(Invoice.getStringExtra("Name"),Invoice.getStringExtra("ID"));
-                else if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) saveCount(Invoice.getStringExtra("Name"),Invoice.getStringExtra("ID"));
+                if (actionId == EditorInfo.IME_ACTION_DONE) saveCount(mNameAssortment,mIDAssortment);
+                else if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) saveCount(mNameAssortment,mIDAssortment);
                 return false;
             }
         });
@@ -83,30 +98,67 @@ public class CountInvoice extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Double cant,PrInc;
-                if (etCant.getText().toString().equals("")){
-                    cant = Double.valueOf("0.0");
-                }else{
-                    cant = Double.valueOf(etCant.getText().toString());
-                }
-                if (etPriceInc.getText().toString().equals("")){
-                    PrInc = Double.valueOf("0.0");
-                }else{
-                    PrInc = Double.valueOf(etPriceInc.getText().toString());
-                }
-                Double PrSales=Double.valueOf(etPriceSales.getText().toString());
+                double cant,PrInc;
 
-                Double totalInc = cant * PrInc;
-                Double totalSales = cant * PrSales;
-                Double profit =((totalSales/totalInc)-1 )/ 0.01;
+                if (mAllowNotIntegerSales) {
+                    if (!isDouble(String.valueOf(s))) etCant.setError(getResources().getString(R.string.msg_format_number_incorect));
+                    else{
+                        if (etCant.getText().toString().equals("")){
+                            cant = Double.valueOf("0.0");
+                        }else{
+                            cant = Double.valueOf(etCant.getText().toString());
+                        }
+                        if (etPriceInc.getText().toString().equals("")){
+                            PrInc = Double.valueOf("0.0");
+                        }else{
+                            PrInc = Double.valueOf(etPriceInc.getText().toString());
+                        }
+                        Double PrSales=Double.valueOf(etPriceSales.getText().toString());
 
-                String total_incom = String.format("%.2f",totalInc);
-                total_incom= total_incom.replace(",",".");
-                String total_sales = String.format("%.2f",totalSales);
-                total_sales= total_sales.replace(",",".");
-                txtTotalinc.setText(total_incom);
-                txtTotalsale.setText(total_sales);
-                txtProfit.setText(String.format("%.2f",profit));
+                        Double totalInc = cant * PrInc;
+                        Double totalSales = cant * PrSales;
+                        Double profit =((totalSales/totalInc)-1 )/ 0.01;
+
+                        String total_incom = String.format("%.2f",totalInc);
+                        total_incom= total_incom.replace(",",".");
+                        String total_sales = String.format("%.2f",totalSales);
+                        total_sales= total_sales.replace(",",".");
+                        txtTotalinc.setText(total_incom);
+                        txtTotalsale.setText(total_sales);
+                        txtProfit.setText(String.format("%.2f",profit));
+                    }
+                }
+                else {
+                    if (!isInteger(etCant.getText().toString()))
+                        etCant.setError(getResources().getString(R.string.msg_only_number_integer));
+                    else{
+                        if (etCant.getText().toString().equals("")){
+                            cant = Double.valueOf("0.0");
+                        }else{
+                            cant = Double.valueOf(etCant.getText().toString());
+                        }
+                        if (etPriceInc.getText().toString().equals("")){
+                            PrInc = Double.valueOf("0.0");
+                        }else{
+                            PrInc = Double.valueOf(etPriceInc.getText().toString());
+                        }
+                        Double PrSales=Double.valueOf(etPriceSales.getText().toString());
+
+                        Double totalInc = cant * PrInc;
+                        Double totalSales = cant * PrSales;
+                        Double profit =((totalSales/totalInc)-1 )/ 0.01;
+
+                        String total_incom = String.format("%.2f",totalInc);
+                        total_incom= total_incom.replace(",",".");
+                        String total_sales = String.format("%.2f",totalSales);
+                        total_sales= total_sales.replace(",",".");
+                        txtTotalinc.setText(total_incom);
+                        txtTotalsale.setText(total_sales);
+                        txtProfit.setText(String.format("%.2f",profit));
+                    }
+                }
+
+
             }
 
             @Override
@@ -205,7 +257,7 @@ public class CountInvoice extends AppCompatActivity {
         btn_accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveCount(Invoice.getStringExtra("Name"),Invoice.getStringExtra("ID"));
+                saveCount(mNameAssortment,mIDAssortment);
             }
         });
     }
@@ -224,27 +276,60 @@ public class CountInvoice extends AppCompatActivity {
         return super.dispatchTouchEvent(event);
     }
     private void saveCount(String name,String id){
-        if(etCant.getText().toString().equals("")) {
-            Toast.makeText(CountInvoice.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
-        }else  if (etPriceInc.getText().toString().equals("")){
-            Toast.makeText(CountInvoice.this, getResources().getString(R.string.msg_input_incoming_price_invoice), Toast.LENGTH_SHORT).show();
-        }else{
-            JSONObject asl = new JSONObject();
-            try {
-                asl.put("AssortimentName", name);
-                asl.put("AssortimentUid", id);
-                asl.put("SalePrice", etPriceSales.getText().toString());
-                asl.put("IncomeSum", etPriceInc.getText().toString());
-                asl.put("Suma", txtTotalinc.getText().toString());
-                asl.put("Count", etCant.getText().toString());
-            } catch (JSONException e) {
-                e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),CountInvoice.this);
+        if(mAllowNotIntegerSales){
+            if (!isDouble(etCant.getText().toString()))
+                etCant.setError(getResources().getString(R.string.msg_format_number_incorect));
+            else {
+                if(etCant.getText().toString().equals("")) {
+                    Toast.makeText(CountInvoice.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
+                }else  if (etPriceInc.getText().toString().equals("")){
+                    Toast.makeText(CountInvoice.this, getResources().getString(R.string.msg_input_incoming_price_invoice), Toast.LENGTH_SHORT).show();
+                }else{
+                    JSONObject asl = new JSONObject();
+                    try {
+                        asl.put("AssortimentName", name);
+                        asl.put("AssortimentUid", id);
+                        asl.put("SalePrice", etPriceSales.getText().toString());
+                        asl.put("IncomeSum", etPriceInc.getText().toString());
+                        asl.put("Suma", txtTotalinc.getText().toString());
+                        asl.put("Count", etCant.getText().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        ((Variables)getApplication()).appendLog(e.getMessage(),CountInvoice.this);
+                    }
+                    Intent intent = new Intent();
+                    intent.putExtra("AssortmentInvoiceAdded", asl.toString());
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
             }
-            Intent intent = new Intent();
-            intent.putExtra("AssortmentInvoiceAdded", asl.toString());
-            setResult(RESULT_OK, intent);
-            finish();
+        }else {
+            if (!isInteger(etCant.getText().toString()))
+                etCant.setError(getResources().getString(R.string.msg_only_number_integer));
+            else {
+                if (etCant.getText().toString().equals("")) {
+                    Toast.makeText(CountInvoice.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
+                } else if (etPriceInc.getText().toString().equals("")) {
+                    Toast.makeText(CountInvoice.this, getResources().getString(R.string.msg_input_incoming_price_invoice), Toast.LENGTH_SHORT).show();
+                } else {
+                    JSONObject asl = new JSONObject();
+                    try {
+                        asl.put("AssortimentName", name);
+                        asl.put("AssortimentUid", id);
+                        asl.put("SalePrice", etPriceSales.getText().toString());
+                        asl.put("IncomeSum", etPriceInc.getText().toString());
+                        asl.put("Suma", txtTotalinc.getText().toString());
+                        asl.put("Count", etCant.getText().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        ((Variables) getApplication()).appendLog(e.getMessage(), CountInvoice.this);
+                    }
+                    Intent intent = new Intent();
+                    intent.putExtra("AssortmentInvoiceAdded", asl.toString());
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+            }
         }
     }
 
@@ -300,5 +385,25 @@ public class CountInvoice extends AppCompatActivity {
             }break;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    private boolean isDouble(String s) throws NumberFormatException {
+        try {
+            Double.parseDouble(s);
+            return true;
+        } catch (NumberFormatException e) {
+
+            ((Variables)getApplication()).appendLog(e.getMessage(),CountInvoice.this);
+            return false;
+        }
+    }
+    private boolean isInteger(String s) throws NumberFormatException {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException e) {
+            ((Variables)getApplication()).appendLog(e.getMessage(),CountInvoice.this);
+            return false;
+        }
     }
 }

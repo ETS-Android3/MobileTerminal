@@ -109,12 +109,14 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
         final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
         SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
-
         String selected = CheckUidFolder.getString("selected_Name_Array","[]");
 
         final SharedPreferences.Editor inpSet = Settings.edit();
+        String workplaceName = WorkPlace.getString("Name","Nedeterminat");
+        if(workplaceName.equals(""))
+            workplaceName ="Nedeterminat";
+        btn_get_workplace.setText(workplaceName);
 
-        btn_get_workplace.setText(WorkPlace.getString("Name","Nedeterminat"));
         ip_=Settings.getString("IP","");
         port_=Settings.getString("Port","");
 
@@ -298,23 +300,6 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                 }else{
                     DownloadASL();
                 }
-//
-//
-//
-//                if{
-//                    AlertDialog.Builder failureAsl = new AlertDialog.Builder(WorkPlace.this);
-//                    failureAsl.setCancelable(false);
-//                    failureAsl.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-//                    failureAsl.setMessage(getResources().getString(R.string.assortment_possible_not_download));
-//                    failureAsl.setPositiveButton(getResources().getString(R.string.txt_accept_all), new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialogInterface, int i) {
-//                            dialogInterface.dismiss();
-//                        }
-//                    });
-//                    failureAsl.show();
-//                }
-
             }
         });
 
@@ -767,7 +752,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                                         finishAffinity();
                                     }
                                 });
-                                alertDialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
+                                alertDialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();

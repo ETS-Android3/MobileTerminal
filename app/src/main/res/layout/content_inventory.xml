@@ -9,6 +9,22 @@
     tools:showIn="@layout/app_bar_inventory"
     tools:ignore="MissingTranslation">
 
+    <ImageButton
+        android:id="@+id/btn_touch_open_asl_inventory_listAdded"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/item_selector_button_actions"
+        android:contentDescription="@string/todo"
+        app:layout_constraintEnd_toStartOf="@+id/btn_auto_cant_inventory"
+        app:layout_constraintStart_toEndOf="@+id/btn_touch_open_asl_inventory"
+        app:layout_constraintTop_toBottomOf="@+id/CL_info_asortment_inventory"
+        app:srcCompat="@drawable/list_white_48dp" />
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/CL_info_asortment_inventory"
         android:layout_width="0dp"
@@ -110,8 +126,8 @@
 
     <ImageButton
         android:id="@+id/btn_write_manual_inventory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
@@ -121,7 +137,7 @@
         app:layout_constraintEnd_toStartOf="@+id/btn_touch_open_asl_inventory"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/CL_info_asortment_inventory"
-        app:srcCompat="@drawable/edit_white_48dp" />
+        app:srcCompat="@drawable/keyboard_white_48dp" />
 
     <TextView
         android:id="@+id/txt_input_barcode_inventory"
@@ -143,13 +159,14 @@
 
     <ImageButton
         android:id="@+id/btn_touch_open_asl_inventory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:adjustViewBounds="false"
         android:background="@drawable/item_selector_button_actions"
+        android:contentDescription="@string/todo"
         app:layout_constraintStart_toEndOf="@+id/btn_write_manual_inventory"
         app:layout_constraintTop_toBottomOf="@+id/CL_info_asortment_inventory"
         app:srcCompat="@drawable/add_white_48dp" />
@@ -201,9 +218,7 @@
     <ToggleButton
         android:id="@+id/btn_auto_cant_inventory"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_height="50dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
@@ -212,7 +227,7 @@
         android:textOff="@string/btn_select_count_inventory"
         android:textOn="@string/btn_select_auto_count_inventory"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_touch_open_asl_inventory"
+        app:layout_constraintStart_toEndOf="@+id/btn_touch_open_asl_inventory_listAdded"
         app:layout_constraintTop_toBottomOf="@+id/CL_info_asortment_inventory" />
 
     <android.support.constraint.ConstraintLayout

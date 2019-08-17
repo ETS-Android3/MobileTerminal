@@ -27,13 +27,17 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edi.md.mobile.Utils.AssortmentInActivity;
+
+import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
+
 public class CountSales extends AppCompatActivity {
 
     TextView txt_barcode,txt_code,txt_articul,txt_stoc,txt_price,txt_name;
     TextView et_count;
     Button btn_add, btn_cancel;
     Boolean adauga_Count=false,mAllowNotIntegerSales;
-    String mName,mPrice,mID;
+    String mNameAssortment,mPriceAssortment,mIDAssortment,mRemainAssortment,mMarkingAssortment,mCodeAssortment,mBarcodeAssortment;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -77,40 +81,45 @@ public class CountSales extends AppCompatActivity {
         btn_add = findViewById(R.id.btn_add_count_sales);
         btn_cancel = findViewById(R.id.btn_cancel_count_sales);
 
-        final Intent sales = getIntent();
-        txt_name.setText(sales.getStringExtra("Name"));
-        txt_barcode.setText(sales.getStringExtra("BarCode"));
-
-        String mMarking = sales.getStringExtra("Marking");
-        String mCode = sales.getStringExtra("Code");
-        mAllowNotIntegerSales = sales.getBooleanExtra("AllowNonInteger",false);
-
-        if(mMarking.equals("null") || mMarking == null){
-            txt_articul.setText("-");
-        }
-        else{
-            txt_articul.setText(mMarking);
-        }
-        if(mCode.equals("null") || mCode == null){
-            txt_code.setText("-");
-        }
-        else{
-            txt_code.setText(mCode);
-        }
-
-        txt_stoc.setText(sales.getStringExtra("Remain"));
-        txt_price.setText(sales.getStringExtra("Price"));
-
-        mName = sales.getStringExtra("Name");
-        mID = sales.getStringExtra("ID");
-        mPrice = sales.getStringExtra("Price");
-
-        et_count.requestFocus();
-
         SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
 
         boolean ShowCode = Sestting.getBoolean("ShowCode", false);
         boolean showKB = Sestting.getBoolean("ShowKeyBoard",false);
+        final boolean mCheckStock = Sestting.getBoolean("CheckStockInput", false);
+
+        final Intent sales = getIntent();
+        AssortmentInActivity assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
+        mNameAssortment = assortment.getName();
+        mPriceAssortment = assortment.getPrice();
+        mMarkingAssortment = assortment.getMarking();
+        mCodeAssortment = assortment.getCode();
+        mBarcodeAssortment = assortment.getBarCode();
+        mRemainAssortment = assortment.getRemain();
+        mIDAssortment = assortment.getAssortimentID();
+        mAllowNotIntegerSales =Boolean.parseBoolean(assortment.getAllowNonIntegerSale());
+
+        txt_name.setText(mNameAssortment);
+        txt_barcode.setText(mBarcodeAssortment);
+        txt_stoc.setText(mRemainAssortment);
+        txt_price.setText(mPriceAssortment);
+        et_count.requestFocus();
+//        String mMarking = sales.getStringExtra("Marking");
+//        String mCode = sales.getStringExtra("Code");
+
+
+        if(mMarkingAssortment == null || mMarkingAssortment.equals("null")){
+            txt_articul.setText("-");
+        }
+        else{
+            txt_articul.setText(mMarkingAssortment);
+        }
+        if(mCodeAssortment == null || mCodeAssortment.equals("null")){
+            txt_code.setText("-");
+        }
+        else{
+            txt_code.setText(mCodeAssortment);
+        }
+
         if (!ShowCode) {
             txt_code.setVisibility(View.INVISIBLE);
         }
@@ -118,9 +127,6 @@ public class CountSales extends AppCompatActivity {
             et_count.requestFocus();
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
-        final boolean checkStock = Sestting.getBoolean("CheckStockInput", false);
-        final boolean stock = sales.getBooleanExtra("Stock",false);
-
         et_count.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int keyCode, KeyEvent event) {
@@ -138,8 +144,7 @@ public class CountSales extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (stock) {
-                    if (checkStock) {
+                    if (mCheckStock) {
                         Double input = 0.0;
                         if (et_count.getText().toString().equals("")) {
                             input = 0.0;
@@ -163,9 +168,7 @@ public class CountSales extends AppCompatActivity {
                     } else {
                         adauga_Count = true;
                     }
-                } else {
-                    adauga_Count = true;
-                }
+
             }
 
             @Override
@@ -266,10 +269,10 @@ public class CountSales extends AppCompatActivity {
                 if (isInteger(et_count.getText().toString())) {
                     JSONObject asl = new JSONObject();
                     try {
-                        asl.put("AssortimentName", mName);
-                        asl.put("AssortimentUid",mID);
+                        asl.put("AssortimentName", mNameAssortment);
+                        asl.put("AssortimentUid",mIDAssortment);
                         asl.put("Count", et_count.getText().toString());
-                        asl.put("Price", mPrice);
+                        asl.put("Price", mPriceAssortment);
                     } catch (JSONException e) {
                         ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
                         e.printStackTrace();
@@ -285,10 +288,10 @@ public class CountSales extends AppCompatActivity {
             }else{
                 JSONObject asl = new JSONObject();
                 try {
-                    asl.put("AssortimentName", mName);
-                    asl.put("AssortimentUid",mID);
+                    asl.put("AssortimentName", mNameAssortment);
+                    asl.put("AssortimentUid",mIDAssortment);
                     asl.put("Count", et_count.getText().toString());
-                    asl.put("Price", mPrice);
+                    asl.put("Price", mPriceAssortment);
                 } catch (JSONException e) {
                     ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
                     e.printStackTrace();
@@ -302,17 +305,6 @@ public class CountSales extends AppCompatActivity {
         }else{
             Toast.makeText(CountSales.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
             et_count.requestFocus();
-        }
-    }
-
-    private boolean isDouble(String s) throws NumberFormatException {
-        try {
-            Double.parseDouble(s);
-            return true;
-        } catch (NumberFormatException e) {
-
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
-            return false;
         }
     }
     private boolean isInteger(String s) throws NumberFormatException {

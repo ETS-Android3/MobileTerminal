@@ -61,6 +61,10 @@ import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edi.md.mobile.Settings.Assortment;
+import edi.md.mobile.Utils.AssortmentInActivity;
+
+import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetAssortiment;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetWareHouseList;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.Ping;
@@ -71,8 +75,8 @@ import static edi.md.mobile.NetworkUtils.NetworkUtils.SaveAccumulateAssortmentLi
 public class StockAssortment extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     TextView txt_input_barcode,txtBarcode_introdus;
-    ImageButton btn_write_barcode,btn_delete,btn_open_asl_list;
-    Button btn_ok,btn_cancel,btn_change_stock,btn_print_lable;
+    ImageButton btn_write_barcode,btn_delete,btn_open_asl_list,btn_print_lable;
+    Button btn_ok,btn_cancel,btn_change_stock;
     ListView list_of_stock_assortment;
     ProgressBar pgBar;
 
@@ -148,7 +152,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
         TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
         user_workplace.setText(WorkPlace.getString("Name",""));
 
-        if (WorkPlaceName.equals("Nedeterminat")){
+        if (WorkPlaceName.equals("Nedeterminat")|| WorkPlaceName.equals("")){
             pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
             pgH.setCancelable(false);
             pgH.setIndeterminate(true);
@@ -818,28 +822,28 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                         String UnitPrice = responseAssortiment.getString("UnitPrice");
                         Double priceDouble = Double.valueOf(Price);
                         Price = String.format("%.2f", priceDouble);
-                        Price = Price.replace(".", ",");
                         Double priceunit = Double.valueOf(UnitPrice);
                         UnitPrice = String.format("%.2f", priceunit);
-                        UnitPrice = UnitPrice.replace(".", ",");
                         String Barcodes = responseAssortiment.getString("BarCode");
 
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
                         txtBarcode_introdus.setText(barcode_introdus);
 
+                        Assortment assortment = new Assortment();
+                        assortment.setBarCode(Barcodes);
+                        assortment.setCode(Codes);
+                        assortment.setName(Names);
+                        assortment.setPrice(Price);
+                        assortment.setMarking(Marking);
+                        assortment.setRemain(Remain);
+                        assortment.setAssortimentID(Uid);
+                        assortment.setUnitPrice(UnitPrice);
+                        assortment.setUnit(Unit);
+                        assortment.setUnitInPackage(UnitInPackage);
+                        final AssortmentInActivity assortmentParcelable = new AssortmentInActivity(assortment);
+
                         Intent sales = new Intent(".CountStockAssortmentMobile");
-
-                        sales.putExtra("Price", Price);
-                        sales.putExtra("Name", Names);
-                        sales.putExtra("ID", Uid);
-                        sales.putExtra("BarCode", Barcodes);
-                        sales.putExtra("Remain", Remain);
-                        sales.putExtra("Marking", Marking);
-                        sales.putExtra("Code", Codes);
-                        sales.putExtra("UnitPrice", UnitPrice);
-                        sales.putExtra("UnitInPackage", UnitInPackage);
-                        sales.putExtra("Unit", Unit);
-
+                        sales.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
                         startActivityForResult(sales, REQUEST_FROM_COUNT_STOCK);
                     } else {
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
@@ -1220,7 +1224,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
         if(!WorkPlaceID.equals(WareUid)){
             btn_change_stock.setText(WorkPlaceName);
         }
-        if(WorkPlaceName.equals("Nedeterminat")){
+        if(WorkPlaceName.equals("Nedeterminat") || WorkPlaceName.equals("")){
             btn_change_stock.setText(WareName);
         }
     }

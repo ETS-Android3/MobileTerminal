@@ -6,14 +6,27 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".Sales"
-    tools:showIn="@layout/app_bar_stock_assortment"
-    tools:ignore="MissingTranslation">
+    tools:ignore="MissingTranslation"
+    tools:showIn="@layout/app_bar_stock_assortment">
+
+    <ImageButton
+        android:id="@+id/btn_edit_line_stock_assortment"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:adjustViewBounds="false"
+        android:background="@drawable/item_selector_button_actions"
+        app:layout_constraintEnd_toStartOf="@+id/btn_delete_stock_assortment"
+        app:layout_constraintStart_toEndOf="@+id/btn_touch_open_asl_stock_assortment"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_stock_assortment"
+        app:srcCompat="@drawable/edit_white_48dp" />
 
     <LinearLayout
         android:id="@+id/headerLV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:background="@drawable/round_corners_yelow_header"
         android:orientation="horizontal"
         android:padding="2dp"
@@ -45,68 +58,61 @@
 
     <ImageButton
         android:id="@+id/btn_write_manual_stock_assortment"
-        android:layout_width="48dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:background="@drawable/item_selector_button_actions"
         app:layout_constraintEnd_toStartOf="@+id/btn_touch_open_asl_stock_assortment"
         app:layout_constraintStart_toEndOf="@+id/btn_print_lable_stock_assortment"
-        app:layout_constraintTop_toBottomOf="@+id/txtBarcodes_introdus_stock_assortment"
-        app:srcCompat="@drawable/edit_white_48dp" />
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_stock_assortment"
+        app:srcCompat="@drawable/keyboard_white_48dp" />
 
     <TextView
         android:id="@+id/txt_input_barcode_stock_assortment"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:imeOptions="actionDone"
         android:singleLine="true"
         android:textAlignment="center"
         android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/txtBarcodes_introdus_stock_assortment"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/btn_delete_stock_assortment"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
         android:adjustViewBounds="false"
         android:background="@drawable/item_selector_button_actions"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_touch_open_asl_stock_assortment"
-        app:layout_constraintTop_toBottomOf="@+id/txtBarcodes_introdus_stock_assortment"
+        app:layout_constraintStart_toEndOf="@+id/btn_edit_line_stock_assortment"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_stock_assortment"
         app:srcCompat="@drawable/delete_white_36dp" />
 
     <ImageButton
         android:id="@+id/btn_touch_open_asl_stock_assortment"
-        android:layout_width="48dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:adjustViewBounds="false"
         android:background="@drawable/item_selector_button_actions"
-        app:layout_constraintEnd_toStartOf="@+id/btn_delete_stock_assortment"
+        app:layout_constraintEnd_toStartOf="@+id/btn_edit_line_stock_assortment"
         app:layout_constraintStart_toEndOf="@+id/btn_write_manual_stock_assortment"
-        app:layout_constraintTop_toBottomOf="@+id/txtBarcodes_introdus_stock_assortment"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_stock_assortment"
         app:srcCompat="@drawable/add_white_48dp" />
 
     <ProgressBar
         android:id="@+id/progressBar_stock_assortment"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="10dp"
         android:indeterminate="true"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
@@ -118,31 +124,26 @@
         android:id="@+id/txtBarcodes_introdus_stock_assortment"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:gravity="center"
-        android:text=""
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar_stock_assortment" />
+        app:layout_constraintStart_toEndOf="@+id/txt_input_barcode_stock_assortment"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btn_change_stock_stock_assortment"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="4dp"
         android:background="@drawable/item_selector_button_blue"
         android:text="@string/txt_depozit_nedeterminat"
         android:textAllCaps="false"
         android:textColor="@android:color/background_light"
-        android:textSize="18sp"
+        android:textSize="24sp"
         android:textStyle="italic"
         app:layout_constraintBottom_toTopOf="@+id/btn_ok_stock_assortment"
         app:layout_constraintEnd_toEndOf="parent"
@@ -189,29 +190,31 @@
         android:id="@+id/LL_list_stock_assortment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:choiceMode="singleChoice"
         android:layout_marginBottom="8dp"
+        android:choiceMode="singleChoice"
         app:layout_constraintBottom_toTopOf="@+id/btn_change_stock_stock_assortment"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headerLV" />
+        app:layout_constraintTop_toBottomOf="@+id/headerLV"
+        app:layout_constraintVertical_bias="0.0" />
 
-    <Button
+    <ImageButton
         android:id="@+id/btn_print_lable_stock_assortment"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/item_selector_button_blue"
-        android:text="@string/btn_print_etichete_stock_asl"
+        android:background="@drawable/item_selector_button_actions"
+        android:src="@drawable/print_white_48dp"
         android:textAllCaps="false"
         android:textColor="@android:color/background_light"
         android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@+id/btn_write_manual_stock_assortment"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtBarcodes_introdus_stock_assortment" />
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_stock_assortment" />
 
 </android.support.constraint.ConstraintLayout>

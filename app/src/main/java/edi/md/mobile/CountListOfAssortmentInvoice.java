@@ -22,12 +22,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import edi.md.mobile.Utils.AssortmentInActivity;
+
+import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
+
 public class CountListOfAssortmentInvoice extends AppCompatActivity {
     Button btn_accept,btn_cancel;
     TextView txtTotalinc,txtTotalsale,txtNames,txtProfit;
     EditText etCant,etPriceInc,etPriceSales;
-    String Name,Uid , ip_,port_,PriceSales,PriceIncoming;
-    String IntegerSales;
+    String mNameAssortment,mIDAssortment , ip_,port_,mPriceAssortment,mPriceIncomingAssortment;
+    boolean mAllowNotIntegerSales;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,22 +66,27 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             etCant.requestFocus();
         }
+        Intent sales = getIntent();
+        AssortmentInActivity assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
+        mNameAssortment = assortment.getName();
+        mPriceAssortment = assortment.getPrice();
+        final String mMarkingAssortment = assortment.getMarking();
+        final String mCodeAssortment = assortment.getCode();
+        final String mBarcodeAssortment = assortment.getBarCode();
+        final String mRemainAssortment = assortment.getRemain();
+        mPriceIncomingAssortment = assortment.getIncomePrice();
+        mIDAssortment = assortment.getAssortimentID();
+        mAllowNotIntegerSales =Boolean.parseBoolean(assortment.getAllowNonIntegerSale());
 
-        Name = save_touch_assortiment.getString("Name_Assortiment", "");
-        PriceSales = save_touch_assortiment.getString("Price_Assortiment", "");
-        IntegerSales = save_touch_assortiment.getString("AllowNonIntegerSale", "false");
-        Uid = save_touch_assortiment.getString("AssortimentID","");
-        PriceIncoming=save_touch_assortiment.getString("IncomePrice","0");
-
-        if(!PriceIncoming.contains("0")){
-            etPriceInc.setText(PriceIncoming.replace(",","."));
+        if(!mPriceIncomingAssortment.contains("0")){
+            etPriceInc.setText(mPriceIncomingAssortment.replace(",","."));
         }
         else{
             etPriceInc.setText("0");
         }
 
-        etPriceSales.setText(PriceSales.replace(",","."));
-        txtNames.setText(Name);
+        etPriceSales.setText(mPriceAssortment.replace(",","."));
+        txtNames.setText(mNameAssortment);
 
         etPriceSales.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -100,26 +109,57 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Double cant,PrInc;
-                if (etCant.getText().toString().equals("")){
-                    cant = Double.valueOf("0.0");
-                }else{
-                    cant = Double.valueOf(etCant.getText().toString());
-                }
-                if (etPriceInc.getText().toString().equals("")){
-                    PrInc = Double.valueOf("0.0");
-                }else{
-                    PrInc = Double.valueOf(etPriceInc.getText().toString());
-                }
-                Double PrSales=Double.valueOf(etPriceSales.getText().toString());
+                if(mAllowNotIntegerSales){
+                    if(!isDouble(etCant.getText().toString())){
+                        etCant.setError(getResources().getString(R.string.msg_format_number_incorect));
+                    }else{
+                        Double cant,PrInc;
+                        if (etCant.getText().toString().equals("")){
+                            cant = Double.valueOf("0.0");
+                        }else{
+                            cant = Double.valueOf(etCant.getText().toString());
+                        }
+                        if (etPriceInc.getText().toString().equals("")){
+                            PrInc = Double.valueOf("0.0");
+                        }else{
+                            PrInc = Double.valueOf(etPriceInc.getText().toString());
+                        }
+                        Double PrSales=Double.valueOf(etPriceSales.getText().toString());
 
-                Double totalInc = cant * PrInc;
-                Double totalSales = cant * PrSales;
-                Double profit =((totalSales/totalInc)-1 )/ 0.01;
+                        Double totalInc = cant * PrInc;
+                        Double totalSales = cant * PrSales;
+                        Double profit =((totalSales/totalInc)-1 )/ 0.01;
 
-                txtTotalinc.setText(String.format("%.2f",totalInc));
-                txtTotalsale.setText(String.format("%.2f",totalSales));
-                txtProfit.setText(String.format("%.2f",profit));
+                        txtTotalinc.setText(String.format("%.2f",totalInc));
+                        txtTotalsale.setText(String.format("%.2f",totalSales));
+                        txtProfit.setText(String.format("%.2f",profit));
+                    }
+                }else{
+                    if (!isInteger(etCant.getText().toString())){
+                        etCant.setError(getResources().getString(R.string.msg_only_number_integer));
+                    }else{
+                        Double cant,PrInc;
+                        if (etCant.getText().toString().equals("")){
+                            cant = Double.valueOf("0.0");
+                        }else{
+                            cant = Double.valueOf(etCant.getText().toString());
+                        }
+                        if (etPriceInc.getText().toString().equals("")){
+                            PrInc = Double.valueOf("0.0");
+                        }else{
+                            PrInc = Double.valueOf(etPriceInc.getText().toString());
+                        }
+                        Double PrSales=Double.valueOf(etPriceSales.getText().toString());
+
+                        Double totalInc = cant * PrInc;
+                        Double totalSales = cant * PrSales;
+                        Double profit =((totalSales/totalInc)-1 )/ 0.01;
+
+                        txtTotalinc.setText(String.format("%.2f",totalInc));
+                        txtTotalsale.setText(String.format("%.2f",totalSales));
+                        txtProfit.setText(String.format("%.2f",profit));
+                    }
+                }
             }
 
             @Override
@@ -239,10 +279,11 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
             Toast.makeText(CountListOfAssortmentInvoice.this, getResources().getString(R.string.msg_input_incoming_price_invoice), Toast.LENGTH_SHORT).show();
         }
         else{
-            if (IntegerSales.equals("true")) {
-                if (isDigits(etCant.getText().toString())) {
+            if (mAllowNotIntegerSales) {
+                if (!isDouble(etCant.getText().toString())) etCant.setError(getResources().getString(R.string.msg_format_number_incorect));
+                else{
                     Intent intent = new Intent();
-                    intent.putExtra("count", etCant.getText().toString());
+                    intent.putExtra("Count", etCant.getText().toString());
                     intent.putExtra("SalePrice", etPriceSales.getText().toString());
                     intent.putExtra("IncomeSum", etPriceInc.getText().toString());
                     intent.putExtra("Suma", txtTotalinc.getText().toString());
@@ -251,7 +292,9 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
                 }
             }
             else {
-                if (isDigitInteger(etCant.getText().toString())) {
+                if (!isInteger(etCant.getText().toString()))
+                    etCant.setError(getResources().getString(R.string.msg_only_number_integer));
+                else {
                     Intent intent = new Intent();
                     intent.putExtra("Count", etCant.getText().toString());
                     intent.putExtra("SalePrice", etPriceSales.getText().toString());
@@ -263,17 +306,17 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
             }
         }
     }
-    private boolean isDigits(String s) throws NumberFormatException {
+    private boolean isDouble(String s) throws NumberFormatException {
         try {
             Double.parseDouble(s);
             return true;
         } catch (NumberFormatException e) {
+
             ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortmentInvoice.this);
             return false;
         }
     }
-
-    private boolean isDigitInteger(String s) throws NumberFormatException {
+    private boolean isInteger(String s) throws NumberFormatException {
         try {
             Integer.parseInt(s);
             return true;

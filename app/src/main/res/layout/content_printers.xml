@@ -4,30 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/astavka"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".SettingsMenu.Printers"
-    tools:showIn="@layout/app_bar_printers"
-    tools:ignore="MissingTranslation">
+    tools:ignore="MissingTranslation"
+    tools:showIn="@layout/app_bar_printers">
 
     <Button
-        android:id="@+id/btn_search_printers"
-        android:layout_width="0dp"
-        android:layout_height="35dp"
-
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/item_selector_button_blue"
-        android:text="@string/btn_cauta_printers"
-        android:textAllCaps="false"
-        android:textColor="@android:color/background_light"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toStartOf="@+id/btn_show_printers"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btn_show_printers"
+        android:id="@+id/btn_connect_device"
         android:layout_width="0dp"
         android:layout_height="35dp"
 
@@ -36,83 +20,16 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/item_selector_button_blue"
-        android:text="@string/btn_asociate_printers"
-        android:textAllCaps="false"
-        android:textColor="@android:color/background_light"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_search_printers"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btn_download_label"
-        android:layout_width="0dp"
-        android:layout_height="35dp"
-
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:background="@drawable/item_selector_button_blue"
-        android:text="@string/btn_descarca_eticheta_printers"
-        android:textAllCaps="false"
-        android:textColor="@android:color/background_light"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_calibrate_printers"
-        app:layout_constraintTop_toBottomOf="@+id/btn_show_printers" />
-
-    <Button
-        android:id="@+id/btn_calibrate_printers"
-        android:layout_width="0dp"
-        android:layout_height="35dp"
-
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:background="@drawable/item_selector_button_blue"
         android:enabled="true"
-        android:text="@string/btn_calibrare_printers"
+        android:text="Connect a bluetooth device"
         android:textAllCaps="false"
         android:textColor="@android:color/background_light"
         android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/btn_download_label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_search_printers" />
-
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:background="@drawable/round_corners_yelow_header"
-        android:paddingLeft="5dp"
-        android:text="@string/txt_header_list_denumirea"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_status_printers" />
-
-    <ListView
-        android:id="@+id/LW_printers"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:choiceMode="singleChoice"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner_model_printer" />
 
     <TextView
         android:id="@+id/txt_status_printers"
@@ -120,11 +37,78 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:gravity="end"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_calibrate_printers" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="Printer type:"
+        android:textColor="@color/colorAccent"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/spinner_type_printer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_status_printers" />
+
+    <Spinner
+        android:id="@+id/spinner_type_printer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:gravity="center"
+        android:spinnerMode="dialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/textView7"
+        app:layout_constraintTop_toBottomOf="@+id/txt_status_printers" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Model printer:"
+        android:textColor="@color/colorAccent"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/spinner_model_printer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+    <Spinner
+        android:id="@+id/spinner_model_printer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:spinnerMode="dialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/textView13"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_type_printer" />
+
+    <FrameLayout
+        android:id="@+id/container_fragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_connect_device">
+
+    </FrameLayout>
 
 </android.support.constraint.ConstraintLayout>

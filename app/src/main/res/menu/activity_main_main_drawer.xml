@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item android:title="@string/item_menu_drawable_setari">
+        <menu>
+            <item
+                android:id="@+id/menu_conect_main"
+                android:icon="@drawable/connect_black_36dp"
+                android:title="@string/header_conectare_activity" />
+            <item
+                android:id="@+id/menu_workplace_main"
+                android:icon="@drawable/work_place_black_36dp"
+                android:title="@string/header_workplace_activity" />
+            <item
+                android:id="@+id/menu_printers_main"
+                android:icon="@drawable/printers_black_36dp"
+                android:title="@string/header_printer_activity" />
+        </menu>
+    </item>
+    <item android:title="@string/item_menu_drawable_generale">
+        <menu>
+            <item
+                android:id="@+id/menu_securitate_main"
+                android:icon="@drawable/security_black_36dp"
+                android:title="@string/header_securitate_activity" />
+            <item
+                android:id="@+id/menu_about_main"
+                android:icon="@drawable/info_black_36dp"
+                android:title="@string/header_obout_program" />
+            <item
+                android:id="@+id/menu_help_main"
+                android:icon="@drawable/help_black_36dp"
+                android:title="@string/help" />
+            <item
+                android:id="@+id/menu_exit_main"
+                android:icon="@drawable/power_settings_new_black_36dp"
+                android:title="@string/item_menu_drawable_exit" />
+        </menu>
+    </item>
+    <group android:checkableBehavior="single">
+
+
+    </group>
+</menu>

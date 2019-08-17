@@ -52,6 +52,11 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edi.md.mobile.Settings.Assortment;
+import edi.md.mobile.SettingsMenu.WorkPlace;
+import edi.md.mobile.Utils.AssortmentInActivity;
+
+import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.CreateRevision;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetAssortiment;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetWareHouseList;
@@ -63,7 +68,7 @@ import static edi.md.mobile.NetworkUtils.NetworkUtils.SaveRevisionLine;
 
 public class Inventory extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     TextView txtArticol,txtCountInit,txtCount,txtTotal,txtNames,txtInpBarcode,txtCode,inpBarcode;
-    ImageButton btn_showKeyboard,btn_addTouch;
+    ImageButton btn_showKeyboard,btn_addTouch,btn_open_list;
     ToggleButton auto_input_count;
     Button btn_ok;
     ListView list_added_touch;
@@ -128,6 +133,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
         btn_addTouch=findViewById(R.id.btn_touch_open_asl_inventory);
         auto_input_count=findViewById(R.id.btn_auto_cant_inventory);
         list_added_touch = findViewById(R.id.LW_asl_added_inventory);
+        btn_open_list = findViewById(R.id.btn_touch_open_asl_inventory_listAdded);
 
         final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
@@ -157,7 +163,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
             case 1: {
                 WareID = WorkPlace.getString("Uid", "0");
                 onCreat = true;
-                if(WareID.equals("0")){
+                if(WareID.equals("0") || WareID.equals("")){
                     AlertDialog.Builder dialog = new AlertDialog.Builder(Inventory.this);
                     dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
                     dialog.setCancelable(false);
@@ -177,8 +183,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             onCreat=false;
-                            Intent Logins = new Intent(".LoginMobile");
-                            Logins.putExtra("Activity", 10);
+                            Intent Logins = new Intent(".MenuWorkPlace");
                             startActivity(Logins);
                         }
                     });
@@ -231,7 +236,9 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
             @Override
             public void onClick(View v) {
                 SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
+                SharedPreferences SaveCountName = getSharedPreferences("SaveNameInventory", MODE_PRIVATE);
                 SaveCount.edit().clear().apply();
+                SaveCountName.edit().clear().apply();
                 finish();
             }
         });
@@ -261,10 +268,18 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 Intent AddingASL = new Intent(".AssortmentMobile");
                 AddingASL.putExtra("ActivityCount", 171);
                 AddingASL.putExtra("AutoCount", auto_input_count.isChecked());
+                AddingASL.putExtra("WeightPrefix",WeightPrefix);
                 startActivityForResult(AddingASL, REQUEST_CODE_OPEN_LIST_ASSORTMENT);
             }
         });
 
+        btn_open_list.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent list_add = new Intent(Inventory.this,ListAddedAssortmentInventory.class);
+                startActivity(list_add);
+            }
+        });
     }
     private void getAssortment(String user){
         show_keyboard[0] = false;
@@ -429,7 +444,6 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
             if (response.equals("true")) {
                 menu.getItem(0).setIcon(ContextCompat.getDrawable( Inventory.this, R.drawable.signal_wi_fi_48));
             }else {
-                this.cancel(true);
                 menu.getItem(0).setIcon(ContextCompat.getDrawable(Inventory.this, R.drawable.no_signal_wi_fi_48));
             }
         }
@@ -458,6 +472,8 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                         Price = responseAssortiment.getString("Price");
                         String Code = responseAssortiment.getString("Code");
                         String Unit = responseAssortiment.getString("Unit");
+                        boolean allowInteger = responseAssortiment.getBoolean("AllowNonIntegerSale");
+
 
                         SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
                         String ExistingCount = SaveCount.getString(Uid,"0");
@@ -473,21 +489,27 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                         txtNames.setText(Name);
                         txtCode.setText(Code);
                         if(!auto_input_count.isChecked()) {
+                            Assortment assortment = new Assortment();
+                            assortment.setBarCode(barcode);
+                            assortment.setCode(Code);
+                            assortment.setName(Name);
+                            assortment.setPrice(Price);
+                            assortment.setMarking(Marking);
+                            assortment.setRemain(Remain);
+                            assortment.setAssortimentID(Uid);
+                            assortment.setAllowNonIntegerSale(String.valueOf(allowInteger));
+                            assortment.setUnit(Unit);
+                            final AssortmentInActivity assortmentParcelable = new AssortmentInActivity(assortment);
+
                             Intent sales = new Intent(".CountInventorytMobile");
-                            sales.putExtra("BarCode", barcode);
-                            sales.putExtra("Name", Name);
-                            sales.putExtra("Marking", Marking);
-                            sales.putExtra("Remain", Remain);
-                            sales.putExtra("Price", Price);
-                            sales.putExtra("Code", Code);
-                            sales.putExtra("Uid", Uid);
-                            sales.putExtra("Unit", Unit);
                             sales.putExtra("WeightPrefix",WeightPrefix);
+                            sales.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
                             startActivityForResult(sales, REQUEST_FROM_COUNT_INV);
+
                             inpBarcode.setText("");
                             inpBarcode.requestFocus();
                         }else{
-                            pgH.setMessage("loading..");
+                            pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
                             pgH.setIndeterminate(true);
                             pgH.setCancelable(false);
                             pgH.show();
@@ -634,8 +656,6 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 }
             }
         }
-
-
     }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -786,7 +806,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
         String WorkPlaceID = WorkPlace.getString("Uid","0");
         String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
 
-        if(!WorkPlaceID.equals("0")){
+        if(!WorkPlaceID.equals("0") && !WorkPlaceID.equals("")){
            WareID = WorkPlaceID;
         }else{
             if(!onCreat) {
@@ -809,8 +829,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         onCreat=false;
-                        Intent Logins = new Intent(".LoginMobile");
-                        Logins.putExtra("Activity", 10);
+                        Intent Logins = new Intent(".MenuWorkPlace");
                         startActivity(Logins);
                     }
                 });

@@ -155,8 +155,8 @@
     <string name="msg_input_incoming_price_invoice">Введите цену закупки!</string>
     <string name="msg_format_number_incorect">Неправильный формат!</string>
     <string name="txt_list_asl_view_barcode">Штрих-код:</string>
-    <string name="txt_list_asl_view_valuta"> лей</string>
-    <string name="txt_list_asl_view_price">Цена: </string>
+    <string name="txt_list_asl_view_valuta">лей</string>
+    <string name="txt_list_asl_view_price">Цена:</string>
     <string name="txt_not_conected_printers">Ни один принтер не подключен!</string>
     <string name="msg_document_save_stock_asl">Документ был сохранен! Номер:</string>
     <string name="txt_designe_theme">Оформление</string>
@@ -169,4 +169,5 @@
     <string name="versiune_server_securitate">Версия на сервере:</string>
     <string name="versiune_locala_securitate">Версия на вашем устройстве:</string>
     <string name="sales_count_only_integer">Только целые числа</string>
+    <string name="help">Помощь</string>
 </resources>
