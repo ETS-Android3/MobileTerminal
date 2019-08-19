@@ -51,6 +51,10 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edi.md.mobile.Settings.Assortment;
+import edi.md.mobile.Utils.AssortmentInActivity;
+
+import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetAssortiment;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetWareHouseList;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.Ping;
@@ -134,7 +138,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
         TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
         user_workplace.setText(WorkPlace.getString("Name",""));
 
-        if (WorkPlaceName.equals("Nedeterminat")){
+        if (WorkPlaceName.equals("Nedeterminat") || WorkPlaceName.equals("")){
             pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
             pgH.setCancelable(false);
             pgH.setIndeterminate(true);
@@ -209,7 +213,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
             public void onClick(View v) {
                 Intent AddingASL = new Intent(".AssortmentMobile");
                 AddingASL.putExtra("ActivityCount", 141);
-                if(WorkPlaceID.equals("0")){
+                if(WorkPlaceID.equals("0") || WorkPlaceName.equals("")){
                     AddingASL.putExtra("WareID",WareUid);
                 }
                 startActivityForResult(AddingASL, REQUEST_FROM_LIST_ASSORTMENT);
@@ -655,12 +659,23 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                             JSONObject object = mAddedAssortmentArray.getJSONObject(i);
                             String AssortimentUid = object.getString("AssortimentUid");
                             String CountExist = object.getString("Count");
-                            Integer countInt = Integer.valueOf(CountExist);
-                            Integer CountAdd = Integer.valueOf(count);
+                            double countInt= 0.00,CountAdd = 0.00;
+                            try{
+                                countInt = Double.parseDouble(CountExist);
+                            }catch (Exception e){
+                                CountExist = CountExist.replace(",",".");
+                                countInt = Double.parseDouble(CountExist);
+                            }
+                            try{
+                                CountAdd = Double.parseDouble(count);
+                            }catch (Exception e1){
+                                count = count.replace(",",".");
+                                CountAdd = Double.parseDouble(count);
+                            }
 
                             if (AssortimentUid.contains(UidAsl)) {
-                                Integer CountNew = CountAdd + countInt;
-                                String countStr = String.valueOf(CountNew);
+                                double CountNew = CountAdd + countInt;
+                                String countStr = String.format("%.2f",CountNew);
                                 object.put("Count", countStr);
                                 isExtist=true;
                             }
@@ -699,12 +714,23 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                                 JSONObject object = mAddedAssortmentArray.getJSONObject(k);
                                 String AssortimentUid = object.getString("AssortimentUid");
                                 String CountExist = object.getString("Count");
-                                Integer countInt = Integer.valueOf(CountExist);
-                                Integer CountAdd = Integer.valueOf(count);
+                                double countInt= 0.00,CountAdd = 0.00;
+                                try{
+                                    countInt = Double.parseDouble(CountExist);
+                                }catch (Exception e){
+                                    CountExist = CountExist.replace(",",".");
+                                    countInt = Double.parseDouble(CountExist);
+                                }
+                                try{
+                                    CountAdd = Double.parseDouble(count);
+                                }catch (Exception e1){
+                                    count = count.replace(",",".");
+                                    CountAdd = Double.parseDouble(count);
+                                }
 
                                 if (AssortimentUid.contains(AssortimentUid_from_touch)) {
-                                    Integer CountNew = CountAdd + countInt;
-                                    String countStr = String.valueOf(CountNew);
+                                    double CountNew = CountAdd + countInt;
+                                    String countStr = String.format("%.2f",CountNew);
                                     object.put("Count", countStr);
                                     isExtist = true;
                                     break;
@@ -1128,17 +1154,23 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                         String Codes = responseAssortiment.getString("Code");
                         String Uid = responseAssortiment.getString("AssortimentID");
                         String Barcodes = responseAssortiment.getString("BarCode");
+                        boolean allowInteger = responseAssortiment.getBoolean("AllowNonIntegerSale");
 
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
 
+                        Assortment assortment = new Assortment();
+                        assortment.setBarCode(Barcodes);
+                        assortment.setCode(Codes);
+                        assortment.setName(Names);
+                        assortment.setPrice(Price);
+                        assortment.setMarking(Marking);
+                        assortment.setRemain(Remain);
+                        assortment.setAssortimentID(Uid);
+                        assortment.setAllowNonIntegerSale(String.valueOf(allowInteger));
+                        final AssortmentInActivity assortmentParcelable = new AssortmentInActivity(assortment);
+
                         Intent sales = new Intent(".CountTransferMobile");
-                        sales.putExtra("BarCode", Barcodes);
-                        sales.putExtra("Price", Price);
-                        sales.putExtra("Name", Names);
-                        sales.putExtra("Remain", Remain);
-                        sales.putExtra("Marking", Marking);
-                        sales.putExtra("Code", Codes);
-                        sales.putExtra("ID", Uid);
+                        sales.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
                         startActivityForResult(sales, REQUEST_COUNT_TRANSFER);
                     } else {
                         pgBar.setVisibility(ProgressBar.INVISIBLE);

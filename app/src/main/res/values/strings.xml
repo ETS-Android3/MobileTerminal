@@ -169,4 +169,5 @@
     <string name="versiune_server_securitate">Versiunea de pe server: </string>
     <string name="versiune_locala_securitate">Versiunea instalată: </string>
     <string name="sales_count_only_integer">Doar numere intregi</string>
+    <string name="help">Ajutor</string>
 </resources>

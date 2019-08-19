@@ -8,6 +8,8 @@ import android.util.Log;
 
 //import com.example.igor.terminalmobile.Settings.Assortment;
 
+import com.RT_Printer.BluetoothPrinter.BLUETOOTH.BluetoothPrintDriver;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -30,10 +32,15 @@ public class Variables extends Application {
     private Boolean LoginVariable=false;
     private Boolean DownloadASLVariable=false;
     private Boolean Recreate = false;
+    public static final String mPOSPrinters = "POS printers";
+    public static final String mLablePrinters = "Lable printers";
+    public static final String[] mRongtaModelList = { "Not selected","RPP-200 57mm", "RPP-300 80mm"};
+    public static final String[] mZebraModelList = {"Not selected", "Zebra lable"};
+    BluetoothPrintDriver mBTDevice;
 
     private HashMap<String, Assortment> AssortimentID =new HashMap<>();
-    Assortiment assortmentInActivities = new Assortiment();
 
+    //методы настройки и получение переменной  если пользователь авторизировался или нет
     public Boolean getLoginVariable() {
         return LoginVariable;
     }
@@ -41,6 +48,7 @@ public class Variables extends Application {
         this.LoginVariable = NewData;
     }
 
+    //методы настройки и получение переменной если было пересоздано окно(в случае смены языка)
     public Boolean getIsRecreate() {
         return Recreate;
     }
@@ -48,6 +56,7 @@ public class Variables extends Application {
         this.Recreate = NewData;
     }
 
+    //методы настройки и получение переменной  если скачан ассортимент или нет
     public void setDownloadASLVariable(Boolean NewData) {
         this.DownloadASLVariable = NewData;
     }
@@ -55,10 +64,12 @@ public class Variables extends Application {
         return DownloadASLVariable;
     }
 
+    //добавляет ассортимент по айди в массив для сохранение в дальнейшем в работе
     public void add_AssortimentID(String ID,Assortment asl) {
         AssortimentID.put(ID,asl);
     }
 
+    //возвращает найденые товары по запросу
     public ArrayList<HashMap<String, Object>> get_Search_Assortment(String search) {
         ArrayList<HashMap<String, Object>> asl_list = new ArrayList<>();
         if(AssortimentID!=null)
@@ -88,9 +99,9 @@ public class Variables extends Application {
 
                         Double priceunit = Double.valueOf(price);
                         price =String.format("%.2f",priceunit);
+                        String Asl_Price =getResources().getString(R.string.txt_list_asl_view_price)+ price + getResources().getString(R.string.txt_list_asl_view_valuta);
 
                         asl_.put("Folder_is", false);
-                        String Asl_Price =getResources().getString(R.string.txt_list_asl_view_price)+ price + getResources().getString(R.string.txt_list_asl_view_valuta);
                         asl_.put("icon", R.drawable.assortiment_item);
                         asl_.put("Name", asl_name);
                         asl_.put("ID", uid_asl);
@@ -98,7 +109,8 @@ public class Variables extends Application {
                         asl_.put("BarCode", barcode_asl);
                         asl_.put("Bar_code",getResources().getString(R.string.txt_list_asl_view_barcode) + barcode_asl);
                         asl_.put("AllowNonIntegerSale", allow_integer);
-                        asl_.put("Price", Asl_Price);
+                        asl_.put("Price", price);
+                        asl_.put("PriceWithText", Asl_Price);
                         asl_.put("IncomePrice", incomePrice);
                         asl_.put("Unit", unitary);
                         asl_.put("UnitPrice", finalUnitPrice);
@@ -127,6 +139,7 @@ public class Variables extends Application {
         return asl_list;
     }
 
+    //возвращает все товары которые которые находится в папке с указаном айди
     public ArrayList<HashMap<String, Object>> get_AssortimentFromParent(String ID_Parinte) {
         ArrayList<HashMap<String, Object>> asl_list = new ArrayList<>();
         if(AssortimentID!=null) {
@@ -150,7 +163,7 @@ public class Variables extends Application {
                         String finalUnitPrice = sal.getUnitPrice();
                         String UnitInPackage = sal.getUnitInPackage();
 
-                        Double priceunit = Double.valueOf(price);
+                        double priceunit = Double.parseDouble(price);
                         price = String.format("%.2f", priceunit);
 
                         asl_.put("Folder_is", false);
@@ -162,7 +175,8 @@ public class Variables extends Application {
                         asl_.put("BarCode", barcode_asl);
                         asl_.put("Bar_code", getResources().getString(R.string.txt_list_asl_view_barcode) + barcode_asl);
                         asl_.put("AllowNonIntegerSale", allow_integer);
-                        asl_.put("Price", Asl_Price);
+                        asl_.put("Price", price);
+                        asl_.put("PriceWithText", Asl_Price);
                         asl_.put("IncomePrice", incomePrice);
                         asl_.put("Unit", unitary);
                         asl_.put("UnitPrice", finalUnitPrice);
@@ -192,10 +206,12 @@ public class Variables extends Application {
         return asl_list;
     }
 
+    //возвращаеттовар по запрошеному айди товара
     public Assortment get_AssortimentFromID (String ID) {
         return AssortimentID.get(ID);
     }
 
+    //возвращает все папки из массива
     public ArrayList<HashMap<String, Object>> get_AssortimentFolders() {
         ArrayList<HashMap<String, Object>> asl_list = new ArrayList<>();
         if(AssortimentID!=null)
@@ -225,6 +241,7 @@ public class Variables extends Application {
         return asl_list;
     }
 
+    //записывание логов в папку IntelectSoft в корневую директорию устройства
     public void appendLog(String text,Context context) {
         File file = null;
         File teste = new File(Environment.getExternalStorageDirectory(),"/IntelectSoft");
@@ -259,10 +276,10 @@ public class Variables extends Application {
         }
     }
 
-
-    public void addAssortimentToArray ( AssortmentInActivity assortmentInActivity){
-        assortmentInActivities.add(assortmentInActivity);
+    public void setPrinters (BluetoothPrintDriver bt_device){
+        this.mBTDevice = bt_device;
     }
-    public Assortiment getAssortimentArray (){return assortmentInActivities;}
-
+    public BluetoothPrintDriver getPrinters (){
+       return mBTDevice ;
+    }
 }

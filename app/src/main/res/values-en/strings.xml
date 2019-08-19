@@ -35,7 +35,7 @@
 
     <string name="txt_header_inp_count">Enter the quantity:</string>
     <string name="header_of_lista_reviziilor">List of revisions</string>
-    <string name="header_obout_program">About:</string>
+    <string name="header_obout_program">About</string>
     <string name="header_securitate_activity">Security</string>
     <string name="header_printer_activity">Printers</string>
     <string name="header_workplace_activity">Workplace</string>
@@ -171,4 +171,5 @@
     <string name="versiune_server_securitate">The version on the server:</string>
     <string name="versiune_locala_securitate">Installed version:</string>
     <string name="sales_count_only_integer">Only integer number</string>
+    <string name="help">Help</string>
 </resources>

@@ -51,6 +51,10 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edi.md.mobile.Settings.Assortment;
+import edi.md.mobile.Utils.AssortmentInActivity;
+
+import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetAssortiment;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetWareHouseList;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.Ping;
@@ -60,7 +64,7 @@ import static edi.md.mobile.NetworkUtils.NetworkUtils.SavePurchaseInvoice;
 
 public class Invoice extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
     ImageButton btn_write_barcode,btn_delete,btn_open_asl_list;
-    TextView txt_input_barcode,txt_nr_factura,txt_total_invoice,txtBarcode_introdus;
+    TextView txt_input_barcode,txt_total_invoice,txtBarcode_introdus;
     ProgressBar pgBar;
     Button btn_ok,btn_cancel,btn_change_stock;
     ListView list_of_invoice;
@@ -70,7 +74,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
     ArrayList<HashMap<String, Object>> stock_List_array = new ArrayList<>();
     ArrayList<HashMap<String, Object>> asl_list = new ArrayList<>();
 
-    String ip_,port_,UserId,WareUid,WareNames,uid_selected,barcode_introdus;
+    String ip_,port_,UserId,WareUid,WareNames,uid_selected,barcode_introdus,mNrInvoice;
     ProgressDialog pgH;
     TimerTask timerTaskSync;
     Timer sync;
@@ -96,7 +100,6 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
         txt_input_barcode = findViewById(R.id.txt_input_barcode_invoice);
         btn_delete = findViewById(R.id.btn_delete_invoice);
         btn_open_asl_list = findViewById(R.id.btn_touch_open_asl_invoice);
-        txt_nr_factura = findViewById(R.id.txtfactura_invoice);
         txt_total_invoice = findViewById(R.id.txtTotal_invoice);
         pgBar = findViewById(R.id.progressBar_invoice);
         txtBarcode_introdus = findViewById(R.id.txtBarcode_introdus_invoice);
@@ -146,8 +149,9 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
         input.setPositiveButton(getResources().getString(R.string.msg_continue), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                txt_nr_factura.setText(inputCode.getText().toString());
-                if (WorkPlaceName.equals("Nedeterminat")){
+                setTitle("Nr: " + inputCode.getText().toString());
+                mNrInvoice = inputCode.getText().toString();
+                if (WorkPlaceName.equals("Nedeterminat")|| WorkPlaceName.equals("")){
                     pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
                     pgH.setCancelable(false);
                     pgH.setIndeterminate(true);
@@ -234,7 +238,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
             public void onClick(View v) {
                 Intent AddingASL = new Intent(".AssortmentMobile");
                 AddingASL.putExtra("ActivityCount", 191);
-                if(WorkPlaceID.equals("0")){
+                if(WorkPlaceID.equals("") || WorkPlaceID.equals("0")){
                     AddingASL.putExtra("WareID",WareUid);
                 }
                 startActivityForResult(AddingASL, REQUET_FROM_LIST_ASSORTMENT);
@@ -271,7 +275,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                 }
                 sendInvoice = new JSONObject();
                 try {
-                    sendInvoice.put("InvoiceNumber",txt_nr_factura.getText().toString());
+                    sendInvoice.put("InvoiceNumber",mNrInvoice);
                     sendInvoice.put("Lines",sendArr);
                     sendInvoice.put("UserID",UserId);
                     sendInvoice.put("TerminalCode","Android");
@@ -943,16 +947,21 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                         String Price = responseAssortiment.getString("Price");
                         String Uid = responseAssortiment.getString("AssortimentID");
                         String PriceIncoming=responseAssortiment.getString("IncomePrice");
+                        boolean allowInteger = responseAssortiment.getBoolean("AllowNonIntegerSale");
 
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
                         txtBarcode_introdus.setText(barcode_introdus);
 
-                        Intent sales = new Intent(".CountInvoiceMobile");
+                        Assortment assortment = new Assortment();
+                        assortment.setName(Names);
+                        assortment.setPrice(Price);
+                        assortment.setIncomePrice(PriceIncoming);
+                        assortment.setAssortimentID(Uid);
+                        assortment.setAllowNonIntegerSale(String.valueOf(allowInteger));
+                        final AssortmentInActivity assortmentParcelable = new AssortmentInActivity(assortment);
 
-                        sales.putExtra("Price", Price);
-                        sales.putExtra("Name", Names);
-                        sales.putExtra("PriceIncoming", PriceIncoming);
-                        sales.putExtra("ID", Uid);
+                        Intent sales = new Intent(".CountInvoiceMobile");
+                        sales.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
                         startActivityForResult(sales, REQUEST_FROM_COUNT);
                     } else {
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
@@ -983,7 +992,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
         if(!WorkPlaceID.equals(WareUid)){
             btn_change_stock.setText(WorkPlaceName);
         }
-        if(WorkPlaceName.equals("Nedeterminat")){
+        if(WorkPlaceName.equals("Nedeterminat") || WorkPlaceName.equals("")){
             btn_change_stock.setText(WareNames);
         }
     }

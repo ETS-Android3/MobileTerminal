@@ -34,11 +34,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import edi.md.mobile.Utils.AssortmentInActivity;
+
+import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.SaveRevisionLine;
 
 public class CountListOfAssortment extends AppCompatActivity {
     final Context context = this;
-    String name_asl,code,ip_,port_;
+    String ip_,port_,mNameAssortment;
     boolean mIntegerSales;
     EditText Count_enter;
     ImageButton btn_plus,btn_del;
@@ -103,42 +106,49 @@ public class CountListOfAssortment extends AppCompatActivity {
             Count_enter.requestFocus();
         }
         boolean ShowCode = Settings.getBoolean("ShowCode", false);
-        if (!ShowCode) {
-            txtCode.setVisibility(View.INVISIBLE);
-        }
-        final String uid_save = sPref.getString("Guid_Assortiment", "");
-        name_asl = sPref.getString("Name_Assortiment", "");
-        if(sPref.getString("AllowNonIntegerSale", "false").equals("true"))
+
+        Intent sales = getIntent();
+        AssortmentInActivity assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
+        mNameAssortment = assortment.getName();
+        final String mPriceAssortment = assortment.getPrice();
+        final String mMarkingAssortment = assortment.getMarking();
+        final String mCodeAssortment = assortment.getCode();
+        final String mBarcodeAssortment = assortment.getBarCode();
+        final String mRemainAssortment = assortment.getRemain();
+        final String mIDAssortment = assortment.getAssortimentID();
+        final boolean mAllowNotIntegerSales =Boolean.parseBoolean(assortment.getAllowNonIntegerSale());
+
+        if(mAllowNotIntegerSales)
             mIntegerSales = true;
         else
             mIntegerSales = false;
 
-        name_forasl.setText(name_asl);
-        price_forasl.setText(sPref.getString("Price_Assortiment", ""));
-        String mCode = sPref.getString("Code_Assortiment", "");
-        String mMarking = sPref.getString("Marking", "");
-        String mRemain = sPref.getString("Remain", "");
-        String mBarcode = sPref.getString("BarCode_Assortiment", "");
+        name_forasl.setText(mNameAssortment);
+        price_forasl.setText(mPriceAssortment);
 
-        if(mCode.equals("") || mCode.equals("null") || mCode==null){
+
+        if(mCodeAssortment==null || mCodeAssortment.equals("") || mCodeAssortment.equals("null") ){
             txtCode.setText("-");
         }else{
-            txtCode.setText(mCode);
+            if (!ShowCode)
+                txtCode.setText("--------");
+            else
+                txtCode.setText(mCodeAssortment);
         }
-        if(mMarking.equals("") || mMarking.equals("null") || mMarking==null){
+        if(mMarkingAssortment==null || mMarkingAssortment.equals("") || mMarkingAssortment.equals("null") ){
             txtMarking.setText("-");
         }else{
-            txtMarking.setText(mCode);
+            txtMarking.setText(mMarkingAssortment);
         }
-        if(mRemain.equals("") || mRemain.equals("null") || mRemain==null){
+        if(mRemainAssortment==null || mRemainAssortment.equals("") || mRemainAssortment.equals("null") ){
             txtRemain.setText("-");
         }else{
-            txtRemain.setText(mRemain);
+            txtRemain.setText(mRemainAssortment);
         }
-        if(mBarcode.equals("") || mBarcode.equals("null") || mBarcode==null){
+        if(mBarcodeAssortment==null || mBarcodeAssortment.equals("") || mBarcodeAssortment.equals("null")){
             txtBarCode.setText("-");
         }else{
-            txtBarCode.setText(mBarcode);
+            txtBarCode.setText(mBarcodeAssortment);
         }
 
         Count_enter.addTextChangedListener(new TextWatcher() {
@@ -149,7 +159,7 @@ public class CountListOfAssortment extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (mIntegerSales) {
-                    if (!isDouble(String.valueOf(charSequence))) Count_enter.setError(getResources().getString(R.string.msg_format_number_incorect));
+                    if (!isDouble(Count_enter.getText().toString())) Count_enter.setError(getResources().getString(R.string.msg_format_number_incorect));
                 }
                 else {
                     if (!isInteger(Count_enter.getText().toString())) Count_enter.setError(getResources().getString(R.string.msg_only_number_integer));
@@ -163,8 +173,8 @@ public class CountListOfAssortment extends AppCompatActivity {
         Count_enter.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) saveCount(uid_save);
-                else if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER) saveCount(uid_save);
+                if (actionId == EditorInfo.IME_ACTION_DONE) saveCount(mIDAssortment);
+                else if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER) saveCount(mIDAssortment);
                 return false;
             }
         });
@@ -172,7 +182,7 @@ public class CountListOfAssortment extends AppCompatActivity {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveCount(uid_save);
+                saveCount(mIDAssortment);
             }
         });
 
@@ -281,7 +291,7 @@ public class CountListOfAssortment extends AppCompatActivity {
             if (mIntegerSales) {
                 if (isDouble(Count_enter.getText().toString())) {
                     Intent intent = new Intent();
-                    intent.putExtra("Name", name_asl);
+                    intent.putExtra("Name", mNameAssortment);
                     intent.putExtra("count", String.valueOf(Count_enter.getText()));
                     setResult(RESULT_OK, intent);
                     finish();
@@ -289,7 +299,7 @@ public class CountListOfAssortment extends AppCompatActivity {
             } else {
                 if (isInteger(Count_enter.getText().toString())) {
                     Intent intent = new Intent();
-                    intent.putExtra("Name", name_asl);
+                    intent.putExtra("Name",mNameAssortment);
                     intent.putExtra("count", String.valueOf(Count_enter.getText()));
                     setResult(RESULT_OK, intent);
                     finish();

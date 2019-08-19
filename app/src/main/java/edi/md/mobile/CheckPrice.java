@@ -59,6 +59,7 @@ import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetAssortiment;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetWareHouseList;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.Ping;
@@ -76,7 +77,6 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
     Button btn_depozit;
     ImageButton print, open_assortment_list, write_barcode,addCount,deleteCount;
     TextView txtInput_barcode, txtNameAsortment, txtBarcodeAssortment,txtCodeAssortment,txtMarkingAssortment,txtStockAssortment,txtPriceAssortment;
-    Switch show_stock;
     ProgressBar pgBar;
     ProgressDialog pgH;
     TimerTask timerTaskSync;
@@ -120,14 +120,9 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         txtMarkingAssortment = findViewById(R.id.txtMarking_asortment_check_price);
         txtStockAssortment = findViewById(R.id.txtStoc_asortment_check_price);
         txtPriceAssortment = findViewById(R.id.txtPrice_asortment_check_price);
-        show_stock = findViewById(R.id.show_stock_check_price);
         pgBar = findViewById(R.id.progressBar_check_price);
         count_lable = findViewById(R.id.count_etichete_check_price);
         pgH=new ProgressDialog(CheckPrice.this);
-
-        if(!show_stock.isChecked()){
-            txtStockAssortment.setVisibility(View.INVISIBLE);
-        }
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -140,9 +135,11 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
 
         boolean ShowCode = Settings.getBoolean("ShowCode",false);
+
         if (!ShowCode){
             txtCodeAssortment.setVisibility(View.INVISIBLE);
         }
+
         UserId = User.getString("UserID","");
         ip_=Settings.getString("IP","");
         port_=Settings.getString("Port","");
@@ -157,7 +154,7 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         final String WorkPlaceID = WorkPlace.getString("Uid","0");
         String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
 
-        if (WorkPlaceName.equals("Nedeterminat")){
+        if (WorkPlaceName.equals("Nedeterminat") || WorkPlaceName.equals("")){
             pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
             pgH.setCancelable(false);
             pgH.setIndeterminate(true);
@@ -216,18 +213,6 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
                     show_keyboard[0] = false;
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(txtInput_barcode.getWindowToken(), 0);
-                }
-            }
-        });
-
-        show_stock.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    txtStockAssortment.setVisibility(View.VISIBLE);
-                }
-                else{
-                    txtStockAssortment.setVisibility(View.INVISIBLE);
                 }
             }
         });
@@ -426,7 +411,10 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         } else if (id == R.id.menu_about) {
             Intent MenuConnect = new Intent(".MenuAbout");
             startActivity(MenuConnect);
-        } else if (id == R.id.menu_exit) {
+        }else if(id == R.id.menu_help) {
+
+        }
+        else if (id == R.id.menu_exit) {
             finish();
         }
 
@@ -449,7 +437,7 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         if (requestCode == REQUEST_FROM_LIST_ASSORTMENT){
             if(resultCode == RESULT_OK){
                 if (data != null) {
-                    AssortmentInActivity assortment = data.getParcelableExtra("AssortmentInActivity");
+                    AssortmentInActivity assortment = data.getParcelableExtra(AssortimentClickentSendIntent);
                     mNameAssortment = assortment.getName();
                     mPriceAssortment = assortment.getPrice();
                     mMarkingAssortment = assortment.getMarking();
@@ -457,11 +445,17 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
                     mBarcodeAssortment = assortment.getBarCode();
                     mUnitAssortment = assortment.getUnit();
                     mUnitPrice = assortment.getUnitPrice();
-                    if (mUnitPrice !=null) mUnitPrice = mUnitPrice.replace(".",",");
+                    //if (mUnitPrice !=null) mUnitPrice = mUnitPrice.replace(".",",");
                     mUnitInPackage = assortment.getUnitInPackage();
 
                     txtNameAsortment.setText(mNameAssortment);
-                    txtPriceAssortment.setText(mPriceAssortment);
+                    double price = 0.00;
+                    try{
+                        price = Double.parseDouble(mPriceAssortment);
+                    }catch (Exception e){
+                        price = Double.parseDouble(mPriceAssortment.replace(",","."));
+                    }
+                    txtPriceAssortment.setText(String.valueOf(price));
 
                     if (mMarkingAssortment != null) {
                         txtMarkingAssortment.setText(mMarkingAssortment);
@@ -470,12 +464,10 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
                     }
                     txtCodeAssortment.setText(mCodeAssortment);
                     txtBarcodeAssortment.setText(mBarcodeAssortment);
-                    if (show_stock.isChecked()){
-                        if(assortment.getRemain()!=null)
-                            txtStockAssortment.setText(assortment.getRemain());
-                        else
-                            txtStockAssortment.setText("0");
-                    }
+                    if(assortment.getRemain()!=null)
+                        txtStockAssortment.setText(assortment.getRemain());
+                    else
+                        txtStockAssortment.setText("0");
                     txtInput_barcode.requestFocus();
                 }
             }
@@ -553,7 +545,7 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         if(!WorkPlaceID.equals(WareUid)){
             btn_depozit.setText(WorkPlaceName);
         }
-        if(WorkPlaceName.equals("Nedeterminat")){
+        if(WorkPlaceName.equals("Nedeterminat") || WorkPlaceName.equals("")){
             btn_depozit.setText(WareNames);
         }
 
@@ -702,7 +694,7 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         sendAssortiment = new JSONObject();
         try {
             sendAssortiment.put("AssortmentIdentifier", txtInput_barcode.getText().toString());
-            sendAssortiment.put("ShowStocks", show_stock.isChecked());
+            sendAssortiment.put("ShowStocks", true);
             sendAssortiment.put("UserID", UserId);
             sendAssortiment.put("WarehouseID", WareUid);
         } catch (JSONException e) {
@@ -863,19 +855,20 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
                         mUnitAssortment = responseAssortiment.getString("Unit");
                         mUnitInPackage = responseAssortiment.getString("UnitInPackage");
                         mUnitPrice = responseAssortiment.getString("UnitPrice");
-                        Double priceDouble = Double.valueOf(mPriceAssortment);
-                        mPriceAssortment = String.format("%.2f", priceDouble);
-                        mPriceAssortment = mPriceAssortment.replace(".", ",");
-                        Double priceunit = Double.valueOf(mUnitPrice);
-                        mUnitPrice = String.format("%.2f", priceunit);
-                        mUnitPrice = mUnitPrice.replace(".", ",");
+//                        double priceDouble = Double.valueOf(mPriceAssortment);
+//                        mPriceAssortment = String.format("%.2f", priceDouble);
+//                        mPriceAssortment = mPriceAssortment.replace(".", ",");
+//
+//                        double priceunit = Double.valueOf(mUnitPrice);
+//                        mUnitPrice = String.format("%.2f", priceunit);
+//                        mUnitPrice = mUnitPrice.replace(".", ",");
                         mBarcodeAssortment = responseAssortiment.getString("BarCode");
 
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
 
                         txtPriceAssortment.setText(mPriceAssortment);
                         txtNameAsortment.setText(mNameAssortment);
-                        if (!mMarkingAssortment.equals("null")) {
+                        if (!mMarkingAssortment.equals("null") || !mMarkingAssortment.equals("")) {
                             txtMarkingAssortment.setText(mMarkingAssortment);
                         } else {
                             txtMarkingAssortment.setText("-");
@@ -883,7 +876,7 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
                         txtStockAssortment.setText(Remain);
                         txtNameAsortment.setText(mNameAssortment);
 
-                        if (!mCodeAssortment.equals("null")) {
+                        if (!mCodeAssortment.equals("null")  || !mCodeAssortment.equals("")) {
                             txtCodeAssortment.setText(mCodeAssortment);
                         } else {
                             txtCodeAssortment.setText("-");

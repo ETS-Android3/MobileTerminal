@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Locale.setDefault(locale);
         Configuration config = new Configuration();
         config.locale = locale;
+
         getBaseContext().getResources().updateConfiguration(config,
                 getBaseContext().getResources().getDisplayMetrics());
 
@@ -114,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view_main);
         btn_check_price=findViewById(R.id.btn_check_price);
         btn_sales = findViewById(R.id.btn_sales);
         btn_invoice = findViewById(R.id.btn_invoice);
@@ -127,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ((Variables)getApplication()).appendLog("Aplication starting",MainActivity.this);
         Settings = getSharedPreferences("Settings", MODE_PRIVATE);
         final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
-        final SharedPreferences.Editor editor = WorkPlace.edit();
         final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
         final SharedPreferences.Editor inpSet = Settings.edit();
 
@@ -145,10 +145,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         sync.schedule(timerTaskSync,100,2000);
 
         View headerLayout = navigationView.getHeaderView(0);
-        TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
+        final TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user_main);
         useremail.setText(User.getString("Name",""));
-        TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
-        user_workplace.setText(WorkPlace.getString("Name",""));
+        final TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user_main);
+        user_workplace.setText(WorkPlace.getString("Name","Nedeterminat"));
+        Button log_out = (Button)headerLayout.findViewById(R.id.btn_log_out_main);
+
+        log_out.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((Variables) getApplication()).setLoginVariable(false);
+                 User.edit().clear().apply();
+                 useremail.setText("");
+            }
+        });
 
         btn_check_price.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -351,27 +361,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.menu_conect) {
+        if (id == R.id.menu_conect_main) {
             Intent MenuConnect = new Intent(".MenuConnect");
             startActivity(MenuConnect);
-        } else if (id == R.id.menu_workplace) {
+        } else if (id == R.id.menu_workplace_main) {
             Intent Logins = new Intent(".LoginMobile");
             Logins.putExtra("Activity", workplaces);
             startActivity(Logins);
-        } else if (id == R.id.menu_printers) {
+        } else if (id == R.id.menu_printers_main) {
             Intent Logins = new Intent(".LoginMobile");
             Logins.putExtra("Activity", printers);
             startActivity(Logins);
-        } else if (id == R.id.menu_securitate) {
+        } else if (id == R.id.menu_securitate_main) {
             Intent Logins = new Intent(".LoginMobile");
             Logins.putExtra("Activity", securitate);
             startActivity(Logins);
-        } else if (id == R.id.menu_about) {
+        } else if (id == R.id.menu_about_main) {
             Intent MenuConnect = new Intent(".MenuAbout");
             startActivity(MenuConnect);
-        } else if (id == R.id.menu_exit) {
-            SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
-            WorkPlace.edit().clear().apply();
+        }else if(id == R.id.menu_help_main) {
+            Intent MenuHelp = new Intent(MainActivity.this, HelpMain.class);
+            startActivity(MenuHelp);
+        }
+        else if (id == R.id.menu_exit_main) {
             finishAffinity();
         }
 
@@ -414,8 +426,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 menu.getItem(0).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.signal_wi_fi_48));
             }else {
                 pingTest=false;
-                this.cancel(true);
-                menu.getItem(0).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.no_signal_wi_fi_48));
+                if(menu!=null)
+                    menu.getItem(0).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.no_signal_wi_fi_48));
             }
         }
     }
@@ -464,8 +476,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         input_LogIn.putString("Name", "");
         input_LogIn.putString("UserID", "");
         input_LogIn.apply();
-        SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
-        WorkPlace.edit().clear().apply();
         ((Variables) getApplication()).setLoginVariable(false);
         super.onDestroy();
     }
@@ -476,11 +486,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
         View headerLayout = navigationView.getHeaderView(0);
-        TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
+        TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user_main);
         useremail.setText(User.getString("Name", ""));
 
         final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
-        TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
+        TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user_main);
         user_workplace.setText(WorkPlace.getString("Name", ""));
     }
 

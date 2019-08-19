@@ -26,7 +26,28 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/mobile_icons"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+
+        <activity android:name=".Utils.DeviceListActivity"
+            android:label="Select device"
+            android:theme="@android:style/Theme.Holo.Dialog"
+            android:configChanges="orientation|keyboardHidden" />
+
+        <activity android:name=".HelpMain"
+            android:label="Help page"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" ></activity>
+        <activity
+            android:name=".ListAddedAssortmentInventory"
+            android:label="Lista adaugate"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".Help" />
+        <activity
+            android:name=".CountListOfAssortmentInventory"
+            android:label="@string/txt_header_inp_count"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".CountListOfAssortmentInvoice"
             android:label="@string/txt_header_inp_count"
@@ -259,9 +280,9 @@
         <activity
             android:name=".GetClient"
             android:configChanges="orientation"
-            android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/header_login_client_activity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name=".GetClientMobile" />
 
@@ -272,17 +293,19 @@
             android:name=".Login"
             android:configChanges="orientation"
             android:label="@string/header_login_user_activity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name=".LoginMobile" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="bb23252915ed55596257f7e1c85fd17cc9a35497" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -290,7 +313,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
     </application>
 

@@ -13,12 +13,12 @@
         android:id="@+id/img_btn_delete_count_check_price"
         android:layout_width="wrap_content"
         android:layout_height="34dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:background="@android:color/transparent"
         app:layout_constraintEnd_toStartOf="@+id/count_etichete_check_price"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/textView14"
-        app:layout_constraintTop_toBottomOf="@+id/show_stock_check_price"
+        app:layout_constraintTop_toBottomOf="@+id/CL_info_asortment_check_price"
         app:srcCompat="@drawable/keyboard_arrow_left_black_48dp" />
 
     <Button
@@ -54,7 +54,7 @@
         android:imeOptions="actionDone"
         android:singleLine="true"
         android:textAlignment="center"
-        android:textSize="8sp"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -239,55 +239,38 @@
             app:layout_constraintTop_toBottomOf="@+id/txtBarcode_assortment_checkPrice" />
     </android.support.constraint.ConstraintLayout>
 
-    <Switch
-        android:id="@+id/show_stock_check_price"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="@string/switch_show_remain_checkprice"
-        android:textSize="21sp"
-        android:theme="@style/SCBSwitch"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/CL_info_asortment_check_price" />
-
     <TextView
         android:id="@+id/textView14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:text="@string/txt_nr_etichete_checkprice"
         android:textColor="@android:color/black"
         android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@+id/img_btn_delete_count_check_price"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/show_stock_check_price" />
+        app:layout_constraintTop_toBottomOf="@+id/CL_info_asortment_check_price" />
 
     <ImageButton
         android:id="@+id/img_btn_add_count_check_price"
         android:layout_width="wrap_content"
         android:layout_height="34dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginTop="12dp"
         android:background="@android:color/transparent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_print_etichete_check_price"
         app:layout_constraintStart_toEndOf="@+id/count_etichete_check_price"
-        app:layout_constraintTop_toBottomOf="@+id/show_stock_check_price"
+        app:layout_constraintTop_toBottomOf="@+id/CL_info_asortment_check_price"
         app:srcCompat="@drawable/keyboard_arrow_right_black_48dp" />
 
     <EditText
         android:id="@+id/count_etichete_check_price"
         android:layout_width="63dp"
         android:layout_height="34dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:background="@android:color/transparent"
         android:gravity="center_horizontal|center_vertical"
         android:text="1"
@@ -295,14 +278,14 @@
         android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@+id/img_btn_add_count_check_price"
         app:layout_constraintStart_toEndOf="@+id/img_btn_delete_count_check_price"
-        app:layout_constraintTop_toBottomOf="@+id/show_stock_check_price" />
+        app:layout_constraintTop_toBottomOf="@+id/CL_info_asortment_check_price" />
 
     <ImageButton
         android:id="@+id/btn_touch_open_asl_check_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:adjustViewBounds="false"
         android:background="@drawable/item_selector_button_actions"
@@ -312,8 +295,8 @@
 
     <ImageButton
         android:id="@+id/btn_add_manual_check_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
@@ -324,15 +307,15 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView14"
-        app:srcCompat="@drawable/edit_white_48dp" />
+        app:srcCompat="@drawable/keyboard_white_48dp" />
 
     <ImageButton
         android:id="@+id/btn_print_etichete_check_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:background="@drawable/item_selector_button_actions"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView14"

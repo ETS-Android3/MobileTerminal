@@ -9,17 +9,77 @@
     tools:showIn="@layout/app_bar_transfer"
     tools:ignore="MissingTranslation">
 
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="25dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginRight="2dp"
+        android:scaleType="center"
+        app:layout_constraintEnd_toStartOf="@+id/txtDepozit_destinar_transfer"
+        app:layout_constraintStart_toEndOf="@+id/txtDepozit_expeditor_transfer"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/keyboard_arrow_down_black_48dp" />
+
+    <ImageButton
+        android:id="@+id/btn_edit_line_asl_transfer"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:adjustViewBounds="false"
+        android:background="@drawable/item_selector_button_actions"
+        app:layout_constraintEnd_toStartOf="@+id/btn_delete_transfer"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_transfer"
+        app:srcCompat="@drawable/edit_white_48dp" />
+
+    <TextView
+        android:id="@+id/txtDepozit_destinar_transfer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginRight="2dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:singleLine="true"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView4"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtDepozit_expeditor_transfer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="2dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:singleLine="true"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/imageView4"
+        app:layout_constraintStart_toEndOf="@+id/imageView3"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:id="@+id/headerLV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:background="@drawable/round_corners_yelow_header"
         android:orientation="horizontal"
         android:padding="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/CL_info_asortment_check_price">
+        app:layout_constraintTop_toBottomOf="@+id/btn_write_manual_transfer">
 
         <TextView
             android:id="@+id/textView10"
@@ -45,161 +105,79 @@
 
     <ImageButton
         android:id="@+id/btn_write_manual_transfer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:background="@drawable/item_selector_button_actions"
         app:layout_constraintEnd_toStartOf="@+id/btn_touch_open_asl_transfer"
-        app:layout_constraintTop_toBottomOf="@+id/txtBarcode_introdus_transfer"
-        app:srcCompat="@drawable/edit_white_48dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_transfer"
+        app:srcCompat="@drawable/keyboard_white_48dp" />
 
     <TextView
         android:id="@+id/txt_input_barcode_transfer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginTop="3dp"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:imeOptions="actionDone"
         android:singleLine="true"
         android:textAlignment="center"
-        android:textSize="10sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@+id/btn_edit_line_asl_transfer"
+        app:layout_constraintStart_toEndOf="@+id/btn_touch_open_asl_transfer"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_transfer" />
 
     <ImageButton
         android:id="@+id/btn_delete_transfer"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
         android:adjustViewBounds="false"
         android:background="@drawable/item_selector_button_actions"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtBarcode_introdus_transfer"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_transfer"
         app:srcCompat="@drawable/delete_white_36dp" />
 
     <ImageButton
         android:id="@+id/btn_touch_open_asl_transfer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:adjustViewBounds="false"
         android:background="@drawable/item_selector_button_actions"
-        app:layout_constraintEnd_toStartOf="@+id/btn_delete_transfer"
-        app:layout_constraintTop_toBottomOf="@+id/txtBarcode_introdus_transfer"
+        app:layout_constraintStart_toEndOf="@+id/btn_write_manual_transfer"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_transfer"
         app:srcCompat="@drawable/add_white_48dp" />
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/CL_info_asortment_check_price"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:background="@drawable/round_corners_transparent"
-        app:layout_constraintEnd_toStartOf="@+id/btn_write_manual_transfer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtBarcode_introdus_transfer">
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="48dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/txt_din_depozit_transfer"
-            android:textColor="@android:color/black"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toStartOf="@+id/txtDepozit_expeditor_transfer"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/txtDepozit_expeditor_transfer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="4dp"
-
-            android:layout_marginRight="4dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="end"
-            android:singleLine="true"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView4"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="48dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginBottom="4dp"
-            android:text="@string/txt_in_depozit_transfer"
-            android:textColor="@android:color/black"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-        <TextView
-            android:id="@+id/txtDepozit_destinar_transfer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="4dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="end"
-            android:singleLine="true"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView6"
-            app:layout_constraintTop_toBottomOf="@+id/txtDepozit_expeditor_transfer" />
-
-    </android.support.constraint.ConstraintLayout>
 
     <ProgressBar
         android:id="@+id/progressBar_transfer"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="10dp"
         android:indeterminate="true"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_input_barcode_transfer" />
+        app:layout_constraintTop_toBottomOf="@+id/txtDepozit_expeditor_transfer" />
 
     <TextView
         android:id="@+id/txtBarcode_introdus_transfer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginTop="4dp"
         android:gravity="center"
-        android:text=""
         android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar_transfer" />
+        app:layout_constraintEnd_toStartOf="@+id/btn_edit_line_asl_transfer"
+        app:layout_constraintStart_toEndOf="@+id/btn_touch_open_asl_transfer"
+        app:layout_constraintTop_toBottomOf="@+id/txt_input_barcode_transfer" />
 
     <Button
         android:id="@+id/btn_ok_transfer"
@@ -240,11 +218,26 @@
         android:id="@+id/LL_list_asl_transfer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="2dp"
         android:choiceMode="singleChoice"
         app:layout_constraintBottom_toTopOf="@+id/btn_ok_transfer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerLV" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="25dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginRight="2dp"
+        android:scaleType="center"
+        app:layout_constraintEnd_toStartOf="@+id/txtDepozit_expeditor_transfer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/keyboard_arrow_up_black_48dp" />
 
 </android.support.constraint.ConstraintLayout>

@@ -398,7 +398,8 @@ public class Login extends AppCompatActivity {
                 try {
                     JSONObject response_from_Autentificare = new JSONObject(response);
                     int errore_code = response_from_Autentificare.getInt("ErrorCode");
-                    if (errore_code == 0) {
+                    String errorMessage = response_from_Autentificare.getString("ErrorMessage");
+                    if (errore_code == 0 && errorMessage.equals("null")) {
                         String Name = response_from_Autentificare.getString("Name");
                         String UserID = response_from_Autentificare.getString("UserID");
 
@@ -407,6 +408,7 @@ public class Login extends AppCompatActivity {
                         SharedPreferences.Editor input_LogIn = LogIn.edit();
                         input_LogIn.putString("Name", Name);
                         input_LogIn.putString("UserID", UserID);
+
                         input_LogIn.apply();
 
                         Intent getActivity = getIntent();
@@ -459,7 +461,7 @@ public class Login extends AppCompatActivity {
                         onedate=false;
                         final AlertDialog.Builder eroare = new AlertDialog.Builder(Login.this);
                         eroare.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                        eroare.setMessage(getResources().getString(R.string.msg_error_code) + errore_code);
+                        eroare.setMessage(getResources().getString(R.string.msg_error_code) + errore_code + "\n" + "ErrorMessage: " + errorMessage);
                         eroare.setPositiveButton(getResources().getString(R.string.txt_accept_all), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {

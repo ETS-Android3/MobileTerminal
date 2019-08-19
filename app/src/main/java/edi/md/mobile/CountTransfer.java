@@ -26,12 +26,16 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edi.md.mobile.Utils.AssortmentInActivity;
+
+import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
+
 public class CountTransfer extends AppCompatActivity {
     TextView txt_barcode,txt_code,txt_articul,txt_stoc,txt_price,txt_name;
     TextView et_count;
     Button btn_add, btn_cancel;
-    Boolean adauga_Count=false;
-    String mName,mID;
+    boolean adauga_Count=false,mAllowNotIntegerSales;
+    String mNameAssortment,mIDAssortment,mPriceAssortment,mMarkingAssortment,mCodeAssortment,mBarcodeAssortment,mRemainAssortment;
 
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -74,15 +78,23 @@ public class CountTransfer extends AppCompatActivity {
         btn_cancel = findViewById(R.id.btn_cancel_count_transfer);
 
         final Intent sales = getIntent();
-        txt_name.setText(sales.getStringExtra("Name"));
-        txt_barcode.setText(sales.getStringExtra("BarCode"));
-        txt_code.setText(sales.getStringExtra("Code"));
-        txt_articul.setText(sales.getStringExtra("Marking"));
-        txt_stoc.setText(sales.getStringExtra("Remain"));
-        txt_price.setText(sales.getStringExtra("Price"));
+        AssortmentInActivity assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
+        mNameAssortment = assortment.getName();
+        mPriceAssortment = assortment.getPrice();
+        mMarkingAssortment = assortment.getMarking();
+        mCodeAssortment = assortment.getCode();
+        mBarcodeAssortment = assortment.getBarCode();
+        mRemainAssortment = assortment.getRemain();
+        mIDAssortment = assortment.getAssortimentID();
+        mAllowNotIntegerSales =Boolean.parseBoolean(assortment.getAllowNonIntegerSale());
 
-        mName = sales.getStringExtra("Name");
-        mID = sales.getStringExtra("ID");
+
+        txt_name.setText(mNameAssortment);
+        txt_barcode.setText(mBarcodeAssortment);
+        txt_code.setText(mCodeAssortment);
+        txt_articul.setText(mMarkingAssortment);
+        txt_stoc.setText(mRemainAssortment);
+        txt_price.setText(mPriceAssortment);
 
         et_count.requestFocus();
         SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
@@ -115,26 +127,67 @@ public class CountTransfer extends AppCompatActivity {
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 if (checkStock){
-                    Double input = 0.0;
-                    if(et_count.getText().toString().equals("")){
-                        input =0.0;
-                    }else{
-                        input = Double.valueOf(et_count.getText().toString());
+                    if (mAllowNotIntegerSales) {
+                        if (!isDouble(et_count.getText().toString()))
+                            et_count.setError(getResources().getString(R.string.msg_format_number_incorect));
+                        else if (isDouble(et_count.getText().toString())){
+                            Double input = 0.0;
+                            if(et_count.getText().toString().equals("")){
+                                input =0.0;
+                            }else{
+                                input = Double.valueOf(et_count.getText().toString());
+                            }
+                            Double Stock = Double.valueOf(sales.getStringExtra("Remain"));
+                            if(input>Stock){
+                                et_count.setError(getResources().getString(R.string.msg_count_greath_like_remain));
+                                adauga_Count=false;
+                            }else if (input==0.0){
+                                et_count.setError(getResources().getString(R.string.msg_input_count_greath_nul));
+                                adauga_Count=false;
+                            }else{
+                                adauga_Count=true;
+                            }
+                        }
                     }
-                    Double Stock = Double.valueOf(sales.getStringExtra("Remain"));
-                    if(input>Stock){
-                        et_count.setError(getResources().getString(R.string.msg_count_greath_like_remain));
-                        adauga_Count=false;
-                    }else if (input==0.0){
-                        et_count.setError(getResources().getString(R.string.msg_input_count_greath_nul));
-                        adauga_Count=false;
-                    }else{
-                        adauga_Count=true;
+                    else {
+                        if (!isInteger(et_count.getText().toString()))
+                            et_count.setError(getResources().getString(R.string.msg_only_number_integer));
+                        else if (isInteger(et_count.getText().toString())){
+                            Double input = 0.0;
+                            if(et_count.getText().toString().equals("")){
+                                input =0.0;
+                            }else{
+                                input = Double.valueOf(et_count.getText().toString());
+                            }
+                            Double Stock = Double.valueOf(sales.getStringExtra("Remain"));
+                            if(input>Stock){
+                                et_count.setError(getResources().getString(R.string.msg_count_greath_like_remain));
+                                adauga_Count=false;
+                            }else if (input==0.0){
+                                et_count.setError(getResources().getString(R.string.msg_input_count_greath_nul));
+                                adauga_Count=false;
+                            }else{
+                                adauga_Count=true;
+                            }
+                        }
                     }
                 }else{
-                    adauga_Count=true;
+                    if (mAllowNotIntegerSales) {
+                        if (!isDouble(et_count.getText().toString()))
+                            et_count.setError(getResources().getString(R.string.msg_format_number_incorect));
+                        else if (isDouble(et_count.getText().toString())){
+                            adauga_Count=true;
+                        }
+                    }
+                    else {
+                        if (!isInteger(et_count.getText().toString()))
+                            et_count.setError(getResources().getString(R.string.msg_only_number_integer));
+                        else if (isInteger(et_count.getText().toString())){
+                            adauga_Count=true;
+                        }
+                    }
                 }
             }
             @Override
@@ -161,19 +214,44 @@ public class CountTransfer extends AppCompatActivity {
     }
     private void saveCount(){
         if (adauga_Count && !et_count.getText().toString().equals("")) {
-            JSONObject asl = new JSONObject();
-            try {
-                asl.put("AssortimentName",mName);
-                asl.put("AssortimentUid", mID);
-                asl.put("Count", et_count.getText().toString());
-            } catch (JSONException e) {
-                e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
+        if (mAllowNotIntegerSales) {
+            if (!isDouble(et_count.getText().toString()))
+                et_count.setError(getResources().getString(R.string.msg_format_number_incorect));
+            else if (isDouble(et_count.getText().toString())){
+                JSONObject asl = new JSONObject();
+                try {
+                    asl.put("AssortimentName",mNameAssortment);
+                    asl.put("AssortimentUid", mIDAssortment);
+                    asl.put("Count", et_count.getText().toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    ((Variables)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
+                }
+                Intent transfer = new Intent();
+                transfer.putExtra("AssortmentTransferAdded",asl.toString());
+                setResult(RESULT_OK, transfer);
+                finish();
             }
-            Intent transfer = new Intent();
-            transfer.putExtra("AssortmentTransferAdded",asl.toString());
-            setResult(RESULT_OK, transfer);
-            finish();
+        }
+        else {
+            if (!isInteger(et_count.getText().toString()))
+                et_count.setError(getResources().getString(R.string.msg_only_number_integer));
+            else if (isInteger(et_count.getText().toString())){
+                JSONObject asl = new JSONObject();
+                try {
+                    asl.put("AssortimentName",mNameAssortment);
+                    asl.put("AssortimentUid", mIDAssortment);
+                    asl.put("Count", et_count.getText().toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    ((Variables)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
+                }
+                Intent transfer = new Intent();
+                transfer.putExtra("AssortmentTransferAdded",asl.toString());
+                setResult(RESULT_OK, transfer);
+                finish();
+            }
+        }
         }else{
             Toast.makeText(CountTransfer.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
             et_count.requestFocus();
@@ -245,5 +323,25 @@ public class CountTransfer extends AppCompatActivity {
             }break;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    private boolean isDouble(String s) throws NumberFormatException {
+        try {
+            Double.parseDouble(s);
+            return true;
+        } catch (NumberFormatException e) {
+
+            ((Variables)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
+            return false;
+        }
+    }
+    private boolean isInteger(String s) throws NumberFormatException {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException e) {
+            ((Variables)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
+            return false;
+        }
     }
 }

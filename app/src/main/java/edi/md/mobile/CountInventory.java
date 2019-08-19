@@ -36,6 +36,9 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 
+import edi.md.mobile.Utils.AssortmentInActivity;
+
+import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.SaveRevisionLine;
 
 public class CountInventory extends AppCompatActivity {
@@ -46,10 +49,10 @@ public class CountInventory extends AppCompatActivity {
 
     ProgressDialog pgH;
     int WeightPrefix;
-    char decSeparator;
+    boolean mAllowNotIntegerSales;
     JSONObject sendAssortiment;
 
-    String Name,Marking,UidAsortiment , ip_,port_,UserId,Remain,RevisionID,Code,Barcode,Price;
+    String mNameAssortment,mMarkingAssortment,mIDAssortment , ip_,port_,UserId,mRemainAssortment,RevisionID,mCodeAssortment,mBarcodeAssortment,mPriceAssortment,mUnitAssortment;
 
 
     @Override
@@ -63,109 +66,7 @@ public class CountInventory extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar_count_inventory);
         setSupportActionBar(toolbar);
 
-        btn_cancel=findViewById(R.id.btn_cancel_count_inventory);
-        btn_ok=findViewById(R.id.btn_add_count_inventory);
-        txtArticol= findViewById(R.id.txtMarking_asortment_count_inventory);
-        txtBarCode=findViewById(R.id.txtbarcode_count_inventory);
-        txtName=findViewById(R.id.txtName_assortment_inv_count);
-        txtStock=findViewById(R.id.txtStoc_count_inventory);
-        txtCode=findViewById(R.id.txtcode_assortment_count_inventory);
-        inpCount=findViewById(R.id.et_count_inventory);
-        cant_final = findViewById(R.id.switch_final_count_inventory);
-        txtRemainScan=findViewById(R.id.txt_ramas_inventory);
-        txtTotalScan = findViewById(R.id.txtTotalScanat_count_inventory);
-        txtSurplusScan=findViewById(R.id.txt_surplus_inventory);
-        txtPrice=findViewById(R.id.txtPrice_asortment_count_inventory);
-        pgH =new ProgressDialog(CountInventory.this);
-
-        final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
-        final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
-        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
-
-        boolean ShowCode = Settings.getBoolean("ShowCode",false);
-        if (!ShowCode){
-            txtCode.setVisibility(View.INVISIBLE);
-        }
-        boolean showKB = Settings.getBoolean("ShowKeyBoard",false);
-        inpCount.requestFocus();
-        if (showKB){
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-            inpCount.requestFocus();
-        }
-        UserId = User.getString("UserID","Non");
-        ip_=Settings.getString("IP","");
-        port_=Settings.getString("Port","");
-
-        RevisionID=getRevisions.getString("RevisionID","");
-
-        NumberFormat nf = NumberFormat.getInstance();
-        if (nf instanceof DecimalFormat) {
-            DecimalFormatSymbols sym = ((DecimalFormat) nf).getDecimalFormatSymbols();
-            sym.setDecimalSeparator('.');
-            decSeparator = sym.getDecimalSeparator();
-        }
-
-        Intent countInv= getIntent();
-
-        Name = countInv.getStringExtra("Name");
-        Marking = countInv.getStringExtra("Marking");
-        Remain = countInv.getStringExtra("Remain");
-        UidAsortiment = countInv.getStringExtra("Uid");
-        Barcode= countInv.getStringExtra("BarCode");
-        Price= countInv.getStringExtra("Price");
-        Code =countInv.getStringExtra("Code");
-        String Unit = countInv.getStringExtra("Unit");
-        WeightPrefix= countInv.getIntExtra("WeightPrefix",0);
-
-
-        SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
-        String ExistingCount = SaveCount.getString(UidAsortiment,"0");
-        ExistingCount = ExistingCount.replace(",",".");
-        txtTotalScan.setText(ExistingCount + " " + Unit);
-
-        double countAdded = Double.valueOf(ExistingCount);
-        double Remain_in_program =Double.valueOf(Remain);
-
-        if (Remain_in_program!=0.0){
-            double remain_scan=  Remain_in_program - countAdded;
-            if (remain_scan<=0) {
-                txtRemainScan.setText("0 " + Unit);
-                double surplus_scan = Math.abs(remain_scan);
-                txtSurplusScan.setText(String.valueOf(surplus_scan) + " " + Unit);
-            }else {
-                txtRemainScan.setText(String.valueOf(remain_scan) + " " + Unit);
-                txtSurplusScan.setText("0 " + Unit);
-            }
-        }else{
-            txtRemainScan.setText("0 " + Unit);
-            double surplus_scan = Math.abs(Remain_in_program - countAdded);
-            txtSurplusScan.setText(String.valueOf(surplus_scan) + " " + Unit);
-        }
-
-        String prefic = Barcode.substring(0,2);
-        Integer toInt = Integer.valueOf(prefic);
-
-        if(toInt==WeightPrefix){
-            String afterseven = Barcode.substring(7,12);
-            String afetrCut = afterseven.substring(0,2) + decSeparator + afterseven.substring(2);
-            Double tet = Double.valueOf(afetrCut);
-            inpCount.setText(String.valueOf(tet));
-        }
-        txtName.setText(Name);
-        txtCode.setText(Code);
-        if (!Marking.equals("null")){
-            txtArticol.setText(Marking);
-        }else{
-            txtArticol.setText("");
-        }
-
-        txtBarCode.setText(Barcode);
-        txtStock.setText(Remain + " " + Unit);
-        if (Price.equals("0") || Price==null){
-            txtPrice.setText("-");
-        }else {
-            txtPrice.setText(Price);
-        }
+        initializareElement();
 
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,28 +95,7 @@ public class CountInventory extends AppCompatActivity {
             }
         });
     }
-    private void saveCount(){
-        if(!inpCount.getText().toString().equals("")) {
-            pgH.setMessage("loading..");
-            pgH.setIndeterminate(true);
-            pgH.setCancelable(false);
-            pgH.show();
-            sendAssortiment = new JSONObject();
-            try {
-                sendAssortiment.put("Assortiment", UidAsortiment);
-                sendAssortiment.put("FinalQuantity", cant_final.isChecked());
-                sendAssortiment.put("Quantity", inpCount.getText().toString());
-                sendAssortiment.put("RevisionID", RevisionID);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),CountInventory.this);
-            }
-            URL generateSaveLine = SaveRevisionLine(ip_, port_);
-            new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
-        }else if (inpCount.getText().toString().equals("")){
-            inpCount.setError(getResources().getString(R.string.txt_header_inp_count));
-        }
-    }
+
     public String getResponseFromURLSaveRevisionLine(URL send_bills) throws IOException {
         String data = "";
         HttpURLConnection send_bill_Connection = null;
@@ -248,7 +128,6 @@ public class CountInventory extends AppCompatActivity {
         }
         return data;
     }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
@@ -345,13 +224,15 @@ public class CountInventory extends AppCompatActivity {
             if (!response.equals("")) {
                 try {
                     JSONObject responseAssortiment = new JSONObject(response);
-                    Integer ErrorCode = responseAssortiment.getInt("ErrorCode");
+                    int ErrorCode = responseAssortiment.getInt("ErrorCode");
                     if (ErrorCode == 0) {
                         //Sumez cantitatea introdusa noua cu cea existenta si o salvez
                         SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
+                        SharedPreferences SaveCountName = getSharedPreferences("SaveNameInventory", MODE_PRIVATE);
                         SharedPreferences.Editor add_count = SaveCount.edit();
+                        SharedPreferences.Editor add_name = SaveCountName.edit();
 
-                        String ExistingCount = SaveCount.getString(UidAsortiment,"0");
+                        String ExistingCount = SaveCount.getString(mIDAssortment,"0");
                         ExistingCount = ExistingCount.replace(",",".");
 
                         Double countExist = Double.valueOf(ExistingCount);
@@ -361,7 +242,9 @@ public class CountInventory extends AppCompatActivity {
                         if (cant_final.isChecked()){
                             total_count = Double.valueOf(inpCount.getText().toString());
                         }
-                        add_count.putString(UidAsortiment,String.format("%.2f",total_count));
+                        add_count.putString(mIDAssortment,String.format("%.2f",total_count));
+                        add_name.putString(mIDAssortment,mNameAssortment);
+                        add_name.apply();
                         add_count.apply();
 
                         Activity activity=CountInventory.this;
@@ -404,6 +287,127 @@ public class CountInventory extends AppCompatActivity {
             }
 
 
+        }
+    }
+    private void saveCount(){
+        if(!inpCount.getText().toString().equals("")) {
+            pgH.setMessage("loading..");
+            pgH.setIndeterminate(true);
+            pgH.setCancelable(false);
+            pgH.show();
+            sendAssortiment = new JSONObject();
+            try {
+                sendAssortiment.put("Assortiment", mIDAssortment);
+                sendAssortiment.put("FinalQuantity", cant_final.isChecked());
+                sendAssortiment.put("Quantity", inpCount.getText().toString());
+                sendAssortiment.put("RevisionID", RevisionID);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                ((Variables)getApplication()).appendLog(e.getMessage(),CountInventory.this);
+            }
+            URL generateSaveLine = SaveRevisionLine(ip_, port_);
+            new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
+        }else if (inpCount.getText().toString().equals("")){
+            inpCount.setError(getResources().getString(R.string.txt_header_inp_count));
+        }
+    }
+    private void initializareElement(){
+        btn_cancel=findViewById(R.id.btn_cancel_count_inventory);
+        btn_ok=findViewById(R.id.btn_add_count_inventory);
+        txtArticol= findViewById(R.id.txtMarking_asortment_count_inventory);
+        txtBarCode=findViewById(R.id.txtbarcode_count_inventory);
+        txtName=findViewById(R.id.txtName_assortment_inv_count);
+        txtStock=findViewById(R.id.txtStoc_count_inventory);
+        txtCode=findViewById(R.id.txtcode_assortment_count_inventory);
+        inpCount=findViewById(R.id.et_count_inventory);
+        cant_final = findViewById(R.id.switch_final_count_inventory);
+        txtRemainScan=findViewById(R.id.txt_ramas_inventory);
+        txtTotalScan = findViewById(R.id.txtTotalScanat_count_inventory);
+        txtSurplusScan=findViewById(R.id.txt_surplus_inventory);
+        txtPrice=findViewById(R.id.txtPrice_asortment_count_inventory);
+        pgH =new ProgressDialog(CountInventory.this);
+
+        final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
+        final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
+        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
+        final SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
+
+        final Intent sales = getIntent();
+        AssortmentInActivity assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
+        mNameAssortment = assortment.getName();
+        mPriceAssortment = assortment.getPrice();
+        mMarkingAssortment = assortment.getMarking();
+        mCodeAssortment = assortment.getCode();
+        mBarcodeAssortment = assortment.getBarCode();
+        mRemainAssortment = assortment.getRemain();
+        mIDAssortment = assortment.getAssortimentID();
+        mUnitAssortment = assortment.getUnit();
+        mAllowNotIntegerSales =Boolean.parseBoolean(assortment.getAllowNonIntegerSale());
+        WeightPrefix= sales.getIntExtra("WeightPrefix",0);
+
+        boolean showKB = Settings.getBoolean("ShowKeyBoard",false);
+        boolean ShowCode = Settings.getBoolean("ShowCode",false);
+        UserId = User.getString("UserID","Non");
+        ip_=Settings.getString("IP","");
+        port_=Settings.getString("Port","");
+        RevisionID=getRevisions.getString("RevisionID","");
+        String prefic = mBarcodeAssortment.substring(0,2);
+        int toInt = Integer.valueOf(prefic);
+
+        String ExistingCount = SaveCount.getString(mIDAssortment,"0");
+        ExistingCount = ExistingCount.replace(",",".");
+        txtTotalScan.setText(ExistingCount + " " + mUnitAssortment);
+        txtName.setText(mNameAssortment);
+        txtCode.setText(mCodeAssortment);
+        txtBarCode.setText(mBarcodeAssortment);
+        txtStock.setText(mRemainAssortment + " " + mUnitAssortment);
+
+        if (!ShowCode){
+            txtCode.setVisibility(View.INVISIBLE);
+        }
+        inpCount.requestFocus();
+        if (showKB){
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            inpCount.requestFocus();
+        }
+        double countAdded = Double.valueOf(ExistingCount);
+        double Remain_in_program = 0.00;
+        if(mRemainAssortment!= null){
+            Remain_in_program =Double.valueOf(mRemainAssortment);
+        }
+        if (Remain_in_program!=0.0){
+            double remain_scan=  Remain_in_program - countAdded;
+            if (remain_scan<=0) {
+                txtRemainScan.setText("0 " + mUnitAssortment);
+                double surplus_scan = Math.abs(remain_scan);
+                txtSurplusScan.setText(String.valueOf(surplus_scan) + " " + mUnitAssortment);
+            }else {
+                txtRemainScan.setText(String.valueOf(remain_scan) + " " + mUnitAssortment);
+                txtSurplusScan.setText("0 " + mUnitAssortment);
+            }
+        }
+        else{
+            txtRemainScan.setText("0 " + mUnitAssortment);
+            double surplus_scan = Math.abs(Remain_in_program - countAdded);
+            txtSurplusScan.setText(String.valueOf(surplus_scan) + " " + mUnitAssortment);
+        }
+        if(toInt==WeightPrefix){
+            String afterseven = mBarcodeAssortment.substring(7,12);
+            String afetrCut = afterseven.substring(0,2) + "." + afterseven.substring(2);
+            Double tet = Double.valueOf(afetrCut);
+            inpCount.setText(String.valueOf(tet));
+        }
+        if (mMarkingAssortment != null){
+            txtArticol.setText(mMarkingAssortment);
+        }
+        else{
+            txtArticol.setText("");
+        }
+        if (mPriceAssortment==null){
+            txtPrice.setText("-");
+        }
+        else {
+            txtPrice.setText(mPriceAssortment);
         }
     }
 }
