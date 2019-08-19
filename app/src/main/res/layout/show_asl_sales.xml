@@ -6,7 +6,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/item_selector_sales"
     android:orientation="horizontal"
-    tools:ignore="MissingTranslation">
+    android:paddingBottom="4dp"
+    android:paddingTop="4dp">
 
     <TextView
         android:id="@+id/textName"

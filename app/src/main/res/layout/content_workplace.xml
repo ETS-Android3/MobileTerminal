@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/astavka"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".SettingsMenu.WorkPlace"
-    tools:showIn="@layout/app_bar_workplace"
-    tools:ignore="MissingTranslation">
+    tools:ignore="MissingTranslation"
+    tools:showIn="@layout/app_bar_workplace">
 
     <Button
         android:id="@+id/btn_change_workplace"
@@ -40,6 +41,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text="@string/txt_utilizator_workplace"
+        android:textColor="@color/colorAccent"
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/txt_user_workplace"
         app:layout_constraintStart_toStartOf="parent"

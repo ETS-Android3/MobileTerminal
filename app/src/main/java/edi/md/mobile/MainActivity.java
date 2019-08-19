@@ -472,11 +472,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onDestroy() {
         final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
-        SharedPreferences.Editor input_LogIn = User.edit();
-        input_LogIn.putString("Name", "");
-        input_LogIn.putString("UserID", "");
-        input_LogIn.apply();
+        User.edit().clear().apply();
         ((Variables) getApplication()).setLoginVariable(false);
+        ((Variables)getApplication()).setDownloadASLVariable(false);
         super.onDestroy();
     }
 

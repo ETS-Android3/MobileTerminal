@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/astavka"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".SettingsMenu.About"
-    tools:showIn="@layout/app_bar_about"
-    tools:ignore="MissingTranslation">
+    tools:ignore="MissingTranslation"
+    tools:showIn="@layout/app_bar_about">
 
     <TextView
         android:id="@+id/txt_versiune_program"
@@ -39,6 +40,7 @@
         android:layout_marginRight="8dp"
         android:autoLink="email"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="start"
         android:text="info@edi.md"
         android:textAlignment="textStart"
@@ -46,8 +48,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_mail_support"
-        android:focusable="true" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_mail_support" />
 
     <TextView
         android:id="@+id/txt_call_support"
@@ -121,6 +122,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
@@ -128,8 +130,7 @@
         android:textColor="@color/colorAccent"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView26"
-        android:layout_alignParentLeft="true" />
+        app:layout_constraintTop_toBottomOf="@+id/textView26" />
 
     <ImageView
         android:id="@+id/imageView2"
@@ -138,17 +139,22 @@
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
         android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/side_tree_theme"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/logo_is"
-        android:layout_marginLeft="8dp" />
+        app:srcCompat="@drawable/logo_is" />
 
     <TextView
         android:id="@+id/textView26"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
@@ -156,8 +162,7 @@
         android:textColor="@color/colorAccent"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView23"
-        android:layout_alignParentLeft="true" />
+        app:layout_constraintTop_toBottomOf="@+id/textView23" />
 
     <TextView
         android:id="@+id/txt_call_sales"

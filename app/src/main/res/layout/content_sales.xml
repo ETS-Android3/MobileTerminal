@@ -4,22 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/astavka"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".Sales"
-    tools:showIn="@layout/app_bar_sales"
-    tools:ignore="MissingTranslation">
-
-    <ImageButton
-        android:id="@+id/btn_edit_line_sales"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:background="@drawable/item_selector_button_actions"
-        app:layout_constraintEnd_toStartOf="@+id/btn_delete_sales"
-        app:layout_constraintStart_toEndOf="@+id/txt_input_barcodes_sales"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar_sales"
-        app:srcCompat="@drawable/edit_white_48dp" />
+    tools:ignore="MissingTranslation"
+    tools:showIn="@layout/app_bar_sales">
 
     <TextView
         android:id="@+id/txtTotal_sales"
@@ -119,8 +108,9 @@
         android:imeOptions="actionDone"
         android:singleLine="true"
         android:textAlignment="center"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toStartOf="@+id/btn_edit_line_sales"
+        android:textColor="@color/colorAccent"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/btn_delete_sales"
         app:layout_constraintStart_toEndOf="@+id/btn_touch_open_asl_sales"
         app:layout_constraintTop_toBottomOf="@+id/progressBar_sales" />
 
@@ -133,7 +123,6 @@
         android:adjustViewBounds="false"
         android:background="@drawable/item_selector_button_actions"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_edit_line_sales"
         app:layout_constraintTop_toBottomOf="@+id/progressBar_sales"
         app:srcCompat="@drawable/delete_white_36dp" />
 
@@ -168,8 +157,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
         android:gravity="center"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toStartOf="@+id/btn_edit_line_sales"
+        android:textColor="@color/colorAccent"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/btn_delete_sales"
         app:layout_constraintStart_toEndOf="@+id/btn_touch_open_asl_sales"
         app:layout_constraintTop_toBottomOf="@+id/txt_input_barcodes_sales" />
 

@@ -1,12 +1,14 @@
 package edi.md.mobile.SettingsMenu;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,11 +19,14 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.SimpleAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -113,6 +118,8 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
 
         final SharedPreferences.Editor inpSet = Settings.edit();
         String workplaceName = WorkPlace.getString("Name","Nedeterminat");
+        WareGUid = WorkPlace.getString("Uid",null);
+
         if(workplaceName.equals(""))
             workplaceName ="Nedeterminat";
         btn_get_workplace.setText(workplaceName);
@@ -298,7 +305,38 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                         dialog.show();
                     }
                 }else{
-                    DownloadASL();
+                    if (UserId != null && WareGUid!=null){
+                        DownloadASL();
+                    }
+                    else if( UserId == null && WareGUid == null){
+                        AlertDialog.Builder selectWorkPlace = new AlertDialog.Builder(WorkPlace.this);
+                        selectWorkPlace.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+                        selectWorkPlace.setMessage("Nu este ales locul de munca!\nAlegeti locul de munca!");
+                        selectWorkPlace.setPositiveButton(getResources().getString(R.string.txt_accept_all), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        selectWorkPlace.show();
+                    }
+                    else if(UserId == null){
+                            Intent Logins = new Intent(".LoginMobile");
+                            Logins.putExtra("Activity", 11);
+                            startActivityForResult(Logins,11);
+                    }
+                    else if(WareGUid == null){
+                        AlertDialog.Builder selectWorkPlace = new AlertDialog.Builder(WorkPlace.this);
+                        selectWorkPlace.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+                        selectWorkPlace.setMessage("Nu este ales locul de munca!\nAlegeti locul de munca!");
+                        selectWorkPlace.setPositiveButton(getResources().getString(R.string.txt_accept_all), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        selectWorkPlace.show();
+                    }
                 }
             }
         });
@@ -375,7 +413,6 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                 if(msg.what == 10) {
                     if (msg.arg1 == 12) {
                         pgH.dismiss();
-                        ((Variables)getApplication()).setDownloadASLVariable(true);
                         int mas=0;
                         Variables myapp =(Variables)getApplication();
                         asl_list =myapp.get_AssortimentFolders();
@@ -461,6 +498,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                                             e.printStackTrace();
                                         }
                                     }
+                                    ((Variables)getApplication()).setDownloadASLVariable(true);
                                     SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
                                     SharedPreferences.Editor test = CheckUidFolder.edit();
                                     JSONArray booleab = new JSONArray();
@@ -518,6 +556,13 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                 getWareHouse();
             }else{
                 pgH.dismiss();
+            }
+        }
+        if( requestCode == 11){
+            if (resultCode == RESULT_OK){
+                SharedPreferences LogIn = getSharedPreferences("User", MODE_PRIVATE);
+                UserId = LogIn.getString("UserID","");
+                DownloadASL();
             }
         }
     }
@@ -707,11 +752,6 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                         handler.obtainMessage(20,t.getMessage()).sendToTarget();
                     }
                 });
-
-
-
-
-
             }
         });
         t.start();
@@ -792,5 +832,19 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
             }
 
         }
+    }
+    @Override
+    public boolean dispatchTouchEvent(@NonNull MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (v instanceof EditText) {
+                v.clearFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+            }
+        }
+
+        return super.dispatchTouchEvent(event);
     }
 }

@@ -28,7 +28,8 @@
     <string name="txt_modificare_pincod_hint_securitate">Модификация пин-кода</string>
     <string name="txt_limita_vinzare_securitate">Ограничения кол-во при продаже:</string>
     <string name="txt_hint_limit_vinzare_securitate">*0 - ограничение не установленно</string>
-    <string name="btn_donload_install_new_version">Загрузка новой версией</string>
+    <string name="btn_donload_install_new_version">Обновить</string>
+    <string name="btn_donload_install_old_version">Откатить</string>
     <string name="txt_hint_input_licenta_securitate">Ключ лицензий</string>
 
     <string name="txt_header_inp_count">Введите кол-во:</string>

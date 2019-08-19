@@ -17,7 +17,7 @@
         app:layout_constraintEnd_toStartOf="@+id/text_view_asl"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/folder_assortiment_item" />
+        app:srcCompat="@drawable/folder_open_black_48dp" />
 
     <TextView
         android:id="@+id/text_view_asl"

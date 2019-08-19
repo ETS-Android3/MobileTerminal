@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/astavka"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".Sales"
-    tools:showIn="@layout/app_bar_transfer"
-    tools:ignore="MissingTranslation">
+    tools:ignore="MissingTranslation"
+    tools:showIn="@layout/app_bar_transfer">
 
     <ImageView
         android:id="@+id/imageView4"
@@ -22,18 +23,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/keyboard_arrow_down_black_48dp" />
 
-    <ImageButton
-        android:id="@+id/btn_edit_line_asl_transfer"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:adjustViewBounds="false"
-        android:background="@drawable/item_selector_button_actions"
-        app:layout_constraintEnd_toStartOf="@+id/btn_delete_transfer"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar_transfer"
-        app:srcCompat="@drawable/edit_white_48dp" />
-
     <TextView
         android:id="@+id/txtDepozit_destinar_transfer"
         android:layout_width="0dp"
@@ -46,7 +35,9 @@
         android:clickable="true"
         android:focusable="true"
         android:singleLine="true"
+        android:textColor="@color/cornerButton"
         android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView4"
         app:layout_constraintTop_toTopOf="parent" />
@@ -64,7 +55,9 @@
         android:clickable="true"
         android:focusable="true"
         android:singleLine="true"
+        android:textColor="@android:color/holo_red_dark"
         android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/imageView4"
         app:layout_constraintStart_toEndOf="@+id/imageView3"
         app:layout_constraintTop_toTopOf="parent" />
@@ -127,8 +120,9 @@
         android:imeOptions="actionDone"
         android:singleLine="true"
         android:textAlignment="center"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toStartOf="@+id/btn_edit_line_asl_transfer"
+        android:textColor="@color/colorAccent"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/btn_delete_transfer"
         app:layout_constraintStart_toEndOf="@+id/btn_touch_open_asl_transfer"
         app:layout_constraintTop_toBottomOf="@+id/progressBar_transfer" />
 
@@ -174,8 +168,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:gravity="center"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toStartOf="@+id/btn_edit_line_asl_transfer"
+        android:textColor="@color/colorAccent"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/btn_delete_transfer"
         app:layout_constraintStart_toEndOf="@+id/btn_touch_open_asl_transfer"
         app:layout_constraintTop_toBottomOf="@+id/txt_input_barcode_transfer" />
 

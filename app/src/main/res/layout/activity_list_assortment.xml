@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/astavka"
     tools:context=".ListAssortment"
     tools:ignore="MissingTranslation">
 
@@ -11,6 +12,7 @@
         android:id="@+id/aslAdappBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/side_tree_theme_background_main"
         android:theme="@style/AppTheme.AppBarOverlay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,7 +22,6 @@
             android:id="@+id/toolbar_sales_add"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <android.support.v7.widget.SearchView
@@ -75,10 +76,9 @@
         android:layout_marginEnd="24dp"
         android:layout_marginRight="24dp"
         android:layout_marginBottom="24dp"
-        android:clickable="true"
-        app:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="@color/colorPrimary"
+        app:fab_colorPressed="@color/colorItemSelectList"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:rippleColor="#00FFFFFF"
-        app:srcCompat="@android:drawable/ic_menu_save" />
+        app:srcCompat="@drawable/save_white_48dp" />
 </android.support.constraint.ConstraintLayout>

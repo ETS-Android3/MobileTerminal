@@ -30,7 +30,8 @@
     <string name="txt_modificare_pincod_hint_securitate">Change pin code</string>
     <string name="txt_limita_vinzare_securitate">Limit positions on sale:</string>
     <string name="txt_hint_limit_vinzare_securitate">*0 - limit is not set</string>
-    <string name="btn_donload_install_new_version">Check new version</string>
+    <string name="btn_donload_install_new_version">Upgrade</string>
+    <string name="btn_donload_install_old_version">Downgrade</string>
     <string name="txt_hint_input_licenta_securitate">Key lic</string>
 
     <string name="txt_header_inp_count">Enter the quantity:</string>
