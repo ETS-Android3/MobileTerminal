@@ -122,7 +122,7 @@ public class Variables extends Application {
                         asl_.put("Name", asl_name);
                         asl_.put("ID", uid_asl);
                         asl_.put("Bar_code","");
-                        asl_.put("icon", R.drawable.folder_assortiment_item);
+                        asl_.put("icon", R.drawable.folder_open_black_48dp);
                         asl_list.add(asl_);
                     }
                 }
@@ -188,7 +188,7 @@ public class Variables extends Application {
                         asl_.put("Name", asl_name);
                         asl_.put("ID", uid_asl);
                         asl_.put("Bar_code", "");
-                        asl_.put("icon", R.drawable.folder_assortiment_item);
+                        asl_.put("icon", R.drawable.folder_open_black_48dp);
                         asl_list.add(asl_);
                     }
                 }

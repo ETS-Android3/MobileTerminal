@@ -4,23 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/astavka"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".Sales"
-    tools:showIn="@layout/app_bar_invoice"
-    tools:ignore="MissingTranslation">
-
-    <ImageButton
-        android:id="@+id/btn_edit_line_invoice"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:background="@drawable/item_selector_button_actions"
-        android:contentDescription="@string/todo"
-        app:layout_constraintEnd_toStartOf="@+id/btn_delete_invoice"
-        app:layout_constraintStart_toEndOf="@+id/txt_input_barcode_invoice"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar_invoice"
-        app:srcCompat="@drawable/edit_white_48dp" />
+    tools:ignore="MissingTranslation"
+    tools:showIn="@layout/app_bar_invoice">
 
     <TextView
         android:id="@+id/txtTotal_invoice"
@@ -31,7 +19,8 @@
         android:gravity="end"
         android:singleLine="true"
         android:textColor="@android:color/holo_red_dark"
-        android:textSize="14sp"
+        android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/btn_change_stock_invoice"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView6" />
@@ -44,7 +33,8 @@
         android:layout_marginLeft="8dp"
         android:text="@string/txt_total_all"
         android:textColor="@android:color/holo_red_dark"
-        android:textSize="14sp"
+        android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/btn_change_stock_invoice"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -109,8 +99,9 @@
         android:imeOptions="actionDone"
         android:singleLine="true"
         android:textAlignment="center"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toStartOf="@+id/btn_edit_line_invoice"
+        android:textColor="@color/colorAccent"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/btn_delete_invoice"
         app:layout_constraintStart_toEndOf="@+id/btn_touch_open_asl_invoice"
         app:layout_constraintTop_toBottomOf="@+id/progressBar_invoice" />
 
@@ -124,7 +115,6 @@
         android:background="@drawable/item_selector_button_actions"
         android:contentDescription="@string/todo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_edit_line_invoice"
         app:layout_constraintTop_toBottomOf="@+id/progressBar_invoice"
         app:srcCompat="@drawable/delete_white_36dp" />
 
@@ -159,8 +149,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toStartOf="@+id/btn_edit_line_invoice"
+        android:textColor="@color/colorAccent"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/btn_delete_invoice"
         app:layout_constraintStart_toEndOf="@+id/btn_touch_open_asl_invoice"
         app:layout_constraintTop_toBottomOf="@+id/txt_input_barcode_invoice" />
 

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/astavka"
     tools:context=".CountSales"
     tools:ignore="MissingTranslation">
 
@@ -11,6 +12,7 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/side_tree_theme_background_main"
         android:theme="@style/AppTheme.AppBarOverlay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,10 +22,10 @@
             android:id="@+id/toolbar_count_sales"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/CL_info_asortment_count_sales"
         android:layout_width="0dp"
@@ -44,6 +46,7 @@
             android:text="@string/txt_barcod_header_asl"
             android:textColor="@android:color/black"
             android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/txtBarcode_assortment_count_sales"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -57,6 +60,7 @@
             android:layout_marginRight="4dp"
             android:gravity="end"
             android:singleLine="true"
+            android:textColor="@color/colorAccent"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView4"
@@ -71,6 +75,7 @@
             android:text="@string/txt_cod_header_asl"
             android:textColor="@android:color/black"
             android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/txtcode_assortment_count_sales"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtMarking_asortment_count_sales" />
@@ -81,6 +86,7 @@
             android:layout_height="wrap_content"
             android:gravity="end"
             android:singleLine="true"
+            android:textColor="@color/colorAccent"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/textView12"
@@ -96,6 +102,7 @@
             android:text="@string/txt_marking_header_asl"
             android:textColor="@android:color/black"
             android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/txtMarking_asortment_count_sales"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView4" />
@@ -108,6 +115,7 @@
             android:layout_marginRight="8dp"
             android:gravity="end"
             android:singleLine="true"
+            android:textColor="@color/colorAccent"
             android:textSize="18sp"
             app:layout_constraintEnd_toStartOf="@+id/textView10"
             app:layout_constraintStart_toEndOf="@+id/textView8"
@@ -120,6 +128,7 @@
             android:text="@string/txt_remain_header_asl"
             android:textColor="@android:color/black"
             android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/txtStoc_asortment_count_sales"
             app:layout_constraintStart_toEndOf="@+id/txtMarking_asortment_count_sales"
             app:layout_constraintTop_toBottomOf="@+id/txtBarcode_assortment_count_sales" />
@@ -147,6 +156,7 @@
             android:text="@string/txt_price_header_asl"
             android:textColor="@android:color/black"
             android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/txtPrice_asortment_count_sales"
             app:layout_constraintStart_toEndOf="@+id/txtcode_assortment_count_sales"
@@ -161,6 +171,7 @@
             android:layout_marginRight="4dp"
             android:gravity="end"
             android:text="0"
+            android:textColor="@color/colorAccent"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -206,8 +217,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="71dp"
-        android:layout_marginRight="71dp"
         android:background="@drawable/round_corners_red_edit_text"
         android:ems="10"
         android:gravity="center"
@@ -222,7 +231,7 @@
 
     <Button
         android:id="@+id/btn_add_count_sales"
-        android:layout_width="120dp"
+        android:layout_width="0dp"
         android:layout_height="45dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"

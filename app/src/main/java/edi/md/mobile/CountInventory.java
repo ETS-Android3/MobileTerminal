@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -65,6 +66,8 @@ public class CountInventory extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar_count_inventory);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         initializareElement();
 
@@ -409,5 +412,15 @@ public class CountInventory extends AppCompatActivity {
         else {
             txtPrice.setText(mPriceAssortment);
         }
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            Intent countInv = new Intent();
+            setResult(RESULT_CANCELED, countInv);
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

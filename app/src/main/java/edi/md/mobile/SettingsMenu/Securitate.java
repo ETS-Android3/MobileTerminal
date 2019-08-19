@@ -82,12 +82,14 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
 
     TextView txtCod,limba;
     EditText key_input,et_limit,et_pin;
-    Button btn_verific,btn_check_update;
+    Button btn_verific,btn_check_update,btn_Downgrade;
     ProgressDialog pDialog;
     ImageButton btn_ro,btn_ru,btn_en;
     public static final int progress_bar_type = 11;
     private static String file_url_apk = "http://edi.md/androidapps/MobileTerminal.apk";
+    private static String file_url_apk_old = "http://edi.md/androidapps/MobileTerminalOld.apk";
     private static String file_version_url = "http://edi.md/androidapps/MobileTerminalVersion.txt";
+    private static String file_version_url_old = "http://edi.md/androidapps/MobileTerminalVersionOld.txt";
     private Locale myLocale;
 
     @Override
@@ -107,6 +109,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         et_limit = findViewById(R.id.et_limit_count_sales_securitate);
         et_pin = findViewById(R.id.et_input_pin_securitate);
         btn_check_update = findViewById(R.id.btn_chek_update2);
+        btn_Downgrade = findViewById(R.id.btn_chek_downgrade);
 
         btn_en = findViewById(R.id.select_lng_en);
         btn_ru = findViewById(R.id.select_lng_ru);
@@ -236,8 +239,13 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         btn_check_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //new DownloadFileFromURL().execute(file_url);
                 new DownloadVersionFileFromURL().execute(file_version_url);
+            }
+        });
+        btn_Downgrade.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DownloadVersionOLDFileFromURL().execute(file_version_url_old);
             }
         });
 
@@ -512,6 +520,94 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         }
 
     }
+    class DownloadFileOLDFromURL extends AsyncTask<String, String, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showDialog(progress_bar_type);
+        }
+        @Override
+        protected String doInBackground(String... f_url) {
+            int count;
+            try {
+                URL url = new URL(f_url[0]);
+                URLConnection conection = url.openConnection();
+                conection.connect();
+
+                // this will be useful so that you can show a tipical 0-100%
+                // progress bar
+                int lenghtOfFile = conection.getContentLength();
+
+                // download the file
+                InputStream input = new BufferedInputStream(url.openStream(),
+                        8192);
+
+                // Output stream
+                OutputStream output = new FileOutputStream(Environment
+                        .getExternalStorageDirectory().toString()
+                        + "/IntelectSoft/MobileTerminalOld.apk");
+
+                byte data[] = new byte[1024];
+
+                long total = 0;
+
+                while ((count = input.read(data)) != -1) {
+                    total += count;
+                    // publishing the progress....
+                    // After this onProgressUpdate will be called
+                    publishProgress("" + (int) ((total * 100) / lenghtOfFile));
+
+                    // writing data to file
+                    output.write(data, 0, count);
+                }
+
+                // flushing output
+                output.flush();
+
+                // closing streams
+                output.close();
+                input.close();
+
+            } catch (Exception e) {
+                Log.e("Error: ", e.getMessage());
+            }
+
+            return null;
+        }
+
+        /**
+         * Updating progress bar
+         * */
+        protected void onProgressUpdate(String... progress) {
+            // setting progress percentage
+            pDialog.setProgress(Integer.parseInt(progress[0]));
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         * **/
+        @Override
+        protected void onPostExecute(String file_url) {
+            // dismiss the dialog after the file was downloaded
+            dismissDialog(progress_bar_type);
+            pDialog.dismiss();
+
+            File file = new File(Environment.getExternalStorageDirectory()+ "/IntelectSoft","/MobileTerminalOld.apk"); // mention apk file path here
+            Uri uri = FileProvider.getUriForFile(Securitate.this, BuildConfig.APPLICATION_ID + ".provider",file);
+            if (file.exists()) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(uri, "application/vnd.android.package-archive");
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivity(intent);
+            } else {
+                Toast.makeText(Securitate.this, "file not exist", Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
+
+    }
     class DownloadVersionFileFromURL extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
@@ -595,6 +691,103 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
             alertDialog.setPositiveButton(getResources().getString(R.string.securitate_download_version), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    new DownloadFileOLDFromURL().execute(file_url_apk_old);
+                }
+            });
+            alertDialog.setNegativeButton(getResources().getString(R.string.txt_renunt_all), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    pDialog.dismiss();
+                }
+            });
+            alertDialog.show();
+        }
+
+    }
+    class DownloadVersionOLDFileFromURL extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showDialog(progress_bar_type);
+        }
+        @Override
+        protected String doInBackground(String... f_url) {
+            int count;
+            try {
+                URL url = new URL(f_url[0]);
+                URLConnection conection = url.openConnection();
+                conection.setConnectTimeout(2000);
+                conection.connect();
+
+                int lenghtOfFile = conection.getContentLength();
+
+                InputStream input = new BufferedInputStream(url.openStream(),
+                        8192);
+
+                OutputStream output = new FileOutputStream(Environment
+                        .getExternalStorageDirectory().toString()
+                        + "/IntelectSoft/MobileTerminalVersionOld.txt");
+
+                byte data[] = new byte[1024];
+
+                long total = 0;
+
+                while ((count = input.read(data)) != -1) {
+                    total += count;
+                    publishProgress("" + (int) ((total * 100) / lenghtOfFile));
+                    output.write(data, 0, count);
+                }
+                output.flush();
+                output.close();
+                input.close();
+
+            } catch (Exception e) {
+                Log.e("Error: ", e.getMessage());
+            }finally{
+                pDialog.dismiss();
+            }
+            return null;
+        }
+        protected void onProgressUpdate(String... progress) {
+            pDialog.setProgress(Integer.parseInt(progress[0]));
+        }
+
+        @Override
+        protected void onPostExecute(final String file_url) {
+            dismissDialog(progress_bar_type);
+            File file = new File(Environment.getExternalStorageDirectory()+ "/IntelectSoft","/MobileTerminalVersionOld.txt"); // mention apk file path here
+            StringBuilder text = new StringBuilder();
+
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                String line;
+
+                while ((line = br.readLine()) != null) {
+                    text.append(line);
+                    text.append('\n');
+                }
+                br.close();
+            }
+            catch (IOException e) {
+                Toast.makeText(Securitate.this, "Exception read file", Toast.LENGTH_SHORT).show();
+            }
+            pDialog.dismiss();
+            String version ="0.0";
+            try {
+                PackageInfo pInfo = Securitate.this.getPackageManager().getPackageInfo(getPackageName(), 0);
+                version = pInfo.versionName;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+                ((Variables)getApplication()).appendLog(e.getMessage(),Securitate.this);
+            }
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(Securitate.this);
+            alertDialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+            alertDialog.setMessage(getResources().getString(R.string.versiune_server_securitate) + text.toString()+ "\n"+getResources().getString(R.string.versiune_locala_securitate) + version);
+            alertDialog.setCancelable(false);
+            alertDialog.setPositiveButton(getResources().getString(R.string.securitate_download_version), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
                     new DownloadFileFromURL().execute(file_url_apk);
                 }
             });
@@ -609,7 +802,6 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         }
 
     }
-
     public void changeLang(String lang) {
         if (lang.equalsIgnoreCase(""))
             return;

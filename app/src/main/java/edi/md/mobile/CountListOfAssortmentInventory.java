@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -62,6 +63,8 @@ public class CountListOfAssortmentInventory extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar_count_inventory_list);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         initializareElement();
 
@@ -319,6 +322,7 @@ public class CountListOfAssortmentInventory extends AppCompatActivity {
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                         Intent countInv = new Intent();
                         countInv.putExtra("Count", inpCount.getText().toString());
+                        countInv.putExtra("Final",cant_final.isChecked());
                         setResult(RESULT_OK, countInv);
                         finish();
                     } else {
@@ -436,5 +440,13 @@ public class CountListOfAssortmentInventory extends AppCompatActivity {
             ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortmentInventory.this);
             return false;
         }
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

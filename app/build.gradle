@@ -16,8 +16,8 @@ android {
         applicationId "edi.md.mobile"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 2
-        versionName "2.2.0808"
+        versionCode 3
+        versionName "2.3.0819"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         setProperty("archivesBaseName", "MobileTerminal v$versionName")

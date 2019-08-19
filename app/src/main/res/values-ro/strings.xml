@@ -29,7 +29,8 @@
     <string name="txt_verifica_stoc_vinzare">Verifică stoc(la vânzare)</string>
     <string name="txt_limita_vinzare_securitate">Limita pozițiilor la vânzare:</string>
     <string name="txt_hint_limit_vinzare_securitate">*0 - limita nu este setată</string>
-    <string name="btn_donload_install_new_version">Descarca versiune nouă</string>
+    <string name="btn_donload_install_new_version">Upgrade</string>
+    <string name="btn_donload_install_old_version">Downgrade</string>
     <string name="txt_hint_input_licenta_securitate">Licența primită</string>
 
     <string name="txt_header_inp_count">Introduceți cantitatea:</string>

@@ -1,5 +1,6 @@
 package edi.md.mobile;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -74,7 +75,6 @@ public class Login extends AppCompatActivity {
 //            imm.showSoftInput(password, InputMethodManager.SHOW_IMPLICIT);
 //            password.setInputType(InputType.TYPE_CLASS_NUMBER);
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-            password.requestFocus();
         }
 
         Intent getActivity = getIntent();
@@ -124,7 +124,8 @@ public class Login extends AppCompatActivity {
                         pgH.dismiss();
                         Toast.makeText(Login.this,getResources().getString(R.string.msg_login_cod_incorect),Toast.LENGTH_SHORT).show();
                     }
-                }else if (id_==9){
+                }
+                else if (id_==9){
                     String code = password.getText().toString();
                     PinCode=Settings.getString("PinCod","");
                     String PinCodAdmin = Settings.getString("PinCodAdmin","");
@@ -140,7 +141,8 @@ public class Login extends AppCompatActivity {
                         pgH.dismiss();
                         Toast.makeText(Login.this,getResources().getString(R.string.msg_login_cod_incorect),Toast.LENGTH_SHORT).show();
                     }
-                } else if (id_==10){
+                }
+                else if (id_==10){
                     String code = password.getText().toString();
                     PinCode=Settings.getString("PinCod","");
                     String PinCodAdmin = Settings.getString("PinCodAdmin","");
@@ -156,18 +158,17 @@ public class Login extends AppCompatActivity {
                         pgH.dismiss();
                         Toast.makeText(Login.this,getResources().getString(R.string.msg_login_cod_incorect),Toast.LENGTH_SHORT).show();
                     }
-                }else{
-                    {
-                        sendCodeObj = new JSONObject();
-                        try {
-                            sendCodeObj.put("Code", password.getText().toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(), Login.this);
-                        }
-                        URL Url_Autentificare = Autentificare(ip_, port_);
-                        new AsyncTask_Autentificare().execute(Url_Autentificare);
+                }
+                else{
+                    sendCodeObj = new JSONObject();
+                    try {
+                        sendCodeObj.put("Code", password.getText().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        ((Variables)getApplication()).appendLog(e.getMessage(), Login.this);
                     }
+                    URL Url_Autentificare = Autentificare(ip_, port_);
+                    new AsyncTask_Autentificare().execute(Url_Autentificare);
                 }
             }
         });
@@ -352,15 +353,15 @@ public class Login extends AppCompatActivity {
         }
         return data.toString();
     }
-
+     @Override
     public boolean dispatchTouchEvent(@NonNull MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
             if (v instanceof EditText) {
                 v.clearFocus();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                assert imm != null;
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
             }
         }
 
@@ -408,8 +409,15 @@ public class Login extends AppCompatActivity {
                         SharedPreferences.Editor input_LogIn = LogIn.edit();
                         input_LogIn.putString("Name", Name);
                         input_LogIn.putString("UserID", UserID);
-
                         input_LogIn.apply();
+                        Activity activity=Login.this;
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        View view = activity.getCurrentFocus();
+                        //If no view currently has focus, create a new one, just so we can grab a window token from it
+                        if (view == null) {
+                            view = new View(activity);
+                        }
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
                         Intent getActivity = getIntent();
                         final int id = getActivity.getIntExtra("Activity", 101);
@@ -455,13 +463,21 @@ public class Login extends AppCompatActivity {
                                 startActivity(StockAsortiment);
                                 finish();
                             }
+                            case 11:{
+                                setResult(RESULT_OK);
+                                finish();
+                            }
                             break;
                         }
                     } else {
                         onedate=false;
                         final AlertDialog.Builder eroare = new AlertDialog.Builder(Login.this);
                         eroare.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                        eroare.setMessage(getResources().getString(R.string.msg_error_code) + errore_code + "\n" + "ErrorMessage: " + errorMessage);
+                        if(errore_code == 1 ){
+                            eroare.setMessage("User with this code not found!");
+                        }else{
+                            eroare.setMessage(getResources().getString(R.string.msg_error_code) + errore_code + "\n" + "ErrorMessage: " + errorMessage);
+                        }
                         eroare.setPositiveButton(getResources().getString(R.string.txt_accept_all), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {

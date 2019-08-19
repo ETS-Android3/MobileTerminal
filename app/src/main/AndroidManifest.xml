@@ -28,21 +28,26 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-
-        <activity android:name=".Utils.DeviceListActivity"
+        <activity android:name=".CountListOfAssortmentStock"
+            android:label="@string/txt_header_inp_count"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"></activity>
+        <activity
+            android:name=".Utils.DeviceListActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:label="Select device"
-            android:theme="@android:style/Theme.Holo.Dialog"
-            android:configChanges="orientation|keyboardHidden" />
-
-        <activity android:name=".HelpMain"
+            android:theme="@android:style/Theme.Holo.Dialog" />
+        <activity
+            android:name=".HelpMain"
             android:label="Help page"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden" ></activity>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ListAddedAssortmentInventory"
             android:label="Lista adaugate"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".Help" />
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Help"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".CountListOfAssortmentInventory"
             android:label="@string/txt_header_inp_count"

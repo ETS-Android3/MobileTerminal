@@ -1,6 +1,6 @@
 package edi.md.mobile;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -1222,7 +1222,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
         String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
 
         if(!WorkPlaceID.equals(WareUid)){
-            btn_change_stock.setText(WorkPlaceName);
+            btn_change_stock.setText(WareName);
         }
         if(WorkPlaceName.equals("Nedeterminat") || WorkPlaceName.equals("")){
             btn_change_stock.setText(WareName);

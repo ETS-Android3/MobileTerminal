@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#003f5e</color>
+    <color name="colorPrimary">#003F5E</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#150209</color>
     <color name="colorYelow">#EEF5AB</color>
     <color name="cornerButton">#00465C</color>
-    <color name="colorItemSelectList">#70A5DE</color>
+    <color name="colorItemSelectList">#84DE70</color>
     <color name="background_fon">#202020</color>
     <color name="new_color_primary">#35353B</color>
     <color name="new_text_color">#84CCF7</color>
     <color name="back_gray">#727272</color>
-    <color name="color_white"></color>
     <color name="color_white_new">#FFFFFF</color>
 </resources>
 <!--004c63-->

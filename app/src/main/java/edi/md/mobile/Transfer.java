@@ -1,6 +1,6 @@
 package edi.md.mobile;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -237,7 +237,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                         String Cant = json.getString("Count");
                         JSONObject sendObj = new JSONObject();
                         sendObj.put("Assortiment",Uid);
-                        sendObj.put("Quantity",Cant);
+                        sendObj.put("Quantity",Cant.replace(",","."));
                         sendArr.put(sendObj);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -520,6 +520,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                 ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
             }
             barcode_introdus = txt_input_barcode.getText().toString();
+            txtBarcode_introdus.setText(barcode_introdus);
             txt_input_barcode.setText("");
             URL getASL = GetAssortiment(ip_, port_);
             new AsyncTask_GetAssortiment().execute(getASL);

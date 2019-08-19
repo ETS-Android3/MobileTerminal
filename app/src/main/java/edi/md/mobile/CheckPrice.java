@@ -1,6 +1,6 @@
 package edi.md.mobile;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -251,9 +251,9 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         print.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences sPref =getSharedPreferences("Conected printers", MODE_PRIVATE);
+                SharedPreferences sPref =getSharedPreferences("Printers", MODE_PRIVATE);
                 SharedPreferences sPrefSetting =getSharedPreferences("Settings", MODE_PRIVATE);
-                final String adresMAC = sPref.getString("AdressPrinters",null);
+                final String adresMAC = sPref.getString("MAC_ZebraPrinters",null);
                 final int number_etichete =Integer.valueOf(count_lable.getText().toString());
                 Eticheta = sPrefSetting.getString("Lable",null);
                 if(adresMAC!=null) {
@@ -412,7 +412,9 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
             Intent MenuConnect = new Intent(".MenuAbout");
             startActivity(MenuConnect);
         }else if(id == R.id.menu_help) {
-
+            Intent openHelpPage = new Intent(this,Help.class);
+            openHelpPage.putExtra("Page",901);
+            startActivity(openHelpPage);
         }
         else if (id == R.id.menu_exit) {
             finish();
@@ -543,7 +545,7 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
         String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
 
         if(!WorkPlaceID.equals(WareUid)){
-            btn_depozit.setText(WorkPlaceName);
+            btn_depozit.setText(WareNames);
         }
         if(WorkPlaceName.equals("Nedeterminat") || WorkPlaceName.equals("")){
             btn_depozit.setText(WareNames);
@@ -855,20 +857,13 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
                         mUnitAssortment = responseAssortiment.getString("Unit");
                         mUnitInPackage = responseAssortiment.getString("UnitInPackage");
                         mUnitPrice = responseAssortiment.getString("UnitPrice");
-//                        double priceDouble = Double.valueOf(mPriceAssortment);
-//                        mPriceAssortment = String.format("%.2f", priceDouble);
-//                        mPriceAssortment = mPriceAssortment.replace(".", ",");
-//
-//                        double priceunit = Double.valueOf(mUnitPrice);
-//                        mUnitPrice = String.format("%.2f", priceunit);
-//                        mUnitPrice = mUnitPrice.replace(".", ",");
                         mBarcodeAssortment = responseAssortiment.getString("BarCode");
 
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
 
                         txtPriceAssortment.setText(mPriceAssortment);
                         txtNameAsortment.setText(mNameAssortment);
-                        if (!mMarkingAssortment.equals("null") || !mMarkingAssortment.equals("")) {
+                        if (!mMarkingAssortment.equals("null") && !mMarkingAssortment.equals("")) {
                             txtMarkingAssortment.setText(mMarkingAssortment);
                         } else {
                             txtMarkingAssortment.setText("-");
@@ -876,7 +871,7 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
                         txtStockAssortment.setText(Remain);
                         txtNameAsortment.setText(mNameAssortment);
 
-                        if (!mCodeAssortment.equals("null")  || !mCodeAssortment.equals("")) {
+                        if (!mCodeAssortment.equals("null")  && !mCodeAssortment.equals("")) {
                             txtCodeAssortment.setText(mCodeAssortment);
                         } else {
                             txtCodeAssortment.setText("-");

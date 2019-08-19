@@ -4,12 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/astavka"
     tools:context=".CountListOfAssortmentInvoice"
     tools:ignore="MissingTranslation">
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayoutInvoiceTouch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/side_tree_theme_background_main"
         android:theme="@style/AppTheme.AppBarOverlay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,7 +22,6 @@
             android:id="@+id/toolbar_count_invoice_touch"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
@@ -78,6 +80,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/txt_profit_invoice"
+        android:textColor="@color/colorAccent"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView24" />
@@ -230,6 +233,7 @@
         android:layout_marginRight="8dp"
         android:gravity="end"
         android:paddingRight="8dp"
+        android:textColor="@color/colorAccent"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView21"

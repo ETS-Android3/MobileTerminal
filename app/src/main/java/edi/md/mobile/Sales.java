@@ -1,7 +1,7 @@
 package edi.md.mobile;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -225,23 +225,25 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(uid_selected!=null){
-                    try {
-                        for (int i = 0; i< mAssortmentArray.length(); i++) {
-                            JSONObject json = mAssortmentArray.getJSONObject(i);
-                            String Uid = json.getString("AssortimentUid");
-                            if (uid_selected.contains(Uid)) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                    mAssortmentArray.remove(i);
+                if(!invoiceSaved){
+                    if(uid_selected!=null){
+                        try {
+                            for (int i = 0; i< mAssortmentArray.length(); i++) {
+                                JSONObject json = mAssortmentArray.getJSONObject(i);
+                                String Uid = json.getString("AssortimentUid");
+                                if (uid_selected.contains(Uid)) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                        mAssortmentArray.remove(i);
+                                    }
                                 }
+                                asl_list.clear();
+                                showAssortmentList();
                             }
-                            asl_list.clear();
-                            showAssortmentList();
-                        }
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(),Sales.this);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            ((Variables)getApplication()).appendLog(e.getMessage(),Sales.this);
+                        }
                     }
                 }
             }
@@ -296,33 +298,11 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         btn_print.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final SharedPreferences SharedPrinters = getSharedPreferences("Printers", MODE_PRIVATE);
-                int positionType = SharedPrinters.getInt("Type",0);
-                String UserName = User.getString("Name","Nullevoi");
-                Date current = new Date();
-                String date = current.toString();
-
-                if(positionType == 1){
-                    if(BluetoothPrintDriver.IsNoConnection()){
-                        Toast.makeText(Sales.this,"BT printer is not conect",Toast.LENGTH_SHORT).show();
-                    }
-                    BluetoothPrintDriver.BT_Write("Contul spre plata NR: " + InvoiceCode);
-                    BluetoothPrintDriver.BT_Write("\r");
-                    BluetoothPrintDriver.BT_Write("Creat de " +UserName );
-                    BluetoothPrintDriver.BT_Write("\r");
-                    BluetoothPrintDriver.BT_Write("Data crearii" +date );
-                    BluetoothPrintDriver.BT_Write("\r");
-                    BluetoothPrintDriver.Begin();
-                    BluetoothPrintDriver.AddCodePrint(BluetoothPrintDriver.CODE39, InvoiceCode);
-                    BluetoothPrintDriver.BT_Write(InvoiceCode);
-                    BluetoothPrintDriver.BT_Write("\n");
+                try {
+                    printSales();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-                else {
-                    printers_List_array.clear();
-                    URL getWareHouse = GetPrinters(ip_,port_,WareUid);
-                    new AsyncTask_GetPrinters().execute(getWareHouse);
-                }
-
             }
         });
         btn_change_stock.setOnClickListener(new View.OnClickListener() {
@@ -1227,32 +1207,10 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                final SharedPreferences SharedPrinters = getSharedPreferences("Printers", MODE_PRIVATE);
-                                SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
-                                int positionType = SharedPrinters.getInt("Type",0);
-                                if(positionType == 1) {
-                                    String UserName = User.getString("Name", "Nullevoi");
-                                    Date current = new Date();
-                                    String date = current.toString();
-
-                                    if (BluetoothPrintDriver.IsNoConnection()) {
-                                        Toast.makeText(Sales.this, "BT printer is not conect", Toast.LENGTH_SHORT).show();
-                                    }
-                                    BluetoothPrintDriver.BT_Write("Contul spre plata NR: " + InvoiceCode);
-                                    BluetoothPrintDriver.BT_Write("\r");
-                                    BluetoothPrintDriver.BT_Write("Creat de " + UserName);
-                                    BluetoothPrintDriver.BT_Write("\r");
-                                    BluetoothPrintDriver.BT_Write("Data crearii" + date);
-                                    BluetoothPrintDriver.BT_Write("\r");
-                                    BluetoothPrintDriver.Begin();
-                                    BluetoothPrintDriver.AddCodePrint(BluetoothPrintDriver.CODE39, InvoiceCode);
-                                    BluetoothPrintDriver.BT_Write(InvoiceCode.getBytes());
-                                    BluetoothPrintDriver.BT_Write("\n");
-                                }
-                                else {
-                                    printers_List_array.clear();
-                                    URL getWareHouse = GetPrinters(ip_, port_, WareUid);
-                                    new AsyncTask_GetPrinters().execute(getWareHouse);
+                                try {
+                                    printSales();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
                             }
                         });
@@ -1299,11 +1257,57 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         String WorkPlaceID = WorkPlace.getString("Uid","0");
         String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
         if(!WorkPlaceID.equals(WareUid)){
-            btn_change_stock.setText(WorkPlaceName);
+            btn_change_stock.setText(WareName);
         }
         if(WorkPlaceName.equals("Nedeterminat") || WorkPlaceName.equals("") ){
             btn_change_stock.setText(WareName);
         }
 
+    }
+    private void printSales() throws JSONException {
+        final SharedPreferences SharedPrinters = getSharedPreferences("Printers", MODE_PRIVATE);
+        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
+        int positionType = SharedPrinters.getInt("Type",0);
+        String UserName = User.getString("Name","NoN");
+        Date current = new Date();
+        String date = current.toString();
+
+        if(positionType == 1){
+            if(BluetoothPrintDriver.IsNoConnection()){
+                Toast.makeText(Sales.this,"BT printer is not conect",Toast.LENGTH_SHORT).show();
+            }
+            BluetoothPrintDriver.Begin();
+            BluetoothPrintDriver.BT_Write("\r");
+            BluetoothPrintDriver.BT_Write("Contul spre plata NR: " + InvoiceCode);
+            BluetoothPrintDriver.BT_Write("\r");
+            BluetoothPrintDriver.BT_Write("Creat de " +UserName );
+            BluetoothPrintDriver.BT_Write("\r");
+            BluetoothPrintDriver.BT_Write("Data crearii" +date );
+            BluetoothPrintDriver.BT_Write("\r");
+            BluetoothPrintDriver.AddCodePrint(BluetoothPrintDriver.CODE39, InvoiceCode);
+            BluetoothPrintDriver.BT_Write("\r");
+            for (int i = 0; i< mAssortmentArray.length(); i++){
+                JSONObject json= mAssortmentArray.getJSONObject(i);
+                String Name = json.getString("AssortimentName");
+                String Cant = json.getString("Count");
+                String Price = json.getString("Price");
+
+                Cant=Cant.replace(",",".");
+                Price = Price.replace(",",".");
+
+                String suma =String.format("%.2f",Double.valueOf(Price) * Double.parseDouble(Cant));
+                String mToPrint = Name + " " + Cant + " " + suma;
+
+                BluetoothPrintDriver.BT_Write("\r");
+                BluetoothPrintDriver.BT_Write(mToPrint);
+                BluetoothPrintDriver.BT_Write("\r");
+            }
+
+        }
+        else {
+            printers_List_array.clear();
+            URL getWareHouse = GetPrinters(ip_,port_,WareUid);
+            new AsyncTask_GetPrinters().execute(getWareHouse);
+        }
     }
 }

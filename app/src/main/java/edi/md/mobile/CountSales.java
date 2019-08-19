@@ -155,7 +155,13 @@ public class CountSales extends AppCompatActivity {
                                 input = Double.valueOf(et_count.getText().toString().replace(".",","));
                             }
                         }
-                        Double Stock = Double.valueOf(sales.getStringExtra("Remain"));
+                        Double Stock = 0.00;
+                        try{
+                            Stock = Double.valueOf(mRemainAssortment);
+                        }catch (Exception e){
+                            Stock = Double.valueOf(mRemainAssortment.replace(".",","));
+                        }
+
                         if (input > Stock) {
                             et_count.setError(getResources().getString(R.string.msg_count_greath_like_remain));
                             adauga_Count = false;
@@ -264,7 +270,7 @@ public class CountSales extends AppCompatActivity {
         return super.dispatchTouchEvent(event);
     }
     private void saveCountSales(){
-        if (!et_count.getText().toString().equals("")) {
+        if (adauga_Count) {
             if(!mAllowNotIntegerSales){
                 if (isInteger(et_count.getText().toString())) {
                     JSONObject asl = new JSONObject();
@@ -303,7 +309,7 @@ public class CountSales extends AppCompatActivity {
             }
 
         }else{
-            Toast.makeText(CountSales.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
+            et_count.setError(getResources().getString(R.string.msg_count_greath_like_remain));
             et_count.requestFocus();
         }
     }

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ListView;
@@ -57,6 +58,12 @@ public class ListAddedAssortmentInventory extends AppCompatActivity {
                 new int[]{R.id.textName_asl_invoice,R.id.textCantitate_asl_invoice});
         list_assortment.setAdapter(simpleAdapterASL);
 
+        btn_close_list.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
     }
     @Override
