@@ -698,53 +698,57 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                         .addConverterFactory(GsonConverterFactory.create())
                         .client(okHttpClient)
                         .build();
-                ServiceApi assortiment_API = retrofit.create(ServiceApi.class);
+                final ServiceApi assortiment_API = retrofit.create(ServiceApi.class);
                 final Call<ASL> assortiment = assortiment_API.getAssortiment(UserId,WareGUid);
                 assortiment.enqueue(new Callback<ASL>() {
                     @Override
                     public void onResponse(Call<ASL> call, Response<ASL> response) {
 
                         ASL assortiment_body = response.body();
-                        List<Assortment> assortmentListData = assortiment_body.getAssortments();
+                        if(assortiment_body != null){
+                            List<Assortment> assortmentListData = assortiment_body.getAssortments();
 
-                        Variables myapp =((Variables)getApplication());
+                            Variables myapp =((Variables)getApplication());
 
-                        //myapp.SaveAsortment(assortmentListData);
-                        int mas=0;
-                        for (int i=0; i<assortmentListData.size();i++){
-                            Boolean is_folder = assortmentListData.get(i).getIsFolder();
-                            String barcode = assortmentListData.get(i).getBarCode();
-                            String unit = assortmentListData.get(i).getUnit();
-                            String unitin_package = assortmentListData.get(i).getUnitInPackage();
-                            if (barcode==null)
-                                assortmentListData.get(i).setBarCode("null");
-                            if (unit==null)
-                                assortmentListData.get(i).setUnit("null");
-                            if (unitin_package==null)
-                                assortmentListData.get(i).setUnitInPackage("null");
-                            String uid_asl = assortmentListData.get(i).getAssortimentID();
-
-                            myapp.add_AssortimentID(uid_asl,assortmentListData.get(i));
-                            if(is_folder){
-                                HashMap<String, Object> asl_folder = new HashMap<>();
-
-                                String asl_name = assortmentListData.get(i).getName();
+                            //myapp.SaveAsortment(assortmentListData);
+                            int mas=0;
+                            for (int i=0; i<assortmentListData.size();i++){
+                                Boolean is_folder = assortmentListData.get(i).getIsFolder();
+                                String barcode = assortmentListData.get(i).getBarCode();
+                                String unit = assortmentListData.get(i).getUnit();
+                                String unitin_package = assortmentListData.get(i).getUnitInPackage();
+                                if (barcode==null)
+                                    assortmentListData.get(i).setBarCode("null");
+                                if (unit==null)
+                                    assortmentListData.get(i).setUnit("null");
+                                if (unitin_package==null)
+                                    assortmentListData.get(i).setUnitInPackage("null");
+                                String uid_asl = assortmentListData.get(i).getAssortimentID();
 
                                 myapp.add_AssortimentID(uid_asl,assortmentListData.get(i));
+                                if(is_folder){
+                                    HashMap<String, Object> asl_folder = new HashMap<>();
 
-                                asl_folder.put("Name", asl_name);
-                                asl_folder.put("ID", uid_asl);
-                                asl_list.add(asl_folder);
-                                mas++;
+                                    String asl_name = assortmentListData.get(i).getName();
+
+                                    myapp.add_AssortimentID(uid_asl,assortmentListData.get(i));
+
+                                    asl_folder.put("Name", asl_name);
+                                    asl_folder.put("ID", uid_asl);
+                                    asl_list.add(asl_folder);
+                                    mas++;
+                                }
                             }
+                            kit_lists=new String[mas];
+                            checkedItems = new boolean[mas];
+                            for (int i=0;i<mas;i++){
+                                checkedItems[i]=false;
+                                kit_lists[i]=(String)asl_list.get(i).get("Name");
+                            }
+                            handler.obtainMessage(10, 12, -1).sendToTarget();
+                        }else{
+                            handler.obtainMessage(20,"Assortment null").sendToTarget();
                         }
-                        kit_lists=new String[mas];
-                        checkedItems = new boolean[mas];
-                        for (int i=0;i<mas;i++){
-                            checkedItems[i]=false;
-                            kit_lists[i]=(String)asl_list.get(i).get("Name");
-                        }
-                        handler.obtainMessage(10, 12, -1).sendToTarget();
                     }
 
                     @Override

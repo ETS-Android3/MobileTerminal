@@ -691,7 +691,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
             alertDialog.setPositiveButton(getResources().getString(R.string.securitate_download_version), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    new DownloadFileOLDFromURL().execute(file_url_apk_old);
+                    new DownloadFileFromURL().execute(file_url_apk);
                 }
             });
             alertDialog.setNegativeButton(getResources().getString(R.string.txt_renunt_all), new DialogInterface.OnClickListener() {
@@ -788,7 +788,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
             alertDialog.setPositiveButton(getResources().getString(R.string.securitate_download_version), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    new DownloadFileFromURL().execute(file_url_apk);
+                    new DownloadFileOLDFromURL().execute(file_url_apk_old);
                 }
             });
             alertDialog.setNegativeButton(getResources().getString(R.string.txt_renunt_all), new DialogInterface.OnClickListener() {

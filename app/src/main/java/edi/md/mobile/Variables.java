@@ -194,15 +194,6 @@ public class Variables extends Application {
                 }
             }
         }
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            asl_list.sort(new Comparator<HashMap<String, Object>>() {
-//                @Override
-//                public int compare(HashMap<String, Object> o1, HashMap<String, Object> o2) {
-//                    return String.valueOf(o1.get("Folder_is")).compareTo(String.valueOf(o2.get("Folder_is")));
-//                }
-//
-//            });
-//        }
         return asl_list;
     }
 

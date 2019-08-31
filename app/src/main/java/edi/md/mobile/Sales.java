@@ -38,7 +38,6 @@ import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.RT_Printer.BluetoothPrinter.BLUETOOTH.BluetoothPrintDriver;
 
@@ -60,7 +59,6 @@ import java.util.TimerTask;
 
 import edi.md.mobile.Settings.Assortment;
 import edi.md.mobile.Utils.AssortmentInActivity;
-import edi.md.mobile.Utils.BTUtils;
 
 import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetAssortiment;
@@ -696,7 +694,8 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         });
         builderType.setCancelable(false);
         pgH.dismiss();
-        builderType.show();
+        if(Sales.this != null)
+            builderType.show();
     }
     public void getWareHouse(){
         URL getWareHouse = GetWareHouseList(ip_,port_,UserId);
@@ -758,6 +757,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         txt_total_sales.setText(String.format("%.2f",sumTotal));
         simpleAdapterASL = new SimpleAdapter(this, asl_list,R.layout.show_asl_sales, new String[]{"Name","Cant","Suma"},
                 new int[]{R.id.textName,R.id.textCantitate,R.id.textSuma});
+        simpleAdapterASL.notifyDataSetChanged();
         list_of_sales.setAdapter(simpleAdapterASL);
     }
     private void startTimetaskSync(){
@@ -1274,7 +1274,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
 
         if(positionType == 1){
             if(BluetoothPrintDriver.IsNoConnection()){
-                Toast.makeText(Sales.this,"BT printer is not conect",Toast.LENGTH_SHORT).show();
+                Toast.makeText(Sales.this,getResources().getString(R.string.information_print_sales),Toast.LENGTH_SHORT).show();
             }
             BluetoothPrintDriver.Begin();
             BluetoothPrintDriver.BT_Write("\r");

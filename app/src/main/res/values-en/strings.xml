@@ -173,4 +173,5 @@
     <string name="versiune_locala_securitate">Installed version:</string>
     <string name="sales_count_only_integer">Only integer number</string>
     <string name="help">Help</string>
+    <string name="information_print_sales">BT printer is not conect</string>
 </resources>
