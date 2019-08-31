@@ -10,6 +10,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -293,25 +295,49 @@ public class CountInventory extends AppCompatActivity {
         }
     }
     private void saveCount(){
-        if(!inpCount.getText().toString().equals("")) {
-            pgH.setMessage("loading..");
-            pgH.setIndeterminate(true);
-            pgH.setCancelable(false);
-            pgH.show();
-            sendAssortiment = new JSONObject();
-            try {
-                sendAssortiment.put("Assortiment", mIDAssortment);
-                sendAssortiment.put("FinalQuantity", cant_final.isChecked());
-                sendAssortiment.put("Quantity", inpCount.getText().toString());
-                sendAssortiment.put("RevisionID", RevisionID);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),CountInventory.this);
+        if (mAllowNotIntegerSales) {
+            if (isDouble(inpCount.getText().toString())) {
+                pgH.setMessage("loading..");
+                pgH.setIndeterminate(true);
+                pgH.setCancelable(false);
+                pgH.show();
+                sendAssortiment = new JSONObject();
+                try {
+                    sendAssortiment.put("Assortiment", mIDAssortment);
+                    sendAssortiment.put("FinalQuantity", cant_final.isChecked());
+                    sendAssortiment.put("Quantity", inpCount.getText().toString());
+                    sendAssortiment.put("RevisionID", RevisionID);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    ((Variables) getApplication()).appendLog(e.getMessage(), CountInventory.this);
+                }
+                URL generateSaveLine = SaveRevisionLine(ip_, port_);
+                new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
+            }else{
+                inpCount.setError(getResources().getString(R.string.msg_format_number_incorect));
             }
-            URL generateSaveLine = SaveRevisionLine(ip_, port_);
-            new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
-        }else if (inpCount.getText().toString().equals("")){
-            inpCount.setError(getResources().getString(R.string.txt_header_inp_count));
+        }
+        else {
+            if (isInteger(inpCount.getText().toString())) {
+                pgH.setMessage("loading..");
+                pgH.setIndeterminate(true);
+                pgH.setCancelable(false);
+                pgH.show();
+                sendAssortiment = new JSONObject();
+                try {
+                    sendAssortiment.put("Assortiment", mIDAssortment);
+                    sendAssortiment.put("FinalQuantity", cant_final.isChecked());
+                    sendAssortiment.put("Quantity", inpCount.getText().toString());
+                    sendAssortiment.put("RevisionID", RevisionID);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    ((Variables) getApplication()).appendLog(e.getMessage(), CountInventory.this);
+                }
+                URL generateSaveLine = SaveRevisionLine(ip_, port_);
+                new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
+            }else{
+                inpCount.setError(getResources().getString(R.string.msg_only_number_integer));
+            }
         }
     }
     private void initializareElement(){
@@ -376,7 +402,12 @@ public class CountInventory extends AppCompatActivity {
         double countAdded = Double.valueOf(ExistingCount);
         double Remain_in_program = 0.00;
         if(mRemainAssortment!= null){
-            Remain_in_program =Double.valueOf(mRemainAssortment);
+           try{
+               Remain_in_program =Double.valueOf(mRemainAssortment);
+           }catch (Exception e){
+               mRemainAssortment.replace(",",".");
+               Remain_in_program =Double.valueOf(mRemainAssortment);
+           }
         }
         if (Remain_in_program!=0.0){
             double remain_scan=  Remain_in_program - countAdded;
@@ -412,6 +443,27 @@ public class CountInventory extends AppCompatActivity {
         else {
             txtPrice.setText(mPriceAssortment);
         }
+        inpCount.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (mAllowNotIntegerSales) {
+                    if (!isDouble(inpCount.getText().toString())) inpCount.setError(getResources().getString(R.string.msg_format_number_incorect));
+                }
+                else {
+                    if (!isInteger(inpCount.getText().toString())) inpCount.setError(getResources().getString(R.string.msg_only_number_integer));
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -422,5 +474,25 @@ public class CountInventory extends AppCompatActivity {
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean isDouble(String s) throws NumberFormatException {
+        try {
+            Double.parseDouble(s);
+            return true;
+        } catch (NumberFormatException e) {
+
+            ((Variables)getApplication()).appendLog(e.getMessage(),CountInventory.this);
+            return false;
+        }
+    }
+    private boolean isInteger(String s) throws NumberFormatException {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException e) {
+            ((Variables)getApplication()).appendLog(e.getMessage(),CountInventory.this);
+            return false;
+        }
     }
 }

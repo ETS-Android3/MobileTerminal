@@ -380,8 +380,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Intent MenuConnect = new Intent(".MenuAbout");
             startActivity(MenuConnect);
         }else if(id == R.id.menu_help_main) {
-            Intent MenuHelp = new Intent(MainActivity.this, HelpMain.class);
-            startActivity(MenuHelp);
+//            Intent MenuHelp = new Intent(MainActivity.this, HelpMain.class);
+//            startActivity(MenuHelp);
         }
         else if (id == R.id.menu_exit_main) {
             finishAffinity();
@@ -404,7 +404,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
             }
         };
-
     }
     class AsyncTask_Ping extends AsyncTask<URL, String, String> {
 
@@ -423,7 +422,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         protected void onPostExecute(String response) {
             if (response.equals("true")) {
                 pingTest=true;
-                menu.getItem(0).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.signal_wi_fi_48));
+                if(menu!=null)
+                    menu.getItem(0).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.signal_wi_fi_48));
             }else {
                 pingTest=false;
                 if(menu!=null)

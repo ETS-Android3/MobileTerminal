@@ -26,21 +26,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fl_btn_close_list_assortment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:layout_marginRight="24dp"
-        android:layout_marginBottom="24dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:backgroundTint="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:rippleColor="#00FFFFFF"
-        app:srcCompat="@drawable/close_white_48dp" />
-
     <LinearLayout
         android:id="@+id/headerList"
         android:layout_width="0dp"

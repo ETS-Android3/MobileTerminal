@@ -173,8 +173,8 @@ public class CountListOfAssortment extends AppCompatActivity {
         Count_enter.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) saveCount(mIDAssortment);
-                else if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER) saveCount(mIDAssortment);
+                if (actionId == EditorInfo.IME_ACTION_DONE) saveCount();
+                else if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER) saveCount();
                 return false;
             }
         });
@@ -182,7 +182,7 @@ public class CountListOfAssortment extends AppCompatActivity {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveCount(mIDAssortment);
+                saveCount();
             }
         });
 
@@ -242,68 +242,23 @@ public class CountListOfAssortment extends AppCompatActivity {
             }
         });
     }
-    private void saveCount(String uid_save){
-        Intent getIntetn = getIntent();
-        int type = getIntetn.getIntExtra("NonAutoCount_from_Inventory",777);
-        if(type== FROM_INVENTORY_ACTIVITY){
-            SharedPreferences Revision = getSharedPreferences("Revision", MODE_PRIVATE);
-            String revisions =Revision.getString("RevisionID","");
-            if (mIntegerSales) {
-                if (isDouble(Count_enter.getText().toString())) {
-                    pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
-                    pgH.setIndeterminate(true);
-                    pgH.setCancelable(false);
-                    pgH.show();
-                    sendRevision = new JSONObject();
-                    try {
-                        sendRevision.put("Assortiment", uid_save);
-                        sendRevision.put("Quantity", Count_enter.getText().toString());
-                        sendRevision.put("RevisionID", revisions);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
-                    }
-                    URL generateSaveLine = SaveRevisionLine(ip_, port_);
-                    new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
-                }
+    private void saveCount(){
+
+        if (mIntegerSales) {
+            if (isDouble(Count_enter.getText().toString())) {
+                Intent intent = new Intent();
+                intent.putExtra("Name", mNameAssortment);
+                intent.putExtra("count", String.valueOf(Count_enter.getText()));
+                setResult(RESULT_OK, intent);
+                finish();
             }
-            else {
-                if (isInteger(Count_enter.getText().toString())) {
-                    pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
-                    pgH.setIndeterminate(true);
-                    pgH.setCancelable(false);
-                    pgH.show();
-                    sendRevision = new JSONObject();
-                    try {
-                        sendRevision.put("Assortiment", uid_save);
-                        sendRevision.put("Quantity", Count_enter.getText().toString());
-                        sendRevision.put("RevisionID", revisions);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
-                    }
-                    URL generateSaveLine = SaveRevisionLine(ip_, port_);
-                    new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
-                }
-            }
-        }
-        else{
-            if (mIntegerSales) {
-                if (isDouble(Count_enter.getText().toString())) {
-                    Intent intent = new Intent();
-                    intent.putExtra("Name", mNameAssortment);
-                    intent.putExtra("count", String.valueOf(Count_enter.getText()));
-                    setResult(RESULT_OK, intent);
-                    finish();
-                }
-            } else {
-                if (isInteger(Count_enter.getText().toString())) {
-                    Intent intent = new Intent();
-                    intent.putExtra("Name",mNameAssortment);
-                    intent.putExtra("count", String.valueOf(Count_enter.getText()));
-                    setResult(RESULT_OK, intent);
-                    finish();
-                }
+        } else {
+            if (isInteger(Count_enter.getText().toString())) {
+                Intent intent = new Intent();
+                intent.putExtra("Name",mNameAssortment);
+                intent.putExtra("count", String.valueOf(Count_enter.getText()));
+                setResult(RESULT_OK, intent);
+                finish();
             }
         }
     }

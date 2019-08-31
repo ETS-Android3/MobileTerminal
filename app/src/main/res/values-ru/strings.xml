@@ -171,4 +171,5 @@
     <string name="versiune_locala_securitate">Версия на вашем устройстве:</string>
     <string name="sales_count_only_integer">Только целые числа</string>
     <string name="help">Помощь</string>
+    <string name="information_print_sales">BT printer is not conect</string>
 </resources>

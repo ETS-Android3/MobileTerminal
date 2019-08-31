@@ -283,11 +283,9 @@ public class ListAssortment extends AppCompatActivity {
                             pgH.setIndeterminate(true);
                             pgH.setCancelable(false);
                             pgH.show();
-
                             try {
                                 boolean isExtist = false;
                                 //добавляю в массив нажатого товара чтобы потом отабразить какие товары были отправлены из окна с списком товаров
-
                                 for(int i=0; i <array_added_items_inventroy.length();i++){
                                     JSONObject object= array_added_items_inventroy.getJSONObject(i);
                                     String GUID = object.getString("AssortimentUid");
@@ -298,8 +296,8 @@ public class ListAssortment extends AppCompatActivity {
                                         cant_exist_double = Double.parseDouble(count_exist);
                                     }catch (Exception e){
                                         count_exist = count_exist.replace(",",".");
+                                        cant_exist_double = Double.parseDouble(count_exist);
                                     }
-
                                     //если товар уже есть то сумирую кол-во
                                     if (GUID.equals(mGUIDAssortment)){
                                         cant_exist_double = cant_exist_double +1;
@@ -315,7 +313,6 @@ public class ListAssortment extends AppCompatActivity {
                                     json_item_added_inventory.put("Quantity", "1");
                                     array_added_items_inventroy.put(json_item_added_inventory);
                                 }
-
                                 //получаю товар что уже был добавлен и добавляю 1 шт и сохраняем
                                 String ExistingCount = SaveCountEnumeratorAssortmentScanned.getString(mGUIDAssortment,"0.00");
                                 double countExist = 0.00;
@@ -330,7 +327,6 @@ public class ListAssortment extends AppCompatActivity {
                                 add_name.putString(mGUIDAssortment,mNameAssortment);
                                 add_name.apply();
                                 add_count_clicked.apply();
-
                                 //сохраняю в JSON то что надо отправить сервису для сохранения нажатого товара на сервере
                                 sendRevision.put("Assortiment", mGUIDAssortment);
                                 sendRevision.put("Quantity", "1");

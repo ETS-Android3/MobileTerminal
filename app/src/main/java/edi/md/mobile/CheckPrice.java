@@ -412,9 +412,9 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
             Intent MenuConnect = new Intent(".MenuAbout");
             startActivity(MenuConnect);
         }else if(id == R.id.menu_help) {
-            Intent openHelpPage = new Intent(this,Help.class);
-            openHelpPage.putExtra("Page",901);
-            startActivity(openHelpPage);
+//            Intent openHelpPage = new Intent(this,Help.class);
+//            openHelpPage.putExtra("Page",901);
+//            startActivity(openHelpPage);
         }
         else if (id == R.id.menu_exit) {
             finish();
