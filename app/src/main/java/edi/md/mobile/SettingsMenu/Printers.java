@@ -191,9 +191,15 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
 
             mModelPrinter.setAdapter(adapterModel);
             mModelPrinter.setSelection(modelType);
-
-
         }
+        else if(positionType == 0){
+            adapterModel = new ArrayAdapter<String>(Printers.this, android.R.layout.simple_spinner_item, mZebraModelList);
+            adapterModel.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            mModelPrinter.setAdapter(adapterModel);
+            mModelPrinter.setSelection(0);
+        }
+
         // обработчик нажатия
         mTypePrinter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -230,7 +236,7 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
                     SharedPrintersEditor.apply();
                 }
                 if( position == 0){
-                    SharedPrintersEditor.putInt("Model",0);
+                    SharedPrintersEditor.putInt("Type",position);
                     SharedPrintersEditor.apply();
 
                     mModelPrinter.setSelection(0);
