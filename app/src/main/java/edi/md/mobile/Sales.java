@@ -1171,7 +1171,10 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                         dialog.dismiss();
                     }
                 });
-                dialog.show();
+                if (Sales.this.isDestroyed()) { // or call isFinishing() if min sdk version < 17
+                    return;
+                }
+                  dialog.show();
             }
 
         }

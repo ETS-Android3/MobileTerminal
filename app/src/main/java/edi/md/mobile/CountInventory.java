@@ -225,7 +225,11 @@ public class CountInventory extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String response) {
+            if (CountInventory.this.isDestroyed()) { // or call isFinishing() if min sdk version < 17
+                return;
+            }
             pgH.dismiss();
+
             if (!response.equals("")) {
                 try {
                     JSONObject responseAssortiment = new JSONObject(response);

@@ -187,10 +187,14 @@ public class ListAssortment extends AppCompatActivity {
         handler = new Handler() {
             public void handleMessage(android.os.Message msg) {
                 if(msg.what == 10) {
+                    if (ListAssortment.this.isDestroyed()) { // or call isFinishing() if min sdk version < 17
+                        return;
+                    }
+                    pgH.dismiss();
                     SortAssortmentList(asl_list);
                     simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
                             new String[]{"Name","icon","PriceWithText","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
-                    pgH.dismiss();
+
                     ((Variables)getApplication()).setDownloadASLVariable(true);
                     list_assortments.setAdapter(simpleAdapterASL);
                 }
