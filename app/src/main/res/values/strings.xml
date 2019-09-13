@@ -171,5 +171,5 @@
     <string name="versiune_locala_securitate">Versiunea instalată: </string>
     <string name="sales_count_only_integer">Doar numere intregi</string>
     <string name="help">Ajutor</string>
-    <string name="information_print_sales">BT printer is not conect</string>
+    <string name="information_print_sales">Bluetooth printer is not conect</string>
 </resources>

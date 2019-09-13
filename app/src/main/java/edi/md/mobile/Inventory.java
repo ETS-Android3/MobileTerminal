@@ -225,7 +225,6 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 list_added_touch.setAdapter(simpleAdapterASL);
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     getAssortment(User.getString("UserID", ""));
-
                 }else if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER) {
                     getAssortment(User.getString("UserID", ""));
                 }
@@ -285,8 +284,11 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
         show_keyboard[0] = false;
         pgB.setVisibility(View.VISIBLE);
         barcode = inpBarcode.getText().toString();
-        String aftercur = barcode.substring(0,2);
-        Integer toInt = Integer.valueOf(aftercur);
+        Integer toInt = 201;
+        if(barcode.length() > 8){
+            String aftercur = barcode.substring(0,2);
+            toInt = Integer.valueOf(aftercur);
+        }
         sendAssortiment = new JSONObject();
         try {
             if(toInt.equals(WeightPrefix)) {

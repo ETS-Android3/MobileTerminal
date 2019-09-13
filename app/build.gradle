@@ -14,10 +14,10 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "edi.md.mobile"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 28
         versionCode 3
-        versionName "2.3.3108"
+        versionName "3.3.1309"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         setProperty("archivesBaseName", "MobileTerminal v$versionName")
