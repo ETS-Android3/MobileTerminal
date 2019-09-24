@@ -725,7 +725,10 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
             }
         });
         builderTypePrinters.setCancelable(false);
-        builderTypePrinters.show();
+        if(isDestroyed())
+            return;
+        else
+            builderTypePrinters.show();
     }
     public void showAssortmentList(){
         double sumTotal=0.0;
