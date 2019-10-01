@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "491349790285",
+    "firebase_url": "https://mobileterminal-c0233.firebaseio.com",
+    "project_id": "mobileterminal-c0233",
+    "storage_bucket": "mobileterminal-c0233.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:491349790285:android:6224ede3cc30910e",
+        "android_client_info": {
+          "package_name": "edi.md.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "491349790285-vf5qa3r43bb8l3junsnvgc3sbf902jv4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7VT5FSBkcxcJH4RS0ZkIOJVhO7onfBjI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "491349790285-vf5qa3r43bb8l3junsnvgc3sbf902jv4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
