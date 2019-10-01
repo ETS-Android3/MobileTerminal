@@ -284,30 +284,38 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
         show_keyboard[0] = false;
         pgB.setVisibility(View.VISIBLE);
         barcode = inpBarcode.getText().toString();
-        Integer toInt = 201;
-        if(barcode.length() > 8){
+        int toInt = 201;
+        if(barcode.length() > 7){
             String aftercur = barcode.substring(0,2);
             toInt = Integer.valueOf(aftercur);
-        }
-        sendAssortiment = new JSONObject();
-        try {
-            if(toInt.equals(WeightPrefix)) {
-                sendAssortiment.put("AssortmentIdentifier", barcode.substring(0,7));
-            }else{
-                sendAssortiment.put("AssortmentIdentifier", inpBarcode.getText().toString());
+            sendAssortiment = new JSONObject();
+            try {
+                if(toInt == WeightPrefix) {
+                    sendAssortiment.put("AssortmentIdentifier", barcode.substring(0,7));
+                }else{
+                    sendAssortiment.put("AssortmentIdentifier", inpBarcode.getText().toString());
+                }
+                sendAssortiment.put("ShowStocks", true);
+                sendAssortiment.put("UserID", user);
+                sendAssortiment.put("WarehouseID",WareID );
+            } catch (JSONException e) {
+                e.printStackTrace();
+                ((Variables)getApplication()).appendLog(e.getMessage(), Inventory.this);
             }
-            sendAssortiment.put("ShowStocks", true);
-            sendAssortiment.put("UserID", user);
-            sendAssortiment.put("WarehouseID",WareID );
-        } catch (JSONException e) {
-            e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(), Inventory.this);
+            txtInpBarcode.setText(inpBarcode.getText().toString());
+            inpBarcode.setText("");
+            inpBarcode.requestFocus();
+            URL getASL = GetAssortiment(ip_, port_);
+            new AsyncTask_GetAssortiment().execute(getASL);
         }
-        txtInpBarcode.setText(inpBarcode.getText().toString());
-        inpBarcode.setText("");
-        inpBarcode.requestFocus();
-        URL getASL = GetAssortiment(ip_, port_);
-        new AsyncTask_GetAssortiment().execute(getASL);
+        else{
+            pgB.setVisibility(View.INVISIBLE);
+            txtNames.setText(getResources().getString(R.string.txt_depozit_nedeterminat));
+            txtArticol.setText("--");
+            txtCount.setText("0");
+            txtCode.setText("-");
+        }
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menus) {
@@ -490,7 +498,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                         }
                         txtNames.setText(Name);
                         txtCode.setText(Code);
-                        if(!auto_input_count.isChecked()) {
+                        if(!auto_input_count.isChecked() && barcode.length()>5) {
                             Assortment assortment = new Assortment();
                             assortment.setBarCode(barcode);
                             assortment.setCode(Code);

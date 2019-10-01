@@ -344,7 +344,7 @@ public class CountInventory extends AppCompatActivity {
             }
         }
     }
-    private void initializareElement(){
+    private void  initializareElement(){
         btn_cancel=findViewById(R.id.btn_cancel_count_inventory);
         btn_ok=findViewById(R.id.btn_add_count_inventory);
         txtArticol= findViewById(R.id.txtMarking_asortment_count_inventory);
