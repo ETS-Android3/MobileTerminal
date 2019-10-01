@@ -152,14 +152,14 @@ public class CountSales extends AppCompatActivity {
                             try{
                                 input = Double.valueOf(et_count.getText().toString());
                             }catch (Exception e){
-                                input = Double.valueOf(et_count.getText().toString().replace(".",","));
+                                input = Double.valueOf(et_count.getText().toString().replace(",","."));
                             }
                         }
                         Double Stock = 0.00;
                         try{
                             Stock = Double.valueOf(mRemainAssortment);
                         }catch (Exception e){
-                            Stock = Double.valueOf(mRemainAssortment.replace(".",","));
+                            Stock = Double.valueOf(mRemainAssortment.replace(",","."));
                         }
 
                         if (input > Stock) {
