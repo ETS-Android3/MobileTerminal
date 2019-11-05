@@ -425,6 +425,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if(menu!=null)
                     menu.getItem(0).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.signal_wi_fi_48));
             }else {
+                this.onCancelled();
                 pingTest=false;
                 if(menu!=null)
                     menu.getItem(0).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.no_signal_wi_fi_48));

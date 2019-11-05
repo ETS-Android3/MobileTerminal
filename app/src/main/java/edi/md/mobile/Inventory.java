@@ -251,7 +251,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                     show_keyboard[0] = true;
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(inpBarcode, InputMethodManager.SHOW_IMPLICIT);
-                    inpBarcode.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    inpBarcode.setInputType(InputType.TYPE_CLASS_TEXT);
                 }else{
                     show_keyboard[0] = false;
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
