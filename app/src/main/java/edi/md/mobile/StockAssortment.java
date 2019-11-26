@@ -363,7 +363,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                     show_keyboard[0] = true;
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(txt_input_barcode, InputMethodManager.SHOW_IMPLICIT);
-                    txt_input_barcode.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    txt_input_barcode.setInputType(InputType.TYPE_CLASS_TEXT);
                 }
                 else {
                     show_keyboard[0] = false;

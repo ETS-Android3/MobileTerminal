@@ -150,9 +150,9 @@ public class CountSales extends AppCompatActivity {
                             input = 0.0;
                         } else {
                             try{
-                                input = Double.valueOf(et_count.getText().toString());
-                            }catch (Exception e){
                                 input = Double.valueOf(et_count.getText().toString().replace(",","."));
+                            }catch (Exception e){
+                                input = Double.valueOf(et_count.getText().toString().replace(".",","));
                             }
                         }
                         Double Stock = 0.00;

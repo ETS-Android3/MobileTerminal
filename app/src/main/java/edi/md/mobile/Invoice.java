@@ -210,7 +210,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                     show_keyboard[0] = true;
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(txt_input_barcode, InputMethodManager.SHOW_IMPLICIT);
-                    txt_input_barcode.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    txt_input_barcode.setInputType(InputType.TYPE_CLASS_TEXT);
                 }
                 else {
                     show_keyboard[0] = false;
@@ -763,6 +763,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                 menu.getItem(0).setIcon(ContextCompat.getDrawable(Invoice.this, R.drawable.signal_wi_fi_48));
             }else {
                 this.cancel(true);
+                onCancelled();
                 menu.getItem(0).setIcon(ContextCompat.getDrawable(Invoice.this, R.drawable.no_signal_wi_fi_48));
             }
         }

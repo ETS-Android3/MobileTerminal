@@ -194,7 +194,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                         show_keyboard[0] = true;
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.showSoftInput(txt_input_barcode, InputMethodManager.SHOW_IMPLICIT);
-                        txt_input_barcode.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        txt_input_barcode.setInputType(InputType.TYPE_CLASS_TEXT);
                     } else {
                         show_keyboard[0] = false;
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -935,6 +935,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
             if (response.equals("true")) {
                 menu.getItem(0).setIcon(ContextCompat.getDrawable(Sales.this, R.drawable.signal_wi_fi_48));
             }else {
+                this.onCancelled();
                 this.cancel(true);
                 menu.getItem(0).setIcon(ContextCompat.getDrawable(Sales.this, R.drawable.no_signal_wi_fi_48));
             }

@@ -139,7 +139,7 @@ public class CountTransfer extends AppCompatActivity {
                             }else{
                                 input = Double.valueOf(et_count.getText().toString());
                             }
-                            Double Stock = Double.valueOf(sales.getStringExtra("Remain"));
+                            Double Stock = Double.valueOf(mRemainAssortment);
                             if(input>Stock){
                                 et_count.setError(getResources().getString(R.string.msg_count_greath_like_remain));
                                 adauga_Count=false;
@@ -161,7 +161,7 @@ public class CountTransfer extends AppCompatActivity {
                             }else{
                                 input = Double.valueOf(et_count.getText().toString());
                             }
-                            Double Stock = Double.valueOf(sales.getStringExtra("Remain"));
+                            Double Stock = Double.valueOf(mRemainAssortment);
                             if(input>Stock){
                                 et_count.setError(getResources().getString(R.string.msg_count_greath_like_remain));
                                 adauga_Count=false;

@@ -207,7 +207,7 @@ public class CheckPrice extends AppCompatActivity implements NavigationView.OnNa
                     show_keyboard[0] = true;
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(txtInput_barcode, InputMethodManager.SHOW_IMPLICIT);
-                    txtInput_barcode.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    txtInput_barcode.setInputType(InputType.TYPE_CLASS_TEXT);
                 }
                 else {
                     show_keyboard[0] = false;
