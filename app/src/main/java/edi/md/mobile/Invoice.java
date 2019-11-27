@@ -591,13 +591,22 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                             JSONObject object = json_array.getJSONObject(i);
                             String AssortimentUid = object.getString("AssortimentUid");
                             String CountExist = object.getString("Count");
-                            Integer countInt = Integer.valueOf(CountExist);
-                            Integer CountAdd = Integer.valueOf(count);
+                            double countDoub = 0;
+                            double countDoubAdd = 0;
+                            try{
+                                countDoub = Double.valueOf(CountExist);
+                            }catch (Exception e){
+                                countDoub = Double.valueOf(CountExist.replace(",","."));
+                            }
+                            try{
+                                countDoubAdd = Double.valueOf(count);
+                            }catch (Exception e){
+                                countDoubAdd = Double.valueOf(count.replace(",","."));
+                            }
 
                             if (AssortimentUid.contains(UidAsl)) {
-                                Integer CountNew = CountAdd + countInt;
-                                String countStr = String.valueOf(CountNew);
-                                object.put("Count", countStr);
+                                double CountNew = countDoubAdd + countDoub;
+                                object.put("Count", CountNew);
                                 isExtist = true;
                             }
                         }

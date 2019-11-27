@@ -17,7 +17,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 28
         versionCode 34
-        versionName "3.4.0411"
+        versionName "3.4.2711"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         setProperty("archivesBaseName", "MobileTerminal v$versionName")

@@ -740,7 +740,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                 String Cant = json.getString("Count");
                 Cant=Cant.replace(",",".");
                 double count_to_double = Double.parseDouble(Cant);
-                String count_to_string =String.format("%.2f",count_to_double);
+                String count_to_string =String.format("%.3f",count_to_double);
                 String Price = json.getString("Price");
                 Price = Price.replace(",",".");
                 String Uid = json.getString("AssortimentUid");
