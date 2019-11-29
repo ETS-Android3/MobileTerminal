@@ -40,6 +40,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.RT_Printer.BluetoothPrinter.BLUETOOTH.BluetoothPrintDriver;
+import com.zebra.sdk.util.internal.Sleeper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,11 +86,12 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
     ArrayList<HashMap<String, Object>> printers_List_array = new ArrayList<>();
     ArrayList<HashMap<String, Object>> asl_list = new ArrayList<>();
 
-    String ip_,port_,UserId,WareUid,InvoiceID,PrinterID,ClientID,uid_selected,barcode_introdus,WareName,InvoiceCode;
+    String ip_,port_,UserId,WareUid,InvoiceID,PrinterID,ClientID,uid_selected,barcode_introdus,WareName,InvoiceCode,WorkPlaceID;
     ProgressDialog pgH;
     TimerTask timerTaskSync;
     Timer sync;
     Boolean invoiceSaved=false;
+    boolean createNewInvoice = false;
 
     Menu menu;
     JSONObject sendInvoice,sendAssortiment;
@@ -152,7 +154,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
         user_workplace.setText(WorkPlace.getString("Name",""));
 
-        final String WorkPlaceID = WorkPlace.getString("Uid","0");
+        WorkPlaceID = WorkPlace.getString("Uid","0");
         final String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
 
         if (WorkPlaceName.equals("Nedeterminat") || WorkPlaceName.equals("")){
@@ -166,6 +168,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         else{
             btn_change_stock.setText(WorkPlaceName);
             WareUid = WorkPlaceID;
+            WareName = WorkPlaceName;
         }
 
         String limit = Settings.getString("LimitSales","0");
@@ -183,7 +186,21 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               exitDialog();
+                if(createNewInvoice){
+                    btn_cancel.setText(Sales.this.getResources().getString(R.string.txt_renunt_all));
+                    btn_add_Client.setEnabled(true);
+                    btn_print.setEnabled(false);
+                    invoiceSaved = false;
+
+                    mAssortmentArray =new JSONArray();
+                    setTitle(getResources().getString(R.string.btn_sales_main_activity));
+                    asl_list.clear();
+                    showAssortmentList();
+                }
+                else{
+                    exitDialog();
+                }
+
             }
         });
         btn_write_barcode.setOnClickListener(new View.OnClickListener() {
@@ -263,11 +280,15 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                             String Uid = json.getString("AssortimentUid");
                             String Cant = json.getString("Count");
                             String Price = json.getString("Price");
+                            String WhareHouse = json.getString("Warehouse");
+
                             Price= Price.replace(",",".");
+
                             JSONObject sendObj = new JSONObject();
                             sendObj.put("Assortiment", Uid);
                             sendObj.put("Quantity", Cant);
                             sendObj.put("SalePrice", Price);
+                            sendObj.put("Warehouse", WhareHouse);
                             sendArr.put(sendObj);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -280,7 +301,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                         sendInvoice.put("Lines", sendArr);
                         sendInvoice.put("UserID", UserId);
                         sendInvoice.put("TerminalCode", "testIgor");
-                        sendInvoice.put("Warehouse", WareUid);
+                        sendInvoice.put("Warehouse", WorkPlaceID);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         ((Variables)getApplication()).appendLog(e.getMessage(),Sales.this);
@@ -655,6 +676,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
 
                 btn_change_stock.setText(WareNames);
                 WareUid = WareGUid;
+                WorkPlaceID = WareGUid;
                 WareName = WareNames;
                 stock_List_array.clear();
             }
@@ -688,7 +710,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                 addWareHouse.apply();
                 btn_change_stock.setText(WareNames);
                 WareUid = WareGUid;
-                WareName=WareNames;
+                WareName = WareNames;
                 stock_List_array.clear();
             }
         });
@@ -736,18 +758,24 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
             for (int i = 0; i< mAssortmentArray.length(); i++){
                 JSONObject json= mAssortmentArray.getJSONObject(i);
                 HashMap<String, Object> asl_ = new HashMap<>();
+
                 String Name = json.getString("AssortimentName");
                 String Cant = json.getString("Count");
+                String WareName = json.getString("WareName");
+
                 Cant=Cant.replace(",",".");
                 double count_to_double = Double.parseDouble(Cant);
-                String count_to_string =String.format("%.2f",count_to_double);
+                String count_to_string =String.format("%.3f",count_to_double);
                 String Price = json.getString("Price");
                 Price = Price.replace(",",".");
                 String Uid = json.getString("AssortimentUid");
+
                 asl_.put("Name",Name);
                 asl_.put("Cant",count_to_string);
                 asl_.put("Price",Price);
                 asl_.put("Uid",Uid);
+                asl_.put("Ware",WareName);
+
                 String suma =String.format("%.2f",Double.valueOf(Price)* count_to_double );
                 sumTotal=sumTotal+Double.valueOf(Price)* Double.valueOf(Cant);
                 asl_.put("Suma",suma.replace(",","."));
@@ -758,8 +786,8 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
             ((Variables)getApplication()).appendLog(e.getMessage(),Sales.this);
         }
         txt_total_sales.setText(String.format("%.2f",sumTotal));
-        simpleAdapterASL = new SimpleAdapter(this, asl_list,R.layout.show_asl_sales, new String[]{"Name","Cant","Suma"},
-                new int[]{R.id.textName,R.id.textCantitate,R.id.textSuma});
+        simpleAdapterASL = new SimpleAdapter(this, asl_list,R.layout.show_asl_sales, new String[]{"Name","Cant","Suma","Ware"},
+                new int[]{R.id.textName,R.id.textCantitate,R.id.textSuma,R.id.textNameWare});
         simpleAdapterASL.notifyDataSetChanged();
         list_of_sales.setAdapter(simpleAdapterASL);
     }
@@ -896,7 +924,10 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                         final AssortmentInActivity assortmentParcelable = new AssortmentInActivity(assortment);
 
                         Intent sales = new Intent(".CountSalesMobile");
+                        sales.putExtra("WhareHouse",WareUid);
                         sales.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
+                        sales.putExtra("WhareNames",WareName);
+
                         startActivityForResult(sales, REQUEST_FROM_COUNT_ACTIVITY);
                     } else {
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
@@ -968,6 +999,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                                 String WareCode = object.getString("Code");
                                 String WareName = object.getString("Name");
                                 String WareUid = object.getString("WarehouseID");
+
                                 HashMap<String, Object> WareHouse = new HashMap<>();
                                 WareHouse.put("Name", WareName);
                                 WareHouse.put("Code", WareCode);
@@ -1197,31 +1229,35 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                     JSONObject respo = new JSONObject(response);
                     int errCode = respo.getInt("ErrorCode");
                     if (errCode == 0) {
+
                         pgH.dismiss();
                         invoiceSaved = true;
                         InvoiceCode = respo.getString("InvoiceCode");
                         InvoiceID = respo.getString("InvoiceID");
                         setTitle(getResources().getString(R.string.btn_sales_main_activity) + ": " + InvoiceCode);
                         btn_print.setEnabled(true);
-                        btn_cancel.setEnabled(false);
+                        createNewInvoice = true;
+                        btn_cancel.setText("New");
                         btn_add_Client.setEnabled(false);
 
-                        final AlertDialog.Builder dialog = new AlertDialog.Builder(Sales.this);
-                        dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                        dialog.setCancelable(false);
-                        dialog.setMessage(getResources().getString(R.string.txt_sales_invoice_saved) + InvoiceCode);
-                        dialog.setPositiveButton(getResources().getString(R.string.txt_save_document), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                try {
-                                    printSales();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                        dialog.show();
+                        Toast.makeText(Sales.this, getResources().getString(R.string.txt_sales_invoice_saved) + InvoiceCode, Toast.LENGTH_SHORT).show();
+                        try {
+                            printSales();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+//                        final AlertDialog.Builder dialog = new AlertDialog.Builder(Sales.this);
+//                        dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+//                        dialog.setCancelable(false);
+//                        dialog.setMessage(getResources().getString(R.string.txt_sales_invoice_saved) + InvoiceCode);
+//                        dialog.setPositiveButton(getResources().getString(R.string.txt_save_document), new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//
+//                            }
+//                        });
+//                        dialog.show();
                     } else {
                         pgH.dismiss();
                         AlertDialog.Builder dialog = new AlertDialog.Builder(Sales.this);
@@ -1238,7 +1274,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),Sales.this);
+                    ((Variables) getApplication()).appendLog(e.getMessage(), Sales.this);
                 }
             }else{
                 pgH.dismiss();
@@ -1313,7 +1349,7 @@ public class Sales extends AppCompatActivity implements NavigationView.OnNavigat
         }
         else {
             printers_List_array.clear();
-            URL getWareHouse = GetPrinters(ip_,port_,WareUid);
+            URL getWareHouse = GetPrinters(ip_,port_,WorkPlaceID);
             new AsyncTask_GetPrinters().execute(getWareHouse);
         }
     }
