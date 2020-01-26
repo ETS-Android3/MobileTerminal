@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edi.md.mobile.Utils;
+package edi.md.mobile.SettingsMenu;
 
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import android.app.Activity;
@@ -25,9 +26,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -39,7 +38,21 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.rt.printerlibrary.bean.BluetoothEdrConfigBean;
+import com.rt.printerlibrary.connect.PrinterInterface;
+import com.rt.printerlibrary.enumerate.ConnectStateEnum;
+import com.rt.printerlibrary.factory.connect.BluetoothFactory;
+import com.rt.printerlibrary.factory.connect.PIFactory;
+import com.rt.printerlibrary.factory.printer.PrinterFactory;
+import com.rt.printerlibrary.factory.printer.ThermalPrinterFactory;
+import com.rt.printerlibrary.observer.PrinterObserver;
+import com.rt.printerlibrary.observer.PrinterObserverManager;
+import com.rt.printerlibrary.printer.RTPrinter;
+
 import edi.md.mobile.R;
+import edi.md.mobile.Variables;
+import edi.md.mobile.app.BluetoothDeviceChooseDialog;
+import edi.md.mobile.app.utils.BaseEnum;
 
 /**
  * This Activity appears as a dialog. It lists any paired devices and
@@ -59,6 +72,8 @@ public class DeviceListActivity extends Activity {
     private BluetoothAdapter mBtAdapter;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
+
+    private BluetoothDeviceChooseDialog.onDeviceItemClickListener mListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,9 +149,6 @@ public class DeviceListActivity extends Activity {
         this.unregisterReceiver(mReceiver);
     }
 
-    /**
-     * Start device discover with the BluetoothAdapter
-     */
     private void doDiscovery() {
         if (D) Log.d(TAG, "doDiscovery()");
 
@@ -156,7 +168,6 @@ public class DeviceListActivity extends Activity {
         mBtAdapter.startDiscovery();
     }
 
-
     // The on-click listener for all devices in the ListViews
     private OnItemClickListener mDeviceClickListener = new OnItemClickListener() {
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
@@ -166,9 +177,11 @@ public class DeviceListActivity extends Activity {
             // Get the device MAC address, which is the last 17 chars in the View
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);
+            BluetoothDevice device = mBtAdapter.getRemoteDevice(address);
 
             // Create the result Intent and include the MAC address
             Intent intent = new Intent();
+            intent.putExtra("btdevice", device);
             intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
 
             // Set result and finish this Activity
@@ -203,6 +216,4 @@ public class DeviceListActivity extends Activity {
             }
         }
     };
-
-
 }

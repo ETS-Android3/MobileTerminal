@@ -52,9 +52,8 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import edi.md.mobile.Settings.Assortment;
-import edi.md.mobile.SettingsMenu.WorkPlace;
-import edi.md.mobile.Utils.AssortmentInActivity;
+import edi.md.mobile.NetworkUtils.RetrofitResults.Assortment;
+import edi.md.mobile.Utils.AssortmentParcelable;
 
 import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.CreateRevision;
@@ -234,11 +233,33 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
-                SharedPreferences SaveCountName = getSharedPreferences("SaveNameInventory", MODE_PRIVATE);
-                SaveCount.edit().clear().apply();
-                SaveCountName.edit().clear().apply();
-                finish();
+                AlertDialog.Builder dialog_accept = new AlertDialog.Builder(Inventory.this,R.style.ThemeOverlay_AppCompat_Dialog_Alert_TestDialogTheme);
+                dialog_accept.setTitle("Ati finisat inventarierea cumva?");
+                dialog_accept.setMessage("Datele au fost salvate pe server.\nDoriti sa salvati datele si pe terminal?\nInchide - nu va salva datele.");
+                dialog_accept.setPositiveButton("Salveaza", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                dialog_accept.setNeutralButton("Inchide", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
+                        SharedPreferences SaveCountName = getSharedPreferences("SaveNameInventory", MODE_PRIVATE);
+                        SaveCount.edit().clear().apply();
+                        SaveCountName.edit().clear().apply();
+                        finish();
+                    }
+                });
+                dialog_accept.setNegativeButton("Anulare", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog_accept.create().show();
+
             }
         });
 
@@ -268,6 +289,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 AddingASL.putExtra("ActivityCount", 171);
                 AddingASL.putExtra("AutoCount", auto_input_count.isChecked());
                 AddingASL.putExtra("WeightPrefix",WeightPrefix);
+                AddingASL.putExtra("WareID",WareID);
                 startActivityForResult(AddingASL, REQUEST_CODE_OPEN_LIST_ASSORTMENT);
             }
         });
@@ -287,7 +309,13 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
         int toInt = 201;
         if(barcode.length() > 7){
             String aftercur = barcode.substring(0,2);
-            toInt = Integer.valueOf(aftercur);
+            try{
+                toInt = Integer.valueOf(aftercur);
+            }
+            catch (Exception e){
+                toInt = 202;
+            }
+
             sendAssortiment = new JSONObject();
             try {
                 if(toInt == WeightPrefix) {
@@ -509,7 +537,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                             assortment.setAssortimentID(Uid);
                             assortment.setAllowNonIntegerSale(String.valueOf(allowInteger));
                             assortment.setUnit(Unit);
-                            final AssortmentInActivity assortmentParcelable = new AssortmentInActivity(assortment);
+                            final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);
 
                             Intent sales = new Intent(".CountInventorytMobile");
                             sales.putExtra("WeightPrefix",WeightPrefix);
@@ -581,15 +609,20 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                     if (ErrorCode == 0) {
                         inpBarcode.setText("");
                         inpBarcode.requestFocus();
+
                         SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
                         SharedPreferences.Editor add_count = SaveCount.edit();
+
                         String ExistingCount = SaveCount.getString(Uid,"0");
+
                         ExistingCount=ExistingCount.replace(",",".");
                         Double countExist = Double.valueOf(ExistingCount);
                         Double new_count  = Double.valueOf("1");
                         Double total_count = countExist + new_count;
+
                         add_count.putString(Uid,String.format("%.2f",total_count));
                         add_count.apply();
+
                         String count_initial = String.format("%.2f",countExist);
                         count_initial=count_initial.replace(",",".");
 
@@ -633,7 +666,9 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 txtCount.setText(count);
 
                 SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
+
                 String ExistingCount = SaveCount.getString(Uid,"0");
+
                 ExistingCount=ExistingCount.replace(",",".");
 
                 txtTotal.setText(ExistingCount);

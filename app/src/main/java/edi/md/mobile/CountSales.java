@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -22,12 +21,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edi.md.mobile.Utils.AssortmentInActivity;
+import edi.md.mobile.Utils.AssortmentParcelable;
 
 import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 
@@ -36,7 +34,7 @@ public class CountSales extends AppCompatActivity {
     TextView txt_barcode,txt_code,txt_articul,txt_stoc,txt_price,txt_name;
     TextView et_count;
     Button btn_add, btn_cancel;
-    Boolean adauga_Count=false,mAllowNotIntegerSales;
+    Boolean mAllowNotIntegerSales;
     String mNameAssortment,mPriceAssortment,mIDAssortment,mRemainAssortment,mMarkingAssortment,mCodeAssortment,mBarcodeAssortment,WareHouse,WareName;
 
     @Override
@@ -91,7 +89,7 @@ public class CountSales extends AppCompatActivity {
         WareHouse = sales.getStringExtra("WhareHouse");
         WareName = sales.getStringExtra("WhareNames");
 
-        AssortmentInActivity assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
+        AssortmentParcelable assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
         mBarcodeAssortment = assortment.getBarCode();
         mCodeAssortment = assortment.getCode();
         mNameAssortment = assortment.getName();
@@ -107,8 +105,6 @@ public class CountSales extends AppCompatActivity {
         txt_stoc.setText(mRemainAssortment);
         txt_price.setText(mPriceAssortment);
         et_count.requestFocus();
-//        String mMarking = sales.getStringExtra("Marking");
-//        String mCode = sales.getStringExtra("Code");
 
 
         if(mMarkingAssortment == null || mMarkingAssortment.equals("null")){
@@ -198,7 +194,6 @@ public class CountSales extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-
         switch (event.getAction()){
             case KeyEvent.ACTION_DOWN :{
                 et_count.requestFocus();
@@ -295,9 +290,15 @@ public class CountSales extends AppCompatActivity {
                     if (isInteger(et_count.getText().toString())) {
                         JSONObject asl = new JSONObject();
                         try {
+                            double count = 0;
+                            try{
+                                count = Double.valueOf(et_count.getText().toString());
+                            }catch (Exception e){
+                                count = Double.valueOf(et_count.getText().toString().replace(",","."));
+                            }
                             asl.put("AssortimentName", mNameAssortment);
                             asl.put("AssortimentUid",mIDAssortment);
-                            asl.put("Count", et_count.getText().toString());
+                            asl.put("Count", count);
                             asl.put("Price", mPriceAssortment);
                             asl.put("Warehouse",WareHouse);
                             asl.put("WareName",WareName);
@@ -316,9 +317,16 @@ public class CountSales extends AppCompatActivity {
                 }else{
                     JSONObject asl = new JSONObject();
                     try {
+                        double count = 0;
+                        try{
+                            count = Double.valueOf(et_count.getText().toString());
+                        }catch (Exception e){
+                            count = Double.valueOf(et_count.getText().toString().replace(",","."));
+                        }
+
                         asl.put("AssortimentName", mNameAssortment);
                         asl.put("AssortimentUid",mIDAssortment);
-                        asl.put("Count", et_count.getText().toString());
+                        asl.put("Count", count);
                         asl.put("Price", mPriceAssortment);
                         asl.put("Warehouse",WareHouse);
                         asl.put("WareName",WareName);
@@ -338,9 +346,16 @@ public class CountSales extends AppCompatActivity {
                 if (isInteger(et_count.getText().toString())) {
                     JSONObject asl = new JSONObject();
                     try {
+                        double count = 0;
+                        try{
+                            count = Double.valueOf(et_count.getText().toString());
+                        }catch (Exception e){
+                            count = Double.valueOf(et_count.getText().toString().replace(",","."));
+                        }
+
                         asl.put("AssortimentName", mNameAssortment);
                         asl.put("AssortimentUid",mIDAssortment);
-                        asl.put("Count", et_count.getText().toString());
+                        asl.put("Count", count);
                         asl.put("Price", mPriceAssortment);
                         asl.put("Warehouse",WareHouse);
                         asl.put("WareName",WareName);
@@ -359,9 +374,15 @@ public class CountSales extends AppCompatActivity {
             }else{
                 JSONObject asl = new JSONObject();
                 try {
+                    double count = 0;
+                    try{
+                        count = Double.valueOf(et_count.getText().toString());
+                    }catch (Exception e){
+                        count = Double.valueOf(et_count.getText().toString().replace(",","."));
+                    }
                     asl.put("AssortimentName", mNameAssortment);
                     asl.put("AssortimentUid",mIDAssortment);
-                    asl.put("Count", et_count.getText().toString());
+                    asl.put("Count", count);
                     asl.put("Price", mPriceAssortment);
                     asl.put("Warehouse",WareHouse);
                     asl.put("WareName",WareName);

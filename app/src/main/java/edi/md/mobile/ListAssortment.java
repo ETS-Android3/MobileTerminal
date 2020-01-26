@@ -41,15 +41,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-import edi.md.mobile.Settings.ASL;
-import edi.md.mobile.Settings.Assortment;
-import edi.md.mobile.Utils.AssortmentInActivity;
-import edi.md.mobile.Utils.ServiceApi;
+import edi.md.mobile.NetworkUtils.ApiRetrofit;
+import edi.md.mobile.NetworkUtils.RetrofitResults.AssortmentListResult;
+import edi.md.mobile.NetworkUtils.RetrofitResults.Assortment;
+import edi.md.mobile.NetworkUtils.Services.CommandService;
+import edi.md.mobile.Utils.AssortmentParcelable;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -61,7 +61,7 @@ import static edi.md.mobile.NetworkUtils.NetworkUtils.SaveRevisionLine;
 
 public class ListAssortment extends AppCompatActivity {
     final Context context = this;
-    public String cnt, WareUid,UserId;
+    public String cnt, WareUid,WareName,UserId;
     FloatingActionButton save_assortments;
     ListView list_assortments;
     SearchView search_asl;
@@ -77,15 +77,16 @@ public class ListAssortment extends AppCompatActivity {
             ACTIVITY_SALES=181,ACTIVITY_INVENTORY=171,ACTIVITY_INVOICE = 191,ACTIVITY_CHECK_PRICE=161,
             ACTIVITY_STOCK_ASSORTMENT=151,REQUEST_CODE_COUNT_INVOICE = 333,
             REQUEST_CODE_COUNT_INVENTORY = 444, REQUEST_CODE_Count_LIST_ASSORTMENT = 303,
-            REQUEST_CODE_COUNT_STOCK_ASL = 404;
+            REQUEST_CODE_COUNT_STOCK_ASL = 404, ACTIVITY_SET_BARCODE = 525 ,REQUEST_SETBARCODE = 252, POSITION_CLICKED;
     Boolean mIsFolderAssortment;
     Handler handler;
     TimerTask timerTask;
     Timer t;
     ArrayList<HashMap<String, Object>> asl_list = new ArrayList<>();
     Toolbar mToolbar;
-    Variables myapp;
     boolean multi_folders = false;
+
+    CommandService commandService;
 
     public static final String AssortimentClickentSendIntent = "AssortimentClicked";
 
@@ -160,21 +161,17 @@ public class ListAssortment extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
+        commandService = ApiRetrofit.getCommandService(ListAssortment.this);
+
         final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
-        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
 
         UserId = User.getString("UserID","");
-        ip_=Settings.getString("IP","");
-        port_=Settings.getString("Port","");
         mArrayAdded_Assortments = new JSONArray();
         array_added_items_inventroy = new JSONArray();
-        WareUid = WorkPlace.getString("Uid","");
-        if (WareUid != null && WareUid.equals("")) {
-            WareUid = getIntent().getStringExtra("WareID");
-        }
 
-        myapp =((Variables)getApplication());
+        WareName = getIntent().getStringExtra("WareName");
+        WareUid = getIntent().getStringExtra("WareID");
+
         mList_Clicked_item_Name.add(0,getResources().getString(R.string.header_list_assortment));
         setTitle(getResources().getString(R.string.header_list_assortment));
         mGUIDAssortment = "00000000-0000-0000-0000-000000000000";
@@ -202,8 +199,7 @@ public class ListAssortment extends AppCompatActivity {
 
         };
 
-        boolean dwnlASL =((Variables)getApplication()).getDownloadASLVariable();
-        if(dwnlASL){
+        if(Variables.getInstance().getDownloadASLVariable()){
             showAssortmentFromID("00000000-0000-0000-0000-000000000000");
         }
         else {
@@ -215,6 +211,7 @@ public class ListAssortment extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //получаем информацию о выбраном товаре
+                POSITION_CLICKED = position;
                 mGUIDAssortment = (String) asl_list.get(position).get("ID");
                 mIsFolderAssortment = (boolean) asl_list.get(position).get("Folder_is");
                 mPriceAssortment = (String) asl_list.get(position).get("Price");
@@ -245,11 +242,12 @@ public class ListAssortment extends AppCompatActivity {
                     assortment.setIncomePrice(mIncomePriceAssortment);
                     assortment.setAssortimentID(mGUIDAssortment);
                     assortment.setAllowNonIntegerSale(mAlowNonIntegerSalesAssortment);
-                    final AssortmentInActivity assortmentParcelable = new AssortmentInActivity(assortment);
+                    final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);
 
                     addAssortmentClicked(mNameAssortment,mGUIDAssortment,mPriceAssortment,mCodeAssortment,mBarcodeAssortment,mUnitAssortment,mUnitPriceAssortment,mUnitInPackageAssortment);
                     Intent count_activity = new Intent(".CountListAssortmentMobile");
                     count_activity.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
+
                     Intent getActivity = getIntent();
                     final int id_intent = getActivity.getIntExtra("ActivityCount", 101);
                     final boolean auto_send =  getActivity.getBooleanExtra("AutoCount",false);
@@ -367,6 +365,11 @@ public class ListAssortment extends AppCompatActivity {
                         setResult(RESULT_OK,count_activity);
                         finish();
                     }
+                    else if (id_intent == ACTIVITY_SET_BARCODE){
+                        Intent setBarcode = new Intent(ListAssortment.this,SetAssortmentBarcode.class);
+                        setBarcode.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
+                        startActivityForResult(setBarcode, REQUEST_SETBARCODE);
+                    }
                 }
                 else {
                     /*
@@ -379,7 +382,7 @@ public class ListAssortment extends AppCompatActivity {
                     index_clecked_item += 1;
                     index_clecked_item_name +=1;
                     asl_list.clear();
-                    asl_list = myapp.get_AssortimentFromParent(mGUIDAssortment);
+                    asl_list = Variables.getInstance().get_AssortimentFromParent(mGUIDAssortment);
                     SortAssortmentList(asl_list);
                     simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
                             new String[]{"Name","icon","PriceWithText","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
@@ -411,6 +414,9 @@ public class ListAssortment extends AppCompatActivity {
                 }
                 else if (id_intent == ACTIVITY_CHECK_PRICE){
                     setResult(RESULT_OK);
+                    finish();
+                }
+                else if (id_intent == ACTIVITY_SET_BARCODE){
                     finish();
                 }
             }
@@ -463,158 +469,150 @@ public class ListAssortment extends AppCompatActivity {
 
     }
     private void downloadShowAssortment() {
-        Thread downloadASL = new Thread(new Runnable() {
-            public void run() {
-                OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                        .connectTimeout(3, TimeUnit.MINUTES)
-                        .readTimeout(4, TimeUnit.MINUTES)
-                        .writeTimeout(2, TimeUnit.MINUTES)
-                        .build();
-                Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("http://"+ ip_+ ":"+port_)
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .client(okHttpClient)
-                        .build();
-                ServiceApi assortiment_API = retrofit.create(ServiceApi.class);
-                final Call<ASL> assortiment = assortiment_API.getAssortiment(UserId,WareUid);
-                assortiment.enqueue(new Callback<ASL>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ASL> call, @NonNull Response<ASL> response) {
-                        ASL assortiment_body = response.body();
 
-                        if(assortiment_body.getAssortments() == null){
-                            Toast.makeText(ListAssortment.this,"Error to download assortment\nBody in response is null!", Toast.LENGTH_SHORT).show();
-                        }
-                        List<Assortment> assortmentListData = assortiment_body.getAssortments();
-                        SharedPreferences CheckUidFolder =getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
-                        String selectedUidJSON = CheckUidFolder.getString("selected_Uid_Array","[]");
-                        try {
-                            mFoldersSelected = new JSONArray(selectedUidJSON);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
-                        }
-                        multi_folders = mFoldersSelected.length() > 0;
+        Call<AssortmentListResult> call = commandService.getAssortimentListForStock(UserId,WareUid);
+        call.enqueue(new Callback<AssortmentListResult>() {
+            @Override
+            public void onResponse(Call<AssortmentListResult> call, Response<AssortmentListResult> response) {
+                AssortmentListResult assortiment_body = response.body();
 
-                        Variables myapp =((Variables)getApplication());
+                if(assortiment_body.getAssortments() == null){
+                    Toast.makeText(ListAssortment.this,"Error to download assortment\nBody in response is null!", Toast.LENGTH_SHORT).show();
+                }
+                List<Assortment> assortmentListData = assortiment_body.getAssortments();
+                SharedPreferences CheckUidFolder =getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
+                String selectedUidJSON = CheckUidFolder.getString("selected_Uid_Array","[]");
+                try {
+                    mFoldersSelected = new JSONArray(selectedUidJSON);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
+                }
+                multi_folders = mFoldersSelected.length() > 0;
 
-                        for (int i=0; i<assortmentListData.size();i++){
-                            HashMap<String, Object> asl_ = new HashMap<>();
-                            String asl_name= assortmentListData.get(i).getName();
-                            String uid_asl = assortmentListData.get(i).getAssortimentID();
-                            String parent_uid_asl = assortmentListData.get(i).getAssortimentParentID();
-                            String price =   assortmentListData.get(i).getPrice();
-                            String code_asl =  assortmentListData.get(i).getCode();
-                            String barcode_asl = assortmentListData.get(i).getBarCode();
-                            String allow_integer =  assortmentListData.get(i).getAllowNonIntegerSale();
-                            String incomePrice= assortmentListData.get(i).getIncomePrice();
-                            String unitary= assortmentListData.get(i).getUnit();
-                            String finalUnitPrice= assortmentListData.get(i).getUnitPrice();
-                            String UnitInPackage= assortmentListData.get(i).getUnitInPackage();
-                            boolean is_folder= assortmentListData.get(i).getIsFolder();
+                Variables myapp =((Variables)getApplication());
 
-                            double priceunit = Double.parseDouble(price);
+                for (int i=0; i<assortmentListData.size();i++){
+                    HashMap<String, Object> asl_ = new HashMap<>();
+                    String asl_name= assortmentListData.get(i).getName();
+                    String uid_asl = assortmentListData.get(i).getAssortimentID();
+                    String parent_uid_asl = assortmentListData.get(i).getAssortimentParentID();
+                    String price =   assortmentListData.get(i).getPrice();
+                    String code_asl =  assortmentListData.get(i).getCode();
+                    String barcode_asl = assortmentListData.get(i).getBarCode();
+                    String allow_integer =  assortmentListData.get(i).getAllowNonIntegerSale();
+                    String incomePrice= assortmentListData.get(i).getIncomePrice();
+                    String marking = assortmentListData.get(i).getMarking();
+                    String unitary= assortmentListData.get(i).getUnit();
+                    String finalUnitPrice= assortmentListData.get(i).getUnitPrice();
+                    String UnitInPackage= assortmentListData.get(i).getUnitInPackage();
+                    boolean is_folder= assortmentListData.get(i).getIsFolder();
 
-//                            Double priceunit = 0.0;
-//                            try{
-//                                priceunit = Double.valueOf(price);
-//                            }catch (Exception e){
-//                                Toast.makeText(ListAssortment.this,"Error to convert price in double from string" + price, Toast.LENGTH_SHORT).show();
-//                            }
+                    double priceunit = Double.parseDouble(price);
 
-                            price =String.format("%.2f",priceunit);
+                    price =String.format("%.2f",priceunit);
 
-                            myapp.add_AssortimentID(uid_asl,assortmentListData.get(i));
+                    myapp.add_AssortimentID(uid_asl,assortmentListData.get(i));
 
-                            if(multi_folders){
-                                for (int j = 0; j< mFoldersSelected.length(); j++) {
-                                    String guidArray = null;
-                                    try {
-                                        guidArray = mFoldersSelected.getString(j);
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                        ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
-                                    }
-                                    boolean contains_id = false;
-                                    if (guidArray != null) {
-                                        contains_id = uid_asl.contains(guidArray);
-                                    }
-                                    if (contains_id) {
-                                        asl_.put("Folder_is", true);
-                                        asl_.put("Parent_ID", parent_uid_asl);
-                                        asl_.put("Name", asl_name);
-                                        asl_.put("ID", uid_asl);
-                                        asl_.put("icon", R.drawable.folder_open_black_48dp);
-                                        asl_list.add(asl_);
-                                    }
-                                }
+                    if(multi_folders){
+                        for (int j = 0; j< mFoldersSelected.length(); j++) {
+                            String guidArray = null;
+                            try {
+                                guidArray = mFoldersSelected.getString(j);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
                             }
-                            else{
-                                if(parent_uid_asl.equals("00000000-0000-0000-0000-000000000000")) {
-                                    if (!is_folder) {
-                                        asl_.put("Folder_is", false);
-                                        asl_.put("icon", R.drawable.assortiment_item);
-                                        asl_.put("Name", asl_name);
-                                        asl_.put("ID", uid_asl);
-                                        asl_.put("Code", code_asl);
-                                        asl_.put("Bar_code", getResources().getString(R.string.txt_list_asl_view_barcode) + barcode_asl);
-                                        asl_.put("BarCode", barcode_asl);
-                                        asl_.put("AllowNonIntegerSale", allow_integer);
-                                        asl_.put("Price", price);
-                                        asl_.put("PriceWithText",getResources().getString(R.string.txt_list_asl_view_price)+ price + getResources().getString(R.string.txt_list_asl_view_valuta));
-                                        asl_.put("IncomePrice", incomePrice);
-                                        asl_.put("Unit", unitary);
-                                        asl_.put("UnitPrice", finalUnitPrice);
-                                        asl_.put("UnitInPackage", UnitInPackage);
-                                        asl_list.add(asl_);
-                                    } else {
-                                        asl_.put("Folder_is", true);
-                                        asl_.put("Parent_ID", parent_uid_asl);
-                                        asl_.put("Name", asl_name);
-                                        asl_.put("ID", uid_asl);
-                                        asl_.put("Bar_code", "");
-                                        asl_.put("icon", R.drawable.folder_open_black_48dp);
-                                        asl_list.add(asl_);
-                                    }
-                                }
-
+                            boolean contains_id = false;
+                            if (guidArray != null) {
+                                contains_id = uid_asl.contains(guidArray);
+                            }
+                            if (contains_id) {
+                                asl_.put("Folder_is", true);
+                                asl_.put("Parent_ID", parent_uid_asl);
+                                asl_.put("Name", asl_name);
+                                asl_.put("ID", uid_asl);
+                                asl_.put("icon", R.drawable.folder_open_black_48dp);
+                                asl_list.add(asl_);
                             }
                         }
-                        handler.obtainMessage(10, 12).sendToTarget();
                     }
+                    else{
+                        if(parent_uid_asl.equals("00000000-0000-0000-0000-000000000000")) {
+                            if (!is_folder) {
+                                asl_.put("Folder_is", false);
+                                asl_.put("icon", R.drawable.assortiment_item);
+                                asl_.put("Name", asl_name);
+                                asl_.put("ID", uid_asl);
+                                asl_.put("Code", code_asl);
+                                asl_.put("Marking",marking);
+                                asl_.put("Bar_code", getResources().getString(R.string.txt_list_asl_view_barcode) + barcode_asl);
+                                asl_.put("BarCode", barcode_asl);
+                                asl_.put("AllowNonIntegerSale", allow_integer);
+                                asl_.put("Price", price);
+                                asl_.put("PriceWithText",getResources().getString(R.string.txt_list_asl_view_price)+ price + getResources().getString(R.string.txt_list_asl_view_valuta));
+                                asl_.put("IncomePrice", incomePrice);
+                                asl_.put("Unit", unitary);
+                                asl_.put("UnitPrice", finalUnitPrice);
+                                asl_.put("UnitInPackage", UnitInPackage);
+                                asl_list.add(asl_);
+                            } else {
+                                asl_.put("Folder_is", true);
+                                asl_.put("Parent_ID", parent_uid_asl);
+                                asl_.put("Name", asl_name);
+                                asl_.put("ID", uid_asl);
+                                asl_.put("Bar_code", "");
+                                asl_.put("icon", R.drawable.folder_open_black_48dp);
+                                asl_list.add(asl_);
+                            }
+                        }
+
+                    }
+                }
+
+                if (ListAssortment.this.isDestroyed()) { // or call isFinishing() if min sdk version < 17
+                    return;
+                }
+                pgH.dismiss();
+                SortAssortmentList(asl_list);
+                simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
+                        new String[]{"Name","icon","PriceWithText","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
+
+                ((Variables)getApplication()).setDownloadASLVariable(true);
+                list_assortments.setAdapter(simpleAdapterASL);
+            }
+
+            @Override
+            public void onFailure(Call<AssortmentListResult> call, Throwable t) {
+                pgH.dismiss();
+                ((Variables)getApplication()).appendLog(t.getMessage(), ListAssortment.this);
+                AlertDialog.Builder failureAsl = new AlertDialog.Builder(ListAssortment.this);
+                failureAsl.setCancelable(false);
+                failureAsl.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+                failureAsl.setMessage(getResources().getString(R.string.msg_eroare_download_asl) + t + "\n" + getResources().getString(R.string.msg_reload_download_asl));
+                failureAsl.setPositiveButton(getResources().getString(R.string.toggle_btn_check_remain_da), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onFailure(Call<ASL> call, Throwable t) {
-                        pgH.dismiss();
-                        ((Variables)getApplication()).appendLog(t.getMessage(), ListAssortment.this);
-                        AlertDialog.Builder failureAsl = new AlertDialog.Builder(ListAssortment.this);
-                        failureAsl.setCancelable(false);
-                        failureAsl.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                        failureAsl.setMessage(getResources().getString(R.string.msg_eroare_download_asl) + t + "\n" + getResources().getString(R.string.msg_reload_download_asl));
-                        failureAsl.setPositiveButton(getResources().getString(R.string.toggle_btn_check_remain_da), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                pgH.setMessage(getResources().getString(R.string.msdownload_assortment));
-                                pgH.setCancelable(false);
-                                pgH.setIndeterminate(true);
-                                pgH.show();
-                            }
-                        });
-                        failureAsl.setNegativeButton(getResources().getString(R.string.toggle_btn_check_remain_nu), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        });
-                        failureAsl.show();
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        pgH.setMessage(getResources().getString(R.string.msdownload_assortment));
+                        pgH.setCancelable(false);
+                        pgH.setIndeterminate(true);
+                        pgH.show();
+                        downloadShowAssortment();
                     }
                 });
+                failureAsl.setNegativeButton(getResources().getString(R.string.toggle_btn_check_remain_nu), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                failureAsl.show();
             }
         });
-        downloadASL.start();
     }
     private void showAssortmentFromID(String id) {
         asl_list.clear();
-        SharedPreferences CheckUidFolder =getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
+        SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
         String selectedUidJSON = CheckUidFolder.getString("selected_Uid_Array","[]");
 
         try {
@@ -632,29 +630,28 @@ public class ListAssortment extends AppCompatActivity {
                     ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
                 }
                 HashMap<String, Object> asl_ = new HashMap<>();
-                Assortment asl_folder = myapp.get_AssortimentFromID(guidArray);
-                String name =  asl_folder.getName();
-                String uid_asl =  asl_folder.getAssortimentID();
-                String parent_uid_asl =  asl_folder.getAssortimentParentID();
+                Assortment asl_folder = Variables.getInstance().get_AssortimentFromID(guidArray);
+
                 asl_.put("Folder_is", true);
-                asl_.put("Parent_ID", parent_uid_asl);
-                asl_.put("Name", name);
+                asl_.put("Parent_ID", asl_folder.getAssortimentParentID());
+                asl_.put("Name", asl_folder.getName());
                 asl_.put("Bar_code", "");
-                asl_.put("ID", uid_asl);
+                asl_.put("ID",  asl_folder.getAssortimentID());
                 asl_.put("icon", R.drawable.folder_open_black_48dp);
                 asl_list.add(asl_);
             }
         }
         else{
-            asl_list = myapp.get_AssortimentFromParent(id);
+            asl_list =  Variables.getInstance().get_AssortimentFromParent(id);
         }
         SortAssortmentList(asl_list);
         simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
                 new String[]{"Name","icon","PriceWithText","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
         list_assortments.setAdapter(simpleAdapterASL);
     }
+
     private void searchAssortment(String search_text) {
-        asl_list= myapp.get_Search_Assortment(search_text);
+        asl_list=  Variables.getInstance().get_Search_Assortment(search_text);
         SortAssortmentList(asl_list);
         simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
                 new String[]{"Name","icon","PriceWithText","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
@@ -693,6 +690,14 @@ public class ListAssortment extends AppCompatActivity {
                     onResultCount(data);
                 else
                     Toast.makeText(ListAssortment.this, "Intent inve is null", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else if (requestCode == REQUEST_SETBARCODE){
+            if(resultCode == RESULT_OK){
+                String barcode = data.getStringExtra("Barcode");
+                asl_list.get(POSITION_CLICKED).put("Bar_code",getResources().getString(R.string.txt_list_asl_view_barcode) + barcode);
+                asl_list.get(POSITION_CLICKED).put("BarCode",barcode);
+                simpleAdapterASL.notifyDataSetChanged();
             }
         }
     }
@@ -921,6 +926,8 @@ public class ListAssortment extends AppCompatActivity {
         cnt = data.getStringExtra("count");
         try {
             mNewAdd_Assortemnt.put("Count", cnt);
+            mNewAdd_Assortemnt.put("Warehouse", WareUid);
+            mNewAdd_Assortemnt.put("WareName", WareName);
         } catch (JSONException e) {
             e.printStackTrace();
             ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);

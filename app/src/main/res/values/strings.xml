@@ -157,7 +157,7 @@
     <string name="msg_format_number_incorect">Format incorect!</string>
     <string name="txt_list_asl_view_barcode">Barcod:</string>
     <string name="txt_list_asl_view_valuta"> lei</string>
-    <string name="txt_list_asl_view_price">Pret: </string>
+    <string name="txt_list_asl_view_price">Preț: </string>
     <string name="txt_not_conected_printers">Nu ați conectat nici o imprimantă!</string>
     <string name="msg_document_save_stock_asl">Documentul a fost salvat! Numarul:</string>
     <string name="txt_designe_theme">Tema</string>
@@ -171,5 +171,31 @@
     <string name="versiune_locala_securitate">Versiunea instalată: </string>
     <string name="sales_count_only_integer">Doar numere intregi</string>
     <string name="help">Ajutor</string>
-    <string name="information_print_sales">Bluetooth printer is not conect</string>
+    <string name="information_print_sales">Bluetooth printer nu este conectat</string>
+
+    <string name="enter_barcode_">Introduceți codul de bare!</string>
+    <string name="responseNothing">Raspunsul este gol</string>
+    <string name="Barcode_not_saved">Codul de bare nu a fost salvat! </string>
+    <string name="errorMsg_Internal">Eroare internă</string>
+    <string name="errorMsg_noError">Nici o eroare</string>
+    <string name="errorMsg_user_notExist">Utilizatorul nu a fost găsit</string>
+    <string name="errorMsg_assortmentNotExist">Assortimentul nu există</string>
+    <string name="errorMsg_WareHouseNotExist">Depozitul nu există</string>
+    <string name="errorMsg_printTemplateNotSet">Șablonul de imprimare nu este setat</string>
+    <string name="errorMsg_printerNotFoundOrNotAvailable">Imprimanta nu a fost găsită sau nu este disponibilă</string>
+    <string name="errorMsg_errorReadingPrintTemplate">Eroare la citirea sablonului pentru printare</string>
+    <string name="errorMsg_notRightForEdit">Nu aveți dreptul la editare</string>
+    <string name="errorMsg_barcodeAlreadyExist">Codul de bare deja există</string>
+    <string name="errorMsg_assortimentNotExist">Asortimentul nu există</string>
+    <string name="errorMsg_mainOfficetoEnterpriseNotExist">Oficiu principal nu a fost găsit</string>
+    <string name="errorMsg_WorkSpacetoMainOfficeNotExist">Locul de muncă nu a fost găsit</string>
+    <string name="errorMsg_unknowErrore">Eroare necunoscuta</string>
+    <string name="et_hint_barcode">Codul de bare</string>
+    <string name="btn_atribuire_barcodului">Setați codul de bare</string>
+
+    <string name="choose_bluetooth_device">Choose Bluetooth Device</string>
+    <string name="search_device">Search</string>
+    <string name="tip_have_no_paired_device">No paired device</string>
+    <string name="tip_have_no_found_bluetooth_device">No Device</string>
+    <string name="paired_devices">Paired</string>
 </resources>

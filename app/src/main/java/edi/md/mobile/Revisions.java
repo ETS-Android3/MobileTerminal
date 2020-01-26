@@ -43,7 +43,7 @@ public class Revisions extends AppCompatActivity {
     JSONArray json_array;
     ProgressDialog pgH;
 
-    String UserId,ip_,port_,uid_selected,NumberRevision,NameRevision;
+    String UserId,ip_,port_,uid_selected,NumberRevision,NameRevision,WorkPlaceName,WorkPlaceId;
     Integer WeightPrefix;
 
     AlertDialog.Builder builderType;
@@ -69,10 +69,15 @@ public class Revisions extends AppCompatActivity {
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
         final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
         final SharedPreferences Revision = getSharedPreferences("Revision", MODE_PRIVATE);
+        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
 
         UserId = User.getString("UserID","");
         ip_=Settings.getString("IP","");
         port_=Settings.getString("Port","");
+
+        WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
+        WorkPlaceId = WorkPlace.getString("Uid",null);
+
 
         pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
         pgH.setIndeterminate(true);
@@ -156,11 +161,23 @@ public class Revisions extends AppCompatActivity {
                 String Uid = json.getString("RevisionID");
                 String prefix = json.getString("WeightPrefix");
                 WeightPrefix = Integer.valueOf(prefix);
-                asl_.put("Name",Name);
-                asl_.put("Number",RevisionNumber);
-                asl_.put("Uid",Uid);
-                asl_.put("WeightPrefix",prefix);
-                asl_list.add(asl_);
+                if(WorkPlaceName != null && !WorkPlaceName.equals("Nedeterminat")){
+                    if(Name.contains(WorkPlaceName)){
+                        asl_.put("Name",Name);
+                        asl_.put("Number",RevisionNumber);
+                        asl_.put("Uid",Uid);
+                        asl_.put("WeightPrefix",prefix);
+                        asl_list.add(asl_);
+                    }
+                }
+                else{
+                    asl_.put("Name",Name);
+                    asl_.put("Number",RevisionNumber);
+                    asl_.put("Uid",Uid);
+                    asl_.put("WeightPrefix",prefix);
+                    asl_list.add(asl_);
+                }
+
             }
         } catch (JSONException e) {
             e.printStackTrace();

@@ -51,8 +51,8 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import edi.md.mobile.Settings.Assortment;
-import edi.md.mobile.Utils.AssortmentInActivity;
+import edi.md.mobile.NetworkUtils.RetrofitResults.Assortment;
+import edi.md.mobile.Utils.AssortmentParcelable;
 
 import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetAssortiment;
@@ -74,7 +74,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
     ArrayList<HashMap<String, Object>> stock_List_array = new ArrayList<>();
     ArrayList<HashMap<String, Object>> asl_list = new ArrayList<>();
 
-    String ip_,port_,UserId,WareUid,uid_selected,barcode_introdus,WareIDIn;
+    String ip_,port_,UserId,WareUid,uid_selected,barcode_introdus,WareIDIn,WorkPlaceName;
     ProgressDialog pgH;
     TimerTask timerTaskSync;
     Timer sync;
@@ -127,7 +127,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
         port_=Settings.getString("Port","");
 
         final String WorkPlaceID = WorkPlace.getString("Uid","0");
-        final String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
+        WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
 
         mAddedAssortmentArray =new JSONArray();
 
@@ -213,9 +213,8 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
             public void onClick(View v) {
                 Intent AddingASL = new Intent(".AssortmentMobile");
                 AddingASL.putExtra("ActivityCount", 141);
-                if(WorkPlaceID.equals("0") || WorkPlaceName.equals("")){
-                    AddingASL.putExtra("WareID",WareUid);
-                }
+                AddingASL.putExtra("WareID",WareUid);
+                AddingASL.putExtra("WareName",WorkPlaceName);
                 startActivityForResult(AddingASL, REQUEST_FROM_LIST_ASSORTMENT);
             }
         });
@@ -313,6 +312,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
 
                 txt_out.setText(WareName);
                 WareUid = WareGUid;
+                WorkPlaceName = WareName;
                 show_stockIn();
             }
         });
@@ -959,6 +959,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                                 WareHouse.put("Name", WareName);
                                 WareHouse.put("Code", WareCode);
                                 WareHouse.put("Uid", WareUid);
+
                                 stock_List_array.add(WareHouse);
                             }
                             show_WareHouse();
@@ -1168,7 +1169,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                         assortment.setRemain(Remain);
                         assortment.setAssortimentID(Uid);
                         assortment.setAllowNonIntegerSale(String.valueOf(allowInteger));
-                        final AssortmentInActivity assortmentParcelable = new AssortmentInActivity(assortment);
+                        final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);
 
                         Intent sales = new Intent(".CountTransferMobile");
                         sales.putExtra(AssortimentClickentSendIntent,assortmentParcelable);

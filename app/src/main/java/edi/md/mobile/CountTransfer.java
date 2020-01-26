@@ -26,7 +26,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edi.md.mobile.Utils.AssortmentInActivity;
+import edi.md.mobile.Utils.AssortmentParcelable;
 
 import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 
@@ -78,7 +78,7 @@ public class CountTransfer extends AppCompatActivity {
         btn_cancel = findViewById(R.id.btn_cancel_count_transfer);
 
         final Intent sales = getIntent();
-        AssortmentInActivity assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
+        AssortmentParcelable assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
         mNameAssortment = assortment.getName();
         mPriceAssortment = assortment.getPrice();
         mMarkingAssortment = assortment.getMarking();

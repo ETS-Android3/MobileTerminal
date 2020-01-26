@@ -14,23 +14,33 @@
         android:id="@+id/btn_connect_device"
         android:layout_width="0dp"
         android:layout_height="35dp"
-
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:background="@drawable/item_selector_button_blue"
         android:enabled="true"
-        android:text="Connect a bluetooth device"
+        android:text="Select device"
+        android:textAllCaps="false"
+        android:textColor="@android:color/background_light"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/btn_device_connect_on_bluetooth"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_model_printer" />
+
+    <Button
+        android:id="@+id/btn_device_connect_on_bluetooth"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/item_selector_button_blue"
+        android:text="Connect"
         android:textAllCaps="false"
         android:textColor="@android:color/background_light"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_connect_device"
         app:layout_constraintTop_toBottomOf="@+id/spinner_model_printer" />
-
     <TextView
         android:id="@+id/txt_status_printers"
         android:layout_width="0dp"
@@ -40,7 +50,6 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:gravity="end"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -52,7 +61,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginTop="4dp"
         android:text="Printer type:"
         android:textColor="@color/colorAccent"
         android:textSize="18sp"
@@ -64,8 +73,8 @@
         android:id="@+id/spinner_type_printer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:gravity="center"
         android:spinnerMode="dialog"
         app:layout_constraintEnd_toEndOf="parent"
@@ -104,11 +113,13 @@
         android:id="@+id/container_fragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_connect_device">
 
     </FrameLayout>
+
 
 </android.support.constraint.ConstraintLayout>

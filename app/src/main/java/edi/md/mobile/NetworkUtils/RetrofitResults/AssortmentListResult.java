@@ -1,12 +1,14 @@
 
-package edi.md.mobile.Settings;
+package edi.md.mobile.NetworkUtils.RetrofitResults;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class ASL {
+import edi.md.mobile.NetworkUtils.RetrofitResults.Assortment;
+
+public class AssortmentListResult {
 
     @SerializedName("Assortments")
     @Expose

@@ -1,101 +1,69 @@
 package edi.md.mobile.SettingsMenu;
-import android.annotation.SuppressLint;
+
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.RT_Printer.BluetoothPrinter.BLUETOOTH.BluetoothPrintDriver;
-import com.zebra.sdk.comm.BluetoothConnection;
-import com.zebra.sdk.comm.Connection;
-import com.zebra.sdk.comm.ConnectionException;
-import com.zebra.sdk.printer.PrinterStatus;
-import com.zebra.sdk.printer.ZebraPrinter;
-import com.zebra.sdk.printer.ZebraPrinterFactory;
-import com.zebra.sdk.printer.ZebraPrinterLanguageUnknownException;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.rt.printerlibrary.bean.BluetoothEdrConfigBean;
+import com.rt.printerlibrary.connect.PrinterInterface;
+import com.rt.printerlibrary.enumerate.CommonEnum;
+import com.rt.printerlibrary.factory.connect.BluetoothFactory;
+import com.rt.printerlibrary.factory.connect.PIFactory;
+import com.rt.printerlibrary.factory.printer.PrinterFactory;
+import com.rt.printerlibrary.factory.printer.ThermalPrinterFactory;
+import com.rt.printerlibrary.observer.PrinterObserver;
+import com.rt.printerlibrary.observer.PrinterObserverManager;
+import com.rt.printerlibrary.printer.RTPrinter;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 import edi.md.mobile.R;
-import edi.md.mobile.Utils.DeviceListActivity;
 import edi.md.mobile.Variables;
+import edi.md.mobile.app.utils.BaseEnum;
 
-import static edi.md.mobile.NetworkUtils.NetworkUtils.GetLabel;
-import static edi.md.mobile.NetworkUtils.NetworkUtils.Response_from_GetLable;
 import static edi.md.mobile.Variables.mLablePrinters;
 import static edi.md.mobile.Variables.mPOSPrinters;
 import static edi.md.mobile.Variables.mRongtaModelList;
 import static edi.md.mobile.Variables.mZebraModelList;
 
-public class Printers extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class Printers extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PrinterObserver {
 
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); // "random" unique identifier
 
-    // Debugging
-    private static final String TAG = "BloothPrinterActivity";
-    private static final boolean D = true;
-
-    // Message types sent from the BluetoothChatService Handler
-    public static final int MESSAGE_STATE_CHANGE_Rongta = 1;
-    public static final int MESSAGE_READ_Rongta = 2;
-    public static final int MESSAGE_WRITE_Rongta = 3;
-    public static final int MESSAGE_DEVICE_NAME_Rongta = 4;
-    public static final int MESSAGE_TOAST_Rongta = 5;
     private final static int MESSAGE_READ_Zebra = 2;
     private final static int CONNECTING_STATUS_Zebra = 3;
     private final static int  MSG_CALIBRATE_Zebra = 4;
@@ -105,35 +73,30 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
     private final static int  isHeadOpen_Zebra = 8;
     private final static int  isPaperOut_Zebra = 9;
 
-    // Key names received from the BluetoothChatService Handler
-    public static final String DEVICE_NAME = "device_name";
-    public static final String TOAST = "toast";
-
-    // Intent request codes
-    private static final int REQUEST_CONNECT_DEVICE = 1;
     private static final int REQUEST_ENABLE_BT = 2;
-    public static int revBytes=0;
-    public  static boolean isHex=false;
+    private static final int REQUEST_CONNECT_DEVICE = 1;
 
-    public static final int REFRESH = 8;
-    private String mConnectedDeviceName = null;
     private BluetoothAdapter mBluetoothAdapter = null;
-    private BluetoothPrintDriver mChatService = null;
-
     int mSelectedPrinter,modelType;
     Spinner mTypePrinter , mModelPrinter;
     FragmentTransaction fTrans;
     Fragment mRongtaPrinterFragment,mZebraPrinterFragment;
-    TextView txt_status;
+    TextView tv_device_selected;
 
     String[] mTypePrinterList = {"NoN", mPOSPrinters, mLablePrinters};
 
-    Button btn_connect_device;
+    Button btn_select_device, btn_connected_toDevice;
     String adressConectoin,ip_,port_;
     private ConnectedThread mConnectedThread;
     private BluetoothSocket mBTSocket = null;
-    private static final List<BluetoothDevice> list_of_device =  new ArrayList<BluetoothDevice>();
-    ArrayAdapter<String> adapterModel;
+    ArrayAdapter<String> adapterModel ;
+
+    private RTPrinter rtPrinter = null;
+    private PrinterFactory printerFactory;
+    private Object configObj;
+    private ArrayList<PrinterInterface> printerInterfaceArrayList = new ArrayList<>();
+    private PrinterInterface curPrinterInterface = null;
+    private BluetoothDevice bluetoothDevice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,10 +119,11 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-        txt_status = findViewById(R.id.txt_status_printers);
-        btn_connect_device = findViewById(R.id.btn_connect_device);
+        btn_select_device = findViewById(R.id.btn_connect_device);
         mTypePrinter = findViewById(R.id.spinner_type_printer);
         mModelPrinter = findViewById(R.id.spinner_model_printer);
+        tv_device_selected = findViewById(R.id.txt_status_printers);
+        btn_connected_toDevice = findViewById(R.id.btn_device_connect_on_bluetooth);
 
         mZebraPrinterFragment = new FragmentZebraPrinter();
         mRongtaPrinterFragment = new FragmentRongtaPrinter();
@@ -177,7 +141,11 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
         mSelectedPrinter = positionType;
         mTypePrinter.setSelection(positionType);
 
-        if(positionType == 1){
+        if(SharedPrinters.getInt("WithDisplay",0) != 0)
+            Variables.getInstance().setWidthPrinterPrint(SharedPrinters.getInt("WithDisplay",0));
+
+        //если пос принтера
+        if(positionType == BaseEnum.POS_PRINTER){
             adapterModel = new ArrayAdapter<String>(Printers.this, android.R.layout.simple_spinner_item, mRongtaModelList);
             adapterModel.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -185,14 +153,16 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
             mModelPrinter.setSelection(modelType);
 
         }
-        else if(positionType == 2){
+        //если принтер этикеток
+        else if(positionType == BaseEnum.LABLE_PRINTER){
             adapterModel = new ArrayAdapter<String>(Printers.this, android.R.layout.simple_spinner_item, mZebraModelList);
             adapterModel.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
             mModelPrinter.setAdapter(adapterModel);
             mModelPrinter.setSelection(modelType);
         }
-        else if(positionType == 0){
+        //если ничего не выбрано
+        else if(positionType == BaseEnum.NO_PRINTER){
             adapterModel = new ArrayAdapter<String>(Printers.this, android.R.layout.simple_spinner_item, mZebraModelList);
             adapterModel.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -205,7 +175,7 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                if(position == 1){
+                if(position == BaseEnum.POS_PRINTER){
                     // адаптер модель принтера
                     adapterModel = new ArrayAdapter<String>(Printers.this, android.R.layout.simple_spinner_item, mRongtaModelList);
                     adapterModel.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -220,7 +190,7 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
                     SharedPrintersEditor.putInt("Type",position);
                     SharedPrintersEditor.apply();
                 }
-                else if(position == 2){
+                else if(position == BaseEnum.LABLE_PRINTER){
                     // адаптер модель принтера
                     adapterModel = new ArrayAdapter<String>(Printers.this, android.R.layout.simple_spinner_item, mZebraModelList);
                     adapterModel.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -235,7 +205,7 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
                     SharedPrintersEditor.putInt("Type",position);
                     SharedPrintersEditor.apply();
                 }
-                if( position == 0){
+                if( position == BaseEnum.NO_PRINTER){
                     SharedPrintersEditor.putInt("Type",position);
                     SharedPrintersEditor.apply();
 
@@ -247,6 +217,17 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         SharedPrintersEditor.putInt("Model",position);
                         SharedPrintersEditor.apply();
+
+                        if(position == BaseEnum.RP_200){
+                            SharedPrintersEditor.putInt("WithDisplay",48);
+                            SharedPrintersEditor.apply();
+                            Variables.getInstance().setWidthPrinterPrint(48);
+                        }
+                        else  if (position == BaseEnum.RP_300){
+                            SharedPrintersEditor.putInt("WithDisplay",72);
+                            SharedPrintersEditor.apply();
+                            Variables.getInstance().setWidthPrinterPrint(72);
+                        }
                     }
 
                     @Override
@@ -272,18 +253,101 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
         ip_=sPref.getString("IP","");
         port_=sPref.getString("Port","");
 
-        btn_connect_device.setOnClickListener(new View.OnClickListener() {
-            Intent serverIntent = null;
+        PrinterObserverManager.getInstance().add(this);
+
+        Variables.instance.setCurrentCmdType(BaseEnum.CMD_ESC);
+        printerFactory = new ThermalPrinterFactory();
+        rtPrinter = printerFactory.create();
+        rtPrinter.setPrinterInterface(curPrinterInterface);
+
+        btn_select_device.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Intent serverIntent = null;
                 if(mSelectedPrinter != 0){
-                    // Launch the DeviceListActivity to see devices and do scan
                     serverIntent = new Intent(Printers.this, DeviceListActivity.class);
-                    startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+                    startActivityForResult(serverIntent,REQUEST_CONNECT_DEVICE);
                 }
 
+//                BluetoothDeviceChooseDialog bluetoothDeviceChooseDialog = new BluetoothDeviceChooseDialog();
+//                bluetoothDeviceChooseDialog.setOnDeviceItemClickListener(new BluetoothDeviceChooseDialog.onDeviceItemClickListener() {
+//                    @Override
+//                    public void onDeviceItemClick(BluetoothDevice device) {
+//                        bluetoothDevice = device;
+//                        if (TextUtils.isEmpty(device.getName())) {
+//                            tv_device_selected.setText(device.getAddress());
+//                        } else {
+//                            tv_device_selected.setText(device.getName() + " [" + device.getAddress() + "]");
+//                        }
+//                        configObj = new BluetoothEdrConfigBean(device);
+//                        tv_device_selected.setTag(BaseEnum.HAS_DEVICE);
+//                    }
+//                });
+//                bluetoothDeviceChooseDialog.show(Printers.this.getFragmentManager(), null);
             }
         });
+
+        btn_connected_toDevice.setOnClickListener(v-> {
+            int mType = getSharedPreferences("Printers", MODE_PRIVATE).getInt("Type",0);
+
+            if (mType == 1){
+                if (tv_device_selected.getTag() == null || Integer.parseInt(tv_device_selected.getTag().toString() ) == BaseEnum.NO_DEVICE) {//未选择设备
+                    showAlertDialog("Please choose a device");
+                    return;
+                }
+
+                tv_device_selected.setText("Connecting...");
+
+                BluetoothEdrConfigBean bluetoothEdrConfigBean = (BluetoothEdrConfigBean) configObj;
+                connectBluetooth(bluetoothEdrConfigBean);
+            }
+            else if ( mType == 2){
+                adressConectoin = bluetoothDevice.getAddress();
+                // Spawn a new thread to avoid blocking the GUI one
+                new Thread()
+                {
+                    public void run() {
+                        boolean fail = false;
+
+                        try {
+                            mBTSocket = createBluetoothSocket(bluetoothDevice);
+                        } catch (IOException e) {
+                            fail = true;
+                            Toast.makeText(Printers.this, "Socket creation failed", Toast.LENGTH_SHORT).show();
+                        }
+                        // Establish the Bluetooth socket connection.
+                        try {
+                            mBTSocket.connect();
+                        } catch (IOException e) {
+                            try {
+                                fail = true;
+                                mBTSocket.close();
+                                mHandlerZebra.obtainMessage(CONNECTING_STATUS_Zebra, -1, -1)
+                                        .sendToTarget();
+                            } catch (IOException e2) {
+                                //insert code to deal with this
+                                Toast.makeText(Printers.this, "Socket creation failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        if(!fail) {
+                            SharedPreferences sPref = getSharedPreferences("Printers", MODE_PRIVATE);
+                            final SharedPreferences.Editor sPrefInput = sPref.edit();
+                            sPrefInput.putString("MAC_ZebraPrinters",adressConectoin);
+                            sPrefInput.putString("Name_ZebraPrinters",bluetoothDevice.getName());
+                            sPrefInput.apply();
+
+                            mConnectedThread = new ConnectedThread(mBTSocket);
+                            mConnectedThread.start();
+
+                            mHandlerZebra.obtainMessage(CONNECTING_STATUS_Zebra, 1, -1, bluetoothDevice.getName()).sendToTarget();
+                        }
+                    }
+                }.start();
+            }
+
+        });
+
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -295,6 +359,21 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
         }
 
     }
+
+    private void connectBluetooth(BluetoothEdrConfigBean bluetoothEdrConfigBean) {
+        PIFactory piFactory = new BluetoothFactory();
+        PrinterInterface printerInterface = piFactory.create();
+        printerInterface.setConfigObject(bluetoothEdrConfigBean);
+        rtPrinter.setPrinterInterface(printerInterface);
+        try {
+            rtPrinter.connect(bluetoothEdrConfigBean);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+        }
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout_printers);
@@ -319,6 +398,21 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void showAlertDialog(final String msg){
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(Printers.this);
+                dialog.setTitle("Tip");
+                dialog.setMessage(msg);
+                dialog.setNegativeButton("Back", null);
+                dialog.show();
+            }
+        });
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -356,86 +450,30 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
-        final SharedPreferences SharedPrinters = getSharedPreferences("Printers", MODE_PRIVATE);
-        int mType = SharedPrinters.getInt("Type",0);
-
-        switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE:
-                // When DeviceListActivity returns with a device to connect
-                if (resultCode == Activity.RESULT_OK) {
-                    // Get the device MAC address
-                    final String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-                    // Get the BLuetoothDevice object
-                    final BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
-
-                    if( mType == 1){
-
-                        // Attempt to connect to the device
-                        mChatService.connect(device);
-                    }
-                    else if ( mType == 2){
-                        adressConectoin=address;
-                        // Spawn a new thread to avoid blocking the GUI one
-                        new Thread()
-                        {
-                            public void run() {
-                                boolean fail = false;
-
-                                try {
-                                    mBTSocket = createBluetoothSocket(device);
-                                } catch (IOException e) {
-                                    fail = true;
-                                    Toast.makeText(Printers.this, "Socket creation failed", Toast.LENGTH_SHORT).show();
-                                }
-                                // Establish the Bluetooth socket connection.
-                                try {
-                                    mBTSocket.connect();
-                                } catch (IOException e) {
-                                    try {
-                                        fail = true;
-                                        mBTSocket.close();
-                                        mHandlerZebra.obtainMessage(CONNECTING_STATUS_Zebra, -1, -1)
-                                                .sendToTarget();
-                                    } catch (IOException e2) {
-                                        //insert code to deal with this
-                                        Toast.makeText(Printers.this, "Socket creation failed", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                                if(!fail) {
-                                    SharedPreferences sPref = getSharedPreferences("Printers", MODE_PRIVATE);
-                                    final SharedPreferences.Editor sPrefInput = sPref.edit();
-                                    sPrefInput.putString("MAC_ZebraPrinters",address);
-                                    sPrefInput.putString("Name_ZebraPrinters",device.getName());
-                                    sPrefInput.apply();
-
-                                    mConnectedThread = new ConnectedThread(mBTSocket);
-                                    mConnectedThread.start();
-
-                                    mHandlerZebra.obtainMessage(CONNECTING_STATUS_Zebra, 1, -1, device.getName())
-                                            .sendToTarget();
-                                }
-                            }
-                        }.start();
-                    }
-
-                }
-                break;
-            case REQUEST_ENABLE_BT:{
-                // When the request to enable Bluetooth returns
-                if (resultCode == Activity.RESULT_OK) {
-                    if(mType == 1){
-                        setupChat();
-                    }
-                } else {
-                    // User did not enable Bluetooth or an error occured
-                    txt_status.setText(R.string.status_bluetooth_disabled);
-                }
+        if(requestCode ==  REQUEST_ENABLE_BT){
+            if (resultCode != Activity.RESULT_OK) {
+                // User did not enable Bluetooth or an error occured
+                tv_device_selected.setText(R.string.status_bluetooth_disabled);
             }
-
+        }
+        else if (requestCode == REQUEST_CONNECT_DEVICE){
+            if(resultCode == RESULT_OK){
+                bluetoothDevice = data.getExtras().getParcelable("btdevice");;
+                if (TextUtils.isEmpty(bluetoothDevice.getName())) {
+                    tv_device_selected.setText(bluetoothDevice.getAddress());
+                } else {
+                    tv_device_selected.setText(bluetoothDevice.getName() + " [" + bluetoothDevice.getAddress() + "]");
+                }
+                configObj = new BluetoothEdrConfigBean(bluetoothDevice);
+                tv_device_selected.setTag(BaseEnum.HAS_DEVICE);
+            }
         }
     }
+
+    //pentru zebra sau label printer
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
         try {
             final Method m = device.getClass().getMethod("createInsecureRfcommSocketToServiceRecord", UUID.class);
@@ -444,6 +482,55 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
             e.printStackTrace();
         }
         return  device.createRfcommSocketToServiceRecord(BTMODULEUUID);
+    }
+
+    @Override
+    public void printerObserverCallback(PrinterInterface printerInterface, int i) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (i) {
+                    case CommonEnum.CONNECT_STATE_SUCCESS:
+                        showToast(printerInterface.getConfigObject().toString() + "connect succes");
+                        tv_device_selected.setText("Connected to :" + printerInterface.getConfigObject().toString());
+                        tv_device_selected.setTag(BaseEnum.HAS_DEVICE);
+
+                        curPrinterInterface = printerInterface;
+                        printerInterfaceArrayList.add(printerInterface);
+                        rtPrinter.setPrinterInterface(printerInterface);
+                        Variables.getInstance().setRtPrinter(rtPrinter);
+
+                        initFragmentUI(mSelectedPrinter,printerInterface.getConfigObject().toString());
+
+                        break;
+                    case CommonEnum.CONNECT_STATE_INTERRUPTED:
+                        if (printerInterface != null && printerInterface.getConfigObject() != null) {
+                            showToast(printerInterface.getConfigObject().toString() + "disconnect");
+                        } else {
+                            showToast("disconnect");
+                        }
+                        tv_device_selected.setText("Click to connect a device");
+                        tv_device_selected.setTag(BaseEnum.NO_DEVICE);
+                        curPrinterInterface = null;
+                        printerInterfaceArrayList.remove(printerInterface);//多连接-从已连接列表中移除
+                        Variables.getInstance().setRtPrinter(null);
+
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+        });
+    }
+
+    @Override
+    public void printerReadMsgCallback(PrinterInterface printerInterface, byte[] bytes) {
+
+    }
+
+    public void showToast(String msg){
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     private class ConnectedThread extends Thread {
@@ -503,108 +590,13 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
     }
 
     @Override
-    protected void onDestroy() {
-              //  Stop the Bluetooth chat services eONGTA
-//        if (mChatService != null) mChatService.stop();
-        super.onDestroy();
-    }
-
-    /**Rongta settings
-     *
-     */
-    @Override
     public void onStart() {
         super.onStart();
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-            // Otherwise, setup the chat session
-        } else {
-            if (mChatService == null) setupChat();
         }
     }
-    @Override
-    public synchronized void onResume() {
-        super.onResume();
-
-        if (mChatService != null) {
-            // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothPrintDriver.STATE_NONE) {
-                // Start the Bluetooth chat services
-                mChatService.start();
-            }
-        }
-    }
-
-    private void setupChat() {
-        Log.d(TAG, "setupChat()");
-        // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothPrintDriver(this, mHandlerRongta);
-    }
-
-    // The Handler that gets information back from the BluetoothChatService
-    private final Handler mHandlerRongta = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MESSAGE_STATE_CHANGE_Rongta:
-                    switch (msg.arg1) {
-                        case BluetoothPrintDriver.STATE_CONNECTED:
-                            txt_status.setText("Connected to: ");
-                            txt_status.append(mConnectedDeviceName);
-
-                            initFragmentUI(mSelectedPrinter,mConnectedDeviceName);
-
-                            break;
-                        case BluetoothPrintDriver.STATE_CONNECTING:
-                            txt_status.setText("Connecting...");
-                            //setTitle(R.string.title_connecting);
-                            break;
-                        case BluetoothPrintDriver.STATE_LISTEN:
-                        case BluetoothPrintDriver.STATE_NONE:
-                            txt_status.setText("Not Connected");
-                            //setTitle(R.string.title_not_connected);
-                            break;
-                    }
-                    break;
-                case MESSAGE_WRITE_Rongta:
-                    break;
-                case MESSAGE_READ_Rongta:
-                    String ErrorMsg = null;
-                    byte[] readBuf = (byte[]) msg.obj;
-                    float Voltage = 0;
-                    if(D) Log.i(TAG, "readBuf[0]:"+readBuf[0]+"  readBuf[1]:"+readBuf[1]+"  readBuf[2]:"+readBuf[2]);
-                    if(readBuf[2]==0)
-                        ErrorMsg = "NO ERROR!";
-                    else
-                    {
-                        if((readBuf[2] & 0x02) != 0)
-                            ErrorMsg = "ERROR: No printer connected!";
-                        if((readBuf[2] & 0x04) != 0)
-                            ErrorMsg = "ERROR: No paper!";
-                        if((readBuf[2] & 0x08) != 0)
-                            ErrorMsg = "ERROR: Voltage is too low!  ";
-                        if((readBuf[2] & 0x40) != 0)
-                            ErrorMsg = "ERROR: Printer Over Heat!  ";
-                    }
-                    Voltage = (float) ((readBuf[0]*256 + readBuf[1])/10.0);
-                    //if(D) Log.i(TAG, "Voltage: "+Voltage);
-                    DisplayToast(ErrorMsg+"\n"+"Battery voltage: "+Voltage+" V");
-
-                    break;
-                case MESSAGE_DEVICE_NAME_Rongta:
-                    // save the connected device's name
-                    mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
-                    Toast.makeText(getApplicationContext(), "Connected to: "
-                            + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                    break;
-                case MESSAGE_TOAST_Rongta:
-                    Toast.makeText(getApplicationContext(), msg.getData().getString(TOAST),
-                            Toast.LENGTH_SHORT).show();
-                    break;
-            }
-        }
-    };
 
     private final Handler mHandlerZebra = new Handler(){
         @Override
@@ -614,17 +606,17 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     readMessage = new String((byte[]) msg.obj, StandardCharsets.UTF_8);
                 }
-                txt_status.setText(readMessage);
+                tv_device_selected.setText(readMessage);
             }
             else if(msg.what == CONNECTING_STATUS_Zebra) {
                 if (msg.arg1 == 1) {
-                    txt_status.setText("Conected to: " +(String) msg.obj);
+                    tv_device_selected.setText("Conected to: " +(String) msg.obj);
                     initFragmentUI(mSelectedPrinter,(String) msg.obj);
                 }
                 else if (msg.arg1 == -1){
-                    txt_status.setText(R.string.status_created_socket_bluetooth);
+                    tv_device_selected.setText(R.string.status_created_socket_bluetooth);
                 }else{
-                    txt_status.setText(R.string.status_conection_bluetooth_handler);
+                    tv_device_selected.setText(R.string.status_conection_bluetooth_handler);
                 }
             }
             else if(msg.what == MSG_CALIBRATE_Zebra){
@@ -645,18 +637,15 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
                 Toast.makeText(Printers.this, "Cannot Print.", Toast.LENGTH_SHORT).show();
             }
             else{
-                txt_status.setText(R.string.connection_failed_bluethoot);
+                tv_device_selected.setText(R.string.connection_failed_bluethoot);
             }
         }
         };
 
-    public void DisplayToast(String str) {
-        Toast toast = Toast.makeText(this, str, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.TOP, 0, 100);
-        toast.show();
-    }
-
     public void initFragmentUI(int position,String BTName){
+        if(Printers.this.isDestroyed()){
+            return;
+        }
         if(position == 1){
             Bundle bundl = new Bundle();
             bundl.putString("BTName",BTName);
@@ -668,6 +657,7 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
             fTrans.replace(R.id.container_fragment, mRongtaPrinterFragment);
             fTrans.commit();
         }
+
         else if(position == 2){
             fTrans = getFragmentManager().beginTransaction();
             fTrans.replace(R.id.container_fragment, mZebraPrinterFragment);

@@ -24,7 +24,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edi.md.mobile.Utils.AssortmentInActivity;
+import edi.md.mobile.Utils.AssortmentParcelable;
 
 import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 
@@ -61,7 +61,7 @@ public class CountInvoice extends AppCompatActivity {
         SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
 
         final Intent Invoice = getIntent();
-        AssortmentInActivity assortment = Invoice.getParcelableExtra(AssortimentClickentSendIntent);
+        AssortmentParcelable assortment = Invoice.getParcelableExtra(AssortimentClickentSendIntent);
         mNameAssortment = assortment.getName();
         mPriceAssortment = assortment.getPrice();
         mIncomePrice = assortment.getIncomePrice();

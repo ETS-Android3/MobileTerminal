@@ -1,11 +1,12 @@
-
-package edi.md.mobile.Settings;
-
+package edi.md.mobile.NetworkUtils.RetrofitResults;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Assortment {
+/**
+ * Created by Igor on 25.01.2020
+ */
 
+public class GetAssortmentItemResult {
     @SerializedName("ErrorCode")
     @Expose
     private Integer errorCode;
@@ -14,13 +15,10 @@ public class Assortment {
     private String errorMessage;
     @SerializedName("AllowNonIntegerSale")
     @Expose
-    private String allowNonIntegerSale;
+    private Boolean allowNonIntegerSale;
     @SerializedName("AssortimentID")
     @Expose
     private String assortimentID;
-    @SerializedName("AssortimentParentID")
-    @Expose
-    private String assortimentParentID;
     @SerializedName("BarCode")
     @Expose
     private String barCode;
@@ -29,10 +27,7 @@ public class Assortment {
     private String code;
     @SerializedName("IncomePrice")
     @Expose
-    private String incomePrice;
-    @SerializedName("IsFolder")
-    @Expose
-    private Boolean isFolder;
+    private Double incomePrice;
     @SerializedName("Marking")
     @Expose
     private String marking;
@@ -41,16 +36,16 @@ public class Assortment {
     private String name;
     @SerializedName("Price")
     @Expose
-    private String price;
+    private Double price;
     @SerializedName("PriceLineID")
     @Expose
     private String priceLineID;
     @SerializedName("Remain")
     @Expose
-    private String remain;
+    private Double remain;
     @SerializedName("RequestedCount")
     @Expose
-    private String requestedCount;
+    private Double requestedCount;
     @SerializedName("Unit")
     @Expose
     private String unit;
@@ -59,12 +54,10 @@ public class Assortment {
     private String unitInPackage;
     @SerializedName("UnitPrice")
     @Expose
-    private String unitPrice;
+    private Double unitPrice;
     @SerializedName("VATCode")
     @Expose
     private String vATCode;
-
-    private String mCount;
 
     public Integer getErrorCode() {
         return errorCode;
@@ -82,11 +75,11 @@ public class Assortment {
         this.errorMessage = errorMessage;
     }
 
-    public String getAllowNonIntegerSale() {
+    public Boolean getAllowNonIntegerSale() {
         return allowNonIntegerSale;
     }
 
-    public void setAllowNonIntegerSale(String allowNonIntegerSale) {
+    public void setAllowNonIntegerSale(Boolean allowNonIntegerSale) {
         this.allowNonIntegerSale = allowNonIntegerSale;
     }
 
@@ -96,14 +89,6 @@ public class Assortment {
 
     public void setAssortimentID(String assortimentID) {
         this.assortimentID = assortimentID;
-    }
-
-    public String getAssortimentParentID() {
-        return assortimentParentID;
-    }
-
-    public void setAssortimentParentID(String assortimentParentID) {
-        this.assortimentParentID = assortimentParentID;
     }
 
     public String getBarCode() {
@@ -122,20 +107,12 @@ public class Assortment {
         this.code = code;
     }
 
-    public String getIncomePrice() {
+    public Double getIncomePrice() {
         return incomePrice;
     }
 
-    public void setIncomePrice(String incomePrice) {
+    public void setIncomePrice(Double incomePrice) {
         this.incomePrice = incomePrice;
-    }
-
-    public Boolean getIsFolder() {
-        return isFolder;
-    }
-
-    public void setIsFolder(Boolean isFolder) {
-        this.isFolder = isFolder;
     }
 
     public String getMarking() {
@@ -154,11 +131,11 @@ public class Assortment {
         this.name = name;
     }
 
-    public String getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
@@ -170,19 +147,19 @@ public class Assortment {
         this.priceLineID = priceLineID;
     }
 
-    public String getRemain() {
+    public Double getRemain() {
         return remain;
     }
 
-    public void setRemain(String remain) {
+    public void setRemain(Double remain) {
         this.remain = remain;
     }
 
-    public String getRequestedCount() {
+    public Double getRequestedCount() {
         return requestedCount;
     }
 
-    public void setRequestedCount(String requestedCount) {
+    public void setRequestedCount(Double requestedCount) {
         this.requestedCount = requestedCount;
     }
 
@@ -202,11 +179,11 @@ public class Assortment {
         this.unitInPackage = unitInPackage;
     }
 
-    public String getUnitPrice() {
+    public Double getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(String unitPrice) {
+    public void setUnitPrice(Double unitPrice) {
         this.unitPrice = unitPrice;
     }
 
@@ -217,13 +194,4 @@ public class Assortment {
     public void setVATCode(String vATCode) {
         this.vATCode = vATCode;
     }
-
-    public String getCount() {
-        return mCount;
-    }
-
-    public void setCount(String count) {
-        this.vATCode = count;
-    }
-
 }

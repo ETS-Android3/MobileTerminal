@@ -1,18 +1,16 @@
-package edi.md.mobile;
+package edi.md.mobile.activities;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -31,25 +29,27 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
+import edi.md.mobile.NetworkUtils.ApiRetrofit;
+import edi.md.mobile.NetworkUtils.Services.CommandService;
+import edi.md.mobile.R;
+import edi.md.mobile.Variables;
 import io.fabric.sdk.android.Fabric;
-import java.io.IOException;
-import java.net.URL;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static edi.md.mobile.NetworkUtils.NetworkUtils.Ping;
-import static edi.md.mobile.NetworkUtils.NetworkUtils.Response_from_Ping;
-
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    Button btn_check_price,btn_sales,btn_invoice,btn_transfer,btn_inventory,btn_stock_asortment;
-    Integer checkPrice=1,salesDoc=2, invoiceDoc =3,transferIntern=4,inventAr=5,stock_asl=7,workplaces=8,printers=9,securitate = 10;
+    Button btn_check_price,btn_sales,btn_invoice,btn_transfer,btn_inventory,btn_stock_asortment, btn_set_barcodes;
+    Integer checkPrice = 1,salesDoc = 2, invoiceDoc = 3,transferIntern = 4,inventAr = 5,stock_asl = 7,workplaces = 8,printers = 9,securitate = 10, setBarcode = 147;
     TimerTask timerTaskSync;
     Timer sync;
     Boolean pingTest=false,keyLicense;
     SharedPreferences Settings;
-    Boolean checkPin;
     private Menu menu;
     NavigationView navigationView;
 
@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         btn_transfer = findViewById(R.id.btn_transfer);
         btn_inventory = findViewById(R.id.btn_inventory);
         btn_stock_asortment = findViewById(R.id.btn_stock_assortment);
+        btn_set_barcodes = findViewById(R.id.btn_set_assortment_barcode);
 
         requestMultiplePermissions();
 
@@ -154,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         log_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((Variables) getApplication()).setLoginVariable(false);
+                ((Variables) getApplication()).setUserAuthentificate(false);
                  User.edit().clear().apply();
                  useremail.setText("");
             }
@@ -166,10 +167,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 keyLicense=Settings.getBoolean("Key",false);
                 if(pingTest) {
                     if(keyLicense) {
-                        Boolean CheckLogin = ((Variables) getApplication()).getLoginVariable();
+                        Boolean CheckLogin = ((Variables) getApplication()).getUserAuthentificate();
                         if (CheckLogin == null) {
                             CheckLogin = false;
-                            ((Variables) getApplication()).setLoginVariable(false);
+                            ((Variables) getApplication()).setUserAuthentificate(false);
                         }
                         if (CheckLogin) {
                             Intent invoice = new Intent(".CheckPriceMobile");
@@ -194,10 +195,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 keyLicense=Settings.getBoolean("Key",false);
                 if(pingTest) {
                     if(keyLicense) {
-                        Boolean CheckLogin = ((Variables) getApplication()).getLoginVariable();
+                        Boolean CheckLogin = ((Variables) getApplication()).getUserAuthentificate();
                         if (CheckLogin == null) {
                             CheckLogin = false;
-                            ((Variables) getApplication()).setLoginVariable(false);
+                            ((Variables) getApplication()).setUserAuthentificate(false);
                         }
                         if (CheckLogin) {
                             Intent invoice = new Intent(".SalesMobile");
@@ -216,17 +217,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
-
         btn_invoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 keyLicense=Settings.getBoolean("Key",false);
                 if(pingTest) {
                     if(keyLicense) {
-                        Boolean CheckLogin = ((Variables) getApplication()).getLoginVariable();
+                        Boolean CheckLogin = ((Variables) getApplication()).getUserAuthentificate();
                         if (CheckLogin == null) {
                             CheckLogin = false;
-                            ((Variables) getApplication()).setLoginVariable(false);
+                            ((Variables) getApplication()).setUserAuthentificate(false);
                         }
                         if (CheckLogin) {
                             Intent invoice = new Intent(".InvoiceMobile");
@@ -251,10 +251,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 keyLicense=Settings.getBoolean("Key",false);
                 if(pingTest) {
                     if(keyLicense) {
-                        Boolean CheckLogin = ((Variables) getApplication()).getLoginVariable();
+                        Boolean CheckLogin = ((Variables) getApplication()).getUserAuthentificate();
                         if (CheckLogin == null) {
                             CheckLogin = false;
-                            ((Variables) getApplication()).setLoginVariable(false);
+                            ((Variables) getApplication()).setUserAuthentificate(false);
                         }
                         if (CheckLogin) {
                             Intent invoice = new Intent(".TransferMobile");
@@ -279,10 +279,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 keyLicense=Settings.getBoolean("Key",false);
                 if(pingTest) {
                     if(keyLicense) {
-                        Boolean CheckLogin = ((Variables) getApplication()).getLoginVariable();
+                        Boolean CheckLogin = ((Variables) getApplication()).getUserAuthentificate();
                         if (CheckLogin == null) {
                             CheckLogin = false;
-                            ((Variables) getApplication()).setLoginVariable(false);
+                            ((Variables) getApplication()).setUserAuthentificate(false);
                         }
                         if (CheckLogin) {
                             Intent invoice = new Intent(".RevisionMobile");
@@ -304,30 +304,80 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         btn_stock_asortment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                keyLicense=Settings.getBoolean("Key",false);
-                if(pingTest) {
-                    if(keyLicense) {
-                        Boolean CheckLogin = ((Variables) getApplication()).getLoginVariable();
+                keyLicense = Settings.getBoolean("Key", false);
+                if (pingTest) {
+                    if (keyLicense) {
+                        Boolean CheckLogin = ((Variables) getApplication()).getUserAuthentificate();
                         if (CheckLogin == null) {
                             CheckLogin = false;
-                            ((Variables) getApplication()).setLoginVariable(false);
+                            ((Variables) getApplication()).setUserAuthentificate(false);
                         }
                         if (CheckLogin) {
                             Intent invoice = new Intent(".StockAssortmentMobile");
                             startActivity(invoice);
-                        } else {
+                        }
+                        else{
                             Intent Logins = new Intent(".LoginMobile");
                             Logins.putExtra("Activity", stock_asl);
                             startActivity(Logins);
                         }
+                    } else {
+                        Toast.makeText(MainActivity.this, "Licenta gresita!", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, "Nu este legatura cu serverul.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        btn_set_barcodes.setOnClickListener(v-> {
+                keyLicense = Settings.getBoolean("Key",false);
+                if(pingTest) {
+                    if(keyLicense) {
+                        Boolean CheckLogin = Variables.getInstance().getUserAuthentificate();
+                        if (CheckLogin == null) {
+                            CheckLogin = false;
+                            Variables.getInstance().setUserAuthentificate(false);
+                        }
+
+                        String WareID = WorkPlace.getString("Uid", "0");
+
+                        if(WareID.equals("0") || WareID.equals("")){
+                            AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+                            dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+                            dialog.setCancelable(false);
+                            dialog.setMessage("Не выбрано рабочее место!");
+                            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            dialog.show();
+                        }
+                        else{
+                            if (CheckLogin) {
+                                Intent assortment = new Intent(".AssortmentMobile");
+                                assortment.putExtra("Activity", setBarcode);
+                                assortment.putExtra("ActivityCount", 525);
+                                assortment.putExtra("WareID",WareID);
+                                startActivity(assortment);
+                            } else {
+                                Intent Logins = new Intent(".LoginMobile");
+                                Logins.putExtra("Activity", setBarcode);
+                                Logins.putExtra("ActivityCount", 525);
+                                Logins.putExtra("WareID",WareID);
+                                startActivity(Logins);
+                            }
+                        }
                     }else{
                         Toast.makeText(MainActivity.this, "Licenta gresita!", Toast.LENGTH_SHORT).show();
                     }
-                }else{
+                }
+                else{
                     Toast.makeText(MainActivity.this, "Nu este legatura cu serverul.", Toast.LENGTH_SHORT).show();
                 }
-
-            }
         });
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -349,7 +399,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menus) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menus);
         this.menu = menus;
         return true;
@@ -391,6 +440,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
     private void startTimetaskSync(){
         timerTaskSync = new TimerTask() {
             @Override
@@ -398,85 +448,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        URL generatedURL = Ping(Settings.getString("IP",""), Settings.getString("Port",""));
-                        new AsyncTask_Ping().execute(generatedURL);
+                        CommandService commandService = ApiRetrofit.getCommandService(MainActivity.this);
+                        Call<Boolean> call = commandService.pingService();
+
+                        call.enqueue(new Callback<Boolean>() {
+                            @Override
+                            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                                if(response.body()){
+                                    pingTest=true;
+                                    if(menu!=null)
+                                        menu.getItem(0).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.signal_wi_fi_48));
+                                }
+                                else{
+                                    pingTest= false;
+                                    if(menu!=null)
+                                        menu.getItem(0).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.no_signal_wi_fi_48));
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Boolean> call, Throwable t) {
+                                if(menu!=null)
+                                    menu.getItem(0).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.no_signal_wi_fi_48));
+                            }
+                        });
                     }
                 });
             }
         };
     }
-    class AsyncTask_Ping extends AsyncTask<URL, String, String> {
-
-        @Override
-        protected String doInBackground(URL... urls) {
-            String ping="";
-            try {
-                ping=Response_from_Ping(urls[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return ping;
-        }
-
-        @Override
-        protected void onPostExecute(String response) {
-            if (response.equals("true")) {
-                pingTest=true;
-                if(menu!=null)
-                    menu.getItem(0).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.signal_wi_fi_48));
-            }else {
-                this.onCancelled();
-                pingTest=false;
-                if(menu!=null)
-                    menu.getItem(0).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.no_signal_wi_fi_48));
-            }
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
-        SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
-
-        boolean logins = ((Variables) getApplication()).getLoginVariable();
-
-        outState.putString("userName", User.getString("Name",""));
-        outState.putString("userUid", User.getString("UserID",""));
-
-        outState.putString("workplaceUid", WorkPlace.getString("Uid",""));
-        outState.putString("workplaceName", WorkPlace.getString("Name",""));
-
-        outState.putBoolean("Login",logins);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
-        SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
-        SharedPreferences.Editor inpUser = User.edit();
-        SharedPreferences.Editor inpWorkPlace = WorkPlace.edit();
-
-        ((Variables) getApplication()).setLoginVariable(savedInstanceState.getBoolean("Login"));
-
-        inpUser.putString("Name",savedInstanceState.getString("userName"));
-        inpUser.putString("UserID",savedInstanceState.getString("userUid"));
-
-        inpWorkPlace.putString("Uid",savedInstanceState.getString("workplaceUid"));
-        inpWorkPlace.putString("Name",savedInstanceState.getString("workplaceName"));
-
-        inpUser.apply();
-        inpWorkPlace.apply();
-    }
 
     @Override
     protected void onDestroy() {
-        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
-        User.edit().clear().apply();
-        ((Variables) getApplication()).setLoginVariable(false);
-        ((Variables)getApplication()).setDownloadASLVariable(false);
         super.onDestroy();
+
+        getSharedPreferences("User", MODE_PRIVATE).edit().clear().apply();
+        Variables.getInstance().setUserAuthentificate(false);
+        Variables.getInstance().setDownloadASLVariable(false);
+
     }
 
     @Override

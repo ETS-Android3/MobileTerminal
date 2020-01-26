@@ -27,46 +27,57 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".CountListOfAssortmentStock"
-            android:label="@string/txt_header_inp_count"
+
+        <activity android:name=".SetAssortmentBarcode"
             android:configChanges="orientation"
+            android:label="@string/enter_barcode_"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden">
+        </activity>
+
         <activity
-            android:name=".Utils.DeviceListActivity"
-            android:label="Select device"
+            android:name=".CountListOfAssortmentStock"
             android:configChanges="orientation"
+            android:label="@string/txt_header_inp_count"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".SettingsMenu.DeviceListActivity"
+            android:configChanges="orientation"
+            android:label="Select device"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Dialog" />
         <activity
             android:name=".HelpMain"
-            android:label="Help page"
             android:configChanges="orientation"
+            android:label="Help page"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ListAddedAssortmentInventory"
+            android:configChanges="orientation"
             android:label="Lista adaugate"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Help"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Help"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".CountListOfAssortmentInventory"
-            android:label="@string/txt_header_inp_count"
             android:configChanges="orientation"
+            android:label="@string/txt_header_inp_count"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".CountListOfAssortmentInvoice"
-            android:label="@string/txt_header_inp_count"
             android:configChanges="orientation"
+            android:label="@string/txt_header_inp_count"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -78,8 +89,8 @@
         </activity>
         <activity
             android:name=".Invoice"
-            android:label="@string/btn_invoice_main_activity"
             android:configChanges="orientation"
+            android:label="@string/btn_invoice_main_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -91,8 +102,8 @@
         </activity>
         <activity
             android:name=".CountStockAssortment"
-            android:label="@string/txt_header_inp_count"
             android:configChanges="orientation"
+            android:label="@string/txt_header_inp_count"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -104,8 +115,8 @@
         </activity>
         <activity
             android:name=".CountInventory"
-            android:label="@string/txt_header_inp_count"
             android:configChanges="orientation"
+            android:label="@string/txt_header_inp_count"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -117,8 +128,8 @@
         </activity>
         <activity
             android:name=".CountTransfer"
-            android:label="@string/txt_header_inp_count"
             android:configChanges="orientation"
+            android:label="@string/txt_header_inp_count"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -130,8 +141,8 @@
         </activity>
         <activity
             android:name=".CountSales"
-            android:label="@string/txt_header_inp_count"
             android:configChanges="orientation"
+            android:label="@string/txt_header_inp_count"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -142,8 +153,8 @@
         </activity>
         <activity
             android:name=".CountInvoice"
-            android:label="@string/txt_header_inp_count"
             android:configChanges="orientation"
+            android:label="@string/txt_header_inp_count"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -154,8 +165,8 @@
         </activity>
         <activity
             android:name=".CountListOfAssortment"
-            android:label="@string/txt_header_inp_count"
             android:configChanges="orientation"
+            android:label="@string/txt_header_inp_count"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -179,8 +190,8 @@
         </activity>
         <activity
             android:name=".StockAssortment"
-            android:label="@string/btn_stock_asl_main_activity"
             android:configChanges="orientation"
+            android:label="@string/btn_stock_asl_main_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -192,8 +203,8 @@
         </activity>
         <activity
             android:name=".Revisions"
-            android:label="@string/header_of_lista_reviziilor"
             android:configChanges="orientation"
+            android:label="@string/header_of_lista_reviziilor"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -217,8 +228,8 @@
         </activity>
         <activity
             android:name=".Transfer"
-            android:label="@string/btn_transfer_main_activity"
             android:configChanges="orientation"
+            android:label="@string/btn_transfer_main_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -230,8 +241,8 @@
         </activity>
         <activity
             android:name=".SettingsMenu.About"
-            android:label="@string/header_obout_program"
             android:configChanges="orientation"
+            android:label="@string/header_obout_program"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -254,8 +265,8 @@
         </activity>
         <activity
             android:name=".SettingsMenu.Printers"
-            android:label="@string/header_printer_activity"
             android:configChanges="orientation"
+            android:label="@string/header_printer_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -267,8 +278,8 @@
         </activity>
         <activity
             android:name=".SettingsMenu.WorkPlace"
-            android:label="@string/header_workplace_activity"
             android:configChanges="orientation"
+            android:label="@string/header_workplace_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -280,8 +291,8 @@
         </activity>
         <activity
             android:name=".SettingsMenu.Conect"
-            android:label="@string/header_conectare_activity"
             android:configChanges="orientation"
+            android:label="@string/header_conectare_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -292,11 +303,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Sales"
-            android:label="@string/btn_sales_main_activity"
+            android:name=".activities.SalesActivity"
             android:configChanges="orientation"
+            android:label="@string/btn_sales_main_activity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name=".SalesMobile" />
 
@@ -304,9 +316,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CheckPrice"
-            android:label="@string/btn_check_price"
+            android:name=".activities.CheckPriceActivity"
             android:configChanges="orientation"
+            android:label="@string/btn_check_price"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -317,9 +329,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
+            android:name=".activities.MainActivity"
             android:configChanges="orientation"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -330,8 +342,8 @@
         </activity>
         <activity
             android:name=".GetClient"
-            android:label="@string/header_login_client_activity"
             android:configChanges="orientation"
+            android:label="@string/header_login_client_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -342,8 +354,8 @@
         </activity>
         <activity
             android:name=".Login"
-            android:label="@string/header_login_user_activity"
             android:configChanges="orientation"
+            android:label="@string/header_login_user_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

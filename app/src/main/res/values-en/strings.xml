@@ -174,4 +174,24 @@
     <string name="sales_count_only_integer">Only integer number</string>
     <string name="help">Help</string>
     <string name="information_print_sales">Bluetooth printer is not conect</string>
+
+    <string name="enter_barcode_">Input barcode</string>
+    <string name="responseNothing">Response is nothing</string>
+    <string name="Barcode_not_saved">Barcode is not saved! </string>
+    <string name="errorMsg_Internal">Internal error</string>
+    <string name="errorMsg_noError">No Error</string>
+    <string name="errorMsg_user_notExist">User does not exist</string>
+    <string name="errorMsg_assortmentNotExist">Assortiment does not exist</string>
+    <string name="errorMsg_WareHouseNotExist">Warehouse does not exist</string>
+    <string name="errorMsg_printTemplateNotSet">Print template not set</string>
+    <string name="errorMsg_printerNotFoundOrNotAvailable">Printer not found or not available</string>
+    <string name="errorMsg_errorReadingPrintTemplate">Error reading print template</string>
+    <string name="errorMsg_notRightForEdit">Not has right for edit</string>
+    <string name="errorMsg_barcodeAlreadyExist">Barcode already exist</string>
+    <string name="errorMsg_assortimentNotExist">Assortiment not exist</string>
+    <string name="errorMsg_mainOfficetoEnterpriseNotExist">Main office to enterprise not exist</string>
+    <string name="errorMsg_WorkSpacetoMainOfficeNotExist">Workspaces to main office not exist</string>
+    <string name="errorMsg_unknowErrore">Unknow error</string>
+    <string name="et_hint_barcode">Barcode</string>
+    <string name="btn_atribuire_barcodului">Set barcode</string>
 </resources>
