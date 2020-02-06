@@ -8,7 +8,9 @@ import android.util.Log;
 
 //import com.example.igor.terminalmobile.Settings.Assortment;
 
-import com.RT_Printer.BluetoothPrinter.BLUETOOTH.BluetoothPrintDriver;
+//import com.RT_Printer.BluetoothPrinter.BLUETOOTH.BluetoothPrintDriver;
+
+import com.rt.printerlibrary.printer.RTPrinter;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,36 +18,90 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.TimeZone;
 
-import edi.md.mobile.Settings.Assortment;
-import edi.md.mobile.Utils.Assortiment;
-import edi.md.mobile.Utils.AssortmentInActivity;
+import edi.md.mobile.NetworkUtils.RetrofitResults.Assortment;
+import edi.md.mobile.app.utils.BaseEnum;
 
 public class Variables extends Application {
 
-    private Boolean LoginVariable=false;
-    private Boolean DownloadASLVariable=false;
+    public static Variables instance = null;
+    private RTPrinter rtPrinter;
+
+    private int widthPrinterPrint;
+
+    @BaseEnum.CmdType
+    private int currentCmdType = BaseEnum.CMD_PIN;//默认为针打
+
+    @BaseEnum.ConnectType
+    private int currentConnectType = BaseEnum.NONE;//默认未连接
+
+    private Boolean userAuthentificate = false;
+    private Boolean DownloadASLVariable = false;
     private Boolean Recreate = false;
     public static final String mPOSPrinters = "POS printers";
     public static final String mLablePrinters = "Lable printers";
     public static final String[] mRongtaModelList = { "Not selected","RPP-200 57mm", "RPP-300 80mm"};
     public static final String[] mZebraModelList = {"Not selected", "Zebra lable"};
-    BluetoothPrintDriver mBTDevice;
+//    BluetoothPrintDriver mBTDevice;
+
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        instance = this;
+    }
+
+    public static Variables getInstance(){
+        return instance;
+    }
+
+
+    public RTPrinter getRtPrinter() {
+        return rtPrinter;
+    }
+
+    public void setRtPrinter(RTPrinter rtPrinter) {
+        this.rtPrinter = rtPrinter;
+    }
+
+    @BaseEnum.CmdType
+    public int getCurrentCmdType() {
+        return currentCmdType;
+    }
+
+    public void setCurrentCmdType(@BaseEnum.CmdType int currentCmdType) {
+        this.currentCmdType = currentCmdType;
+    }
+
+    @BaseEnum.ConnectType
+    public int getCurrentConnectType() {
+        return currentConnectType;
+    }
+
+    public void setCurrentConnectType(@BaseEnum.ConnectType int currentConnectType) {
+        this.currentConnectType = currentConnectType;
+    }
+
+    public int getWidthPrinterPrint() {
+        return widthPrinterPrint;
+    }
+
+    public void setWidthPrinterPrint(int widthPrinterPrint) {
+        this.widthPrinterPrint = widthPrinterPrint;
+    }
 
     private HashMap<String, Assortment> AssortimentID =new HashMap<>();
 
     //методы настройки и получение переменной  если пользователь авторизировался или нет
-    public Boolean getLoginVariable() {
-        return LoginVariable;
+    public Boolean getUserAuthentificate() {
+        return userAuthentificate;
     }
-    public void setLoginVariable(Boolean NewData) {
-        this.LoginVariable = NewData;
+    public void setUserAuthentificate(Boolean NewData) {
+        this.userAuthentificate = NewData;
     }
 
     //методы настройки и получение переменной если было пересоздано окно(в случае смены языка)
@@ -94,6 +150,7 @@ public class Variables extends Application {
                         String allow_integer = sal.getAllowNonIntegerSale();
                         String incomePrice=sal.getIncomePrice();
                         String unitary=sal.getUnit();
+                        String marking = sal.getMarking();
                         String finalUnitPrice=sal.getUnitPrice();
                         String UnitInPackage=sal.getUnitInPackage();
 
@@ -107,6 +164,7 @@ public class Variables extends Application {
                         asl_.put("ID", uid_asl);
                         asl_.put("Code", code_asl);
                         asl_.put("BarCode", barcode_asl);
+                        asl_.put("Marking",marking);
                         asl_.put("Bar_code",getResources().getString(R.string.txt_list_asl_view_barcode) + barcode_asl);
                         asl_.put("AllowNonIntegerSale", allow_integer);
                         asl_.put("Price", price);
@@ -159,6 +217,7 @@ public class Variables extends Application {
                         String barcode_asl = sal.getBarCode();
                         String allow_integer = sal.getAllowNonIntegerSale();
                         String incomePrice = sal.getIncomePrice();
+                        String marking = sal.getMarking();
                         String unitary = sal.getUnit();
                         String finalUnitPrice = sal.getUnitPrice();
                         String UnitInPackage = sal.getUnitInPackage();
@@ -168,11 +227,13 @@ public class Variables extends Application {
 
                         asl_.put("Folder_is", false);
                         String Asl_Price =getResources().getString(R.string.txt_list_asl_view_price)+ price + getResources().getString(R.string.txt_list_asl_view_valuta);
+
                         asl_.put("icon", R.drawable.assortiment_item);
                         asl_.put("Name", asl_name);
                         asl_.put("ID", uid_asl);
                         asl_.put("Code", code_asl);
                         asl_.put("BarCode", barcode_asl);
+                        asl_.put("Marking",marking);
                         asl_.put("Bar_code", getResources().getString(R.string.txt_list_asl_view_barcode) + barcode_asl);
                         asl_.put("AllowNonIntegerSale", allow_integer);
                         asl_.put("Price", price);
@@ -267,10 +328,52 @@ public class Variables extends Application {
         }
     }
 
-    public void setPrinters (BluetoothPrintDriver bt_device){
-        this.mBTDevice = bt_device;
-    }
-    public BluetoothPrintDriver getPrinters (){
-       return mBTDevice ;
+
+    public String getErrorMessage (int code){
+        String errorMsg = "";
+        switch (code){
+            case -1: {
+                errorMsg = getString(R.string.errorMsg_Internal);
+            }break;
+            case 0: {
+                errorMsg = getString(R.string.errorMsg_noError);
+            }break;
+            case 1: {
+                errorMsg = getString(R.string.errorMsg_user_notExist);
+            }break;
+            case 2: {
+                errorMsg = getString(R.string.errorMsg_assortmentNotExist);
+            }break;
+            case 3: {
+                errorMsg = getString(R.string.errorMsg_WareHouseNotExist);
+            }break;
+            case 4: {
+                errorMsg = getString(R.string.errorMsg_printTemplateNotSet);
+            }break;
+            case 5: {
+                errorMsg = getString(R.string.errorMsg_printerNotFoundOrNotAvailable);
+            }break;
+            case 6: {
+                errorMsg = getString(R.string.errorMsg_errorReadingPrintTemplate);
+            }break;
+            case 7: {
+                errorMsg = getString(R.string.errorMsg_notRightForEdit);
+            }break;
+            case 8: {
+                errorMsg = getString(R.string.errorMsg_barcodeAlreadyExist);
+            }break;
+            case 9: {
+                errorMsg = getString(R.string.errorMsg_assortimentNotExist);
+            }break;
+            case 10: {
+                errorMsg = getString(R.string.errorMsg_mainOfficetoEnterpriseNotExist);
+            }break;
+            case 11: {
+                errorMsg = getString(R.string.errorMsg_WorkSpacetoMainOfficeNotExist);
+            }break;
+            default:
+                errorMsg = getString(R.string.errorMsg_unknowErrore);
+        }
+        return errorMsg;
     }
 }

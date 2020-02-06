@@ -40,6 +40,7 @@ public class FragmentZebraPrinter extends Fragment {
    Button btn_download_lable,btn_calibrate_printer;
    String ip_,port_,mNamePrinter,mMACPrinter;
    TextView txt_status, txtNamePrinter;
+
     // Message types sent from the BluetoothChatService Handler
     public static final int MESSAGE_STATE_CHANGE_Rongta = 1;
     public static final int MESSAGE_READ_Rongta = 2;

@@ -43,11 +43,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import edi.md.mobile.NetworkUtils.Services.CommandService;
 import edi.md.mobile.R;
-import edi.md.mobile.Sales;
-import edi.md.mobile.Settings.ASL;
-import edi.md.mobile.Settings.Assortment;
-import edi.md.mobile.Utils.ServiceApi;
+import edi.md.mobile.NetworkUtils.RetrofitResults.AssortmentListResult;
+import edi.md.mobile.NetworkUtils.RetrofitResults.Assortment;
 import edi.md.mobile.Variables;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -61,7 +60,7 @@ import static edi.md.mobile.NetworkUtils.NetworkUtils.Response_from_GetWareHouse
 
 public class WorkPlace extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     Button btn_get_workplace,btn_add_folder,btn_delete_all_folder;
-    Switch check_stock,show_cod,auto_confirm,show_keyboard;
+    Switch check_stock,show_cod,auto_confirm,show_keyboard, printSales;
     TextView txtFolders,txt_user;
     String ip_,port_,UserId;
     ProgressDialog pgH;
@@ -108,6 +107,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         show_keyboard = findViewById(R.id.switch_show_keyboard_workplace);
         txtFolders = findViewById(R.id.txt_show_folders_workplace);
         txt_user = findViewById(R.id.txt_user_workplace);
+        printSales = findViewById(R.id.switch_print_sales);
         pgH=new ProgressDialog(WorkPlace.this);
 
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
@@ -139,6 +139,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         boolean show = Settings.getBoolean("ShowKeyBoard",false);
         boolean CheckStock = Settings.getBoolean("CheckStockInput",false);
         boolean ShowCode = Settings.getBoolean("ShowCode",false);
+        boolean printSale = Settings.getBoolean("PrintSales",false);
 
         if (show){
             show_keyboard.setChecked(true);
@@ -162,6 +163,13 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         }else{
             show_cod.setChecked(false);
         }
+
+        if (printSale){
+            printSales.setChecked(true);
+        }else{
+            printSales.setChecked(false);
+        }
+
 
         try {
             myJSONArray = new JSONArray(selected);
@@ -406,6 +414,16 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                 }else{
                     getWareHouse();
                 }
+            }
+        });
+
+        printSales.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                inpSet.putBoolean("PrintSales",true);
+                inpSet.apply();
+            }else{
+                inpSet.putBoolean("PrintSales",false);
+                inpSet.apply();
             }
         });
         handler = new Handler() {
@@ -698,13 +716,13 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                         .addConverterFactory(GsonConverterFactory.create())
                         .client(okHttpClient)
                         .build();
-                final ServiceApi assortiment_API = retrofit.create(ServiceApi.class);
-                final Call<ASL> assortiment = assortiment_API.getAssortiment(UserId,WareGUid);
-                assortiment.enqueue(new Callback<ASL>() {
+                final CommandService assortiment_API = retrofit.create(CommandService.class);
+                final Call<AssortmentListResult> assortiment = assortiment_API.getAssortimentListForStock(UserId,WareGUid);
+                assortiment.enqueue(new Callback<AssortmentListResult>() {
                     @Override
-                    public void onResponse(Call<ASL> call, Response<ASL> response) {
+                    public void onResponse(Call<AssortmentListResult> call, Response<AssortmentListResult> response) {
 
-                        ASL assortiment_body = response.body();
+                        AssortmentListResult assortiment_body = response.body();
                         if(assortiment_body != null){
                             List<Assortment> assortmentListData = assortiment_body.getAssortments();
 
@@ -752,7 +770,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                     }
 
                     @Override
-                    public void onFailure(Call<ASL> call, Throwable t) {
+                    public void onFailure(Call<AssortmentListResult> call, Throwable t) {
                         handler.obtainMessage(20,t.getMessage()).sendToTarget();
                     }
                 });

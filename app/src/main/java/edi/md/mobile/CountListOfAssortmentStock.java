@@ -5,13 +5,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -24,20 +21,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import edi.md.mobile.Utils.AssortmentInActivity;
+import edi.md.mobile.Utils.AssortmentParcelable;
 
 import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
-import static edi.md.mobile.NetworkUtils.NetworkUtils.SaveRevisionLine;
 
 public class CountListOfAssortmentStock extends AppCompatActivity {
     final Context context = this;
@@ -108,7 +96,7 @@ public class CountListOfAssortmentStock extends AppCompatActivity {
         boolean ShowCode = Settings.getBoolean("ShowCode", false);
 
         Intent sales = getIntent();
-        AssortmentInActivity assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
+        AssortmentParcelable assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
         mNameAssortment = assortment.getName();
         final String mPriceAssortment = assortment.getPrice();
         final String mMarkingAssortment = assortment.getMarking();

@@ -22,7 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import edi.md.mobile.Utils.AssortmentInActivity;
+import edi.md.mobile.Utils.AssortmentParcelable;
 
 import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 
@@ -67,7 +67,7 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
             etCant.requestFocus();
         }
         Intent sales = getIntent();
-        AssortmentInActivity assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
+        AssortmentParcelable assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
         mNameAssortment = assortment.getName();
         mPriceAssortment = assortment.getPrice();
         final String mMarkingAssortment = assortment.getMarking();

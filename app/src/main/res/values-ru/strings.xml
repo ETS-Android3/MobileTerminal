@@ -171,5 +171,24 @@
     <string name="versiune_locala_securitate">Версия на вашем устройстве:</string>
     <string name="sales_count_only_integer">Только целые числа</string>
     <string name="help">Помощь</string>
-    <string name="information_print_sales">Bluetooth printer is not conect</string>
+    <string name="information_print_sales">Принетр по блютузу не подключен</string>
+    <string name="enter_barcode_">Введите штрих-код</string>
+    <string name="responseNothing">Ответ пустой</string>
+    <string name="Barcode_not_saved">Штрих-код не сохранен!</string>
+    <string name="errorMsg_Internal">Внутренея ошибка</string>
+    <string name="errorMsg_noError">Нет ошибки</string>
+    <string name="errorMsg_user_notExist">Пользователь не найден</string>
+    <string name="errorMsg_assortmentNotExist">Товар не найден</string>
+    <string name="errorMsg_WareHouseNotExist">Склад не найден</string>
+    <string name="errorMsg_printTemplateNotSet">Шаблон печати не настроен</string>
+    <string name="errorMsg_printerNotFoundOrNotAvailable">Принтер не найден или недоступен</string>
+    <string name="errorMsg_errorReadingPrintTemplate">Ошибки при чтения шаблона</string>
+    <string name="errorMsg_notRightForEdit">У вас нет прав на редактирование товара</string>
+    <string name="errorMsg_barcodeAlreadyExist">Штрихкод уже существует</string>
+    <string name="errorMsg_assortimentNotExist">Товар не существует</string>
+    <string name="errorMsg_mainOfficetoEnterpriseNotExist">Главный офис не найден</string>
+    <string name="errorMsg_WorkSpacetoMainOfficeNotExist">Рабочие места в офисе не найдены</string>
+    <string name="errorMsg_unknowErrore">Неизвестная ошибка</string>
+    <string name="et_hint_barcode">Штрих-код</string>
+    <string name="btn_atribuire_barcodului">Установить штрих-код</string>
 </resources>

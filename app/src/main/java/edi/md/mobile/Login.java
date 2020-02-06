@@ -21,7 +21,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Switch;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +43,7 @@ public class Login extends AppCompatActivity {
     ProgressDialog pgH;
     String ip_,port_,PinCode;
     Boolean onedate =false;
+    ImageView image_login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +58,44 @@ public class Login extends AppCompatActivity {
         cancel_btn=findViewById(R.id.btn_cancel_login);
         ok_btn=findViewById(R.id.btn_ok_login);
         password=findViewById(R.id.passwords_login);
+        image_login = findViewById(R.id.imageLogin);
 
         final SharedPreferences Settings = getSharedPreferences("Settings", MODE_PRIVATE);
         ip_=Settings.getString("IP","");
         port_=Settings.getString("Port","");
         pgH=new ProgressDialog(Login.this);
 
-        PinCode=Settings.getString("PinCode","");
+        PinCode = Settings.getString("PinCode","");
+
+        Intent getActivity = getIntent();
+        final int id_ = getActivity.getIntExtra("Activity", 101);
+
+        if(Settings.getString("PinCod","").equals("")){
+            if(id_ == 8) {
+                SharedPreferences.Editor inpNew = Settings.edit();
+                inpNew.putBoolean("SetPin",false);
+                inpNew.apply();
+                Intent Seting= new Intent(".MenuWorkPlace");
+                startActivity(Seting);
+                finish();
+            }
+            else if (id_ == 9){
+                SharedPreferences.Editor inpNew = Settings.edit();
+                inpNew.putBoolean("SetPin",false);
+                inpNew.apply();
+                Intent Seting= new Intent(".MenuPrinters");
+                startActivity(Seting);
+                finish();
+            }
+            else if (id_ == 10){
+                SharedPreferences.Editor inpNew = Settings.edit();
+                inpNew.putBoolean("SetPin",false);
+                inpNew.apply();
+                Intent Seting= new Intent(".MenuSecuritate");
+                startActivity(Seting);
+                finish();
+            }
+        }
 
         password.requestFocus();
 
@@ -77,26 +109,29 @@ public class Login extends AppCompatActivity {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
 
-        Intent getActivity = getIntent();
-        final int id_ = getActivity.getIntExtra("Activity", 101);
+
 
         if(id_ == 8){
+            image_login.setImageDrawable(getResources().getDrawable(R.drawable.login));
             setTitle(R.string.header_login_user_settings);
         }
         else if( id_ == 9) {
+            image_login.setImageDrawable(getResources().getDrawable(R.drawable.login));
             setTitle(R.string.header_login_user_settings);
         }
         else if( id_ == 10){
+            image_login.setImageDrawable(getResources().getDrawable(R.drawable.login));
             setTitle(R.string.header_login_user_settings);
         }
         else{
+            image_login.setImageDrawable(getResources().getDrawable(R.drawable.login_server));
             setTitle(R.string.header_login_user_activity);
         }
 
         cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((Variables)getApplication()).setLoginVariable(false);
+                ((Variables)getApplication()).setUserAuthentificate(false);
                 finish();
             }
         });
@@ -108,9 +143,9 @@ public class Login extends AppCompatActivity {
                 pgH.setIndeterminate(true);
                 pgH.show();
 
-                if(id_==8) {
+                if(id_ == 8) {
                     String code = password.getText().toString();
-                    PinCode=Settings.getString("PinCod","");
+                    PinCode = Settings.getString("PinCod","");
                     String PinCodAdmin = Settings.getString("PinCodAdmin","");
                     if(TestInputPin(code,PinCode) || TestInputPin(code,PinCodAdmin)){
                         pgH.dismiss();
@@ -125,7 +160,7 @@ public class Login extends AppCompatActivity {
                         Toast.makeText(Login.this,getResources().getString(R.string.msg_login_cod_incorect),Toast.LENGTH_SHORT).show();
                     }
                 }
-                else if (id_==9){
+                else if (id_ == 9){
                     String code = password.getText().toString();
                     PinCode=Settings.getString("PinCod","");
                     String PinCodAdmin = Settings.getString("PinCodAdmin","");
@@ -142,7 +177,7 @@ public class Login extends AppCompatActivity {
                         Toast.makeText(Login.this,getResources().getString(R.string.msg_login_cod_incorect),Toast.LENGTH_SHORT).show();
                     }
                 }
-                else if (id_==10){
+                else if (id_ == 10){
                     String code = password.getText().toString();
                     PinCode=Settings.getString("PinCod","");
                     String PinCodAdmin = Settings.getString("PinCodAdmin","");
@@ -404,7 +439,7 @@ public class Login extends AppCompatActivity {
                         String Name = response_from_Autentificare.getString("Name");
                         String UserID = response_from_Autentificare.getString("UserID");
 
-                        ((Variables) getApplication()).setLoginVariable(true);
+                        ((Variables) getApplication()).setUserAuthentificate(true);
                         SharedPreferences LogIn = getSharedPreferences("User", MODE_PRIVATE);
                         SharedPreferences.Editor input_LogIn = LogIn.edit();
                         input_LogIn.putString("Name", Name);
@@ -421,6 +456,7 @@ public class Login extends AppCompatActivity {
 
                         Intent getActivity = getIntent();
                         final int id = getActivity.getIntExtra("Activity", 101);
+
                         switch (id) {
                             case 1: {
                                 Intent checkprice = new Intent(".CheckPriceMobile");
@@ -462,12 +498,19 @@ public class Login extends AppCompatActivity {
                                 Intent StockAsortiment = new Intent(".StockAssortmentMobile");
                                 startActivity(StockAsortiment);
                                 finish();
-                            }
+                            }break;
                             case 11:{
                                 setResult(RESULT_OK);
                                 finish();
                             }
                             break;
+                            case 147: {
+                                Intent asortmentList = new Intent(".AssortmentMobile");
+                                asortmentList.putExtra("WareID",getActivity.getStringExtra("WareID"));
+                                asortmentList.putExtra("ActivityCount",getActivity.getIntExtra("ActivityCount",0));
+                                startActivity(asortmentList);
+                                finish();
+                            }break;
                         }
                     } else {
                         onedate=false;

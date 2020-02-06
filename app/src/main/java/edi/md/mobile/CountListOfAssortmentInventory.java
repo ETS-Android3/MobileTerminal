@@ -36,7 +36,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import edi.md.mobile.Utils.AssortmentInActivity;
+import edi.md.mobile.Utils.AssortmentParcelable;
 
 import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.SaveRevisionLine;
@@ -370,7 +370,7 @@ public class CountListOfAssortmentInventory extends AppCompatActivity {
         pgH =new ProgressDialog(CountListOfAssortmentInventory.this);
 
         Intent sales = getIntent();
-        AssortmentInActivity assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
+        AssortmentParcelable assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
         mNameAssortment = assortment.getName();
         mPriceAssortment = assortment.getPrice();
         mMarkingAssortment = assortment.getMarking();

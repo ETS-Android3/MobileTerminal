@@ -39,9 +39,9 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.zebra.sdk.comm.BluetoothConnection;
-import com.zebra.sdk.comm.Connection;
-import com.zebra.sdk.comm.ConnectionException;
+//import com.zebrdk.a.sdk.comm.BluetoothConnection;
+//import com.zebra.sdk.comm.Connection;
+//import com.zebra.scomm.ConnectionException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,16 +53,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import edi.md.mobile.Settings.Assortment;
-import edi.md.mobile.Utils.AssortmentInActivity;
+import edi.md.mobile.NetworkUtils.RetrofitResults.Assortment;
+import edi.md.mobile.Utils.AssortmentParcelable;
 
 import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetAssortiment;
@@ -259,89 +256,89 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                 SharedPreferences sPrefSetting =getSharedPreferences("Save setting", MODE_PRIVATE);
                 final String adresMAC = sPref.getString("AdressPrinters",null);
                 laberl = sPrefSetting.getString("Lable",null);
-                if(adresMAC!=null) {
-                    pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
-                    pgH.setCancelable(false);
-                    pgH.setIndeterminate(true);
-                    pgH.show();
-                    new Thread() {
-                        public void run() {
-                            Connection connection = new BluetoothConnection(adresMAC);
-                            try {
-                                connection.open();
-                                for (int j = 0; j< mArrayForEtichete.length(); j++){
-                                    JSONObject asl_obj = mArrayForEtichete.getJSONObject(j);
-                                    String UnitInPackage = asl_obj.getString("UnitInPackage");
-                                    String UnitPrice = asl_obj.getString("UnitPrice");
-                                    String Unit = asl_obj.getString("Unit");
-                                    String Code = asl_obj.getString("Code");
-                                    String Barcode = asl_obj.getString("Barcode");
-                                    String Name= asl_obj.getString("Name");
-                                    String Price = asl_obj.getString("Price");
-
-                                    String price_unit;
-                                    if (UnitInPackage==null){
-                                        price_unit = UnitPrice + "/" + Unit;
-                                    }else{
-                                        price_unit = UnitPrice + "/" + UnitInPackage;
-                                    }
-
-                                    String Count = asl_obj.getString("Count");
-                                    int count_to_int = Integer.valueOf(Count);
-
-                                    Date datess = new Date();
-                                    SimpleDateFormat sdfChisinau = new SimpleDateFormat("yyyy.MM.dd");
-                                    TimeZone tzInChisinau = TimeZone.getTimeZone("Europe/Chisinau");
-                                    sdfChisinau.setTimeZone(tzInChisinau);
-                                    String sDateInChisinau = sdfChisinau.format(datess); // Convert to String first
-
-                                    for(int sciotcik=0; count_to_int > sciotcik; sciotcik++){
-                                        String codes = "codes_imprim";
-                                        String data_imprim = "data_imprim";
-                                        String name_imprim = "name_imprim";
-                                        String rus_name_imprim = "rus_imprim";
-                                        String price_imprim = "price_imprim";
-                                        String price_unit_imprim = "price_unit_imprim";
-                                        String barcode_imprim = "barcode_imprim";
-                                        if(laberl!=null) {
-                                            laberl = laberl.replace(codes, Code);
-                                            laberl = laberl.replace(data_imprim, sDateInChisinau);
-                                            laberl = laberl.replace(name_imprim, Name);
-                                            laberl = laberl.replace(rus_name_imprim, "");
-                                            laberl = laberl.replace(price_imprim, Price);
-                                            laberl = laberl.replace(price_unit_imprim, price_unit);
-                                            laberl = laberl.replace(barcode_imprim, Barcode);
-                                            connection.write(laberl.getBytes());
-                                        }
-                                        else{
-                                            mHandler.obtainMessage(20, 12, -1)
-                                                    .sendToTarget();
-                                            break;
-                                        }
-                                    }
-                                }
-                                mHandler.obtainMessage(10, 11, -1)
-                                        .sendToTarget();
-                            } catch (ConnectionException e) {
-                                ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
-                                mHandler.obtainMessage(201, 14, -1,e.toString())
-                                        .sendToTarget();
-                            }
-                            catch (JSONException e) {
-                                e.printStackTrace();
-                                ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
-                            }
-                            try {
-                                connection.close();
-                            } catch (ConnectionException e) {
-                                e.printStackTrace();
-                                ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
-                            }
-                        }
-                    }.start();
-                }else{
-                    Toast.makeText(StockAssortment.this,getResources().getString(R.string.txt_not_conected_printers), Toast.LENGTH_SHORT).show();
-                }
+//                if(adresMAC!=null) {
+//                    pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
+//                    pgH.setCancelable(false);
+//                    pgH.setIndeterminate(true);
+//                    pgH.show();
+//                    new Thread() {
+//                        public void run() {
+//                            Connection connection = new BluetoothConnection(adresMAC);
+//                            try {
+//                                connection.open();
+//                                for (int j = 0; j< mArrayForEtichete.length(); j++){
+//                                    JSONObject asl_obj = mArrayForEtichete.getJSONObject(j);
+//                                    String UnitInPackage = asl_obj.getString("UnitInPackage");
+//                                    String UnitPrice = asl_obj.getString("UnitPrice");
+//                                    String Unit = asl_obj.getString("Unit");
+//                                    String Code = asl_obj.getString("Code");
+//                                    String Barcode = asl_obj.getString("Barcode");
+//                                    String Name= asl_obj.getString("Name");
+//                                    String Price = asl_obj.getString("Price");
+//
+//                                    String price_unit;
+//                                    if (UnitInPackage==null){
+//                                        price_unit = UnitPrice + "/" + Unit;
+//                                    }else{
+//                                        price_unit = UnitPrice + "/" + UnitInPackage;
+//                                    }
+//
+//                                    String Count = asl_obj.getString("Count");
+//                                    int count_to_int = Integer.valueOf(Count);
+//
+//                                    Date datess = new Date();
+//                                    SimpleDateFormat sdfChisinau = new SimpleDateFormat("yyyy.MM.dd");
+//                                    TimeZone tzInChisinau = TimeZone.getTimeZone("Europe/Chisinau");
+//                                    sdfChisinau.setTimeZone(tzInChisinau);
+//                                    String sDateInChisinau = sdfChisinau.format(datess); // Convert to String first
+//
+//                                    for(int sciotcik=0; count_to_int > sciotcik; sciotcik++){
+//                                        String codes = "codes_imprim";
+//                                        String data_imprim = "data_imprim";
+//                                        String name_imprim = "name_imprim";
+//                                        String rus_name_imprim = "rus_imprim";
+//                                        String price_imprim = "price_imprim";
+//                                        String price_unit_imprim = "price_unit_imprim";
+//                                        String barcode_imprim = "barcode_imprim";
+//                                        if(laberl!=null) {
+//                                            laberl = laberl.replace(codes, Code);
+//                                            laberl = laberl.replace(data_imprim, sDateInChisinau);
+//                                            laberl = laberl.replace(name_imprim, Name);
+//                                            laberl = laberl.replace(rus_name_imprim, "");
+//                                            laberl = laberl.replace(price_imprim, Price);
+//                                            laberl = laberl.replace(price_unit_imprim, price_unit);
+//                                            laberl = laberl.replace(barcode_imprim, Barcode);
+//                                            connection.write(laberl.getBytes());
+//                                        }
+//                                        else{
+//                                            mHandler.obtainMessage(20, 12, -1)
+//                                                    .sendToTarget();
+//                                            break;
+//                                        }
+//                                    }
+//                                }
+//                                mHandler.obtainMessage(10, 11, -1)
+//                                        .sendToTarget();
+//                            } catch (ConnectionException e) {
+//                                ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
+//                                mHandler.obtainMessage(201, 14, -1,e.toString())
+//                                        .sendToTarget();
+//                            }
+//                            catch (JSONException e) {
+//                                e.printStackTrace();
+//                                ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
+//                            }
+//                            try {
+//                                connection.close();
+//                            } catch (ConnectionException e) {
+//                                e.printStackTrace();
+//                                ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
+//                            }
+//                        }
+//                    }.start();
+//                }else{
+//                    Toast.makeText(StockAssortment.this,getResources().getString(R.string.txt_not_conected_printers), Toast.LENGTH_SHORT).show();
+//                }
             }
         });
 
@@ -840,7 +837,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                         assortment.setUnitPrice(UnitPrice);
                         assortment.setUnit(Unit);
                         assortment.setUnitInPackage(UnitInPackage);
-                        final AssortmentInActivity assortmentParcelable = new AssortmentInActivity(assortment);
+                        final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);
 
                         Intent sales = new Intent(".CountStockAssortmentMobile");
                         sales.putExtra(AssortimentClickentSendIntent,assortmentParcelable);

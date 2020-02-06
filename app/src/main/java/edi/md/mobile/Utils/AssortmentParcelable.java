@@ -7,13 +7,11 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
+import edi.md.mobile.NetworkUtils.RetrofitResults.Assortment;
 
-import edi.md.mobile.Settings.Assortment;
+public class AssortmentParcelable implements Parcelable {
 
-public class AssortmentInActivity implements Parcelable {
-
-    Assortiment assortiment;
+    AssortimentArray assortiment;
 
     @SerializedName("ErrorCode")
     @Expose
@@ -74,7 +72,7 @@ public class AssortmentInActivity implements Parcelable {
     private String vATCode;
     private String mCount;
 
-    public AssortmentInActivity(Parcel in) {
+    public AssortmentParcelable(Parcel in) {
         if (in.readByte() == 0) {
             errorCode = null;
         } else {
@@ -102,7 +100,7 @@ public class AssortmentInActivity implements Parcelable {
         mCount = in.readString();
     }
 
-    public AssortmentInActivity(Assortment asl) {
+    public AssortmentParcelable(Assortment asl) {
         allowNonIntegerSale = asl.getAllowNonIntegerSale();
         assortimentID = asl.getAssortimentID();
         assortimentParentID = asl.getAssortimentParentID();
@@ -123,15 +121,15 @@ public class AssortmentInActivity implements Parcelable {
         mCount = asl.getCount();
     }
 
-    public static final Creator<AssortmentInActivity> CREATOR = new Creator<AssortmentInActivity>() {
+    public static final Creator<AssortmentParcelable> CREATOR = new Creator<AssortmentParcelable>() {
         @Override
-        public AssortmentInActivity createFromParcel(Parcel in) {
-            return new AssortmentInActivity(in);
+        public AssortmentParcelable createFromParcel(Parcel in) {
+            return new AssortmentParcelable(in);
         }
 
         @Override
-        public AssortmentInActivity[] newArray(int size) {
-            return new AssortmentInActivity[size];
+        public AssortmentParcelable[] newArray(int size) {
+            return new AssortmentParcelable[size];
         }
     };
 

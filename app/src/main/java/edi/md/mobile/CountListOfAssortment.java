@@ -34,21 +34,21 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import edi.md.mobile.Utils.AssortmentInActivity;
+import edi.md.mobile.Utils.AssortmentParcelable;
 
 import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
-import static edi.md.mobile.NetworkUtils.NetworkUtils.SaveRevisionLine;
 
 public class CountListOfAssortment extends AppCompatActivity {
     final Context context = this;
-    String ip_,port_,mNameAssortment;
+    String ip_,port_,mNameAssortment,WareNames,WareUid;
     boolean mIntegerSales;
     EditText Count_enter;
     ImageButton btn_plus,btn_del;
     TextView name_forasl,price_forasl,btn_save,btn_cancel,txtCode,txtBarCode,txtMarking,txtRemain;
-    int FROM_INVENTORY_ACTIVITY = 717;
     JSONObject sendRevision;
     ProgressDialog pgH;
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -108,7 +108,7 @@ public class CountListOfAssortment extends AppCompatActivity {
         boolean ShowCode = Settings.getBoolean("ShowCode", false);
 
         Intent sales = getIntent();
-        AssortmentInActivity assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
+        AssortmentParcelable assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
         mNameAssortment = assortment.getName();
         final String mPriceAssortment = assortment.getPrice();
         final String mMarkingAssortment = assortment.getMarking();
@@ -122,6 +122,9 @@ public class CountListOfAssortment extends AppCompatActivity {
             mIntegerSales = true;
         else
             mIntegerSales = false;
+
+        WareNames = sales.getStringExtra("WareN");
+        WareUid = sales.getStringExtra("WareI");
 
         name_forasl.setText(mNameAssortment);
         price_forasl.setText(mPriceAssortment);
@@ -243,12 +246,13 @@ public class CountListOfAssortment extends AppCompatActivity {
         });
     }
     private void saveCount(){
-
         if (mIntegerSales) {
             if (isDouble(Count_enter.getText().toString())) {
                 Intent intent = new Intent();
                 intent.putExtra("Name", mNameAssortment);
                 intent.putExtra("count", String.valueOf(Count_enter.getText()));
+                intent.putExtra("WareName",WareNames);
+                intent.putExtra("Warehouse",WareUid);
                 setResult(RESULT_OK, intent);
                 finish();
             }
@@ -257,6 +261,8 @@ public class CountListOfAssortment extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.putExtra("Name",mNameAssortment);
                 intent.putExtra("count", String.valueOf(Count_enter.getText()));
+                intent.putExtra("WareName",WareNames);
+                intent.putExtra("Warehouse",WareUid);
                 setResult(RESULT_OK, intent);
                 finish();
             }

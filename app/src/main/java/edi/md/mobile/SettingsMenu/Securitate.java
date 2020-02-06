@@ -445,6 +445,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
             try {
                 URL url = new URL(f_url[0]);
                 URLConnection conection = url.openConnection();
+
                 conection.connect();
 
                 // this will be useful so that you can show a tipical 0-100%

@@ -51,8 +51,8 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import edi.md.mobile.Settings.Assortment;
-import edi.md.mobile.Utils.AssortmentInActivity;
+import edi.md.mobile.NetworkUtils.RetrofitResults.Assortment;
+import edi.md.mobile.Utils.AssortmentParcelable;
 
 import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 import static edi.md.mobile.NetworkUtils.NetworkUtils.GetAssortiment;
@@ -238,9 +238,8 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
             public void onClick(View v) {
                 Intent AddingASL = new Intent(".AssortmentMobile");
                 AddingASL.putExtra("ActivityCount", 191);
-                if(WorkPlaceID.equals("") || WorkPlaceID.equals("0")){
-                    AddingASL.putExtra("WareID",WareUid);
-                }
+                AddingASL.putExtra("WareID",WareUid);
+                AddingASL.putExtra("WareName",WareNames);
                 startActivityForResult(AddingASL, REQUET_FROM_LIST_ASSORTMENT);
 
             }
@@ -968,7 +967,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                         assortment.setIncomePrice(PriceIncoming);
                         assortment.setAssortimentID(Uid);
                         assortment.setAllowNonIntegerSale(String.valueOf(allowInteger));
-                        final AssortmentInActivity assortmentParcelable = new AssortmentInActivity(assortment);
+                        final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);
 
                         Intent sales = new Intent(".CountInvoiceMobile");
                         sales.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
