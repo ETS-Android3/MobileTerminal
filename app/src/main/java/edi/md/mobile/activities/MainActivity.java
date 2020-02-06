@@ -449,6 +449,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void run() {
                         CommandService commandService = ApiRetrofit.getCommandService(MainActivity.this);
+
                         Call<Boolean> call = commandService.pingService();
 
                         call.enqueue(new Callback<Boolean>() {

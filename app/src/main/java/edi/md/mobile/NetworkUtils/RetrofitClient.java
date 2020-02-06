@@ -42,14 +42,12 @@ public class RetrofitClient {
     }
     public static Retrofit getDataRetrofitClient(String url){
 
-        if(retrofitDataTerminal == null){
+        retrofitDataTerminal = new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(getOkHttpClient())
+                .build();
 
-            retrofitDataTerminal = new Retrofit.Builder()
-                    .baseUrl(url)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(getOkHttpClient())
-                    .build();
-        }
         return retrofitDataTerminal;
     }
     public static Retrofit getFpServiceClient(String url){
@@ -126,9 +124,9 @@ public class RetrofitClient {
     }
     private static OkHttpClient getOkHttpClient() {
         return new OkHttpClient.Builder()
-                .connectTimeout(8, TimeUnit.MINUTES)
-                .readTimeout(6, TimeUnit.MINUTES)
-                .writeTimeout(8, TimeUnit.MINUTES)
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
                 .build();
     }
 }

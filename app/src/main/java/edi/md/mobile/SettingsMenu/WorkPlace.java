@@ -60,7 +60,7 @@ import static edi.md.mobile.NetworkUtils.NetworkUtils.Response_from_GetWareHouse
 
 public class WorkPlace extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     Button btn_get_workplace,btn_add_folder,btn_delete_all_folder;
-    Switch check_stock,show_cod,auto_confirm,show_keyboard;
+    Switch check_stock,show_cod,auto_confirm,show_keyboard, printSales;
     TextView txtFolders,txt_user;
     String ip_,port_,UserId;
     ProgressDialog pgH;
@@ -107,6 +107,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         show_keyboard = findViewById(R.id.switch_show_keyboard_workplace);
         txtFolders = findViewById(R.id.txt_show_folders_workplace);
         txt_user = findViewById(R.id.txt_user_workplace);
+        printSales = findViewById(R.id.switch_print_sales);
         pgH=new ProgressDialog(WorkPlace.this);
 
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
@@ -138,6 +139,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         boolean show = Settings.getBoolean("ShowKeyBoard",false);
         boolean CheckStock = Settings.getBoolean("CheckStockInput",false);
         boolean ShowCode = Settings.getBoolean("ShowCode",false);
+        boolean printSale = Settings.getBoolean("PrintSales",false);
 
         if (show){
             show_keyboard.setChecked(true);
@@ -161,6 +163,13 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         }else{
             show_cod.setChecked(false);
         }
+
+        if (printSale){
+            printSales.setChecked(true);
+        }else{
+            printSales.setChecked(false);
+        }
+
 
         try {
             myJSONArray = new JSONArray(selected);
@@ -405,6 +414,16 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                 }else{
                     getWareHouse();
                 }
+            }
+        });
+
+        printSales.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                inpSet.putBoolean("PrintSales",true);
+                inpSet.apply();
+            }else{
+                inpSet.putBoolean("PrintSales",false);
+                inpSet.apply();
             }
         });
         handler = new Handler() {

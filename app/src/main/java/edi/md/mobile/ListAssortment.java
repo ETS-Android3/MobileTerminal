@@ -46,8 +46,10 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import edi.md.mobile.NetworkUtils.ApiRetrofit;
+import edi.md.mobile.NetworkUtils.RetrofitBody.SaveRevisionLineBody;
 import edi.md.mobile.NetworkUtils.RetrofitResults.AssortmentListResult;
 import edi.md.mobile.NetworkUtils.RetrofitResults.Assortment;
+import edi.md.mobile.NetworkUtils.RetrofitResults.ResponseSimple;
 import edi.md.mobile.NetworkUtils.Services.CommandService;
 import edi.md.mobile.Utils.AssortmentParcelable;
 import okhttp3.OkHttpClient;
@@ -79,7 +81,6 @@ public class ListAssortment extends AppCompatActivity {
             REQUEST_CODE_COUNT_INVENTORY = 444, REQUEST_CODE_Count_LIST_ASSORTMENT = 303,
             REQUEST_CODE_COUNT_STOCK_ASL = 404, ACTIVITY_SET_BARCODE = 525 ,REQUEST_SETBARCODE = 252, POSITION_CLICKED;
     Boolean mIsFolderAssortment;
-    Handler handler;
     TimerTask timerTask;
     Timer t;
     ArrayList<HashMap<String, Object>> asl_list = new ArrayList<>();
@@ -181,24 +182,6 @@ public class ListAssortment extends AppCompatActivity {
         pgH.setIndeterminate(true);
         pgH.setCancelable(false);
 
-        handler = new Handler() {
-            public void handleMessage(android.os.Message msg) {
-                if(msg.what == 10) {
-                    if (ListAssortment.this.isDestroyed()) { // or call isFinishing() if min sdk version < 17
-                        return;
-                    }
-                    pgH.dismiss();
-                    SortAssortmentList(asl_list);
-                    simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
-                            new String[]{"Name","icon","PriceWithText","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
-
-                    ((Variables)getApplication()).setDownloadASLVariable(true);
-                    list_assortments.setAdapter(simpleAdapterASL);
-                }
-            }
-
-        };
-
         if(Variables.getInstance().getDownloadASLVariable()){
             showAssortmentFromID("00000000-0000-0000-0000-000000000000");
         }
@@ -277,10 +260,10 @@ public class ListAssortment extends AppCompatActivity {
                         //проверяем если стоит вручную вести кол-во или по 1 автоматически
                         if(auto_send) {
                             json_item_added_inventory = new JSONObject();
-                            sendRevision = new JSONObject();
 
                             SharedPreferences Revision = getSharedPreferences("Revision", MODE_PRIVATE);
                             String RevisionID = Revision.getString("RevisionID", "");
+
                             pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
                             pgH.setIndeterminate(true);
                             pgH.setCancelable(false);
@@ -289,7 +272,7 @@ public class ListAssortment extends AppCompatActivity {
                                 boolean isExtist = false;
                                 //добавляю в массив нажатого товара чтобы потом отабразить какие товары были отправлены из окна с списком товаров
                                 for(int i=0; i <array_added_items_inventroy.length();i++){
-                                    JSONObject object= array_added_items_inventroy.getJSONObject(i);
+                                    JSONObject object = array_added_items_inventroy.getJSONObject(i);
                                     String GUID = object.getString("AssortimentUid");
                                     String count_exist = object.getString("Quantity");
 
@@ -325,21 +308,49 @@ public class ListAssortment extends AppCompatActivity {
                                     countExist = Double.parseDouble(ExistingCount);
                                 }
                                 Double total_count = countExist + 1;
+
                                 add_count_clicked.putString(mGUIDAssortment,String.format("%.2f",total_count));
                                 add_name.putString(mGUIDAssortment,mNameAssortment);
                                 add_name.apply();
                                 add_count_clicked.apply();
-                                //сохраняю в JSON то что надо отправить сервису для сохранения нажатого товара на сервере
-                                sendRevision.put("Assortiment", mGUIDAssortment);
-                                sendRevision.put("Quantity", "1");
-                                sendRevision.put("RevisionID", RevisionID);
+
+                                //надо отправить сервису для сохранения нажатого товара
+                                SaveRevisionLineBody revisionLineBody = new SaveRevisionLineBody();
+                                revisionLineBody.setAssortiment(mGUIDAssortment);
+                                revisionLineBody.setRevisionID(RevisionID);
+                                revisionLineBody.setFinalQuantity(false);
+                                revisionLineBody.setQuantity(1.0);
+
+                                CommandService commandService = ApiRetrofit.getCommandService(ListAssortment.this);
+                                Call<ResponseSimple> call = commandService.saveRevisionLine(revisionLineBody);
+
+                                call.enqueue(new Callback<ResponseSimple>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseSimple> call, Response<ResponseSimple> response) {
+                                        ResponseSimple responseSimple = response.body();
+                                        pgH.dismiss();
+                                        if(responseSimple != null){
+                                            if(responseSimple.getErrorCode() == 0){
+                                                Toast.makeText(ListAssortment.this, getResources().getString(R.string.msg_count_added_inventory), Toast.LENGTH_SHORT).show();
+                                            }
+                                            else{
+                                                Toast.makeText(ListAssortment.this, getResources().getString(R.string.msg_error_code) + responseSimple.getErrorCode() , Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                        else
+                                            Toast.makeText(ListAssortment.this, getResources().getString(R.string.msg_nu_raspuns_server), Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseSimple> call, Throwable t) {
+                                        pgH.dismiss();
+                                        Toast.makeText(ListAssortment.this, t.getMessage() , Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
                             }
-                            //метод асинхроный где отправляю в сервис товар
-                            URL generateSaveLine = SaveRevisionLine(ip_, port_);
-                            new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
                         }
                         //если не стоит автоматическое добавление товара в ревизию
                         else{
@@ -469,7 +480,6 @@ public class ListAssortment extends AppCompatActivity {
 
     }
     private void downloadShowAssortment() {
-
         Call<AssortmentListResult> call = commandService.getAssortimentListForStock(UserId,WareUid);
         call.enqueue(new Callback<AssortmentListResult>() {
             @Override
@@ -478,10 +488,12 @@ public class ListAssortment extends AppCompatActivity {
 
                 if(assortiment_body.getAssortments() == null){
                     Toast.makeText(ListAssortment.this,"Error to download assortment\nBody in response is null!", Toast.LENGTH_SHORT).show();
+                    return;
                 }
                 List<Assortment> assortmentListData = assortiment_body.getAssortments();
                 SharedPreferences CheckUidFolder =getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
                 String selectedUidJSON = CheckUidFolder.getString("selected_Uid_Array","[]");
+
                 try {
                     mFoldersSelected = new JSONArray(selectedUidJSON);
                 } catch (JSONException e) {
@@ -489,8 +501,6 @@ public class ListAssortment extends AppCompatActivity {
                     ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
                 }
                 multi_folders = mFoldersSelected.length() > 0;
-
-                Variables myapp =((Variables)getApplication());
 
                 for (int i=0; i<assortmentListData.size();i++){
                     HashMap<String, Object> asl_ = new HashMap<>();
@@ -510,9 +520,9 @@ public class ListAssortment extends AppCompatActivity {
 
                     double priceunit = Double.parseDouble(price);
 
-                    price =String.format("%.2f",priceunit);
+                    price = String.format("%.2f",priceunit);
 
-                    myapp.add_AssortimentID(uid_asl,assortmentListData.get(i));
+                    Variables.getInstance().add_AssortimentID(uid_asl,assortmentListData.get(i));
 
                     if(multi_folders){
                         for (int j = 0; j< mFoldersSelected.length(); j++) {
@@ -701,41 +711,7 @@ public class ListAssortment extends AppCompatActivity {
             }
         }
     }
-    public String getResponseFromURLSaveRevisionLineAdd(URL send_bills) {
-        StringBuilder data = new StringBuilder();
-        HttpURLConnection send_bill_Connection = null;
-        try {
-            send_bill_Connection = (HttpURLConnection) send_bills.openConnection();
-            send_bill_Connection.setConnectTimeout(4000);
-            send_bill_Connection.setRequestMethod("POST");
-            send_bill_Connection.setRequestProperty("Content-Type", "application/json");
-            send_bill_Connection.setDoOutput(true);
-            DataOutputStream wr = new DataOutputStream(send_bill_Connection.getOutputStream());
-            wr.writeBytes(String.valueOf(sendRevision));
-            wr.flush();
-            wr.close();
-
-            InputStream in = send_bill_Connection.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(in);
-            int inputStreamData = inputStreamReader.read();
-
-            while (inputStreamData != -1) {
-                char current = (char) inputStreamData;
-                inputStreamData = inputStreamReader.read();
-                data.append(current);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
-        } finally {
-            if (send_bill_Connection != null) {
-                send_bill_Connection.disconnect();
-            }
-        }
-
-        return data.toString();
-    }
+    @Override
     public boolean dispatchTouchEvent(@NonNull MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
@@ -751,35 +727,7 @@ public class ListAssortment extends AppCompatActivity {
 
         return super.dispatchTouchEvent(event);
     }
-    class AsyncTask_SaveRevisionLine extends AsyncTask<URL, String, String> {
-        @Override
-        protected String doInBackground(URL... urls) {
-            return getResponseFromURLSaveRevisionLineAdd(urls[0]);
-        }
 
-        @Override
-        protected void onPostExecute(String response) {
-            pgH.dismiss();
-            if (!response.equals("")) {
-                try {
-                    JSONObject responseAssortiment = new JSONObject(response);
-                    int ErrorCode = responseAssortiment.getInt("ErrorCode");
-                    if (ErrorCode == 0) {
-                        Toast.makeText(ListAssortment.this, getResources().getString(R.string.msg_count_added_inventory), Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(ListAssortment.this, getResources().getString(R.string.msg_error_code) + ErrorCode , Toast.LENGTH_SHORT).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
-                }
-            }else{
-                Toast.makeText(ListAssortment.this, getResources().getString(R.string.msg_nu_raspuns_server), Toast.LENGTH_SHORT).show();
-            }
-
-
-        }
-    }
     @Override
     public void onBackPressed() {
         if (mList_Clicked_item.size() == 0) {

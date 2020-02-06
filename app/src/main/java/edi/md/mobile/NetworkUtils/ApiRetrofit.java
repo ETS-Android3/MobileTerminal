@@ -12,7 +12,9 @@ import static android.content.Context.MODE_PRIVATE;
 public class ApiRetrofit {
 
     public static CommandService getCommandService (Context context){
-        String uri = "http://" + context.getSharedPreferences("Settings", MODE_PRIVATE).getString("IP",null) + ":" + context.getSharedPreferences("Settings", MODE_PRIVATE).getString("Port",null);
+        String uri = "http://" + context.getSharedPreferences("Settings", MODE_PRIVATE).getString("IP","192.168.1.1") + ":"
+                + context.getSharedPreferences("Settings", MODE_PRIVATE).getString("Port","1111");
+
         return RetrofitClient.getDataRetrofitClient(uri).create(CommandService.class);
     }
 

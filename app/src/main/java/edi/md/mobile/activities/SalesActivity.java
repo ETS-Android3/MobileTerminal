@@ -293,62 +293,80 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
             @Override
             public void onClick(View v) {
                 if (!invoiceSaved) {
-                    pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
-                    pgH.setIndeterminate(true);
-                    pgH.setCancelable(false);
-                    pgH.show();
 
-                    SaveInvoiceBody saveInvoiceBody = new SaveInvoiceBody();
-                    List<InvoiceLineBody> lineBodyList = new ArrayList<>();
+                        pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
+                        pgH.setIndeterminate(true);
+                        pgH.setCancelable(false);
+                        pgH.show();
 
-                    for (int i = 0; i < mAssortmentArray.length(); i++) {
-                        InvoiceLineBody invoiceLineBody = new InvoiceLineBody();
+                        SaveInvoiceBody saveInvoiceBody = new SaveInvoiceBody();
+                        List<InvoiceLineBody> lineBodyList = new ArrayList<>();
 
-                        try {
-                            invoiceLineBody.setAssortiment(mAssortmentArray.getJSONObject(i).getString("AssortimentUid"));
-                            invoiceLineBody.setQuantity(mAssortmentArray.getJSONObject(i).getDouble("Count"));
-                            invoiceLineBody.setSalePrice(mAssortmentArray.getJSONObject(i).getDouble("Price"));
-                            invoiceLineBody.setWarehouse(mAssortmentArray.getJSONObject(i).getString("Warehouse"));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        for (int i = 0; i < mAssortmentArray.length(); i++) {
+                            InvoiceLineBody invoiceLineBody = new InvoiceLineBody();
+
+                            try {
+                                invoiceLineBody.setAssortiment(mAssortmentArray.getJSONObject(i).getString("AssortimentUid"));
+                                invoiceLineBody.setQuantity(mAssortmentArray.getJSONObject(i).getDouble("Count"));
+                                invoiceLineBody.setSalePrice(mAssortmentArray.getJSONObject(i).getDouble("Price"));
+                                invoiceLineBody.setWarehouse(mAssortmentArray.getJSONObject(i).getString("Warehouse"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            lineBodyList.add(invoiceLineBody);
                         }
-                        lineBodyList.add(invoiceLineBody);
-                    }
 
-                    saveInvoiceBody.setLines(lineBodyList);
-                    saveInvoiceBody.setUserID(UserId);
-                    saveInvoiceBody.setTerminalCode("From Terminal");
-                    saveInvoiceBody.setWarehouse(WorkPlaceID);
-                    saveInvoiceBody.setClientID(ClientID);
+                        saveInvoiceBody.setLines(lineBodyList);
+                        saveInvoiceBody.setUserID(UserId);
+                        saveInvoiceBody.setTerminalCode("From Terminal");
+                        saveInvoiceBody.setWarehouse(WorkPlaceID);
+                        saveInvoiceBody.setClientID(ClientID);
 
-                    Call<SaveInvoiceResult> call = commandService.saveInvoice(saveInvoiceBody);
+                        Call<SaveInvoiceResult> call = commandService.saveInvoice(saveInvoiceBody);
 
-                    call.enqueue(new Callback<SaveInvoiceResult>() {
-                        @Override
-                        public void onResponse(Call<SaveInvoiceResult> call, Response<SaveInvoiceResult> response) {
-                            SaveInvoiceResult result = response.body();
-                            if(result!= null){
-                                if(result.getErrorCode() == 0 ){
-                                    pgH.dismiss();
-                                    invoiceSaved = true;
-                                    InvoiceCode = result.getInvoiceCode();
-                                    InvoiceID = result.getInvoiceID();
-                                    setTitle(getResources().getString(R.string.btn_sales_main_activity) + ": " + InvoiceCode);
-                                    btn_print.setEnabled(true);
-                                    createNewInvoice = true;
-                                    btn_cancel.setText("New");
-                                    btn_add_Client.setEnabled(false);
+                        call.enqueue(new Callback<SaveInvoiceResult>() {
+                            @Override
+                            public void onResponse(Call<SaveInvoiceResult> call, Response<SaveInvoiceResult> response) {
+                                SaveInvoiceResult result = response.body();
+                                if(result!= null){
+                                    if(result.getErrorCode() == 0 ){
+                                        pgH.dismiss();
+                                        invoiceSaved = true;
+                                        InvoiceCode = result.getInvoiceCode();
+                                        InvoiceID = result.getInvoiceID();
+                                        setTitle(getResources().getString(R.string.btn_sales_main_activity) + ": " + InvoiceCode);
+                                        btn_print.setEnabled(true);
+                                        createNewInvoice = true;
+                                        btn_cancel.setText("New");
+                                        btn_add_Client.setEnabled(false);
 
-                                    Toast.makeText(SalesActivity.this, getResources().getString(R.string.txt_sales_invoice_saved) + InvoiceCode, Toast.LENGTH_SHORT).show();
-
-                                    printSales();
+                                        Toast.makeText(SalesActivity.this, getResources().getString(R.string.txt_sales_invoice_saved) + InvoiceCode, Toast.LENGTH_SHORT).show();
+                                        boolean print = getSharedPreferences("Settings",MODE_PRIVATE).getBoolean("PrintSales",false);
+                                        if(print) {
+                                            printSales();
+                                        }
+                                    }
+                                    else{
+                                        pgH.dismiss();
+                                        AlertDialog.Builder dialog = new AlertDialog.Builder(SalesActivity.this);
+                                        dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+                                        dialog.setCancelable(false);
+                                        dialog.setMessage(getResources().getString(R.string.msg_document_notsaved_cod_error) + result.getErrorCode());
+                                        dialog.setPositiveButton(getResources().getString(R.string.txt_accept_all), new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                        dialog.show();
+                                    }
                                 }
                                 else{
                                     pgH.dismiss();
                                     AlertDialog.Builder dialog = new AlertDialog.Builder(SalesActivity.this);
                                     dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
                                     dialog.setCancelable(false);
-                                    dialog.setMessage(getResources().getString(R.string.msg_document_notsaved_cod_error) + result.getErrorCode());
+                                    dialog.setMessage(getResources().getString(R.string.msg_document_not_saved_nu_raspuns_serviciu));
                                     dialog.setPositiveButton(getResources().getString(R.string.txt_accept_all), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
@@ -358,28 +376,14 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                                     dialog.show();
                                 }
                             }
-                            else{
-                                pgH.dismiss();
-                                AlertDialog.Builder dialog = new AlertDialog.Builder(SalesActivity.this);
-                                dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
-                                dialog.setCancelable(false);
-                                dialog.setMessage(getResources().getString(R.string.msg_document_not_saved_nu_raspuns_serviciu));
-                                dialog.setPositiveButton(getResources().getString(R.string.txt_accept_all), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                                dialog.show();
-                            }
-                        }
 
-                        @Override
-                        public void onFailure(Call<SaveInvoiceResult> call, Throwable t) {
-                            pgH.dismiss();
-                            Toast.makeText(SalesActivity.this,  t.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                            @Override
+                            public void onFailure(Call<SaveInvoiceResult> call, Throwable t) {
+                                pgH.dismiss();
+                                Toast.makeText(SalesActivity.this,  t.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
                 }
                 else{
                     finish();
@@ -389,7 +393,10 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
         btn_print.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                printSales();
+                boolean print = getSharedPreferences("Settings",MODE_PRIVATE).getBoolean("PrintSales",false);
+                if(print) {
+                    printSales();
+                }
             }
         });
         btn_change_stock.setOnClickListener(new View.OnClickListener() {
