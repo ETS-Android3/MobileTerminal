@@ -24,6 +24,7 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -101,7 +102,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
     ArrayList<HashMap<String, Object>> printers_List_array = new ArrayList<>();
     ArrayList<HashMap<String, Object>> asl_list = new ArrayList<>();
 
-    String UserId,WareUid,InvoiceID,ClientID,uid_selected,barcode_introdus,WareName,WorkPlaceID;
+    String UserId,WareUid,InvoiceID,ClientID,ClientName,uid_selected,barcode_introdus,WareName,WorkPlaceID, WorkPlaceGetPrinters;
     int InvoiceCode;
     ProgressDialog pgH;
     TimerTask timerTaskSync;
@@ -120,6 +121,8 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
     Bitmap mBitmap = null;
     private RTPrinter rtPrinter = null;
     private ProgressDialog progressDialog;
+
+    String mInputComment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +179,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
         user_workplace.setText(WorkPlace.getString("Name",""));
 
         WorkPlaceID = WorkPlace.getString("Uid","0");
+        WorkPlaceGetPrinters = WorkPlace.getString("Uid","0");
         final String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
 
         if (WorkPlaceName.equals("Nedeterminat") || WorkPlaceName.equals("")){
@@ -198,7 +202,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
             limit_sales = 1000;
         }
 
-        sync=new Timer();
+        sync = new Timer();
         startTimetaskSync();
         sync.schedule(timerTaskSync,2000,3000);
 
@@ -212,6 +216,9 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                 if(createNewInvoice){
                     btn_cancel.setText(SalesActivity.this.getResources().getString(R.string.txt_renunt_all));
                     btn_add_Client.setEnabled(true);
+                    btn_add_Client.setText(SalesActivity.this.getResources().getString(R.string.btn_adauga_client_sales));
+                    mInputComment = null;
+                    ClientID = null;
                     btn_print.setEnabled(false);
                     invoiceSaved = false;
                     createNewInvoice = false;
@@ -318,7 +325,13 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
 
                         saveInvoiceBody.setLines(lineBodyList);
                         saveInvoiceBody.setUserID(UserId);
-                        saveInvoiceBody.setTerminalCode("From Terminal");
+                        if(mInputComment != null)
+                            saveInvoiceBody.setComment(mInputComment);
+                        else
+                            saveInvoiceBody.setComment("FROM TERMINAL");
+                        saveInvoiceBody.setTerminalCode("FROM TERMINAL");
+
+
                         saveInvoiceBody.setWarehouse(WorkPlaceID);
                         saveInvoiceBody.setClientID(ClientID);
 
@@ -328,7 +341,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                             @Override
                             public void onResponse(Call<SaveInvoiceResult> call, Response<SaveInvoiceResult> response) {
                                 SaveInvoiceResult result = response.body();
-                                if(result!= null){
+                                if(result != null){
                                     if(result.getErrorCode() == 0 ){
                                         pgH.dismiss();
                                         invoiceSaved = true;
@@ -413,8 +426,71 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
         btn_add_Client.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent Logins = new Intent(".GetClientMobile");
-                startActivityForResult(Logins, REQUEST_FROM_GET_CLIENT);
+                LayoutInflater inflater = getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.msg_add_client_comment, null);
+
+                AlertDialog addCeva = new AlertDialog.Builder(SalesActivity.this,R.style.ThemeOverlay_AppCompat_Dialog_Alert_TestDialogTheme).create();
+                addCeva.setView(dialogView);
+
+                Button btnComment = dialogView.findViewById(R.id.btn_cook);
+                Button btnCancel = dialogView.findViewById(R.id.btn_canceled);
+                Button btnClient = dialogView.findViewById(R.id.btn_finished_cook);
+
+                btnClient.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        addCeva.dismiss();
+                        Intent Logins = new Intent(".GetClientMobile");
+                        startActivityForResult(Logins, REQUEST_FROM_GET_CLIENT);
+                    }
+                });
+
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        addCeva.dismiss();
+                    }
+                });
+
+                btnComment.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        addCeva.dismiss();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(SalesActivity.this,R.style.ThemeOverlay_AppCompat_Dialog_Alert_TestDialogTheme);
+                        builder.setTitle("Comentarii:");
+                        builder.setMessage("Introduceti comentariul:");
+                        final EditText input = new EditText(SalesActivity.this);
+                        input.setFocusable(true);
+                        builder.setCancelable(false);
+                        input.setInputType(InputType.TYPE_CLASS_TEXT);
+                        builder.setView(input);
+
+                        builder.setPositiveButton("Adauga", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mInputComment = input.getText().toString();
+                                if(ClientName == null)
+                                  btn_add_Client.setText(mInputComment);
+                                else{
+                                    btn_add_Client.setText(ClientName + " /" + mInputComment);
+                                }
+                                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+                            }
+                        });
+                        builder.setNegativeButton("Renunt", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                });
+
+                addCeva.show();
+
             }
         });
         btn_open_asl_list.setOnClickListener(new View.OnClickListener() {
@@ -548,8 +624,15 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
             else if (resultCode==RESULT_OK){
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
-                ClientID= data.getStringExtra("ClientID");
-                btn_add_Client.setText(data.getStringExtra("ClientName"));
+                ClientID = data.getStringExtra("ClientID");
+                ClientName = data.getStringExtra("ClientName");
+                if(mInputComment == null){
+                    btn_add_Client.setText(ClientName);
+                }
+                else{
+                    btn_add_Client.setText(ClientName + " /" + mInputComment);
+                }
+
             }
         }
         else if(requestCode == REQUEST_FROM_LIST_ASSORTMENT) {
@@ -721,6 +804,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                                 assortment.setBarCode(assortmentItemResult.getBarCode());
                                 assortment.setCode(assortmentItemResult.getCode());
                                 assortment.setName(assortmentItemResult.getName());
+                                assortment.setUnit(assortmentItemResult.getUnit());
                                 assortment.setPrice(String.format("%.2f", assortmentItemResult.getPrice()).replace(",","."));
                                 assortment.setMarking(assortmentItemResult.getMarking());
                                 assortment.setRemain(String.format("%.2f", assortmentItemResult.getRemain()).replace(",","."));
@@ -838,8 +922,9 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
         builderTypePrinters.setAdapter(simpleAdapterType, new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int wich) {
-                String ID= String.valueOf(printers_List_array.get(wich).get("ID"));
-                printInvoiceToService(ID);
+                String ID = String.valueOf(printers_List_array.get(wich).get("ID"));
+                String Name = String.valueOf(printers_List_array.get(wich).get("Name"));
+                printInvoiceToService(ID,Name);
             }
         });
         builderTypePrinters.setCancelable(false);
@@ -990,7 +1075,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                         AlertDialog.Builder dialog = new AlertDialog.Builder(SalesActivity.this);
                         dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
                         dialog.setCancelable(false);
-                        dialog.setMessage(getResources().getString(R.string.msg_document_not_saved_nu_raspuns_serviciu));
+                        dialog.setMessage("Nici o imprimanta de la server");
                         dialog.setPositiveButton(getResources().getString(R.string.txt_accept_all), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -1011,7 +1096,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
         }
         else {
             printers_List_array.clear();
-            Call<GetPrintersResult> call = commandService.getPrinters(WorkPlaceID);
+            Call<GetPrintersResult> call = commandService.getPrinters(WorkPlaceGetPrinters);
 
             call.enqueue(new Callback<GetPrintersResult>() {
                 @Override
@@ -1039,9 +1124,9 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
 
                             if(printers.size() == 1){
                                 PrinterResults printerResults = printers.get(0);
-                                printInvoiceToService(printerResults.getID());
+                                printInvoiceToService(printerResults.getID(), printerResults.getName());
                             }
-                            else{
+                            else if (printers.size() > 1) {
                                 for (PrinterResults printer : printers) {
                                     HashMap<String, Object> Printers = new HashMap<>();
                                     Printers.put("Name", printer.getName());
@@ -1070,7 +1155,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                         AlertDialog.Builder dialog = new AlertDialog.Builder(SalesActivity.this);
                         dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
                         dialog.setCancelable(false);
-                        dialog.setMessage(getResources().getString(R.string.msg_document_not_saved_nu_raspuns_serviciu));
+                        dialog.setMessage("Eroare la descarcarea imprimatelor! Nici un raspuns!");
                         dialog.setPositiveButton(getResources().getString(R.string.txt_accept_all), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -1089,7 +1174,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
         }
     }
 
-    private void printInvoiceToService(String printerId){
+    private void printInvoiceToService(String printerId, String printerName){
         Call<ResponseSimple> call = commandService.printInvoice(InvoiceID,printerId);
 
         call.enqueue(new Callback<ResponseSimple>() {
@@ -1098,7 +1183,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                 ResponseSimple result = response.body();
                 if(result != null){
                     if(result.getErrorCode() == 0)
-                        Toast.makeText(SalesActivity.this, getResources().getString(R.string.msg_imprimare_sales), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SalesActivity.this, getResources().getString(R.string.msg_imprimare_sales) + " " + printerName, Toast.LENGTH_SHORT).show();
                     else{
                         AlertDialog.Builder input = new AlertDialog.Builder(SalesActivity.this);
                         input.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));

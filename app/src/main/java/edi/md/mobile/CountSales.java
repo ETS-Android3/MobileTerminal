@@ -32,7 +32,7 @@ import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 public class CountSales extends AppCompatActivity {
 
     TextView txt_barcode,txt_code,txt_articul,txt_stoc,txt_price,txt_name;
-    TextView et_count;
+    TextView et_count,txt_unit;
     Button btn_add, btn_cancel;
     Boolean mAllowNotIntegerSales;
     String mNameAssortment,mPriceAssortment,mIDAssortment,mRemainAssortment,mMarkingAssortment,mCodeAssortment,mBarcodeAssortment,WareHouse,WareName;
@@ -78,6 +78,7 @@ public class CountSales extends AppCompatActivity {
         et_count = findViewById(R.id.et_count_sales);
         btn_add = findViewById(R.id.btn_add_count_sales);
         btn_cancel = findViewById(R.id.btn_cancel_count_sales);
+        txt_unit = findViewById(R.id.txt_unit);
 
         SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
 
@@ -104,6 +105,7 @@ public class CountSales extends AppCompatActivity {
         txt_barcode.setText(mBarcodeAssortment);
         txt_stoc.setText(mRemainAssortment);
         txt_price.setText(mPriceAssortment);
+        txt_unit.setText("/" + assortment.getUnit());
         et_count.requestFocus();
 
 

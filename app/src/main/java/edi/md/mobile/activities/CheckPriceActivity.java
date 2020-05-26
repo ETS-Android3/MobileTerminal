@@ -69,7 +69,7 @@ import retrofit2.Response;
 public class CheckPriceActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
     Button btn_depozit;
     ImageButton print, open_assortment_list, write_barcode,addCount,deleteCount;
-    TextView txtInput_barcode, txtNameAsortment, txtBarcodeAssortment,txtCodeAssortment,txtMarkingAssortment,txtStockAssortment,txtPriceAssortment;
+    TextView txtInput_barcode, txtNameAsortment, txtBarcodeAssortment,txtCodeAssortment,txtMarkingAssortment,txtStockAssortment,txtPriceAssortment, txtUnit;
     ProgressBar pgBar;
     ProgressDialog pgH;
     TimerTask timerTaskSync;
@@ -110,6 +110,7 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
         txtMarkingAssortment = findViewById(R.id.txtMarking_asortment_check_price);
         txtStockAssortment = findViewById(R.id.txtStoc_asortment_check_price);
         txtPriceAssortment = findViewById(R.id.txtPrice_asortment_check_price);
+        txtUnit = findViewById(R.id.txt_unit_check_price);
         pgBar = findViewById(R.id.progressBar_check_price);
         count_lable = findViewById(R.id.count_etichete_check_price);
         pgH=new ProgressDialog(CheckPriceActivity.this);
@@ -384,6 +385,7 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
                     mUnitInPackage = assortment.getUnitInPackage();
 
                     txtNameAsortment.setText(mNameAssortment);
+                    txtUnit.setText(mUnitAssortment);
                     double price = 0.00;
                     try{
                         price = Double.parseDouble(mPriceAssortment);
@@ -624,6 +626,7 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
                         txtMarkingAssortment.setText(assortmentItemResult.getMarking());
                         txtStockAssortment.setText(String.format("%.2f", assortmentItemResult.getRemain()).replace(",","."));
                         txtCodeAssortment.setText(assortmentItemResult.getCode());
+                        txtUnit.setText("/" + assortmentItemResult.getUnit());
 
                         txtInput_barcode.requestFocus();
                     }

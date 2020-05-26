@@ -44,7 +44,7 @@ public class CountListOfAssortment extends AppCompatActivity {
     boolean mIntegerSales;
     EditText Count_enter;
     ImageButton btn_plus,btn_del;
-    TextView name_forasl,price_forasl,btn_save,btn_cancel,txtCode,txtBarCode,txtMarking,txtRemain;
+    TextView name_forasl,price_forasl,btn_save,btn_cancel,txtCode,txtBarCode,txtMarking,txtRemain, txtUnit;
     JSONObject sendRevision;
     ProgressDialog pgH;
 
@@ -89,6 +89,7 @@ public class CountListOfAssortment extends AppCompatActivity {
         txtBarCode = findViewById(R.id.txtBarcode_assortment_count_list_asl);
         txtMarking = findViewById(R.id.txtMarking_asortment_count_list_asl);
         txtRemain = findViewById(R.id.txtStoc_asortment_count_list_asl);
+        txtUnit = findViewById(R.id.txt_unit_list_assortment);
         pgH = new ProgressDialog(CountListOfAssortment.this);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -117,6 +118,7 @@ public class CountListOfAssortment extends AppCompatActivity {
         final String mRemainAssortment = assortment.getRemain();
         final String mIDAssortment = assortment.getAssortimentID();
         final boolean mAllowNotIntegerSales =Boolean.parseBoolean(assortment.getAllowNonIntegerSale());
+        txtUnit.setText(assortment.getUnit());
 
         if(mAllowNotIntegerSales)
             mIntegerSales = true;

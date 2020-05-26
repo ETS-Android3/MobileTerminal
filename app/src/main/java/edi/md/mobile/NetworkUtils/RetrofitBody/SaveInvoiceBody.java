@@ -15,6 +15,9 @@ public class SaveInvoiceBody {
     @SerializedName("ClientID")
     @Expose
     private String clientID;
+    @SerializedName("Comment")
+    @Expose
+    private String comment;
     @SerializedName("InvoiceNumber")
     @Expose
     private String invoiceNumber;
@@ -45,6 +48,14 @@ public class SaveInvoiceBody {
 
     public void setClientID(String clientID) {
         this.clientID = clientID;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public String getInvoiceNumber() {

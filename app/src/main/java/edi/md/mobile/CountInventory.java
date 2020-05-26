@@ -43,7 +43,7 @@ import static edi.md.mobile.NetworkUtils.NetworkUtils.SaveRevisionLine;
 
 public class CountInventory extends AppCompatActivity {
     Button btn_ok,btn_cancel;
-    TextView txtBarCode,txtArticol,txtStock,txtName,txtCode,txtTotalScan,txtRemainScan,txtSurplusScan,txtPrice;
+    TextView txtBarCode,txtArticol,txtStock,txtName,txtCode,txtTotalScan,txtRemainScan,txtSurplusScan,txtPrice, txtUnit;
     EditText inpCount;
     Switch cant_final;
 
@@ -90,7 +90,7 @@ public class CountInventory extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     saveCount();
-                }else if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER){
+                }else if(event.getKeyCode()  == KeyEvent.KEYCODE_ENTER){
                     saveCount();
                 }
                 return false;

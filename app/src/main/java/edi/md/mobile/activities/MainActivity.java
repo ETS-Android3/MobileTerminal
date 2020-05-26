@@ -38,6 +38,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -61,17 +63,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.INTERNET}, 1);
             } else if(grantResults[1] != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_PHONE_STATE}, 2);
             }else if(grantResults[2] != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 3);
             }else if(grantResults[3] != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 4);
             }else if(grantResults[4] != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CALL_PHONE}, 1);
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CALL_PHONE}, 5);
             }else if(grantResults[5] != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH}, 1);
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH}, 6);
             }else if(grantResults[6] != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 7);
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -89,6 +91,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 },
                 12);
+    }
+
+    private void AskForPermissions() {
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        int readpermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        int writepermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int READ_PHONEpermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+
+        if (writepermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (readpermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+        if (READ_PHONEpermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_PHONE_STATE);
+        }
+
+
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 1);
+        }
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +148,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         btn_stock_asortment = findViewById(R.id.btn_stock_assortment);
         btn_set_barcodes = findViewById(R.id.btn_set_assortment_barcode);
 
-        requestMultiplePermissions();
+        //ask necessary permisions
+        AskForPermissions();
 
         ((Variables)getApplication()).appendLog("Aplication starting",MainActivity.this);
         Settings = getSharedPreferences("Settings", MODE_PRIVATE);
@@ -146,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         sync.schedule(timerTaskSync,100,2000);
 
         View headerLayout = navigationView.getHeaderView(0);
+
         final TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user_main);
         useremail.setText(User.getString("Name",""));
         final TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user_main);
@@ -455,16 +481,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         call.enqueue(new Callback<Boolean>() {
                             @Override
                             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                                if(response.body()){
-                                    pingTest=true;
-                                    if(menu!=null)
-                                        menu.getItem(0).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.signal_wi_fi_48));
+                                if(response != null){
+                                    boolean result = false;
+                                    if(response.body() != null)
+                                        result = response.body();
+                                    if(result){
+                                        pingTest=true;
+                                        if(menu!=null)
+                                            menu.getItem(0).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.signal_wi_fi_48));
+                                    }
+                                    else{
+                                        pingTest= false;
+                                        if(menu!=null)
+                                            menu.getItem(0).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.no_signal_wi_fi_48));
+                                    }
                                 }
                                 else{
                                     pingTest= false;
                                     if(menu!=null)
                                         menu.getItem(0).setIcon(ContextCompat.getDrawable(MainActivity.this, R.drawable.no_signal_wi_fi_48));
                                 }
+
                             }
 
                             @Override

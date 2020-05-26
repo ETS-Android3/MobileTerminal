@@ -396,7 +396,7 @@ public class ListAssortment extends AppCompatActivity {
                     asl_list = Variables.getInstance().get_AssortimentFromParent(mGUIDAssortment);
                     SortAssortmentList(asl_list);
                     simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
-                            new String[]{"Name","icon","PriceWithText","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
+                            new String[]{"Name","icon","PriceWithText","Bar_code","Unit"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list,R.id.txt_unit});
                     list_assortments.setAdapter(simpleAdapterASL);
                 }
             }
@@ -562,7 +562,7 @@ public class ListAssortment extends AppCompatActivity {
                                 asl_.put("Price", price);
                                 asl_.put("PriceWithText",getResources().getString(R.string.txt_list_asl_view_price)+ price + getResources().getString(R.string.txt_list_asl_view_valuta));
                                 asl_.put("IncomePrice", incomePrice);
-                                asl_.put("Unit", unitary);
+                                asl_.put("Unit",  " /"+  unitary);
                                 asl_.put("UnitPrice", finalUnitPrice);
                                 asl_.put("UnitInPackage", UnitInPackage);
                                 asl_list.add(asl_);
@@ -586,7 +586,7 @@ public class ListAssortment extends AppCompatActivity {
                 pgH.dismiss();
                 SortAssortmentList(asl_list);
                 simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
-                        new String[]{"Name","icon","PriceWithText","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
+                        new String[]{"Name","icon","PriceWithText","Bar_code","Unit"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list,R.id.txt_unit});
 
                 ((Variables)getApplication()).setDownloadASLVariable(true);
                 list_assortments.setAdapter(simpleAdapterASL);
@@ -656,7 +656,7 @@ public class ListAssortment extends AppCompatActivity {
         }
         SortAssortmentList(asl_list);
         simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
-                new String[]{"Name","icon","PriceWithText","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
+                new String[]{"Name","icon","PriceWithText","Bar_code","Unit"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list,R.id.txt_unit});
         list_assortments.setAdapter(simpleAdapterASL);
     }
 
@@ -664,7 +664,7 @@ public class ListAssortment extends AppCompatActivity {
         asl_list=  Variables.getInstance().get_Search_Assortment(search_text);
         SortAssortmentList(asl_list);
         simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
-                new String[]{"Name","icon","PriceWithText","Bar_code"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list});
+                new String[]{"Name","icon","PriceWithText","Bar_code","Unit"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list,R.id.txt_unit});
         list_assortments.setAdapter(simpleAdapterASL);
     }
     @Override

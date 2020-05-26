@@ -40,7 +40,7 @@ import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 public class SetAssortmentBarcode extends AppCompatActivity {
 
     Button btn_save, btn_cancel;
-    TextView txtName, txtMarking,txtCode,txtPrice;
+    TextView txtName, txtMarking,txtCode,txtPrice, txtUnit;
     EditText etBarcodeInput;
 
     String ip, port, userId, assortmentId;
@@ -66,6 +66,7 @@ public class SetAssortmentBarcode extends AppCompatActivity {
         etBarcodeInput = findViewById(R.id.txt_input_barcode_for_assortment);
         btn_save = findViewById(R.id.btn_save_barcode);
         btn_cancel = findViewById(R.id.btn_cancel_set_barcode);
+        txtUnit = findViewById(R.id.txt_unit_barcode);
         pgH = new ProgressDialog(SetAssortmentBarcode.this);
 
         userId =  getSharedPreferences("User", MODE_PRIVATE).getString("UserID",null);
@@ -76,7 +77,7 @@ public class SetAssortmentBarcode extends AppCompatActivity {
         AssortmentParcelable assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
 
         assortmentId = assortment.getAssortimentID();
-
+        txtUnit.setText("/" + assortment.getUnit());
         txtName.setText(assortment.getName());
         txtPrice.setText(assortment.getPrice());
         txtCode.setText(assortment.getCode());

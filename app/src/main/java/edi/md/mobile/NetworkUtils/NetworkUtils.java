@@ -224,7 +224,7 @@ public class NetworkUtils {
         String resp = "false";
 
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        urlConnection.setConnectTimeout(2000);
+        urlConnection.setConnectTimeout(5000);
         try {
             InputStream in = urlConnection.getInputStream();
 

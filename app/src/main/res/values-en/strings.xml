@@ -87,7 +87,7 @@
     <string name="toggle_btn_check_remain_da">Yes</string>
     <string name="txt_verifica_stoc_sales">Check remain</string>
     <string name="btn_imprimare_sales">Print</string>
-    <string name="btn_adauga_client_sales">Add client</string>
+    <string name="btn_adauga_client_sales">Add client/comment</string>
     <string name="txt_header_list_suma_sales">Summ</string>
     <string name="btn_print_etichete_stock_asl">Print labels</string>
     <string name="txt_din_depozit_transfer">From:</string>
@@ -123,7 +123,7 @@
     <string name="msg_sales_is_saved">The order is already saved!</string>
     <string name="msg_error_code">Errore!Code:</string>
     <string name="msg_nu_raspuns_server">There is no response from the service!</string>
-    <string name="msg_imprimare_sales">Print..</string>
+    <string name="msg_imprimare_sales">Print to</string>
     <string name="txt_not_printers_check_back_office">No printers set up!\nCheck your printers in the back office.</string>
     <string name="txt_sales_invoice_saved">The sale invoice has been saved! Order no:</string>
     <string name="msg_document_notsaved_cod_error">Document is not saved! Error code:</string>
