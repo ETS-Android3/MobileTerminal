@@ -134,13 +134,18 @@ public class Variables extends Application {
                 assert sal != null;
                 String code_asl = sal.getCode();
                 String barcode_asl =sal.getBarCode();
+                String marking_asl =sal.getMarking();
+
+                if(marking_asl == null)
+                    marking_asl = "null";
                 if (barcode_asl==null)
                     barcode_asl="null";
                 if(code_asl==null)
                     code_asl="null";
                 String asl_name= sal.getName();
-                boolean is_folder= sal.getIsFolder();
-                if(barcode_asl.toUpperCase().contains(search.toUpperCase()) || code_asl.toUpperCase().contains(search.toUpperCase()) || asl_name.toUpperCase().contains(search.toUpperCase())) {
+
+                boolean is_folder = sal.getIsFolder();
+                if(marking_asl.toUpperCase().contains(search.toUpperCase()) || barcode_asl.toUpperCase().contains(search.toUpperCase()) || code_asl.toUpperCase().contains(search.toUpperCase()) || asl_name.toUpperCase().contains(search.toUpperCase())) {
                     HashMap<String, Object> asl_ = new HashMap<>();
 
                     String uid_asl = sal.getAssortimentID();
@@ -170,7 +175,7 @@ public class Variables extends Application {
                         asl_.put("Price", price);
                         asl_.put("PriceWithText", Asl_Price);
                         asl_.put("IncomePrice", incomePrice);
-                        asl_.put("Unit", unitary);
+                        asl_.put("Unit",  " /"+  unitary);
                         asl_.put("UnitPrice", finalUnitPrice);
                         asl_.put("UnitInPackage", UnitInPackage);
                         asl_list.add(asl_);
@@ -229,21 +234,22 @@ public class Variables extends Application {
                         String Asl_Price =getResources().getString(R.string.txt_list_asl_view_price)+ price + getResources().getString(R.string.txt_list_asl_view_valuta);
 
                         asl_.put("icon", R.drawable.assortiment_item);
-                        asl_.put("Name", asl_name);
+                        asl_.put("Name", asl_name );
                         asl_.put("ID", uid_asl);
                         asl_.put("Code", code_asl);
                         asl_.put("BarCode", barcode_asl);
                         asl_.put("Marking",marking);
                         asl_.put("Bar_code", getResources().getString(R.string.txt_list_asl_view_barcode) + barcode_asl);
                         asl_.put("AllowNonIntegerSale", allow_integer);
-                        asl_.put("Price", price);
+                        asl_.put("Price", price );
                         asl_.put("PriceWithText", Asl_Price);
                         asl_.put("IncomePrice", incomePrice);
-                        asl_.put("Unit", unitary);
+                        asl_.put("Unit",  "/"+  unitary);
                         asl_.put("UnitPrice", finalUnitPrice);
                         asl_.put("UnitInPackage", UnitInPackage);
                         asl_list.add(asl_);
-                    } else {
+                    }
+                    else {
                         asl_.put("Folder_is", true);
                         asl_.put("Parent_ID", parent);
                         asl_.put("Name", asl_name);

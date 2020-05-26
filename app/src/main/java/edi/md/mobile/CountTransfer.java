@@ -32,7 +32,7 @@ import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 
 public class CountTransfer extends AppCompatActivity {
     TextView txt_barcode,txt_code,txt_articul,txt_stoc,txt_price,txt_name;
-    TextView et_count;
+    TextView et_count,txtUnit;
     Button btn_add, btn_cancel;
     boolean adauga_Count=false,mAllowNotIntegerSales;
     String mNameAssortment,mIDAssortment,mPriceAssortment,mMarkingAssortment,mCodeAssortment,mBarcodeAssortment,mRemainAssortment;
@@ -76,6 +76,7 @@ public class CountTransfer extends AppCompatActivity {
         et_count = findViewById(R.id.et_count_transfer);
         btn_add = findViewById(R.id.btn_add_count_transfer);
         btn_cancel = findViewById(R.id.btn_cancel_count_transfer);
+        txtUnit = findViewById(R.id.txt_unit_transfer);
 
         final Intent sales = getIntent();
         AssortmentParcelable assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
@@ -88,7 +89,7 @@ public class CountTransfer extends AppCompatActivity {
         mIDAssortment = assortment.getAssortimentID();
         mAllowNotIntegerSales =Boolean.parseBoolean(assortment.getAllowNonIntegerSale());
 
-
+        txtUnit.setText("/" + assortment.getUnit());
         txt_name.setText(mNameAssortment);
         txt_barcode.setText(mBarcodeAssortment);
         txt_code.setText(mCodeAssortment);

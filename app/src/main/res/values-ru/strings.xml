@@ -85,7 +85,7 @@
     <string name="txt_verifica_stoc_sales">Показ остатка</string>
     <string name="txt_verifica_stoc_vinzare">Проверить остаток(при продаже)</string>
     <string name="btn_imprimare_sales">Печать</string>
-    <string name="btn_adauga_client_sales">Добавить клиента</string>
+    <string name="btn_adauga_client_sales">Добавить клиента/коментарий</string>
     <string name="txt_header_list_suma_sales">Сумма</string>
     <string name="btn_print_etichete_stock_asl">Печать этикеток</string>
     <string name="txt_din_depozit_transfer">С: </string>
@@ -121,7 +121,7 @@
     <string name="msg_sales_is_saved">Счёт уже сохранён!</string>
     <string name="msg_error_code">Ошибка!Код ошибки:</string>
     <string name="msg_nu_raspuns_server">Нет ответа от сервера!</string>
-    <string name="msg_imprimare_sales">Печать..</string>
+    <string name="msg_imprimare_sales">Печать на </string>
     <string name="txt_not_printers_check_back_office">Принтера не настроены!\nПроверьте настройки в бэк-оффисе.</string>
     <string name="txt_sales_invoice_saved">Продажа была сохранена!\nНомер счёта:</string>
     <string name="msg_document_notsaved_cod_error">Документ не был сохранён!Код ошибки:</string>

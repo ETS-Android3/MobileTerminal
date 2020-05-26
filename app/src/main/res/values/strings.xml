@@ -85,7 +85,7 @@
     <string name="toggle_btn_check_remain_da">Da</string>
     <string name="txt_verifica_stoc_sales">Verifică stoc</string>
     <string name="btn_imprimare_sales">Imprimare</string>
-    <string name="btn_adauga_client_sales">Adaugă client</string>
+    <string name="btn_adauga_client_sales">Adaugă client/comentariu</string>
     <string name="txt_header_list_suma_sales">Suma</string>
     <string name="btn_print_etichete_stock_asl">Print. etichete</string>
     <string name="txt_din_depozit_transfer">Din:</string>

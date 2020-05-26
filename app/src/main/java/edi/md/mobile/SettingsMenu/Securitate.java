@@ -86,10 +86,10 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
     ProgressDialog pDialog;
     ImageButton btn_ro,btn_ru,btn_en;
     public static final int progress_bar_type = 11;
-    private static String file_url_apk = "http://edi.md/androidapps/MobileTerminal.apk";
-    private static String file_url_apk_old = "http://edi.md/androidapps/MobileTerminalOld.apk";
-    private static String file_version_url = "http://edi.md/androidapps/MobileTerminalVersion.txt";
-    private static String file_version_url_old = "http://edi.md/androidapps/MobileTerminalVersionOld.txt";
+    private static String file_url_apk = "https://edi.md/androidapps/MobileTerminal.apk";
+    private static String file_url_apk_old = "https://edi.md/androidapps/MobileTerminalOld.apk";
+    private static String file_version_url = "https://edi.md/androidapps/MobileTerminalVersion.txt";
+    private static String file_version_url_old = "https://edi.md/androidapps/MobileTerminalVersionOld.txt";
     private Locale myLocale;
 
     @Override
@@ -511,6 +511,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
             if (file.exists()) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(uri, "application/vnd.android.package-archive");
+                intent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 startActivity(intent);
             } else {

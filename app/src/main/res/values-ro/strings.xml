@@ -85,7 +85,7 @@
     <string name="toggle_btn_check_remain_da">Da</string>
     <string name="txt_verifica_stoc_sales">Verifică stoc</string>
     <string name="btn_imprimare_sales">Imprimare</string>
-    <string name="btn_adauga_client_sales">Adaugă client</string>
+    <string name="btn_adauga_client_sales">Adaugă client/comentariu</string>
     <string name="txt_header_list_suma_sales">Suma</string>
     <string name="btn_print_etichete_stock_asl">Print. etichete</string>
     <string name="txt_din_depozit_transfer">Din:</string>
@@ -121,7 +121,7 @@
     <string name="msg_sales_is_saved">Contul de plată este salvat!</string>
     <string name="msg_error_code">Eroare!Codul:</string>
     <string name="msg_nu_raspuns_server">Nu există niciun răspuns din partea serviciului.</string>
-    <string name="msg_imprimare_sales">Imprimare..</string>
+    <string name="msg_imprimare_sales">Imprimare la </string>
     <string name="txt_not_printers_check_back_office">Nu sunt setate imprimante!\nVerificați imprimantele in back office.</string>
     <string name="txt_sales_invoice_saved">Contul de plată a fost salvată!\nComanda nr:</string>
     <string name="msg_document_notsaved_cod_error">Documentul nu a fost salvat! Codul erorii:</string>

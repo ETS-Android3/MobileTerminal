@@ -357,6 +357,9 @@ public class Revisions extends AppCompatActivity {
                             inpRev.putString("RevisionName",Name);
                             inpRev.putString("RevisionNumber",Number);
                             inpRev.putString("RevisionID",RevisionId);
+                            if(prefix == null || prefix.equals("null")){
+                                prefix = "10154";
+                            }
                             inpRev.putInt("WeightPrefix",Integer.valueOf(prefix));
                             inpRev.putInt("Type",0);
                             inpRev.apply();

@@ -1168,6 +1168,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                         assortment.setMarking(Marking);
                         assortment.setRemain(Remain);
                         assortment.setAssortimentID(Uid);
+                        assortment.setUnit(responseAssortiment.getString("Unit"));
                         assortment.setAllowNonIntegerSale(String.valueOf(allowInteger));
                         final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);
 
