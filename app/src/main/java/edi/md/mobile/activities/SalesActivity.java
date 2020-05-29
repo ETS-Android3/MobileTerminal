@@ -70,10 +70,12 @@ import edi.md.mobile.NetworkUtils.RetrofitBody.InvoiceLineBody;
 import edi.md.mobile.NetworkUtils.RetrofitBody.SaveInvoiceBody;
 import edi.md.mobile.NetworkUtils.RetrofitResults.Assortment;
 import edi.md.mobile.NetworkUtils.RetrofitResults.GetAssortmentItemResult;
+import edi.md.mobile.NetworkUtils.RetrofitResults.GetAssortmentRemainResults;
 import edi.md.mobile.NetworkUtils.RetrofitResults.GetPrintInvoiceResults;
 import edi.md.mobile.NetworkUtils.RetrofitResults.GetPrintersResult;
 import edi.md.mobile.NetworkUtils.RetrofitResults.GetWarehousesListResult;
 import edi.md.mobile.NetworkUtils.RetrofitResults.PrinterResults;
+import edi.md.mobile.NetworkUtils.RetrofitResults.Remain;
 import edi.md.mobile.NetworkUtils.RetrofitResults.ResponseSimple;
 import edi.md.mobile.NetworkUtils.RetrofitResults.SaveInvoiceResult;
 import edi.md.mobile.NetworkUtils.RetrofitResults.WarehouseList;
@@ -90,19 +92,20 @@ import retrofit2.Response;
 import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 
 public class SalesActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    ImageButton btn_write_barcode,btn_delete,btn_open_asl_list;
+    ImageButton btn_write_barcode,btn_delete,btn_open_asl_list, btn_check_remain_for_assortment;
     TextView txt_input_barcode,txt_total_sales,txtBarcode_introdus;
     ProgressBar pgBar;
     Button btn_print,btn_ok,btn_cancel,btn_change_stock,btn_add_Client;
     ListView list_of_sales;
 
-    AlertDialog.Builder builderType,builderTypePrinters;
+    AlertDialog.Builder builderType,builderTypePrinters, dialogBuilderRemainAsl;
     SimpleAdapter simpleAdapterASL;
     ArrayList<HashMap<String, Object>> stock_List_array = new ArrayList<>();
     ArrayList<HashMap<String, Object>> printers_List_array = new ArrayList<>();
+    ArrayList<HashMap<String, Object>> remain_List_array = new ArrayList<>();
     ArrayList<HashMap<String, Object>> asl_list = new ArrayList<>();
 
-    String UserId,WareUid,InvoiceID,ClientID,ClientName,uid_selected,barcode_introdus,WareName,WorkPlaceID, WorkPlaceGetPrinters;
+    String UserId,WareUid,InvoiceID,ClientID,ClientName,uid_selected,barcode_introdus,WareName,WorkPlaceID, WorkPlaceGetPrinters,assortmentWareUid, assortmentSelectedName;
     int InvoiceCode;
     ProgressDialog pgH;
     TimerTask timerTaskSync;
@@ -153,6 +156,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
         btn_cancel=findViewById(R.id.btn_cancel_sales);
         btn_change_stock=findViewById(R.id.btn_change_stock_sales);
         list_of_sales=findViewById(R.id.LL_list_sales);
+        btn_check_remain_for_assortment = findViewById(R.id.btn_check_remain_assortment);
         pgH=new ProgressDialog(SalesActivity.this);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout_sales);
@@ -222,6 +226,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                     btn_print.setEnabled(false);
                     invoiceSaved = false;
                     createNewInvoice = false;
+                    uid_selected = null;
 
                     mAssortmentArray =new JSONArray();
                     setTitle(getResources().getString(R.string.btn_sales_main_activity));
@@ -268,13 +273,15 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 uid_selected = (String)asl_list.get(position).get("Uid");
+                assortmentWareUid =  (String)asl_list.get(position).get("WareUid");
+                assortmentSelectedName = (String)asl_list.get(position).get("Name");
             }
         });
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!invoiceSaved){
-                    if(uid_selected!=null){
+                    if(uid_selected != null){
                         try {
                             for (int i = 0; i< mAssortmentArray.length(); i++) {
                                 JSONObject json = mAssortmentArray.getJSONObject(i);
@@ -296,6 +303,99 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                 }
             }
         });
+        btn_check_remain_for_assortment.setOnClickListener(v -> {
+            if(!invoiceSaved) {
+                if (uid_selected != null) {
+                    pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
+                    pgH.setIndeterminate(true);
+                    pgH.setCancelable(false);
+                    pgH.show();
+                    commandService = ApiRetrofit.getCommandService(SalesActivity.this);
+                    Call<GetAssortmentRemainResults> call = commandService.getAssortimentRemains(uid_selected,WareUid);
+
+                    call.enqueue(new Callback<GetAssortmentRemainResults>() {
+                        @Override
+                        public void onResponse(Call<GetAssortmentRemainResults> call, Response<GetAssortmentRemainResults> response) {
+                            if(response.isSuccessful()){
+                                GetAssortmentRemainResults remain = response.body();
+                                if(remain != null && remain.getErrorCode() == 0){
+                                    List<Remain> remains = remain.getRemains();
+                                    if(remains.size() > 0){
+                                        pgH.dismiss();
+                                        for(Remain remain1 : remains){
+                                            HashMap<String, Object> WareHouse = new HashMap<>();
+                                            WareHouse.put("remain", remain1.getRemain());
+                                            WareHouse.put("warehouseId", remain1.getWarehouseID());
+                                            WareHouse.put("warehouseName", remain1.getWarehouseName());
+                                            remain_List_array.add(WareHouse);
+                                        }
+
+                                        SimpleAdapter simpleAdapterType = new SimpleAdapter(SalesActivity.this, remain_List_array,R.layout.item_dialog_remain_assortment, new String[]{"warehouseName","remain"}, new int[]{R.id.txtName_warehouse,R.id.text_remain_assortment});
+                                        dialogBuilderRemainAsl = new AlertDialog.Builder(SalesActivity.this);
+                                        dialogBuilderRemainAsl.setTitle(assortmentSelectedName);
+                                        dialogBuilderRemainAsl.setNegativeButton(R.string.txt_renunt_all, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                remain_List_array.clear();
+                                                dialogInterface.dismiss();
+                                            }
+                                        });
+                                        dialogBuilderRemainAsl.setAdapter(simpleAdapterType, new DialogInterface.OnClickListener(){
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int wich) {
+
+                                                String wareDialogId = (String) remain_List_array.get(wich).get("warehouseId");
+                                                String wareDialogName = (String) remain_List_array.get(wich).get("warehouseName");
+                                                try {
+                                                    for (int i = 0; i< mAssortmentArray.length(); i++) {
+                                                        JSONObject json = mAssortmentArray.getJSONObject(i);
+                                                        String Uid = json.getString("AssortimentUid");
+                                                        if (uid_selected.contains(Uid)) {
+                                                            json.put("Warehouse",wareDialogId);
+                                                            json.put("WareName",wareDialogName);
+                                                            asl_list.clear();
+                                                            showAssortmentList();
+                                                        }
+                                                    }
+
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                                remain_List_array.clear();
+                                            }
+                                        });
+                                        dialogBuilderRemainAsl.setCancelable(false);
+                                        pgH.dismiss();
+                                        if(!SalesActivity.this.isDestroyed())
+                                            dialogBuilderRemainAsl.show();
+                                    }
+                                    else{
+                                        pgH.dismiss();
+                                        Toast.makeText(SalesActivity.this, "List of remain is empty!", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                                else{
+                                    pgH.dismiss();
+                                    Toast.makeText(SalesActivity.this, "List of remain is empty or error: " + remain.getErrorCode(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            else{
+                                pgH.dismiss();
+                                Toast.makeText(SalesActivity.this, "Not connected successful!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<GetAssortmentRemainResults> call, Throwable t) {
+                            pgH.dismiss();
+                            Toast.makeText(SalesActivity.this, "Error." + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -944,6 +1044,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                 String Name = json.getString("AssortimentName");
                 String Cant = json.getString("Count");
                 String WareName = json.getString("WareName");
+                String WareUid = json.getString("Warehouse");
 
                 Cant=Cant.replace(",",".");
                 double count_to_double = Double.parseDouble(Cant);
@@ -956,6 +1057,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                 asl_.put("Cant",count_to_string);
                 asl_.put("Price",Price);
                 asl_.put("Uid",Uid);
+                asl_.put("WareUid",WareUid);
                 asl_.put("Ware",WareName);
 
                 String suma =String.format("%.2f",Double.valueOf(Price)* count_to_double );

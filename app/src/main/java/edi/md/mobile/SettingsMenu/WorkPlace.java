@@ -60,7 +60,7 @@ import static edi.md.mobile.NetworkUtils.NetworkUtils.Response_from_GetWareHouse
 
 public class WorkPlace extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     Button btn_get_workplace,btn_add_folder,btn_delete_all_folder;
-    Switch check_stock,show_cod,auto_confirm,show_keyboard, printSales;
+    Switch check_stock,show_cod,auto_confirm,show_keyboard, printSales, checkStock_added_assortment;
     TextView txtFolders,txt_user;
     String ip_,port_,UserId;
     ProgressDialog pgH;
@@ -108,6 +108,8 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         txtFolders = findViewById(R.id.txt_show_folders_workplace);
         txt_user = findViewById(R.id.txt_user_workplace);
         printSales = findViewById(R.id.switch_print_sales);
+        checkStock_added_assortment = findViewById(R.id.switch_check_stock_add_asl);
+
         pgH=new ProgressDialog(WorkPlace.this);
 
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
@@ -124,8 +126,8 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
             workplaceName ="Nedeterminat";
         btn_get_workplace.setText(workplaceName);
 
-        ip_=Settings.getString("IP","");
-        port_=Settings.getString("Port","");
+        ip_ = Settings.getString("IP","");
+        port_ = Settings.getString("Port","");
 
         txt_user.setText(User.getString("Name",""));
         View headerLayout = navigationView.getHeaderView(0);
@@ -140,6 +142,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         boolean CheckStock = Settings.getBoolean("CheckStockInput",false);
         boolean ShowCode = Settings.getBoolean("ShowCode",false);
         boolean printSale = Settings.getBoolean("PrintSales",false);
+        boolean verifyStockAddAsortment = Settings.getBoolean("CheckStockToServer",false);
 
         if (show){
             show_keyboard.setChecked(true);
@@ -168,6 +171,12 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
             printSales.setChecked(true);
         }else{
             printSales.setChecked(false);
+        }
+
+        if (verifyStockAddAsortment){
+            checkStock_added_assortment.setChecked(true);
+        }else{
+            checkStock_added_assortment.setChecked(false);
         }
 
 
@@ -424,6 +433,19 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
             }else{
                 inpSet.putBoolean("PrintSales",false);
                 inpSet.apply();
+            }
+        });
+
+        checkStock_added_assortment.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    inpSet.putBoolean("CheckStockToServer",true);
+                    inpSet.apply();
+                }else{
+                    inpSet.putBoolean("CheckStockToServer",false);
+                    inpSet.apply();
+                }
             }
         });
         handler = new Handler() {

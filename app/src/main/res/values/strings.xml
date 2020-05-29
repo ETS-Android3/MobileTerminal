@@ -25,7 +25,7 @@
     <string name="txt_licenta_licenta">Licența:</string>
     <string name="btn_verificare_licenta">Verificare</string>
     <string name="txt_pincod_securitate">Pin cod:</string>
-    <string name="txt_verifica_stoc_vinzare">Verifică stoc(la vânzare)</string>
+    <string name="txt_verifica_stoc_vinzare">Interzice vinzarea in rosu</string>
     <string name="txt_modificare_pincod_hint_securitate">Modificare pin cod</string>
     <string name="txt_limita_vinzare_securitate">Limita pozițiilor la vânzare:</string>
     <string name="txt_hint_limit_vinzare_securitate">*0 - limita nu este setată</string>

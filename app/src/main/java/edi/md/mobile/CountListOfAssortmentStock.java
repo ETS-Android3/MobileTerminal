@@ -19,24 +19,31 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import java.util.List;
+
+import edi.md.mobile.NetworkUtils.ApiRetrofit;
+import edi.md.mobile.NetworkUtils.RetrofitResults.GetAssortmentRemainResults;
+import edi.md.mobile.NetworkUtils.RetrofitResults.Remain;
+import edi.md.mobile.NetworkUtils.Services.CommandService;
 import edi.md.mobile.Utils.AssortmentParcelable;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 
 public class CountListOfAssortmentStock extends AppCompatActivity {
-    final Context context = this;
-    String ip_,port_,mNameAssortment;
-    boolean mIntegerSales;
+    String ip_,port_,mNameAssortment, WareUid;
     EditText Count_enter;
     ImageButton btn_plus,btn_del;
     TextView name_forasl,price_forasl,btn_save,btn_cancel,txtCode,txtBarCode,txtMarking,txtRemain;
-    int FROM_INVENTORY_ACTIVITY = 717;
-    JSONObject sendRevision;
-    ProgressDialog pgH;
+    ProgressBar pgBar;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -78,6 +85,7 @@ public class CountListOfAssortmentStock extends AppCompatActivity {
         txtBarCode = findViewById(R.id.txtBarcode_assortment_count_list_asl_stock);
         txtMarking = findViewById(R.id.txtMarking_asortment_count_list_asl_stock);
         txtRemain = findViewById(R.id.txtStoc_asortment_count_list_asl_stock);
+        pgBar = findViewById(R.id.progressBar2);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -85,8 +93,9 @@ public class CountListOfAssortmentStock extends AppCompatActivity {
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
         SharedPreferences sPref = getSharedPreferences("Save touch assortiment", MODE_PRIVATE);
 
-        ip_=Settings.getString("IP","");
-        port_=Settings.getString("Port","");
+        ip_ = Settings.getString("IP","");
+        port_ = Settings.getString("Port","");
+
 
         boolean showKB = Settings.getBoolean("ShowKeyBoard",false);
         if (showKB){
@@ -107,6 +116,7 @@ public class CountListOfAssortmentStock extends AppCompatActivity {
 
         name_forasl.setText(mNameAssortment);
         price_forasl.setText(mPriceAssortment);
+        WareUid = sales.getStringExtra("WareUid");
 
 
         if(mCodeAssortment==null || mCodeAssortment.equals("") || mCodeAssortment.equals("null") ){
@@ -131,6 +141,12 @@ public class CountListOfAssortmentStock extends AppCompatActivity {
             txtBarCode.setText("-");
         }else{
             txtBarCode.setText(mBarcodeAssortment);
+        }
+
+        boolean verifyStock = Settings.getBoolean("CheckStockToServer", false);
+
+        if(verifyStock){
+            checkStock(mIDAssortment,WareUid);
         }
 
         Count_enter.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -180,6 +196,56 @@ public class CountListOfAssortmentStock extends AppCompatActivity {
             }
         });
     }
+
+    private void checkStock(String mIDAssortment, String wareUid) {
+        txtRemain.setVisibility(View.INVISIBLE);
+        pgBar.setVisibility(View.VISIBLE);
+        CommandService commandService = ApiRetrofit.getCommandService(CountListOfAssortmentStock.this);
+        Call<GetAssortmentRemainResults> call = commandService.getAssortimentRemains(mIDAssortment,wareUid);
+
+        call.enqueue(new Callback<GetAssortmentRemainResults>() {
+            @Override
+            public void onResponse(Call<GetAssortmentRemainResults> call, Response<GetAssortmentRemainResults> response) {
+                if(response.isSuccessful()){
+                    GetAssortmentRemainResults remain = response.body();
+                    if(remain != null && remain.getErrorCode() == 0){
+                        List<Remain> remains = remain.getRemains();
+                        if(remains.size() > 0){
+
+                            for(Remain remain1 : remains){
+                                String remaiId = remain1.getWarehouseID();
+                                if(remaiId.equals(wareUid)){
+                                    txtRemain.setText(String.format("%.2f",remain1.getRemain()));
+                                    txtRemain.setVisibility(View.VISIBLE);
+                                    pgBar.setVisibility(View.INVISIBLE);
+                                    break;
+                                }
+                            }
+                        }
+                        else{
+                            txtRemain.setVisibility(View.VISIBLE);
+                            pgBar.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                    else{
+                        txtRemain.setVisibility(View.VISIBLE);
+                        pgBar.setVisibility(View.INVISIBLE);
+                    }
+                }
+                else{
+                    txtRemain.setVisibility(View.VISIBLE);
+                    pgBar.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetAssortmentRemainResults> call, Throwable t) {
+                txtRemain.setVisibility(View.VISIBLE);
+                pgBar.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
     private void saveCount(String uid_save){
         Intent intent = new Intent();
         intent.putExtra("Name",mNameAssortment);

@@ -22,7 +22,9 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,21 +35,29 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
+import edi.md.mobile.NetworkUtils.ApiRetrofit;
+import edi.md.mobile.NetworkUtils.RetrofitResults.GetAssortmentRemainResults;
+import edi.md.mobile.NetworkUtils.RetrofitResults.Remain;
+import edi.md.mobile.NetworkUtils.Services.CommandService;
 import edi.md.mobile.Utils.AssortmentParcelable;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static edi.md.mobile.ListAssortment.AssortimentClickentSendIntent;
 
 public class CountListOfAssortment extends AppCompatActivity {
     final Context context = this;
-    String ip_,port_,mNameAssortment,WareNames,WareUid;
+    String ip_,port_,mNameAssortment,WareUid;
     boolean mIntegerSales;
     EditText Count_enter;
     ImageButton btn_plus,btn_del;
     TextView name_forasl,price_forasl,btn_save,btn_cancel,txtCode,txtBarCode,txtMarking,txtRemain, txtUnit;
     JSONObject sendRevision;
     ProgressDialog pgH;
-
+    ProgressBar pgBarStock;
 
 
     @Override
@@ -91,6 +101,7 @@ public class CountListOfAssortment extends AppCompatActivity {
         txtRemain = findViewById(R.id.txtStoc_asortment_count_list_asl);
         txtUnit = findViewById(R.id.txt_unit_list_assortment);
         pgH = new ProgressDialog(CountListOfAssortment.this);
+        pgBarStock = findViewById(R.id.progressBar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -125,8 +136,13 @@ public class CountListOfAssortment extends AppCompatActivity {
         else
             mIntegerSales = false;
 
-        WareNames = sales.getStringExtra("WareN");
-        WareUid = sales.getStringExtra("WareI");
+        WareUid = sales.getStringExtra("WareUid");
+
+        boolean verifyStock = Settings.getBoolean("CheckStockToServer", false);
+
+        if(verifyStock){
+            checkStock(mIDAssortment,WareUid);
+        }
 
         name_forasl.setText(mNameAssortment);
         price_forasl.setText(mPriceAssortment);
@@ -247,14 +263,62 @@ public class CountListOfAssortment extends AppCompatActivity {
             }
         });
     }
+
+    private void checkStock(String mIDAssortment, String wareUid) {
+        txtRemain.setVisibility(View.INVISIBLE);
+        pgBarStock.setVisibility(View.VISIBLE);
+        CommandService commandService = ApiRetrofit.getCommandService(CountListOfAssortment.this);
+        Call<GetAssortmentRemainResults> call = commandService.getAssortimentRemains(mIDAssortment,wareUid);
+
+        call.enqueue(new Callback<GetAssortmentRemainResults>() {
+            @Override
+            public void onResponse(Call<GetAssortmentRemainResults> call, Response<GetAssortmentRemainResults> response) {
+                if(response.isSuccessful()){
+                    GetAssortmentRemainResults remain = response.body();
+                    if(remain != null && remain.getErrorCode() == 0){
+                        List<Remain> remains = remain.getRemains();
+                        if(remains.size() > 0){
+
+                            for(Remain remain1 : remains){
+                                String remaiId = remain1.getWarehouseID();
+                                if(remaiId.equals(wareUid)){
+                                    txtRemain.setText(String.format("%.2f",remain1.getRemain()));
+                                    txtRemain.setVisibility(View.VISIBLE);
+                                    pgBarStock.setVisibility(View.INVISIBLE);
+                                    break;
+                                }
+                            }
+                        }
+                        else{
+                            txtRemain.setVisibility(View.VISIBLE);
+                            pgBarStock.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                    else{
+                        txtRemain.setVisibility(View.VISIBLE);
+                        pgBarStock.setVisibility(View.INVISIBLE);
+                    }
+                }
+                else{
+                    txtRemain.setVisibility(View.VISIBLE);
+                    pgBarStock.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetAssortmentRemainResults> call, Throwable t) {
+                txtRemain.setVisibility(View.VISIBLE);
+                pgBarStock.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
     private void saveCount(){
         if (mIntegerSales) {
             if (isDouble(Count_enter.getText().toString())) {
                 Intent intent = new Intent();
                 intent.putExtra("Name", mNameAssortment);
                 intent.putExtra("count", String.valueOf(Count_enter.getText()));
-                intent.putExtra("WareName",WareNames);
-                intent.putExtra("Warehouse",WareUid);
                 setResult(RESULT_OK, intent);
                 finish();
             }
@@ -263,8 +327,6 @@ public class CountListOfAssortment extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.putExtra("Name",mNameAssortment);
                 intent.putExtra("count", String.valueOf(Count_enter.getText()));
-                intent.putExtra("WareName",WareNames);
-                intent.putExtra("Warehouse",WareUid);
                 setResult(RESULT_OK, intent);
                 finish();
             }

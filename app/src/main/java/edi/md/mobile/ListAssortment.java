@@ -230,6 +230,7 @@ public class ListAssortment extends AppCompatActivity {
                     addAssortmentClicked(mNameAssortment,mGUIDAssortment,mPriceAssortment,mCodeAssortment,mBarcodeAssortment,mUnitAssortment,mUnitPriceAssortment,mUnitInPackageAssortment);
                     Intent count_activity = new Intent(".CountListAssortmentMobile");
                     count_activity.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
+                    count_activity.putExtra("WareUid",WareUid);
 
                     Intent getActivity = getIntent();
                     final int id_intent = getActivity.getIntExtra("ActivityCount", 101);
@@ -242,6 +243,7 @@ public class ListAssortment extends AppCompatActivity {
                     else if (id_intent == ACTIVITY_STOCK_ASSORTMENT){
                         Intent count_activity_stock = new Intent(ListAssortment.this, CountListOfAssortmentStock.class);
                         count_activity_stock.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
+                        count_activity.putExtra("WareUid",WareUid);
                         startActivityForResult(count_activity_stock, REQUEST_CODE_COUNT_STOCK_ASL);
                     }
                     else if (id_intent == ACTIVITY_SALES){
