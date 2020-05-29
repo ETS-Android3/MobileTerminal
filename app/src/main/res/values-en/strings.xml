@@ -26,7 +26,7 @@
     <string name="txt_licenta_licenta">License:</string>
     <string name="btn_verificare_licenta">Check</string>
     <string name="txt_pincod_securitate">Pin code:</string>
-    <string name="txt_verifica_stoc_vinzare">Check remain(on salles)</string>
+    <string name="txt_verifica_stoc_vinzare">Prohibit the sale в red</string>
     <string name="txt_modificare_pincod_hint_securitate">Change pin code</string>
     <string name="txt_limita_vinzare_securitate">Limit positions on sale:</string>
     <string name="txt_hint_limit_vinzare_securitate">*0 - limit is not set</string>

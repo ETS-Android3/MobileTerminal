@@ -11,6 +11,7 @@ import edi.md.mobile.NetworkUtils.RetrofitBody.TransferFromOneWarehouseToAnother
 import edi.md.mobile.NetworkUtils.RetrofitResults.AssortmentListResult;
 import edi.md.mobile.NetworkUtils.RetrofitResults.AuthentificateUserResult;
 import edi.md.mobile.NetworkUtils.RetrofitResults.GetAssortmentItemResult;
+import edi.md.mobile.NetworkUtils.RetrofitResults.GetAssortmentRemainResults;
 import edi.md.mobile.NetworkUtils.RetrofitResults.GetPrintInvoiceResults;
 import edi.md.mobile.NetworkUtils.RetrofitResults.GetPrintersResult;
 import edi.md.mobile.NetworkUtils.RetrofitResults.GetWarehousesListResult;
@@ -80,4 +81,7 @@ public interface CommandService {
 
     @GET("/DataTerminalService/json/GetLableTemplate")
     Call<ResponseSimple> getLableTemplate (@Query("LableType") String lableType);
+
+    @GET("/DataTerminalService/json/GetAssortimentRemains")
+    Call<GetAssortmentRemainResults> getAssortimentRemains (@Query("AssortmentID") String assortmentID, @Query("WarehouseID") String warehouseID);
 }

@@ -110,7 +110,7 @@
         android:textAlignment="center"
         android:textColor="@color/colorAccent"
         android:textSize="14sp"
-        app:layout_constraintEnd_toStartOf="@+id/btn_delete_sales"
+        app:layout_constraintEnd_toStartOf="@+id/btn_check_remain_assortment"
         app:layout_constraintStart_toEndOf="@+id/btn_touch_open_asl_sales"
         app:layout_constraintTop_toBottomOf="@+id/progressBar_sales" />
 
@@ -125,6 +125,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progressBar_sales"
         app:srcCompat="@drawable/delete_white_36dp" />
+
+    <ImageButton
+        android:id="@+id/btn_check_remain_assortment"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="8dp"
+        android:adjustViewBounds="false"
+        android:background="@drawable/item_selector_button_actions"
+        app:layout_constraintEnd_toStartOf="@+id/btn_delete_sales"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_sales"
+        app:srcCompat="@drawable/check_white_36dp" />
 
     <ImageButton
         android:id="@+id/btn_touch_open_asl_sales"
@@ -159,7 +170,7 @@
         android:gravity="center"
         android:textColor="@color/colorAccent"
         android:textSize="14sp"
-        app:layout_constraintEnd_toStartOf="@+id/btn_delete_sales"
+        app:layout_constraintEnd_toStartOf="@+id/btn_check_remain_assortment"
         app:layout_constraintStart_toEndOf="@+id/btn_touch_open_asl_sales"
         app:layout_constraintTop_toBottomOf="@+id/txt_input_barcodes_sales" />
 

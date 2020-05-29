@@ -83,7 +83,7 @@
     <string name="toggle_btn_check_remain_nu">Нет</string>
     <string name="toggle_btn_check_remain_da">Да</string>
     <string name="txt_verifica_stoc_sales">Показ остатка</string>
-    <string name="txt_verifica_stoc_vinzare">Проверить остаток(при продаже)</string>
+    <string name="txt_verifica_stoc_vinzare">Запрет продажи в красное</string>
     <string name="btn_imprimare_sales">Печать</string>
     <string name="btn_adauga_client_sales">Добавить клиента/коментарий</string>
     <string name="txt_header_list_suma_sales">Сумма</string>
