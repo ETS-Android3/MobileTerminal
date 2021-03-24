@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/astavka"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".activities.CheckPriceActivity"
+    tools:context=".CheckPriceActivity"
     tools:ignore="MissingTranslation"
     tools:showIn="@layout/app_bar_check_price">
 
@@ -87,7 +87,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtName_assortment_check_price" />
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/CL_info_asortment_check_price"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -257,18 +257,17 @@
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtBarcode_assortment_checkPrice" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/textView14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="12dp"
         android:text="@string/txt_nr_etichete_checkprice"
         android:textColor="@android:color/black"
-        android:textSize="24sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/img_btn_delete_count_check_price"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -293,6 +292,7 @@
         android:layout_marginTop="12dp"
         android:background="@android:color/transparent"
         android:gravity="center_horizontal|center_vertical"
+        android:inputType="number"
         android:text="1"
         android:textColor="@android:color/black"
         android:textSize="24sp"
@@ -305,12 +305,11 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:adjustViewBounds="false"
         android:background="@drawable/item_selector_button_actions"
         app:layout_constraintStart_toEndOf="@+id/btn_add_manual_check_price"
-        app:layout_constraintTop_toBottomOf="@+id/textView14"
+        app:layout_constraintTop_toBottomOf="@+id/count_etichete_check_price"
         app:srcCompat="@drawable/add_white_48dp" />
 
     <ImageButton
@@ -318,15 +317,13 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:background="@drawable/item_selector_button_actions"
         app:layout_constraintEnd_toStartOf="@+id/btn_touch_open_asl_check_price"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView14"
+        app:layout_constraintTop_toBottomOf="@+id/count_etichete_check_price"
         app:srcCompat="@drawable/keyboard_white_48dp" />
 
     <ImageButton
@@ -335,10 +332,9 @@
         android:layout_height="50dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:background="@drawable/item_selector_button_actions"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView14"
+        app:layout_constraintTop_toBottomOf="@+id/count_etichete_check_price"
         app:srcCompat="@drawable/print_white_48dp" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

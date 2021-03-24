@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MobileTerminal</string>
+    <string name="app_name">Stock Manager</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -29,7 +29,7 @@
     <string name="txt_modificare_pincod_hint_securitate">Modificare pin cod</string>
     <string name="txt_limita_vinzare_securitate">Limita pozițiilor la vânzare:</string>
     <string name="txt_hint_limit_vinzare_securitate">*0 - limita nu este setată</string>
-    <string name="btn_donload_install_new_version">Upgrade</string>
+    <string name="btn_donload_install_new_version">Verifica versiunea</string>
     <string name="btn_donload_install_old_version">Downgrade</string>
     <string name="txt_hint_input_licenta_securitate">Licența primită</string>
 
@@ -193,9 +193,12 @@
     <string name="et_hint_barcode">Codul de bare</string>
     <string name="btn_atribuire_barcodului">Setați codul de bare</string>
 
-    <string name="choose_bluetooth_device">Choose Bluetooth Device</string>
-    <string name="search_device">Search</string>
-    <string name="tip_have_no_paired_device">No paired device</string>
-    <string name="tip_have_no_found_bluetooth_device">No Device</string>
-    <string name="paired_devices">Paired</string>
+    <string name="choose_bluetooth_device">Alege dispozitiv disponibil</string>
+    <string name="tip_have_no_found_bluetooth_device">Niciun dispozitiv</string>
+    <string name="paired_devices">Asociat</string>
+    <string name="factura_de_intrare_dupa_suma">Factură de intrare după sumă</string>
+    <string name="verfica_stocul_la_adaugarea_cantitatii">Verifica stocul la adaugarea cantității</string>
+    <string name="search_device">Сăutare</string>
+    <string name="tip_have_no_paired_device">Niciun dispozitiv asociat</string>
+    <string name="cdata_delete"><![CDATA[<-]]></string>
 </resources>

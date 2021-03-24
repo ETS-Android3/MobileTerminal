@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="app_name">MobileTerminal</string>
+    <string name="app_name">Stock Manager</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -30,7 +30,7 @@
     <string name="txt_modificare_pincod_hint_securitate">Change pin code</string>
     <string name="txt_limita_vinzare_securitate">Limit positions on sale:</string>
     <string name="txt_hint_limit_vinzare_securitate">*0 - limit is not set</string>
-    <string name="btn_donload_install_new_version">Upgrade</string>
+    <string name="btn_donload_install_new_version">Check updates</string>
     <string name="btn_donload_install_old_version">Downgrade</string>
     <string name="txt_hint_input_licenta_securitate">Key lic</string>
 
@@ -194,4 +194,12 @@
     <string name="errorMsg_unknowErrore">Unknow error</string>
     <string name="et_hint_barcode">Barcode</string>
     <string name="btn_atribuire_barcodului">Set barcode</string>
+    <string name="factura_de_intrare_dupa_suma">Entry invoice by amount</string>
+    <string name="verfica_stocul_la_adaugarea_cantitatii">Check stock when adding quantity</string>
+    <string name="search_device">Search</string>
+    <string name="tip_have_no_paired_device">No paired device</string>
+    <string name="tip_have_no_found_bluetooth_device">No Device</string>
+    <string name="paired_devices">Paired</string>
+    <string name="choose_bluetooth_device">Choose Bluetooth Device</string>
+    <string name="cdata_delete"><![CDATA[<-]]></string>
 </resources>

@@ -1,0 +1,23 @@
+
+package md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
+public class AssortmentListResult {
+
+    @SerializedName("Assortments")
+    @Expose
+    private List<Assortment> assortments = null;
+
+    public List<Assortment> getAssortments() {
+        return assortments;
+    }
+
+    public void setAssortments(List<Assortment> assortments) {
+        this.assortments = assortments;
+    }
+
+}

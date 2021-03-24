@@ -17,6 +17,9 @@
     <color name="primary">#272a3b</color>
     <color name="stroke_gray_color">#dddddd</color>
     <color name="hint_text_color">#7f7f7f</color>
+
+    <color name="red" >#ed0909</color>
+    <color name="black">#FF000000</color>
 </resources>
 <!--004c63-->
     <!--004263-->

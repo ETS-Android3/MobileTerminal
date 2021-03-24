@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/background_constraint_securitate"
@@ -15,40 +15,17 @@
         android:id="@+id/btn_chek_update2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:background="@drawable/item_selector_button_blue"
-        android:drawableLeft="@drawable/arrow_up_white_48dp"
+        android:drawableRight="@drawable/arrow_up_white_48dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:text="@string/btn_donload_install_new_version"
         android:textAllCaps="false"
         android:textColor="@android:color/background_light"
         android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/btn_chek_downgrade"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView18" />
-
-    <Button
-        android:id="@+id/btn_chek_downgrade"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:background="@drawable/item_selector_button_blue"
-        android:drawableLeft="@drawable/arrow_down_white_48dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:text="@string/btn_donload_install_old_version"
-        android:textAllCaps="false"
-        android:textColor="@android:color/background_light"
-        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_chek_update2"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView18" />
 
     <EditText
@@ -259,4 +236,4 @@
         app:srcCompat="@drawable/united_states" />
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="app_name">MobileTerminal</string>
+    <string name="app_name">Stock Manager</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -28,7 +28,7 @@
     <string name="txt_modificare_pincod_hint_securitate">Модификация пин-кода</string>
     <string name="txt_limita_vinzare_securitate">Ограничения кол-во при продаже:</string>
     <string name="txt_hint_limit_vinzare_securitate">*0 - ограничение не установленно</string>
-    <string name="btn_donload_install_new_version">Обновить</string>
+    <string name="btn_donload_install_new_version">Проверить обновления</string>
     <string name="btn_donload_install_old_version">Откатить</string>
     <string name="txt_hint_input_licenta_securitate">Ключ лицензий</string>
 
@@ -191,4 +191,12 @@
     <string name="errorMsg_unknowErrore">Неизвестная ошибка</string>
     <string name="et_hint_barcode">Штрих-код</string>
     <string name="btn_atribuire_barcodului">Установить штрих-код</string>
+    <string name="factura_de_intrare_dupa_suma">Приход по сумме товара</string>
+    <string name="verfica_stocul_la_adaugarea_cantitatii">Проверяйте запас при добавлении количества</string>
+    <string name="choose_bluetooth_device">Выберите устройство Bluetooth</string>
+    <string name="search_device">Поиск</string>
+    <string name="tip_have_no_paired_device">Нет сопряженного устройства</string>
+    <string name="tip_have_no_found_bluetooth_device">Нет устройства</string>
+    <string name="paired_devices">Соединенный</string>
+    <string name="cdata_delete"><![CDATA[<-]]></string>
 </resources>
