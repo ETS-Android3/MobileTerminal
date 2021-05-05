@@ -194,4 +194,12 @@
     <string name="errorMsg_unknowErrore">Unknow error</string>
     <string name="et_hint_barcode">Barcode</string>
     <string name="btn_atribuire_barcodului">Set barcode</string>
+    <string name="btn_create_assortment">Create item</string>
+    <string name="denumirea_produsului">Name</string>
+    <string name="barcode">Barcode</string>
+    <string name="articol">Marking</string>
+    <string name="creare">Create</string>
+    <string name="complete_this_filed">Completeaza acest cimp!</string>
+    <string name="item_created">Assortment added!</string>
+    <string name="error_create_item">"Error: "</string>
 </resources>

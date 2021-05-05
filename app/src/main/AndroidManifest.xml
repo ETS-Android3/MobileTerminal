@@ -28,14 +28,14 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
 
-        <activity android:name=".SetAssortmentBarcode"
+        <activity android:name=".CreateAssortmentActivity" android:theme="@style/AppTheme.NoActionBar" android:label="@string/btn_create_assortment"></activity>
+        <activity
+            android:name=".SetAssortmentBarcode"
             android:configChanges="orientation"
             android:label="@string/enter_barcode_"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden">
-        </activity>
-
+            android:windowSoftInputMode="stateHidden"></activity>
         <activity
             android:name=".CountListOfAssortmentStock"
             android:configChanges="orientation"
@@ -254,8 +254,8 @@
         </activity>
         <activity
             android:name=".SettingsMenu.Securitate"
-            android:label="@string/header_securitate_activity"
             android:configChanges="orientation|screenSize"
+            android:label="@string/header_securitate_activity"
             android:screenOrientation="fullSensor"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -372,7 +372,7 @@
             android:value="bb23252915ed55596257f7e1c85fd17cc9a35497" />
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">

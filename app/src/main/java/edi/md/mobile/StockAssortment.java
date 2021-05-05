@@ -1,6 +1,6 @@
 package edi.md.mobile;
 
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,16 +9,16 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.navigation.NavigationView;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -88,8 +88,8 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
     Timer sync;
     private Handler mHandler;
 
-    JSONObject  sendDocument,document_etichete,sendAssortiment;
-    JSONArray mArrayAssortment, mArrayForEtichete;
+    JSONObject  showList, sendDocument,document_etichete,sendAssortiment;
+    JSONArray mArrayAssortment, mArrayForEtichete, mArrayAssortmentShow;
 
     Menu menu;
     final boolean[] show_keyboard = {false};
@@ -138,6 +138,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
 
         mArrayAssortment =new JSONArray();
         mArrayForEtichete =new JSONArray();
+        mArrayAssortmentShow =new JSONArray();
 
         final String WorkPlaceID = WorkPlace.getString("Uid","0");
         final String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
@@ -215,12 +216,12 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
             public void onClick(View v) {
                 if(uid_selected!=null){
                     try {
-                        for (int i = 0; i< mArrayAssortment.length(); i++) {
-                            JSONObject json = mArrayAssortment.getJSONObject(i);
+                        for (int i = 0; i< mArrayAssortmentShow.length(); i++) {
+                            JSONObject json = mArrayAssortmentShow.getJSONObject(i);
                             String Uid = json.getString("AssortimentID");
                             if (uid_selected.contains(Uid)) {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                    mArrayAssortment.remove(i);
+                                    mArrayAssortmentShow.remove(i);
                                 }
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                                     mArrayForEtichete.remove(i);
@@ -386,7 +387,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
 
     }
     private void exitDialog(){
-        if(mArrayAssortment.length()==0){
+        if(mArrayAssortmentShow.length()==0){
             finish();
         }
         else{
@@ -561,8 +562,8 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
     }
     public void showAssortment(){
         try {
-            for (int i = 0; i< mArrayAssortment.length(); i++){
-                JSONObject json= mArrayAssortment.getJSONObject(i);
+            for (int i = 0; i< mArrayAssortmentShow.length(); i++){
+                JSONObject json= mArrayAssortmentShow.getJSONObject(i);
                 HashMap<String, Object> asl_ = new HashMap<>();
                 String Name = json.getString("AssortimentName");
                 String Cant = json.getString("Quantity");
@@ -987,6 +988,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                 String response = data.getStringExtra("AssortmentStockAdded");
                 try {
                     sendDocument=new JSONObject();
+                    showList =new JSONObject();
                     document_etichete=new JSONObject();
 
                     JSONObject json= new JSONObject(response);
@@ -1007,11 +1009,14 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                     String Barcode  = json.getString("Barcode");
                     String Unit  = json.getString("Unit");
 
-                    sendDocument.put("AssortimentName",NameAsl);
                     sendDocument.put("AssortimentID",UidAsl);
                     sendDocument.put("Quantity",count);
                     sendDocument.put("WarehouseID",WareUid);
-                    sendDocument.put("WarehouseName",WareName);
+                    showList.put("AssortimentID",UidAsl);
+                    showList.put("Quantity",count);
+                    showList.put("WarehouseID",WareUid);
+                    showList.put("WarehouseName",WareName);
+                    showList.put("AssortimentName",NameAsl);
 
                     document_etichete.put("AssortimentID",UidAsl);
                     document_etichete.put("Count",count);
@@ -1024,9 +1029,9 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                     document_etichete.put("UnitInPackage",UnitInPackage);
 
                     boolean isExtist = false;
-                    if (mArrayAssortment.length()!=0) {
-                        for (int i = 0; i < mArrayAssortment.length(); i++) {
-                            JSONObject object = mArrayAssortment.getJSONObject(i);
+                    if (mArrayAssortmentShow.length()!=0) {
+                        for (int i = 0; i < mArrayAssortmentShow.length(); i++) {
+                            JSONObject object = mArrayAssortmentShow.getJSONObject(i);
                             JSONObject jsonObject = mArrayForEtichete.getJSONObject(i);
                             String AssortimentUid = object.getString("AssortimentID");
                             String CountExist = object.getString("Quantity");
@@ -1049,10 +1054,12 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                         }
                         if (!isExtist){
                             mArrayAssortment.put(sendDocument);
+                            mArrayAssortmentShow.put(showList);
                             mArrayForEtichete.put(document_etichete);
                         }
                     }else{
                         mArrayAssortment.put(sendDocument);
+                        mArrayAssortmentShow.put(showList);
                         mArrayForEtichete.put(document_etichete);
                     }
                     asl_list.clear();
@@ -1077,7 +1084,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                 try {
                     JSONArray array_from_touch = new JSONArray(response);
 
-                    if (mArrayAssortment.length() != 0) {
+                    if (mArrayAssortmentShow.length() != 0) {
                         boolean isExtist = false;
                         for (int i = 0; i < array_from_touch.length(); i++) {
                             JSONObject object_from_touch = array_from_touch.getJSONObject(i);
@@ -1101,11 +1108,15 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                             sendDocument=new JSONObject();
                             document_etichete=new JSONObject();
 
-                            sendDocument.put("AssortimentName",NameAsl);
                             sendDocument.put("AssortimentID",AssortimentUid_from_touch);
                             sendDocument.put("Quantity",count);
                             sendDocument.put("WarehouseID",WareUid);
-                            sendDocument.put("WarehouseName",WareName);
+
+                            showList.put("AssortimentID",AssortimentUid_from_touch);
+                            showList.put("Quantity",count);
+                            showList.put("WarehouseID",WareUid);
+                            showList.put("WarehouseName",WareName);
+                            showList.put("AssortimentName",NameAsl);
 
                             document_etichete.put("AssortimentID",AssortimentUid_from_touch);
                             document_etichete.put("Count",count);
@@ -1117,8 +1128,8 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                             document_etichete.put("UnitPrice",UnitPrice);
                             document_etichete.put("UnitInPackage",UnitInPackage);
 
-                            for (int k = 0; k < mArrayAssortment.length(); k++) {
-                                JSONObject object = mArrayAssortment.getJSONObject(k);
+                            for (int k = 0; k < mArrayAssortmentShow.length(); k++) {
+                                JSONObject object = mArrayAssortmentShow.getJSONObject(k);
                                 JSONObject jsonObject = mArrayForEtichete.getJSONObject(i);
                                 String AssortimentUid = object.getString("AssortimentID");
                                 String CountExist = object.getString("Quantity");
@@ -1142,6 +1153,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                             }
                             if (!isExtist) {
                                 mArrayAssortment.put(sendDocument);
+                                mArrayAssortmentShow.put(showList);
                                 mArrayForEtichete.put(document_etichete);
                             }
                         }
@@ -1167,11 +1179,14 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                             sendDocument=new JSONObject();
                             document_etichete=new JSONObject();
 
-                            sendDocument.put("AssortimentName",NameAsl);
                             sendDocument.put("AssortimentID",UidAsl);
                             sendDocument.put("Quantity",Count);
                             sendDocument.put("WarehouseID",WareUid);
-                            sendDocument.put("WarehouseName",WareName);
+                            showList.put("AssortimentID",UidAsl);
+                            showList.put("Quantity",Count);
+                            showList.put("WarehouseID",WareUid);
+                            showList.put("WarehouseName",WareName);
+                            showList.put("AssortimentName",NameAsl);
 
                             document_etichete.put("Name",NameAsl);
                             document_etichete.put("AssortimentID",UidAsl);
@@ -1184,6 +1199,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                             document_etichete.put("Count",Count);
 
                             mArrayAssortment.put(sendDocument);
+                            mArrayAssortmentShow.put(showList);
                             mArrayForEtichete.put(document_etichete);
                         }
                     }

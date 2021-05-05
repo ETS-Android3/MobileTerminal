@@ -5,9 +5,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -27,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 import edi.md.mobile.NetworkUtils.Services.CommandService;
 import edi.md.mobile.Utils.AssortmentParcelable;
 import edi.md.mobile.NetworkUtils.RetrofitResults.ResponseSimple;
-import io.reactivex.annotations.NonNull;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;

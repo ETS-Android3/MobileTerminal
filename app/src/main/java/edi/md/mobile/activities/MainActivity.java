@@ -7,19 +7,19 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AlertDialog;
 import android.view.View;
-import android.support.v4.view.GravityCompat;
-import android.support.v7.app.ActionBarDrawerToggle;
+import androidx.core.view.GravityCompat;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
-import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
+import com.google.android.material.navigation.NavigationView;
+import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
@@ -27,13 +27,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
-
+import edi.md.mobile.CreateAssortmentActivity;
 import edi.md.mobile.NetworkUtils.ApiRetrofit;
 import edi.md.mobile.NetworkUtils.Services.CommandService;
 import edi.md.mobile.R;
 import edi.md.mobile.Variables;
-import io.fabric.sdk.android.Fabric;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,7 +44,7 @@ import java.util.TimerTask;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    Button btn_check_price,btn_sales,btn_invoice,btn_transfer,btn_inventory,btn_stock_asortment, btn_set_barcodes;
+    Button btn_check_price,btn_sales,btn_invoice,btn_transfer,btn_inventory,btn_stock_asortment, btn_set_barcodes, buttonCreateItem;
     Integer checkPrice = 1,salesDoc = 2, invoiceDoc = 3,transferIntern = 4,inventAr = 5,stock_asl = 7,workplaces = 8,printers = 9,securitate = 10, setBarcode = 147;
     TimerTask timerTaskSync;
     Timer sync;
@@ -117,7 +115,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -147,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         btn_inventory = findViewById(R.id.btn_inventory);
         btn_stock_asortment = findViewById(R.id.btn_stock_assortment);
         btn_set_barcodes = findViewById(R.id.btn_set_assortment_barcode);
+        buttonCreateItem = findViewById(R.id.btn_create_assortment);
 
         //ask necessary permisions
         AskForPermissions();
@@ -213,6 +211,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Toast.makeText(MainActivity.this, "Nu este legatura cu serverul.", Toast.LENGTH_SHORT).show();
                 }
 
+            }
+        });
+
+        buttonCreateItem.setOnClickListener(view -> {
+            keyLicense=Settings.getBoolean("Key",false);
+            if(pingTest) {
+                if(keyLicense) {
+                    Boolean CheckLogin = ((Variables) getApplication()).getUserAuthentificate();
+                    if (CheckLogin == null) {
+                        CheckLogin = false;
+                        ((Variables) getApplication()).setUserAuthentificate(false);
+                    }
+                    if (CheckLogin) {
+                        Intent invoice = new Intent(this, CreateAssortmentActivity.class);
+                        startActivity(invoice);
+                    } else {
+                        Intent Logins = new Intent(".LoginMobile");
+                        Logins.putExtra("Activity", 12);
+                        startActivity(Logins);
+                    }
+                }else{
+                    Toast.makeText(MainActivity.this, "Licenta gresita!", Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(MainActivity.this, "Nu este legatura cu serverul.", Toast.LENGTH_SHORT).show();
             }
         });
         btn_sales.setOnClickListener(new View.OnClickListener() {

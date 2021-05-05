@@ -191,4 +191,12 @@
     <string name="errorMsg_unknowErrore">Неизвестная ошибка</string>
     <string name="et_hint_barcode">Штрих-код</string>
     <string name="btn_atribuire_barcodului">Установить штрих-код</string>
+    <string name="btn_create_assortment">Создать товар</string>
+    <string name="denumirea_produsului">Название</string>
+    <string name="barcode">Штрих-код</string>
+    <string name="articol">Артикул</string>
+    <string name="creare">Создать</string>
+    <string name="complete_this_filed">Completeaza acest cimp!</string>
+    <string name="item_created">Товар успешно созда!</string>
+    <string name="error_create_item">"Ошибка: "</string>
 </resources>

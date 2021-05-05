@@ -2,6 +2,7 @@ package edi.md.mobile.NetworkUtils.Services;
 import java.util.List;
 
 import edi.md.mobile.NetworkUtils.RetrofitBody.AuthentificateUserBody;
+import edi.md.mobile.NetworkUtils.RetrofitBody.CreateAssortmentBody;
 import edi.md.mobile.NetworkUtils.RetrofitBody.GetAssortmentItemBody;
 import edi.md.mobile.NetworkUtils.RetrofitBody.SaveAccumulateAssortmentListBody;
 import edi.md.mobile.NetworkUtils.RetrofitBody.SaveInvoiceBody;
@@ -84,4 +85,7 @@ public interface CommandService {
 
     @GET("/DataTerminalService/json/GetAssortimentRemains")
     Call<GetAssortmentRemainResults> getAssortimentRemains (@Query("AssortmentID") String assortmentID, @Query("WarehouseID") String warehouseID);
+
+    @POST("/DataTerminalService/json/CreateAssortiment")
+    Call<ResponseSimple> createAssortment (@Body CreateAssortmentBody body);
 }

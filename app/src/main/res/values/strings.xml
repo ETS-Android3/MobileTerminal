@@ -192,10 +192,19 @@
     <string name="errorMsg_unknowErrore">Eroare necunoscuta</string>
     <string name="et_hint_barcode">Codul de bare</string>
     <string name="btn_atribuire_barcodului">Setați codul de bare</string>
+    <string name="btn_create_assortment">Creare produs</string>
+
 
     <string name="choose_bluetooth_device">Choose Bluetooth Device</string>
     <string name="search_device">Search</string>
     <string name="tip_have_no_paired_device">No paired device</string>
     <string name="tip_have_no_found_bluetooth_device">No Device</string>
     <string name="paired_devices">Paired</string>
+    <string name="denumirea_produsului">Denumirea produsului</string>
+    <string name="barcode">Cod de bare</string>
+    <string name="articol">Articol</string>
+    <string name="creare">Creare</string>
+    <string name="complete_this_filed">Completeaza acest cimp!</string>
+    <string name="item_created">Assortment added!</string>
+    <string name="error_create_item">"Eroare: "</string>
 </resources>
