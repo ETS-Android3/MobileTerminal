@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.remoteconfig.BuildConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.rt.printerlibrary.printer.RTPrinter;
@@ -29,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -36,12 +36,13 @@ import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.Assortment;
 import md.intelectsoft.stockmanager.Utils.UpdateHelper;
 import md.intelectsoft.stockmanager.app.utils.BaseEnum;
 
-public class Variables extends Application {
+public class BaseApp extends Application {
 
-    public static Variables instance = null;
+    public static BaseApp instance = null;
     private RTPrinter rtPrinter;
 
     private int widthPrinterPrint;
+    List<Assortment> assortments = new ArrayList<>();
 
     @BaseEnum.CmdType
     private int currentCmdType = BaseEnum.CMD_PIN;//默认为针打
@@ -94,7 +95,16 @@ public class Variables extends Application {
         });
     }
 
-    public static Variables getInstance(){
+
+    public List<Assortment> getAssortments() {
+        return assortments;
+    }
+
+    public void setAssortments(List<Assortment> assortments) {
+        this.assortments = assortments;
+    }
+
+    public static BaseApp getInstance(){
         return instance;
     }
 
@@ -190,34 +200,34 @@ public class Variables extends Application {
                     String uid_asl = sal.getAssortimentID();
                     String parent = sal.getAssortimentParentID();
                     if (!is_folder) {
-                        String price =  sal.getPrice();
-                        String allow_integer = sal.getAllowNonIntegerSale();
-                        String incomePrice=sal.getIncomePrice();
-                        String unitary=sal.getUnit();
-                        String marking = sal.getMarking();
-                        String finalUnitPrice=sal.getUnitPrice();
+//                        String price =  sal.getPrice();
+//                        String allow_integer = sal.getAllowNonIntegerSale();
+//                        String incomePrice=sal.getIncomePrice();
+//                        String unitary=sal.getUnit();
+//                        String marking = sal.getMarking();
+//                        String finalUnitPrice=sal.getUnitPrice();
                         String UnitInPackage=sal.getUnitInPackage();
 
-                        Double priceunit = Double.valueOf(price);
-                        price =String.format("%.2f",priceunit);
-                        String Asl_Price =getResources().getString(R.string.txt_list_asl_view_price)+ price + getResources().getString(R.string.txt_list_asl_view_valuta);
-
-                        asl_.put("Folder_is", false);
-                        asl_.put("icon", R.drawable.assortiment_item);
-                        asl_.put("Name", asl_name);
-                        asl_.put("ID", uid_asl);
-                        asl_.put("Code", code_asl);
-                        asl_.put("BarCode", barcode_asl);
-                        asl_.put("Marking",marking);
-                        asl_.put("Bar_code",getResources().getString(R.string.txt_list_asl_view_barcode) + barcode_asl);
-                        asl_.put("AllowNonIntegerSale", allow_integer);
-                        asl_.put("Price", price);
-                        asl_.put("PriceWithText", Asl_Price);
-                        asl_.put("IncomePrice", incomePrice);
-                        asl_.put("Unit",  " /"+  unitary);
-                        asl_.put("UnitPrice", finalUnitPrice);
-                        asl_.put("UnitInPackage", UnitInPackage);
-                        asl_list.add(asl_);
+//                        Double priceunit = Double.valueOf(price);
+//                        price =String.format("%.2f",priceunit);
+//                        String Asl_Price =getResources().getString(R.string.txt_list_asl_view_price)+ price + getResources().getString(R.string.txt_list_asl_view_valuta);
+//
+//                        asl_.put("Folder_is", false);
+//                        asl_.put("icon", R.drawable.assortiment_item);
+//                        asl_.put("Name", asl_name);
+//                        asl_.put("ID", uid_asl);
+//                        asl_.put("Code", code_asl);
+//                        asl_.put("BarCode", barcode_asl);
+//                        asl_.put("Marking",marking);
+//                        asl_.put("Bar_code",getResources().getString(R.string.txt_list_asl_view_barcode) + barcode_asl);
+//                        asl_.put("AllowNonIntegerSale", allow_integer);
+//                        asl_.put("Price", price);
+//                        asl_.put("PriceWithText", Asl_Price);
+//                        asl_.put("IncomePrice", incomePrice);
+//                        asl_.put("Unit",  " /"+  unitary);
+//                        asl_.put("UnitPrice", finalUnitPrice);
+//                        asl_.put("UnitInPackage", UnitInPackage);
+//                        asl_list.add(asl_);
                     } else {
                         asl_.put("Folder_is", true);
                         asl_.put("Parent_ID", parent);
@@ -256,36 +266,36 @@ public class Variables extends Application {
                     String asl_name = sal.getName();
                     String uid_asl = sal.getAssortimentID();
                     if (!is_folder) {
-                        String price = sal.getPrice();
-                        String code_asl = sal.getCode();
-                        String barcode_asl = sal.getBarCode();
-                        String allow_integer = sal.getAllowNonIntegerSale();
-                        String incomePrice = sal.getIncomePrice();
-                        String marking = sal.getMarking();
-                        String unitary = sal.getUnit();
-                        String finalUnitPrice = sal.getUnitPrice();
-                        String UnitInPackage = sal.getUnitInPackage();
-
-                        double priceunit = Double.parseDouble(price);
-                        price = String.format("%.2f", priceunit);
-
-                        asl_.put("Folder_is", false);
-                        String Asl_Price =getResources().getString(R.string.txt_list_asl_view_price)+ price + getResources().getString(R.string.txt_list_asl_view_valuta);
-
-                        asl_.put("icon", R.drawable.assortiment_item);
-                        asl_.put("Name", asl_name );
-                        asl_.put("ID", uid_asl);
-                        asl_.put("Code", code_asl);
-                        asl_.put("BarCode", barcode_asl);
-                        asl_.put("Marking",marking);
-                        asl_.put("Bar_code", getResources().getString(R.string.txt_list_asl_view_barcode) + barcode_asl);
-                        asl_.put("AllowNonIntegerSale", allow_integer);
-                        asl_.put("Price", price );
-                        asl_.put("PriceWithText", Asl_Price);
-                        asl_.put("IncomePrice", incomePrice);
-                        asl_.put("Unit",  "/"+  unitary);
-                        asl_.put("UnitPrice", finalUnitPrice);
-                        asl_.put("UnitInPackage", UnitInPackage);
+//                        String price = sal.getPrice();
+//                        String code_asl = sal.getCode();
+//                        String barcode_asl = sal.getBarCode();
+//                        String allow_integer = sal.getAllowNonIntegerSale();
+//                        String incomePrice = sal.getIncomePrice();
+//                        String marking = sal.getMarking();
+//                        String unitary = sal.getUnit();
+//                        String finalUnitPrice = sal.getUnitPrice();
+//                        String UnitInPackage = sal.getUnitInPackage();
+//
+//                        double priceunit = Double.parseDouble(price);
+//                        price = String.format("%.2f", priceunit);
+//
+//                        asl_.put("Folder_is", false);
+//                        String Asl_Price =getResources().getString(R.string.txt_list_asl_view_price)+ price + getResources().getString(R.string.txt_list_asl_view_valuta);
+//
+//                        asl_.put("icon", R.drawable.assortiment_item);
+//                        asl_.put("Name", asl_name );
+//                        asl_.put("ID", uid_asl);
+//                        asl_.put("Code", code_asl);
+//                        asl_.put("BarCode", barcode_asl);
+//                        asl_.put("Marking",marking);
+//                        asl_.put("Bar_code", getResources().getString(R.string.txt_list_asl_view_barcode) + barcode_asl);
+//                        asl_.put("AllowNonIntegerSale", allow_integer);
+//                        asl_.put("Price", price );
+//                        asl_.put("PriceWithText", Asl_Price);
+//                        asl_.put("IncomePrice", incomePrice);
+//                        asl_.put("Unit",  "/"+  unitary);
+//                        asl_.put("UnitPrice", finalUnitPrice);
+//                        asl_.put("UnitInPackage", UnitInPackage);
                         asl_list.add(asl_);
                     }
                     else {

@@ -350,7 +350,7 @@ public class CountInvoice extends AppCompatActivity {
                         asl.put("Count", etCant.getText().toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(),CountInvoice.this);
+                        ((BaseApp)getApplication()).appendLog(e.getMessage(),CountInvoice.this);
                     }
                     Intent intent = new Intent();
                     intent.putExtra("AssortmentInvoiceAdded", asl.toString());
@@ -377,7 +377,7 @@ public class CountInvoice extends AppCompatActivity {
                         asl.put("Count", etCant.getText().toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        ((Variables) getApplication()).appendLog(e.getMessage(), CountInvoice.this);
+                        ((BaseApp) getApplication()).appendLog(e.getMessage(), CountInvoice.this);
                     }
                     Intent intent = new Intent();
                     intent.putExtra("AssortmentInvoiceAdded", asl.toString());
@@ -461,7 +461,7 @@ public class CountInvoice extends AppCompatActivity {
             return true;
         } catch (NumberFormatException e) {
 
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountInvoice.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountInvoice.this);
             return false;
         }
     }
@@ -470,7 +470,7 @@ public class CountInvoice extends AppCompatActivity {
             Integer.parseInt(s);
             return true;
         } catch (NumberFormatException e) {
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountInvoice.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountInvoice.this);
             return false;
         }
     }

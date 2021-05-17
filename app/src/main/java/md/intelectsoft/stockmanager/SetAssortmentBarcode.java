@@ -160,7 +160,7 @@ public class SetAssortmentBarcode extends AppCompatActivity {
                         if(errorCode == 0)
                             handlers.obtainMessage(10).sendToTarget();
                         else {
-                            String msg = ((Variables)getApplication()).getErrorMessage(errorCode);
+                            String msg = ((BaseApp)getApplication()).getErrorMessage(errorCode);
                             handlers.obtainMessage(101, msg).sendToTarget();
                         }
                     }

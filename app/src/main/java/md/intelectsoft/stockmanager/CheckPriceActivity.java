@@ -55,12 +55,10 @@ import com.zebra.sdk.comm.BluetoothConnection;
 import com.zebra.sdk.comm.Connection;
 import com.zebra.sdk.comm.ConnectionException;
 
-import md.intelectsoft.stockmanager.NetworkUtils.ApiRetrofit;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.GetAssortmentItemBody;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.GetAssortmentItemResult;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.GetWarehousesListResult;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.WarehouseList;
-import md.intelectsoft.stockmanager.NetworkUtils.Services.CommandService;
 import md.intelectsoft.stockmanager.TerminalService.TerminalAPI;
 import md.intelectsoft.stockmanager.TerminalService.TerminalRetrofitClient;
 import md.intelectsoft.stockmanager.app.utils.SPFHelp;
@@ -241,7 +239,7 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
                                         .sendToTarget();
                             } catch (UnsupportedEncodingException e) {
                                 e.printStackTrace();
-                                ((Variables)getApplication()).appendLog(e.getMessage(), CheckPriceActivity.this);
+                                ((BaseApp)getApplication()).appendLog(e.getMessage(), CheckPriceActivity.this);
                             }
                         }
                     }.start();

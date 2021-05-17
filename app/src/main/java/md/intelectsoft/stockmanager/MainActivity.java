@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AlertDialog;
 
 import android.os.Environment;
 import android.view.View;
@@ -32,17 +31,13 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import md.intelectsoft.stockmanager.NetworkUtils.ApiRetrofit;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.GetWarehousesListResult;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.WarehouseList;
-import md.intelectsoft.stockmanager.NetworkUtils.Services.CommandService;
-import md.intelectsoft.stockmanager.SettingsMenu.WorkPlace;
 import md.intelectsoft.stockmanager.TerminalService.TerminalAPI;
 import md.intelectsoft.stockmanager.TerminalService.TerminalRetrofitClient;
 import md.intelectsoft.stockmanager.Utils.UpdateHelper;
@@ -55,7 +50,6 @@ import retrofit2.Response;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -134,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Button log_out = (Button) headerLayout.findViewById(R.id.btn_log_out_main);
         log_out.setOnClickListener(v -> {
-            ((Variables) getApplication()).setUserAuthentificate(false);
+            ((BaseApp) getApplication()).setUserAuthentificate(false);
             Map<String, String> userMap = new HashMap<>();
             userMap.put("UserName", "");
             userMap.put("UserId", "");
@@ -152,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
         btn_sales.setOnClickListener(v -> {
             if(pingTest) {
-                Intent invoice = new Intent(".SalesMobile");
+                Intent invoice = new Intent(this, CheckoutActivity.class);
                 startActivity(invoice);
             }
             else
@@ -403,16 +397,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onDestroy() {
         super.onDestroy();
 
-        Variables.getInstance().setUserAuthentificate(false);
-        Variables.getInstance().setDownloadASLVariable(false);
+        BaseApp.getInstance().setUserAuthentificate(false);
+        BaseApp.getInstance().setDownloadASLVariable(false);
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        boolean recreare = ((Variables) getApplication()).getIsRecreate();
+        boolean recreare = ((BaseApp) getApplication()).getIsRecreate();
         if(recreare){
-            ((Variables) getApplication()).setRecreate(false);
+            ((BaseApp) getApplication()).setRecreate(false);
             recreate();
         }
     }

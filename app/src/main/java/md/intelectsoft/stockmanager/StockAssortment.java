@@ -154,7 +154,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
             pgH.setCancelable(false);
             pgH.setIndeterminate(true);
             pgH.show();
-            ((Variables)getApplication()).setDownloadASLVariable(false);
+            ((BaseApp)getApplication()).setDownloadASLVariable(false);
             getWareHouse();
         }
         else{
@@ -231,7 +231,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
+                        ((BaseApp)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
                     }
                 }
             }
@@ -576,7 +576,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
         }
         simpleAdapterASL = new SimpleAdapter(this, asl_list,R.layout.show_stock_acumulated_asl, new String[]{"Name","Cant","Ware"},
                 new int[]{R.id.textName_stock_asl,R.id.textCantitate_stock_asl,R.id.txtStockAsl_stock_asl});
@@ -595,7 +595,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                 sendAssortiment.put("WarehouseID", WareUid);
             } catch (JSONException e) {
                 e.printStackTrace();
-                ((Variables) getApplication()).appendLog(e.getMessage(), StockAssortment.this);
+                ((BaseApp) getApplication()).appendLog(e.getMessage(), StockAssortment.this);
             }
             barcode_introdus = txt_input_barcode.getText().toString();
             txt_input_barcode.setText("");
@@ -630,7 +630,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
 
         } catch (Exception e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
         } finally {
             send_bill_Connection.disconnect();
         }
@@ -663,7 +663,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
 
         } catch (Exception e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
         } finally {
             send_bill_Connection.disconnect();
         }
@@ -700,7 +700,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                 response = Response_from_GetWareHouse(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
             }
             return response;
         }
@@ -728,7 +728,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                             show_WareHouse();
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            ((Variables) getApplication()).appendLog(e.getMessage(), StockAssortment.this);
+                            ((BaseApp) getApplication()).appendLog(e.getMessage(), StockAssortment.this);
                         }
                     }else{
                         pgH.dismiss();
@@ -736,7 +736,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables) getApplication()).appendLog(e.getMessage(), StockAssortment.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), StockAssortment.this);
                 }
             }else{
                 pgH.dismiss();
@@ -752,7 +752,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                 response = Response_from_GetWareHouse(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
             }
             return response;
         }
@@ -780,7 +780,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                             show_WareHouseChange();
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            ((Variables) getApplication()).appendLog(e.getMessage(), StockAssortment.this);
+                            ((BaseApp) getApplication()).appendLog(e.getMessage(), StockAssortment.this);
                         }
                     }else{
                         pgH.dismiss();
@@ -788,7 +788,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables) getApplication()).appendLog(e.getMessage(), StockAssortment.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), StockAssortment.this);
                 }
             }else{
                 pgH.dismiss();
@@ -830,11 +830,11 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                         assortment.setBarCode(Barcodes);
                         assortment.setCode(Codes);
                         assortment.setName(Names);
-                        assortment.setPrice(Price);
+//                        assortment.setPrice(Price);
                         assortment.setMarking(Marking);
-                        assortment.setRemain(Remain);
+//                        assortment.setRemain(Remain);
                         assortment.setAssortimentID(Uid);
-                        assortment.setUnitPrice(UnitPrice);
+//                        assortment.setUnitPrice(UnitPrice);
                         assortment.setUnit(Unit);
                         assortment.setUnitInPackage(UnitInPackage);
                         final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);
@@ -849,11 +849,11 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
                 }
             }else{
                 Toast.makeText(StockAssortment.this,getResources().getString(R.string.msg_nu_raspuns_server), Toast.LENGTH_SHORT).show();
-                ((Variables)getApplication()).appendLog(response,StockAssortment.this);
+                ((BaseApp)getApplication()).appendLog(response,StockAssortment.this);
                 pgBar.setVisibility(ProgressBar.INVISIBLE);
                 txtBarcode_introdus.setText(barcode_introdus + " - " + getResources().getString(R.string.txt_depozit_nedeterminat));
                 txt_input_barcode.requestFocus();
@@ -869,7 +869,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                 ping =getResponseFromURLSendAccumulatedAssortiment(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
             }
             return ping;
         }
@@ -907,7 +907,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
                 }
             }else{
                 AlertDialog.Builder NameDoc = new AlertDialog.Builder(StockAssortment.this);
@@ -1058,7 +1058,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                     showAssortment();
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
                 }
 
             }
@@ -1191,7 +1191,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(),StockAssortment.this);
                 }
             }
         }

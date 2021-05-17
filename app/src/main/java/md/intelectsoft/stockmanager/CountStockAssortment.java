@@ -205,7 +205,7 @@ public class CountStockAssortment extends AppCompatActivity {
                 asl.put("Count", et_count.getText().toString());
             } catch (JSONException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),CountStockAssortment.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),CountStockAssortment.this);
             }
             Intent stock_asl = new Intent();
             stock_asl.putExtra("AssortmentStockAdded", asl.toString());

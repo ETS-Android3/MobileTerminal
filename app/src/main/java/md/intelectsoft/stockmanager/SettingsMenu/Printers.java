@@ -52,13 +52,13 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import md.intelectsoft.stockmanager.R;
-import md.intelectsoft.stockmanager.Variables;
+import md.intelectsoft.stockmanager.BaseApp;
 import md.intelectsoft.stockmanager.app.utils.BaseEnum;
 
-import static md.intelectsoft.stockmanager.Variables.mLablePrinters;
-import static md.intelectsoft.stockmanager.Variables.mPOSPrinters;
-import static md.intelectsoft.stockmanager.Variables.mRongtaModelList;
-import static md.intelectsoft.stockmanager.Variables.mZebraModelList;
+import static md.intelectsoft.stockmanager.BaseApp.mLablePrinters;
+import static md.intelectsoft.stockmanager.BaseApp.mPOSPrinters;
+import static md.intelectsoft.stockmanager.BaseApp.mRongtaModelList;
+import static md.intelectsoft.stockmanager.BaseApp.mZebraModelList;
 
 public class Printers extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PrinterObserver {
 
@@ -142,7 +142,7 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
         mTypePrinter.setSelection(positionType);
 
         if(SharedPrinters.getInt("WithDisplay",0) != 0)
-            Variables.getInstance().setWidthPrinterPrint(SharedPrinters.getInt("WithDisplay",0));
+            BaseApp.getInstance().setWidthPrinterPrint(SharedPrinters.getInt("WithDisplay",0));
 
         //если пос принтера
         if(positionType == BaseEnum.POS_PRINTER){
@@ -221,12 +221,12 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
                         if(position == BaseEnum.RP_200){
                             SharedPrintersEditor.putInt("WithDisplay",48);
                             SharedPrintersEditor.apply();
-                            Variables.getInstance().setWidthPrinterPrint(48);
+                            BaseApp.getInstance().setWidthPrinterPrint(48);
                         }
                         else  if (position == BaseEnum.RP_300){
                             SharedPrintersEditor.putInt("WithDisplay",72);
                             SharedPrintersEditor.apply();
-                            Variables.getInstance().setWidthPrinterPrint(72);
+                            BaseApp.getInstance().setWidthPrinterPrint(72);
                         }
                     }
 
@@ -255,7 +255,7 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
 
         PrinterObserverManager.getInstance().add(this);
 
-        Variables.instance.setCurrentCmdType(BaseEnum.CMD_ESC);
+        BaseApp.instance.setCurrentCmdType(BaseEnum.CMD_ESC);
         printerFactory = new ThermalPrinterFactory();
         rtPrinter = printerFactory.create();
         rtPrinter.setPrinterInterface(curPrinterInterface);
@@ -496,7 +496,7 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
                         curPrinterInterface = printerInterface;
                         printerInterfaceArrayList.add(printerInterface);
                         rtPrinter.setPrinterInterface(printerInterface);
-                        Variables.getInstance().setRtPrinter(rtPrinter);
+                        BaseApp.getInstance().setRtPrinter(rtPrinter);
 
                         initFragmentUI(mSelectedPrinter,printerInterface.getConfigObject().toString());
 
@@ -511,7 +511,7 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
                         tv_device_selected.setTag(BaseEnum.NO_DEVICE);
                         curPrinterInterface = null;
                         printerInterfaceArrayList.remove(printerInterface);//多连接-从已连接列表中移除
-                        Variables.getInstance().setRtPrinter(null);
+                        BaseApp.getInstance().setRtPrinter(null);
 
                         break;
                     default:

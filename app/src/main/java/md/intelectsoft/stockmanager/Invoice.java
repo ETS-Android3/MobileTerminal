@@ -156,7 +156,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                     pgH.setCancelable(false);
                     pgH.setIndeterminate(true);
                     pgH.show();
-                    ((Variables)getApplication()).setDownloadASLVariable(false);
+                    ((BaseApp)getApplication()).setDownloadASLVariable(false);
                     getWareHouse();
                 }
                 else{
@@ -269,7 +269,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                         sendArr.put(sendObj);
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(),Invoice.this);
+                        ((BaseApp)getApplication()).appendLog(e.getMessage(),Invoice.this);
                     }
                 }
                 sendInvoice = new JSONObject();
@@ -281,7 +281,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                     sendInvoice.put("Warehouse",WareUid);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),Invoice.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(),Invoice.this);
                 }
                 URL generateSave = SavePurchaseInvoice(ip_,port_);
                 new AsyncTask_SaveInvoice().execute(generateSave);
@@ -306,7 +306,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(), Invoice.this);
+                        ((BaseApp)getApplication()).appendLog(e.getMessage(), Invoice.this);
                     }
                 }
             }
@@ -326,7 +326,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                 sendAssortiment.put("WarehouseID", WareUid);
             } catch (JSONException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),Invoice.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),Invoice.this);
             }
             barcode_introdus = txt_input_barcode.getText().toString();
             txt_input_barcode.setText("");
@@ -529,7 +529,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(), Invoice.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(), Invoice.this);
         }
         txt_total_invoice.setText(String.format("%.2f",sumTotal));
         simpleAdapterASL = new SimpleAdapter(this, asl_list,R.layout.show_asl_invoice, new String[]{"Name","Cant"},
@@ -562,7 +562,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
 
         } catch (Exception e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(), Invoice.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(), Invoice.this);
         } finally {
             assert send_bill_Connection != null;
             send_bill_Connection.disconnect();
@@ -571,7 +571,8 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode==REQUEST_FROM_COUNT) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_FROM_COUNT) {
             if (resultCode == RESULT_CANCELED) {
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
@@ -592,15 +593,15 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                             String CountExist = object.getString("Count");
                             double countDoub = 0;
                             double countDoubAdd = 0;
-                            try{
+                            try {
                                 countDoub = Double.valueOf(CountExist);
-                            }catch (Exception e){
-                                countDoub = Double.valueOf(CountExist.replace(",","."));
+                            } catch (Exception e) {
+                                countDoub = Double.valueOf(CountExist.replace(",", "."));
                             }
-                            try{
+                            try {
                                 countDoubAdd = Double.valueOf(count);
-                            }catch (Exception e){
-                                countDoubAdd = Double.valueOf(count.replace(",","."));
+                            } catch (Exception e) {
+                                countDoubAdd = Double.valueOf(count.replace(",", "."));
                             }
 
                             if (AssortimentUid.contains(UidAsl)) {
@@ -619,15 +620,14 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                     showAssortment();
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(), Invoice.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), Invoice.this);
                 }
             }
-        } else if (requestCode==REQUET_FROM_LIST_ASSORTMENT) {
+        } else if (requestCode == REQUET_FROM_LIST_ASSORTMENT) {
             if (resultCode == RESULT_CANCELED) {
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
-            }
-            else if (resultCode == RESULT_OK) {
+            } else if (resultCode == RESULT_OK) {
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();
                 String response = data.getStringExtra("AssortmentInvoiceAddedArray");
@@ -665,7 +665,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                     showAssortment();
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(), Invoice.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), Invoice.this);
                 }
             }
         }
@@ -746,7 +746,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
 
         } catch (Exception e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(),Invoice.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),Invoice.this);
         } finally {
             send_bill_Connection.disconnect();
         }
@@ -818,7 +818,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),Invoice.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(),Invoice.this);
                 }
             }else{
                 AlertDialog.Builder dialog = new AlertDialog.Builder( Invoice.this);
@@ -844,7 +844,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                 response = Response_from_GetWareHouse(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),Invoice.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),Invoice.this);
             }
             return response;
         }
@@ -872,7 +872,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                             show_WareHouse();
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            ((Variables) getApplication()).appendLog(e.getMessage(), Invoice.this);
+                            ((BaseApp) getApplication()).appendLog(e.getMessage(), Invoice.this);
                         }
                     }else{
                         pgH.dismiss();
@@ -880,7 +880,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables) getApplication()).appendLog(e.getMessage(), Invoice.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), Invoice.this);
                 }
             }else{
                 pgH.dismiss();
@@ -896,7 +896,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                 response = Response_from_GetWareHouse(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),Invoice.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),Invoice.this);
             }
             return response;
         }
@@ -924,7 +924,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                             show_WareHouseChange();
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            ((Variables) getApplication()).appendLog(e.getMessage(), Invoice.this);
+                            ((BaseApp) getApplication()).appendLog(e.getMessage(), Invoice.this);
                         }
                     }else{
                         pgH.dismiss();
@@ -932,7 +932,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables) getApplication()).appendLog(e.getMessage(), Invoice.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), Invoice.this);
                 }
             }else{
                 pgH.dismiss();
@@ -963,10 +963,10 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
 
                         Assortment assortment = new Assortment();
                         assortment.setName(Names);
-                        assortment.setPrice(Price);
-                        assortment.setIncomePrice(PriceIncoming);
+//                        assortment.setPrice(Price);
+//                        assortment.setIncomePrice(PriceIncoming);
                         assortment.setAssortimentID(Uid);
-                        assortment.setAllowNonIntegerSale(String.valueOf(allowInteger));
+//                        assortment.setAllowNonIntegerSale(String.valueOf(allowInteger));
                         final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);
 
                         Intent sales = new Intent(".CountInvoiceMobile");
@@ -979,12 +979,12 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),Invoice.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(),Invoice.this);
                     Toast.makeText(Invoice.this,e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }else{
                 Toast.makeText(Invoice.this,getResources().getString(R.string.msg_nu_raspuns_server), Toast.LENGTH_SHORT).show();
-                ((Variables)getApplication()).appendLog(response,Invoice.this);
+                ((BaseApp)getApplication()).appendLog(response,Invoice.this);
                 pgBar.setVisibility(ProgressBar.INVISIBLE);
                 txtBarcode_introdus.setText(barcode_introdus + " - "+ getResources().getString(R.string.txt_depozit_nedeterminat));
                 txt_input_barcode.requestFocus();

@@ -23,7 +23,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import md.intelectsoft.stockmanager.R;
-import md.intelectsoft.stockmanager.Variables;
+import md.intelectsoft.stockmanager.BaseApp;
 
 public class About extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
@@ -66,7 +66,7 @@ public class About extends AppCompatActivity implements NavigationView.OnNavigat
             version = pInfo.versionName;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(),About.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),About.this);
         }
         txt_version.setText("Mobile Terminal for Android v"+ version);
 

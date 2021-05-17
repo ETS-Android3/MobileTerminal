@@ -305,7 +305,7 @@ public class CountSales extends AppCompatActivity {
                             asl.put("Warehouse",WareHouse);
                             asl.put("WareName",WareName);
                         } catch (JSONException e) {
-                            ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
+                            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountSales.this);
                             e.printStackTrace();
                         }
                         Intent sales = new Intent();
@@ -333,7 +333,7 @@ public class CountSales extends AppCompatActivity {
                         asl.put("Warehouse",WareHouse);
                         asl.put("WareName",WareName);
                     } catch (JSONException e) {
-                        ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
+                        ((BaseApp)getApplication()).appendLog(e.getMessage(),CountSales.this);
                         e.printStackTrace();
                     }
                     Intent sales = new Intent();
@@ -362,7 +362,7 @@ public class CountSales extends AppCompatActivity {
                         asl.put("Warehouse",WareHouse);
                         asl.put("WareName",WareName);
                     } catch (JSONException e) {
-                        ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
+                        ((BaseApp)getApplication()).appendLog(e.getMessage(),CountSales.this);
                         e.printStackTrace();
                     }
                     Intent sales = new Intent();
@@ -389,7 +389,7 @@ public class CountSales extends AppCompatActivity {
                     asl.put("Warehouse",WareHouse);
                     asl.put("WareName",WareName);
                 } catch (JSONException e) {
-                    ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(),CountSales.this);
                     e.printStackTrace();
                 }
                 Intent sales = new Intent();
@@ -404,7 +404,7 @@ public class CountSales extends AppCompatActivity {
             Integer.parseInt(s);
             return true;
         } catch (NumberFormatException e) {
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountSales.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountSales.this);
             return false;
         }
     }

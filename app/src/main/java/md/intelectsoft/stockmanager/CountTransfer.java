@@ -226,7 +226,7 @@ public class CountTransfer extends AppCompatActivity {
                     asl.put("Count", et_count.getText().toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
                 }
                 Intent transfer = new Intent();
                 transfer.putExtra("AssortmentTransferAdded",asl.toString());
@@ -245,7 +245,7 @@ public class CountTransfer extends AppCompatActivity {
                     asl.put("Count", et_count.getText().toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
                 }
                 Intent transfer = new Intent();
                 transfer.putExtra("AssortmentTransferAdded",asl.toString());
@@ -332,7 +332,7 @@ public class CountTransfer extends AppCompatActivity {
             return true;
         } catch (NumberFormatException e) {
 
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
             return false;
         }
     }
@@ -341,7 +341,7 @@ public class CountTransfer extends AppCompatActivity {
             Integer.parseInt(s);
             return true;
         } catch (NumberFormatException e) {
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
             return false;
         }
     }

@@ -143,7 +143,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
             pgH.setCancelable(false);
             pgH.setIndeterminate(true);
             pgH.show();
-            ((Variables)getApplication()).setDownloadASLVariable(false);
+            ((BaseApp)getApplication()).setDownloadASLVariable(false);
             getWareHouse();
         }
         else{
@@ -240,7 +240,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                         sendArr.put(sendObj);
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
+                        ((BaseApp)getApplication()).appendLog(e.getMessage(),Transfer.this);
                     }
                 }
                 sendInvoice = new JSONObject();
@@ -254,7 +254,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                     sendInvoice.put("FromWarehouseID",WareUid);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(),Transfer.this);
                 }
                 URL generateSave = TransferFromOneWareHouseToAnother(ip_,port_);
                 new AsyncTask_SaveTransfer().execute(generateSave);
@@ -278,7 +278,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
+                        ((BaseApp)getApplication()).appendLog(e.getMessage(),Transfer.this);
                     }
                 }
             }
@@ -517,7 +517,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                 sendAssortiment.put("WarehouseID", WareUid);
             } catch (JSONException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),Transfer.this);
             }
             barcode_introdus = txt_input_barcode.getText().toString();
             txtBarcode_introdus.setText(barcode_introdus);
@@ -596,7 +596,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(), Transfer.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(), Transfer.this);
         }
         simpleAdapterASL = new SimpleAdapter(this, asl_list,R.layout.show_asl_invoice, new String[]{"Name","Cant"},
                 new int[]{R.id.textName_asl_invoice,R.id.textCantitate_asl_invoice});
@@ -628,7 +628,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
 
         } catch (Exception e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(), Transfer.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(), Transfer.this);
         } finally {
             assert send_bill_Connection != null;
             send_bill_Connection.disconnect();
@@ -831,7 +831,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
 
         } catch (Exception e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),Transfer.this);
         } finally {
             send_bill_Connection.disconnect();
         }
@@ -909,7 +909,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(),Transfer.this);
                 }
             }else{
                 pgH.dismiss();
@@ -936,7 +936,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                 response = Response_from_GetWareHouse(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),Transfer.this);
             }
             return response;
         }
@@ -965,7 +965,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                             show_WareHouse();
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            ((Variables) getApplication()).appendLog(e.getMessage(), Transfer.this);
+                            ((BaseApp) getApplication()).appendLog(e.getMessage(), Transfer.this);
                         }
                     }else{
                         pgH.dismiss();
@@ -973,7 +973,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables) getApplication()).appendLog(e.getMessage(), Transfer.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), Transfer.this);
                 }
             }else{
                 pgH.dismiss();
@@ -989,7 +989,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                 response = Response_from_GetWareHouse(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),Transfer.this);
             }
             return response;
         }
@@ -1017,7 +1017,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                             show_stockIn();
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            ((Variables) getApplication()).appendLog(e.getMessage(), Transfer.this);
+                            ((BaseApp) getApplication()).appendLog(e.getMessage(), Transfer.this);
                         }
                     }else{
                         pgH.dismiss();
@@ -1025,7 +1025,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables) getApplication()).appendLog(e.getMessage(), Transfer.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), Transfer.this);
                 }
             }else{
                 pgH.dismiss();
@@ -1041,7 +1041,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                 response = Response_from_GetWareHouse(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),Transfer.this);
             }
             return response;
         }
@@ -1069,7 +1069,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                             show_stockInClick();
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            ((Variables) getApplication()).appendLog(e.getMessage(), Transfer.this);
+                            ((BaseApp) getApplication()).appendLog(e.getMessage(), Transfer.this);
                         }
                     }else{
                         pgH.dismiss();
@@ -1077,7 +1077,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables) getApplication()).appendLog(e.getMessage(), Transfer.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), Transfer.this);
                 }
             }else{
                 pgH.dismiss();
@@ -1093,7 +1093,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                 response = Response_from_GetWareHouse(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),Transfer.this);
             }
             return response;
         }
@@ -1121,7 +1121,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                             show_stockOutClick();
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            ((Variables) getApplication()).appendLog(e.getMessage(), Transfer.this);
+                            ((BaseApp) getApplication()).appendLog(e.getMessage(), Transfer.this);
                         }
                     }else{
                         pgH.dismiss();
@@ -1129,7 +1129,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables) getApplication()).appendLog(e.getMessage(), Transfer.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), Transfer.this);
                 }
             }else{
                 pgH.dismiss();
@@ -1164,12 +1164,12 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                         assortment.setBarCode(Barcodes);
                         assortment.setCode(Codes);
                         assortment.setName(Names);
-                        assortment.setPrice(Price);
+//                        assortment.setPrice(Price);
                         assortment.setMarking(Marking);
-                        assortment.setRemain(Remain);
+//                        assortment.setRemain(Remain);
                         assortment.setAssortimentID(Uid);
                         assortment.setUnit(responseAssortiment.getString("Unit"));
-                        assortment.setAllowNonIntegerSale(String.valueOf(allowInteger));
+//                        assortment.setAllowNonIntegerSale(String.valueOf(allowInteger));
                         final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);
 
                         Intent sales = new Intent(".CountTransferMobile");
@@ -1182,11 +1182,11 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),Transfer.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(),Transfer.this);
                 }
             }else{
                 Toast.makeText(Transfer.this,getResources().getString(R.string.msg_nu_raspuns_server), Toast.LENGTH_SHORT).show();
-                ((Variables)getApplication()).appendLog(response,Transfer.this);
+                ((BaseApp)getApplication()).appendLog(response,Transfer.this);
                 pgBar.setVisibility(ProgressBar.INVISIBLE);
                 txtBarcode_introdus.setText(barcode_introdus +" - " +getResources().getString(R.string.txt_depozit_nedeterminat));
                 txt_input_barcode.requestFocus();

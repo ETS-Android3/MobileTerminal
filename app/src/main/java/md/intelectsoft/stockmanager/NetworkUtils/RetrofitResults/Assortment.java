@@ -5,16 +5,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Assortment {
-
-    @SerializedName("ErrorCode")
-    @Expose
-    private Integer errorCode;
-    @SerializedName("ErrorMessage")
-    @Expose
-    private String errorMessage;
     @SerializedName("AllowNonIntegerSale")
     @Expose
-    private String allowNonIntegerSale;
+    private boolean allowNonIntegerSale;
     @SerializedName("AssortimentID")
     @Expose
     private String assortimentID;
@@ -29,7 +22,7 @@ public class Assortment {
     private String code;
     @SerializedName("IncomePrice")
     @Expose
-    private String incomePrice;
+    private double incomePrice;
     @SerializedName("IsFolder")
     @Expose
     private Boolean isFolder;
@@ -41,16 +34,16 @@ public class Assortment {
     private String name;
     @SerializedName("Price")
     @Expose
-    private String price;
+    private double price;
     @SerializedName("PriceLineID")
     @Expose
     private String priceLineID;
     @SerializedName("Remain")
     @Expose
-    private String remain;
+    private double remain;
     @SerializedName("RequestedCount")
     @Expose
-    private String requestedCount;
+    private double requestedCount;
     @SerializedName("Unit")
     @Expose
     private String unit;
@@ -59,34 +52,18 @@ public class Assortment {
     private String unitInPackage;
     @SerializedName("UnitPrice")
     @Expose
-    private String unitPrice;
+    private double unitPrice;
     @SerializedName("VATCode")
     @Expose
     private String vATCode;
 
     private String mCount;
 
-    public Integer getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(Integer errorCode) {
-        this.errorCode = errorCode;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
-
-    public String getAllowNonIntegerSale() {
+    public boolean getAllowNonIntegerSale() {
         return allowNonIntegerSale;
     }
 
-    public void setAllowNonIntegerSale(String allowNonIntegerSale) {
+    public void setAllowNonIntegerSale(boolean allowNonIntegerSale) {
         this.allowNonIntegerSale = allowNonIntegerSale;
     }
 
@@ -122,11 +99,11 @@ public class Assortment {
         this.code = code;
     }
 
-    public String getIncomePrice() {
+    public double getIncomePrice() {
         return incomePrice;
     }
 
-    public void setIncomePrice(String incomePrice) {
+    public void setIncomePrice(double incomePrice) {
         this.incomePrice = incomePrice;
     }
 
@@ -154,11 +131,11 @@ public class Assortment {
         this.name = name;
     }
 
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -170,19 +147,19 @@ public class Assortment {
         this.priceLineID = priceLineID;
     }
 
-    public String getRemain() {
+    public double getRemain() {
         return remain;
     }
 
-    public void setRemain(String remain) {
+    public void setRemain(double remain) {
         this.remain = remain;
     }
 
-    public String getRequestedCount() {
+    public double getRequestedCount() {
         return requestedCount;
     }
 
-    public void setRequestedCount(String requestedCount) {
+    public void setRequestedCount(double requestedCount) {
         this.requestedCount = requestedCount;
     }
 
@@ -202,11 +179,11 @@ public class Assortment {
         this.unitInPackage = unitInPackage;
     }
 
-    public String getUnitPrice() {
+    public double getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(String unitPrice) {
+    public void setUnitPrice(double unitPrice) {
         this.unitPrice = unitPrice;
     }
 

@@ -337,7 +337,7 @@ public class CountListOfAssortment extends AppCompatActivity {
             return true;
         } catch (NumberFormatException e) {
 
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
             return false;
         }
     }
@@ -346,7 +346,7 @@ public class CountListOfAssortment extends AppCompatActivity {
             Integer.parseInt(s);
             return true;
         } catch (NumberFormatException e) {
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
             return false;
         }
     }
@@ -376,7 +376,7 @@ public class CountListOfAssortment extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
         } finally {
             send_bill_Connection.disconnect();
         }
@@ -404,7 +404,7 @@ public class CountListOfAssortment extends AppCompatActivity {
                 response = getResponseFromURLSaveRevisionLineAdd(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables) getApplication()).appendLog(e.getMessage(), CountListOfAssortment.this);
+                ((BaseApp) getApplication()).appendLog(e.getMessage(), CountListOfAssortment.this);
             }
             return response;
         }
@@ -428,7 +428,7 @@ public class CountListOfAssortment extends AppCompatActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables) getApplication()).appendLog(e.getMessage(), CountListOfAssortment.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), CountListOfAssortment.this);
                 }
             } else {
                 Intent intent_cancel = new Intent();

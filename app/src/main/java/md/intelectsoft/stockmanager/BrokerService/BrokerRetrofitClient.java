@@ -35,7 +35,7 @@ public class BrokerRetrofitClient {
             retrofit = new Retrofit.Builder()
                     .baseUrl(BaseURL_BrokerService)
                     .addConverterFactory(GsonConverterFactory.create())
-                    .client(getOkHttpClient())
+                    .client(getUnsafeOkHttpClient())
                     .build();
 
         return retrofit.create(BrokerServiceAPI.class);
@@ -97,7 +97,10 @@ public class BrokerRetrofitClient {
                 }
             });
 
-            OkHttpClient okHttpClient = builder.build();
+            OkHttpClient okHttpClient = builder
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(20, TimeUnit.SECONDS)
+                    .writeTimeout(8, TimeUnit.SECONDS).build();
             return okHttpClient;
         } catch (Exception e) {
             throw new RuntimeException(e);

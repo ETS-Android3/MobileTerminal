@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 import java.util.Map;
 
-import md.intelectsoft.stockmanager.Variables;
+import md.intelectsoft.stockmanager.BaseApp;
 
 public class SPFHelp {
 
@@ -19,7 +19,7 @@ public class SPFHelp {
     public static SPFHelp getInstance() {
         if (instance == null){
             instance = new SPFHelp();
-            sharedPreferences = Variables.getInstance().getSharedPreferences("AppParams", Context.MODE_PRIVATE);
+            sharedPreferences = BaseApp.getInstance().getSharedPreferences("AppParams", Context.MODE_PRIVATE);
         }
         return instance;
     }

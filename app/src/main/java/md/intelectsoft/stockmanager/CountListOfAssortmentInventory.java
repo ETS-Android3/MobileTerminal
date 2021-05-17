@@ -135,7 +135,7 @@ public class CountListOfAssortmentInventory extends AppCompatActivity {
                     sendAssortiment.put("RevisionID", RevisionID);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables) getApplication()).appendLog(e.getMessage(), CountListOfAssortmentInventory.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), CountListOfAssortmentInventory.this);
                 }
                 URL generateSaveLine = SaveRevisionLine(ip_, port_);
                 new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
@@ -156,7 +156,7 @@ public class CountListOfAssortmentInventory extends AppCompatActivity {
                     sendAssortiment.put("RevisionID", RevisionID);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables) getApplication()).appendLog(e.getMessage(), CountListOfAssortmentInventory.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), CountListOfAssortmentInventory.this);
                 }
                 URL generateSaveLine = SaveRevisionLine(ip_, port_);
                 new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
@@ -191,7 +191,7 @@ public class CountListOfAssortmentInventory extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortmentInventory.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountListOfAssortmentInventory.this);
         } finally {
             send_bill_Connection.disconnect();
         }
@@ -283,7 +283,7 @@ public class CountListOfAssortmentInventory extends AppCompatActivity {
                 response = getResponseFromURLSaveRevisionLine(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables) getApplication()).appendLog(e.getMessage(), CountListOfAssortmentInventory.this);
+                ((BaseApp) getApplication()).appendLog(e.getMessage(), CountListOfAssortmentInventory.this);
             }
             return response;
         }
@@ -359,7 +359,7 @@ public class CountListOfAssortmentInventory extends AppCompatActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables) getApplication()).appendLog(e.getMessage(), CountListOfAssortmentInventory.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), CountListOfAssortmentInventory.this);
                 }
             } else {
                 Activity activity = CountListOfAssortmentInventory.this;
@@ -451,7 +451,7 @@ public class CountListOfAssortmentInventory extends AppCompatActivity {
             return true;
         } catch (NumberFormatException e) {
 
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortmentInventory.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountListOfAssortmentInventory.this);
             return false;
         }
     }
@@ -460,7 +460,7 @@ public class CountListOfAssortmentInventory extends AppCompatActivity {
             Integer.parseInt(s);
             return true;
         } catch (NumberFormatException e) {
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortmentInventory.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountListOfAssortmentInventory.this);
             return false;
         }
     }

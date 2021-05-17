@@ -65,7 +65,7 @@ import md.intelectsoft.stockmanager.BuildConfig;
 import md.intelectsoft.stockmanager.R;
 import md.intelectsoft.stockmanager.Utils.UpdateHelper;
 import md.intelectsoft.stockmanager.Utils.UpdateInformation;
-import md.intelectsoft.stockmanager.Variables;
+import md.intelectsoft.stockmanager.BaseApp;
 
 public class Securitate extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,  UpdateHelper.OnUpdateCheckListener  {
 
@@ -253,7 +253,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
                 inpSet.putString("Language","ru");
                 inpSet.apply();
                 btn_ru.setSelected(true);
-                ((Variables) getApplication()).setRecreate(true);
+                ((BaseApp) getApplication()).setRecreate(true);
                 changeLang("ru");
             }
         });
@@ -269,7 +269,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
                 inpSet.putString("Language","ro");
                 inpSet.apply();
                 btn_ro.setSelected(true);
-                ((Variables) getApplication()).setRecreate(true);
+                ((BaseApp) getApplication()).setRecreate(true);
                 changeLang("ro");
             }
         });
@@ -285,7 +285,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
                 inpSet.putString("Language","en");
                 inpSet.apply();
                 btn_en.setSelected(true);
-                ((Variables) getApplication()).setRecreate(true);
+                ((BaseApp) getApplication()).setRecreate(true);
                 changeLang("en");
             }
         });
@@ -752,7 +752,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
                 version = pInfo.versionName;
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),Securitate.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),Securitate.this);
             }
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(Securitate.this);
             alertDialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
@@ -849,7 +849,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
                 version = pInfo.versionName;
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),Securitate.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),Securitate.this);
             }
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(Securitate.this);
             alertDialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));

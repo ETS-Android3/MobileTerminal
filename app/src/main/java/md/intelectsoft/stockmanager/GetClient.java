@@ -139,7 +139,7 @@ public class GetClient extends AppCompatActivity {
                 response = Response_from_GetClient(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),GetClient.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),GetClient.this);
             }
             return response;
         }
@@ -176,7 +176,7 @@ public class GetClient extends AppCompatActivity {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),GetClient.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),GetClient.this);
             }
 
         }

@@ -373,7 +373,7 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
             return true;
         } catch (NumberFormatException e) {
 
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortmentInvoice.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountListOfAssortmentInvoice.this);
             return false;
         }
     }
@@ -382,7 +382,7 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
             Integer.parseInt(s);
             return true;
         } catch (NumberFormatException e) {
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountListOfAssortmentInvoice.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountListOfAssortmentInvoice.this);
             return false;
         }
     }

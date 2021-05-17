@@ -198,7 +198,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
             pgH.setCancelable(false);
             pgH.setIndeterminate(true);
             pgH.show();
-            ((Variables)getApplication()).setDownloadASLVariable(false);
+            ((BaseApp)getApplication()).setDownloadASLVariable(false);
             changeOrSelectWareHouse(false);
         }
         else{
@@ -302,7 +302,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(), SalesActivity.this);
+                            ((BaseApp)getApplication()).appendLog(e.getMessage(), SalesActivity.this);
                         }
                     }
                 }
@@ -717,7 +717,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(), SalesActivity.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(), SalesActivity.this);
                 }
             }
         }
@@ -792,7 +792,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                     showAssortmentList();
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(), SalesActivity.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(), SalesActivity.this);
                 }
 
             }
@@ -910,11 +910,11 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                                 assortment.setCode(assortmentItemResult.getCode());
                                 assortment.setName(assortmentItemResult.getName());
                                 assortment.setUnit(assortmentItemResult.getUnit());
-                                assortment.setPrice(String.format("%.2f", assortmentItemResult.getPrice()).replace(",","."));
+//                                assortment.setPrice(String.format("%.2f", assortmentItemResult.getPrice()).replace(",","."));
                                 assortment.setMarking(assortmentItemResult.getMarking());
-                                assortment.setRemain(String.format("%.2f", assortmentItemResult.getRemain()).replace(",","."));
+//                                assortment.setRemain(String.format("%.2f", assortmentItemResult.getRemain()).replace(",","."));
                                 assortment.setAssortimentID(assortmentItemResult.getAssortimentID());
-                                assortment.setAllowNonIntegerSale(String.valueOf(assortmentItemResult.getAllowNonIntegerSale()));
+//                                assortment.setAllowNonIntegerSale(String.valueOf(assortmentItemResult.getAllowNonIntegerSale()));
                                 final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);
 
                                 Intent sales = new Intent(".CountSalesMobile");
@@ -1072,7 +1072,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(), SalesActivity.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(), SalesActivity.this);
         }
         txt_total_sales.setText(String.format("%.2f",sumTotal));
         simpleAdapterASL = new SimpleAdapter(this, asl_list,R.layout.show_asl_sales, new String[]{"Name","Cant","Suma","Ware"},
@@ -1148,7 +1148,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
         int positionType = SharedPrinters.getInt("Type",0);
 
         if(positionType == BaseEnum.POS_PRINTER){
-            width = Variables.getInstance().getWidthPrinterPrint();
+            width = BaseApp.getInstance().getWidthPrinterPrint();
             if(width == 0){
                 width = SharedPrinters.getInt("WithDisplay",0);
             }
@@ -1330,7 +1330,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
     }
 
     private void printToBluetoothPrinter(String imageId){
-        rtPrinter = Variables.getInstance().getRtPrinter();
+        rtPrinter = BaseApp.getInstance().getRtPrinter();
 
         byte[] decodedString = Base64.decode(imageId, Base64.DEFAULT );
 
@@ -1338,7 +1338,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
 
         mBitmap = bitmap;
 
-        if (Variables.getInstance().getCurrentCmdType() == BaseEnum.CMD_ESC) {
+        if (BaseApp.getInstance().getCurrentCmdType() == BaseEnum.CMD_ESC) {
             if (mBitmap.getWidth() > 48 * 8) {
                 mBitmap = BitmapConvertUtil.decodeSampledBitmapFromBitmap(bitmap,48 * 8, 4000);
             }

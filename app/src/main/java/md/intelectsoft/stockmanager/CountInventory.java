@@ -124,7 +124,7 @@ public class CountInventory extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountInventory.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountInventory.this);
         } finally {
             send_bill_Connection.disconnect();
         }
@@ -215,7 +215,7 @@ public class CountInventory extends AppCompatActivity {
                 response = getResponseFromURLSaveRevisionLine(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),CountInventory.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),CountInventory.this);
             }
             return response;
         }
@@ -278,7 +278,7 @@ public class CountInventory extends AppCompatActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),CountInventory.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(),CountInventory.this);
                 }
             }else{
                 Activity activity=CountInventory.this;
@@ -310,7 +310,7 @@ public class CountInventory extends AppCompatActivity {
                     sendAssortiment.put("RevisionID", RevisionID);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables) getApplication()).appendLog(e.getMessage(), CountInventory.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), CountInventory.this);
                 }
                 URL generateSaveLine = SaveRevisionLine(ip_, port_);
                 new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
@@ -332,7 +332,7 @@ public class CountInventory extends AppCompatActivity {
                     sendAssortiment.put("RevisionID", RevisionID);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables) getApplication()).appendLog(e.getMessage(), CountInventory.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), CountInventory.this);
                 }
                 URL generateSaveLine = SaveRevisionLine(ip_, port_);
                 new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
@@ -484,7 +484,7 @@ public class CountInventory extends AppCompatActivity {
             return true;
         } catch (NumberFormatException e) {
 
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountInventory.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountInventory.this);
             return false;
         }
     }
@@ -493,7 +493,7 @@ public class CountInventory extends AppCompatActivity {
             Integer.parseInt(s);
             return true;
         } catch (NumberFormatException e) {
-            ((Variables)getApplication()).appendLog(e.getMessage(),CountInventory.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountInventory.this);
             return false;
         }
     }

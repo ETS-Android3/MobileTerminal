@@ -11,6 +11,28 @@ public class AssortmentListResult {
     @SerializedName("Assortments")
     @Expose
     private List<Assortment> assortments = null;
+    @SerializedName("ErrorCode")
+    @Expose
+    private Integer errorCode;
+    @SerializedName("ErrorMessage")
+    @Expose
+    private String errorMessage;
+
+    public Integer getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(Integer errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
     public List<Assortment> getAssortments() {
         return assortments;

@@ -101,22 +101,22 @@ public class AssortmentParcelable implements Parcelable {
     }
 
     public AssortmentParcelable(Assortment asl) {
-        allowNonIntegerSale = asl.getAllowNonIntegerSale();
+//        allowNonIntegerSale = asl.getAllowNonIntegerSale();
         assortimentID = asl.getAssortimentID();
         assortimentParentID = asl.getAssortimentParentID();
         barCode = asl.getBarCode();
         code = asl.getCode();
-        incomePrice = asl.getIncomePrice();
+//        incomePrice = asl.getIncomePrice();
         isFolder = asl.getIsFolder();
         marking = asl.getMarking();
         name = asl.getName();
-        price = asl.getPrice();
+//        price = asl.getPrice();
         priceLineID = asl.getPriceLineID();
-        remain = asl.getRemain();
-        requestedCount = asl.getRequestedCount();
+//        remain = asl.getRemain();
+//        requestedCount = asl.getRequestedCount();
         unit = asl.getUnit();
         unitInPackage = asl.getUnitInPackage();
-        unitPrice = asl.getUnitPrice();
+//        unitPrice = asl.getUnitPrice();
         vATCode = asl.getVATCode();
         mCount = asl.getCount();
     }

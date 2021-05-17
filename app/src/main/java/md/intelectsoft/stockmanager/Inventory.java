@@ -341,7 +341,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 sendAssortiment.put("RevisionID", RevisionID);
             } catch (JSONException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(), Inventory.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(), Inventory.this);
             }
             txtInpBarcode.setText(inpBarcode.getText().toString());
             inpBarcode.setText("");
@@ -420,7 +420,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
 
         } catch (Exception e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(), Inventory.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(), Inventory.this);
         } finally {
             assert send_bill_Connection != null;
             send_bill_Connection.disconnect();
@@ -470,7 +470,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
 
         } catch (Exception e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(), Inventory.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(), Inventory.this);
         } finally {
             assert send_bill_Connection != null;
             send_bill_Connection.disconnect();
@@ -540,11 +540,11 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                             assortment.setBarCode(barcode);
                             assortment.setCode(Code);
                             assortment.setName(Name);
-                            assortment.setPrice(Price);
+//                            assortment.setPrice(Price);
                             assortment.setMarking(Marking);
-                            assortment.setRemain(Remain);
+//                            assortment.setRemain(Remain);
                             assortment.setAssortimentID(Uid);
-                            assortment.setAllowNonIntegerSale(String.valueOf(allowInteger));
+//                            assortment.setAllowNonIntegerSale(String.valueOf(allowInteger));
                             assortment.setUnit(Unit);
                             final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);
 
@@ -568,7 +568,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                                 sendRevision.put("RevisionID",RevisionID);
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                ((Variables)getApplication()).appendLog(e.getMessage(),Inventory.this);
+                                ((BaseApp)getApplication()).appendLog(e.getMessage(),Inventory.this);
                             }
                             txtCount.setText("1");
 
@@ -583,7 +583,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),Inventory.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(),Inventory.this);
                 }
             }else{
                 txtNames.setText(getResources().getString(R.string.txt_depozit_nedeterminat));
@@ -602,7 +602,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 response = getResponseFromURLSaveRevisionLine(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(), Inventory.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(), Inventory.this);
             }
             return response;
         }
@@ -661,7 +661,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),Inventory.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(),Inventory.this);
                 }
             }else{
                 inpBarcode.setText("");
@@ -969,7 +969,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 response = Response_from_GetWareHouse(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),Inventory.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),Inventory.this);
             }
             return response;
         }
@@ -997,7 +997,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                             show_WareHouse();
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            ((Variables) getApplication()).appendLog(e.getMessage(), Inventory.this);
+                            ((BaseApp) getApplication()).appendLog(e.getMessage(), Inventory.this);
                         }
                     }else{
                         pgH.dismiss();
@@ -1005,7 +1005,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables) getApplication()).appendLog(e.getMessage(), Inventory.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), Inventory.this);
                 }
             }else{
                 pgH.dismiss();
@@ -1021,7 +1021,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 response = Response_from_CreateRevision(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(), Inventory.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(), Inventory.this);
             }
             return response;
         }
@@ -1063,14 +1063,14 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(), Inventory.this);
+                            ((BaseApp)getApplication()).appendLog(e.getMessage(), Inventory.this);
                         }
                     }else{
                         Toast.makeText(Inventory.this,getResources().getString(R.string.msg_error_code) + ErrorCode, Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(), Inventory.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(), Inventory.this);
                 }
             }else{
                 Toast.makeText(Inventory.this, getResources().getString(R.string.msg_nu_raspuns_server), Toast.LENGTH_SHORT).show();

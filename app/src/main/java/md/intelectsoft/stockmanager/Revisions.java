@@ -181,7 +181,7 @@ public class Revisions extends AppCompatActivity {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(), Revisions.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(), Revisions.this);
         }
         simpleAdapterASL = new SimpleAdapter(this, asl_list,R.layout.show_revision_list, new String[]{"Name","Number"},
                 new int[]{R.id.textName_revisionList,R.id.textNumber_revisionList});
@@ -239,7 +239,7 @@ public class Revisions extends AppCompatActivity {
                 response =  Response_from_GetRevision(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(), Revisions.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(), Revisions.this);
             }
             return response;
         }
@@ -264,7 +264,7 @@ public class Revisions extends AppCompatActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(), Revisions.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(), Revisions.this);
                 }
             }else{
                 pgH.dismiss();
@@ -280,7 +280,7 @@ public class Revisions extends AppCompatActivity {
                 response = Response_from_GetWareHouse(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),Revisions.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),Revisions.this);
             }
             return response;
         }
@@ -308,7 +308,7 @@ public class Revisions extends AppCompatActivity {
                             show_WareHouse();
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            ((Variables) getApplication()).appendLog(e.getMessage(), Revisions.this);
+                            ((BaseApp) getApplication()).appendLog(e.getMessage(), Revisions.this);
                         }
                     }else{
                         pgH.dismiss();
@@ -316,7 +316,7 @@ public class Revisions extends AppCompatActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables) getApplication()).appendLog(e.getMessage(), Revisions.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), Revisions.this);
                 }
             }else{
                 pgH.dismiss();
@@ -332,7 +332,7 @@ public class Revisions extends AppCompatActivity {
                 response = Response_from_CreateRevision(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(), Revisions.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(), Revisions.this);
             }
             return response;
         }
@@ -370,14 +370,14 @@ public class Revisions extends AppCompatActivity {
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(), Revisions.this);
+                            ((BaseApp)getApplication()).appendLog(e.getMessage(), Revisions.this);
                         }
                     }else{
                         Toast.makeText(Revisions.this,getResources().getString(R.string.msg_error_code) + ErrorCode, Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(), Revisions.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(), Revisions.this);
                 }
             }else{
                 Toast.makeText(Revisions.this, getResources().getString(R.string.msg_nu_raspuns_server), Toast.LENGTH_SHORT).show();

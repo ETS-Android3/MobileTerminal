@@ -113,8 +113,6 @@ public class ListAssortment extends AppCompatActivity {
                     asl_list.clear();
                     showAssortmentFromID(mGUIDAssortment);
                     mList_Clicked_item.remove(index_clecked_item);
-
-
                 }
             }
             break;
@@ -177,7 +175,7 @@ public class ListAssortment extends AppCompatActivity {
         pgH.setIndeterminate(true);
         pgH.setCancelable(false);
 
-        if(Variables.getInstance().getDownloadASLVariable()){
+        if(BaseApp.getInstance().getDownloadASLVariable()){
             showAssortmentFromID("00000000-0000-0000-0000-000000000000");
         }
         else {
@@ -205,200 +203,200 @@ public class ListAssortment extends AppCompatActivity {
                 final String ParentUid = (String) asl_list.get(position).get("Parent_ID");
 
                 //проверяем если выбраный товар не папка это не папка
-                if (!mIsFolderAssortment) {
-                    Assortment assortment = new Assortment();
-                    assortment.setBarCode(mBarcodeAssortment);
-                    assortment.setCode(mCodeAssortment);
-                    assortment.setName(mNameAssortment);
-                    assortment.setPrice(mPriceAssortment);
-                    assortment.setMarking(mMarkingAssortment);
-                    assortment.setRemain(mRemainAssortment);
-                    assortment.setUnit(mUnitAssortment);
-                    assortment.setUnitPrice(mUnitPriceAssortment);
-                    assortment.setUnitInPackage(mUnitInPackageAssortment);
-                    assortment.setIncomePrice(mIncomePriceAssortment);
-                    assortment.setAssortimentID(mGUIDAssortment);
-                    assortment.setAllowNonIntegerSale(mAlowNonIntegerSalesAssortment);
-                    final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);
-
-                    addAssortmentClicked(mNameAssortment,mGUIDAssortment,mPriceAssortment,mCodeAssortment,mBarcodeAssortment,mUnitAssortment,mUnitPriceAssortment,mUnitInPackageAssortment);
-                    Intent count_activity = new Intent(".CountListAssortmentMobile");
-                    count_activity.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
-                    count_activity.putExtra("WareUid", workPlaceID);
-
-                    Intent getActivity = getIntent();
-                    final int id_intent = getActivity.getIntExtra("ActivityCount", 101);
-                    final boolean auto_send =  getActivity.getBooleanExtra("AutoCount",false);
-
-                    //проверяем айди открытого окна  после чего открываем окно с воода кол-во
-                    if(id_intent == ACTIVITY_TRANSFER){
-                        startActivityForResult(count_activity, REQUEST_CODE_Count_LIST_ASSORTMENT);
-                    }
-                    else if (id_intent == ACTIVITY_STOCK_ASSORTMENT){
-                        Intent count_activity_stock = new Intent(ListAssortment.this, CountListOfAssortmentStock.class);
-                        count_activity_stock.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
-                        count_activity.putExtra("WareUid", workPlaceID);
-                        startActivityForResult(count_activity_stock, REQUEST_CODE_COUNT_STOCK_ASL);
-                    }
-                    else if (id_intent == ACTIVITY_SALES){
-                        startActivityForResult(count_activity, REQUEST_CODE_Count_LIST_ASSORTMENT);
-                    }
-                    else if (id_intent == ACTIVITY_INVOICE){
-                        Intent count_activity_invoice = new Intent(ListAssortment.this,CountListOfAssortmentInvoice.class);
-                        count_activity_invoice.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
-                        startActivityForResult(count_activity_invoice, REQUEST_CODE_COUNT_INVOICE);
-                    }
-                    else if (id_intent == ACTIVITY_INVENTORY){
-                        SharedPreferences SaveCountEnumeratorAssortmentScanned = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
-                        SharedPreferences SaveCountName = getSharedPreferences("SaveNameInventory", MODE_PRIVATE);
-                        SharedPreferences.Editor add_count_clicked = SaveCountEnumeratorAssortmentScanned.edit();
-                        SharedPreferences.Editor add_name = SaveCountName.edit();
-                        //проверяем если стоит вручную вести кол-во или по 1 автоматически
-                        if(auto_send) {
-                            json_item_added_inventory = new JSONObject();
-
-                            SharedPreferences Revision = getSharedPreferences("Revision", MODE_PRIVATE);
-                            String RevisionID = Revision.getString("RevisionID", "");
-
-                            SharedPreferences revisionHistory = getSharedPreferences(RevisionID, MODE_PRIVATE);
-
-                            pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
-                            pgH.setIndeterminate(true);
-                            pgH.setCancelable(false);
-                            pgH.show();
-                            try {
-                                boolean isExtist = false;
-                                //добавляю в массив нажатого товара чтобы потом отабразить какие товары были отправлены из окна с списком товаров
-                                for(int i=0; i <array_added_items_inventroy.length();i++){
-                                    JSONObject object = array_added_items_inventroy.getJSONObject(i);
-                                    String GUID = object.getString("AssortimentUid");
-                                    String count_exist = object.getString("Quantity");
-
-                                    double cant_exist_double = 0.00;
-                                    try{
-                                        cant_exist_double = Double.parseDouble(count_exist);
-                                    }catch (Exception e){
-                                        count_exist = count_exist.replace(",",".");
-                                        cant_exist_double = Double.parseDouble(count_exist);
-                                    }
-                                    //если товар уже есть то сумирую кол-во
-                                    if (GUID.equals(mGUIDAssortment)){
-                                        cant_exist_double = cant_exist_double +1;
-                                        object.put("Quantity",String.valueOf(cant_exist_double));
-                                        isExtist=true;
-                                        break;
-                                    }
-                                }
-                                //если нажатый товар в списке нет, то добавляю
-                                if (!isExtist){
-                                    json_item_added_inventory.put("AssortimentName", mNameAssortment);
-                                    json_item_added_inventory.put("AssortimentUid", mGUIDAssortment);
-                                    json_item_added_inventory.put("Quantity", "1");
-                                    array_added_items_inventroy.put(json_item_added_inventory);
-                                }
-                                //получаю товар что уже был добавлен и добавляю 1 шт и сохраняем
-                                String ExistingCount = SaveCountEnumeratorAssortmentScanned.getString(mGUIDAssortment,"0.00");
-                                double countExist = 0.00;
-                                try{
-                                    countExist = Double.parseDouble(ExistingCount);
-                                }catch (Exception e){
-                                    ExistingCount = ExistingCount.replace(",",".");
-                                    countExist = Double.parseDouble(ExistingCount);
-                                }
-                                Double total_count = countExist + 1;
-
-                                add_count_clicked.putString(mGUIDAssortment,String.format("%.2f",total_count));
-                                add_name.putString(mGUIDAssortment,mNameAssortment);
-                                add_name.apply();
-                                add_count_clicked.apply();
-
-                                //надо отправить сервису для сохранения нажатого товара
-                                SaveRevisionLineBody revisionLineBody = new SaveRevisionLineBody();
-                                revisionLineBody.setAssortiment(mGUIDAssortment);
-                                revisionLineBody.setRevisionID(RevisionID);
-                                revisionLineBody.setFinalQuantity(false);
-                                revisionLineBody.setQuantity(1.0);
-
-                                CommandService commandService = ApiRetrofit.getCommandService(ListAssortment.this);
-                                Call<ResponseSimple> call = commandService.saveRevisionLine(revisionLineBody);
-
-                                call.enqueue(new Callback<ResponseSimple>() {
-                                    @Override
-                                    public void onResponse(Call<ResponseSimple> call, Response<ResponseSimple> response) {
-                                        ResponseSimple responseSimple = response.body();
-                                        pgH.dismiss();
-                                        if(responseSimple != null){
-                                            if(responseSimple.getErrorCode() == 0){
-                                                Toast.makeText(ListAssortment.this, getResources().getString(R.string.msg_count_added_inventory), Toast.LENGTH_SHORT).show();
-
-                                                revisionHistory.edit().putString("name",mNameAssortment).putString("count", "1").apply();
-                                            }
-                                            else{
-                                                Toast.makeText(ListAssortment.this, getResources().getString(R.string.msg_error_code) + responseSimple.getErrorCode() , Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                        else
-                                            Toast.makeText(ListAssortment.this, getResources().getString(R.string.msg_nu_raspuns_server), Toast.LENGTH_SHORT).show();
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<ResponseSimple> call, Throwable t) {
-                                        pgH.dismiss();
-                                        Toast.makeText(ListAssortment.this, t.getMessage() , Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        //если не стоит автоматическое добавление товара в ревизию
-                        else{
-                            //создаю новый обьект JSON ажатого товара
-                            json_item_added_inventory = new JSONObject();
-                            mNewAdd_Assortemnt = new JSONObject();
-
-                            try {
-                                mNewAdd_Assortemnt.put("AssortimentName", mNameAssortment);
-                                mNewAdd_Assortemnt.put("AssortimentUid", mGUIDAssortment);
-                                mNewAdd_Assortemnt.put("Price",mPriceAssortment);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
-                            }
-                            //открываю окно с вводом кол-во
-                            Intent count_activity_inventory = new Intent(ListAssortment.this,CountListOfAssortmentInventory.class);
-                            count_activity_inventory.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
-                            startActivityForResult(count_activity_inventory, REQUEST_CODE_COUNT_INVENTORY);
-                        }
-                    }
-                    else if (id_intent == ACTIVITY_CHECK_PRICE){
-                        setResult(RESULT_OK,count_activity);
-                        finish();
-                    }
-                    else if (id_intent == ACTIVITY_SET_BARCODE){
-                        Intent setBarcode = new Intent(ListAssortment.this,SetAssortmentBarcode.class);
-                        setBarcode.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
-                        startActivityForResult(setBarcode, REQUEST_SETBARCODE);
-                    }
-                }
-                else {
-                    /*
-                    если это папка то ставлю в массив этапы нажатых папок и имя, для отображения в баре и для возврата на папку вверх
-                    после чего получаю все итемы данной папке и отображаю на экран
-                     */
-                    mList_Clicked_item.add(index_clecked_item, ParentUid);
-                    lastClickedItemName.add(index_clecked_item_name, mNameAssortment);
-                    setTitle(mNameAssortment);
-                    index_clecked_item += 1;
-                    index_clecked_item_name +=1;
-                    asl_list.clear();
-                    asl_list = Variables.getInstance().get_AssortimentFromParent(mGUIDAssortment);
-                    SortAssortmentList(asl_list);
-                    simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
-                            new String[]{"Name","icon","PriceWithText","Bar_code","Unit"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list,R.id.txt_unit});
-                    list_assortments.setAdapter(simpleAdapterASL);
-                }
+//                if (!mIsFolderAssortment) {
+//                    Assortment assortment = new Assortment();
+//                    assortment.setBarCode(mBarcodeAssortment);
+//                    assortment.setCode(mCodeAssortment);
+//                    assortment.setName(mNameAssortment);
+//                    assortment.setPrice(mPriceAssortment);
+//                    assortment.setMarking(mMarkingAssortment);
+//                    assortment.setRemain(mRemainAssortment);
+//                    assortment.setUnit(mUnitAssortment);
+//                    assortment.setUnitPrice(mUnitPriceAssortment);
+//                    assortment.setUnitInPackage(mUnitInPackageAssortment);
+//                    assortment.setIncomePrice(mIncomePriceAssortment);
+//                    assortment.setAssortimentID(mGUIDAssortment);
+//                    assortment.setAllowNonIntegerSale(mAlowNonIntegerSalesAssortment);
+//                    final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);
+//
+//                    addAssortmentClicked(mNameAssortment,mGUIDAssortment,mPriceAssortment,mCodeAssortment,mBarcodeAssortment,mUnitAssortment,mUnitPriceAssortment,mUnitInPackageAssortment);
+//                    Intent count_activity = new Intent(".CountListAssortmentMobile");
+//                    count_activity.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
+//                    count_activity.putExtra("WareUid", workPlaceID);
+//
+//                    Intent getActivity = getIntent();
+//                    final int id_intent = getActivity.getIntExtra("ActivityCount", 101);
+//                    final boolean auto_send =  getActivity.getBooleanExtra("AutoCount",false);
+//
+//                    //проверяем айди открытого окна  после чего открываем окно с воода кол-во
+//                    if(id_intent == ACTIVITY_TRANSFER){
+//                        startActivityForResult(count_activity, REQUEST_CODE_Count_LIST_ASSORTMENT);
+//                    }
+//                    else if (id_intent == ACTIVITY_STOCK_ASSORTMENT){
+//                        Intent count_activity_stock = new Intent(ListAssortment.this, CountListOfAssortmentStock.class);
+//                        count_activity_stock.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
+//                        count_activity.putExtra("WareUid", workPlaceID);
+//                        startActivityForResult(count_activity_stock, REQUEST_CODE_COUNT_STOCK_ASL);
+//                    }
+//                    else if (id_intent == ACTIVITY_SALES){
+//                        startActivityForResult(count_activity, REQUEST_CODE_Count_LIST_ASSORTMENT);
+//                    }
+//                    else if (id_intent == ACTIVITY_INVOICE){
+//                        Intent count_activity_invoice = new Intent(ListAssortment.this,CountListOfAssortmentInvoice.class);
+//                        count_activity_invoice.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
+//                        startActivityForResult(count_activity_invoice, REQUEST_CODE_COUNT_INVOICE);
+//                    }
+//                    else if (id_intent == ACTIVITY_INVENTORY){
+//                        SharedPreferences SaveCountEnumeratorAssortmentScanned = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
+//                        SharedPreferences SaveCountName = getSharedPreferences("SaveNameInventory", MODE_PRIVATE);
+//                        SharedPreferences.Editor add_count_clicked = SaveCountEnumeratorAssortmentScanned.edit();
+//                        SharedPreferences.Editor add_name = SaveCountName.edit();
+//                        //проверяем если стоит вручную вести кол-во или по 1 автоматически
+//                        if(auto_send) {
+//                            json_item_added_inventory = new JSONObject();
+//
+//                            SharedPreferences Revision = getSharedPreferences("Revision", MODE_PRIVATE);
+//                            String RevisionID = Revision.getString("RevisionID", "");
+//
+//                            SharedPreferences revisionHistory = getSharedPreferences(RevisionID, MODE_PRIVATE);
+//
+//                            pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
+//                            pgH.setIndeterminate(true);
+//                            pgH.setCancelable(false);
+//                            pgH.show();
+//                            try {
+//                                boolean isExtist = false;
+//                                //добавляю в массив нажатого товара чтобы потом отабразить какие товары были отправлены из окна с списком товаров
+//                                for(int i=0; i <array_added_items_inventroy.length();i++){
+//                                    JSONObject object = array_added_items_inventroy.getJSONObject(i);
+//                                    String GUID = object.getString("AssortimentUid");
+//                                    String count_exist = object.getString("Quantity");
+//
+//                                    double cant_exist_double = 0.00;
+//                                    try{
+//                                        cant_exist_double = Double.parseDouble(count_exist);
+//                                    }catch (Exception e){
+//                                        count_exist = count_exist.replace(",",".");
+//                                        cant_exist_double = Double.parseDouble(count_exist);
+//                                    }
+//                                    //если товар уже есть то сумирую кол-во
+//                                    if (GUID.equals(mGUIDAssortment)){
+//                                        cant_exist_double = cant_exist_double +1;
+//                                        object.put("Quantity",String.valueOf(cant_exist_double));
+//                                        isExtist=true;
+//                                        break;
+//                                    }
+//                                }
+//                                //если нажатый товар в списке нет, то добавляю
+//                                if (!isExtist){
+//                                    json_item_added_inventory.put("AssortimentName", mNameAssortment);
+//                                    json_item_added_inventory.put("AssortimentUid", mGUIDAssortment);
+//                                    json_item_added_inventory.put("Quantity", "1");
+//                                    array_added_items_inventroy.put(json_item_added_inventory);
+//                                }
+//                                //получаю товар что уже был добавлен и добавляю 1 шт и сохраняем
+//                                String ExistingCount = SaveCountEnumeratorAssortmentScanned.getString(mGUIDAssortment,"0.00");
+//                                double countExist = 0.00;
+//                                try{
+//                                    countExist = Double.parseDouble(ExistingCount);
+//                                }catch (Exception e){
+//                                    ExistingCount = ExistingCount.replace(",",".");
+//                                    countExist = Double.parseDouble(ExistingCount);
+//                                }
+//                                Double total_count = countExist + 1;
+//
+//                                add_count_clicked.putString(mGUIDAssortment,String.format("%.2f",total_count));
+//                                add_name.putString(mGUIDAssortment,mNameAssortment);
+//                                add_name.apply();
+//                                add_count_clicked.apply();
+//
+//                                //надо отправить сервису для сохранения нажатого товара
+//                                SaveRevisionLineBody revisionLineBody = new SaveRevisionLineBody();
+//                                revisionLineBody.setAssortiment(mGUIDAssortment);
+//                                revisionLineBody.setRevisionID(RevisionID);
+//                                revisionLineBody.setFinalQuantity(false);
+//                                revisionLineBody.setQuantity(1.0);
+//
+//                                CommandService commandService = ApiRetrofit.getCommandService(ListAssortment.this);
+//                                Call<ResponseSimple> call = commandService.saveRevisionLine(revisionLineBody);
+//
+//                                call.enqueue(new Callback<ResponseSimple>() {
+//                                    @Override
+//                                    public void onResponse(Call<ResponseSimple> call, Response<ResponseSimple> response) {
+//                                        ResponseSimple responseSimple = response.body();
+//                                        pgH.dismiss();
+//                                        if(responseSimple != null){
+//                                            if(responseSimple.getErrorCode() == 0){
+//                                                Toast.makeText(ListAssortment.this, getResources().getString(R.string.msg_count_added_inventory), Toast.LENGTH_SHORT).show();
+//
+//                                                revisionHistory.edit().putString("name",mNameAssortment).putString("count", "1").apply();
+//                                            }
+//                                            else{
+//                                                Toast.makeText(ListAssortment.this, getResources().getString(R.string.msg_error_code) + responseSimple.getErrorCode() , Toast.LENGTH_SHORT).show();
+//                                            }
+//                                        }
+//                                        else
+//                                            Toast.makeText(ListAssortment.this, getResources().getString(R.string.msg_nu_raspuns_server), Toast.LENGTH_SHORT).show();
+//                                    }
+//
+//                                    @Override
+//                                    public void onFailure(Call<ResponseSimple> call, Throwable t) {
+//                                        pgH.dismiss();
+//                                        Toast.makeText(ListAssortment.this, t.getMessage() , Toast.LENGTH_SHORT).show();
+//                                    }
+//                                });
+//
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                        //если не стоит автоматическое добавление товара в ревизию
+//                        else{
+//                            //создаю новый обьект JSON ажатого товара
+//                            json_item_added_inventory = new JSONObject();
+//                            mNewAdd_Assortemnt = new JSONObject();
+//
+//                            try {
+//                                mNewAdd_Assortemnt.put("AssortimentName", mNameAssortment);
+//                                mNewAdd_Assortemnt.put("AssortimentUid", mGUIDAssortment);
+//                                mNewAdd_Assortemnt.put("Price",mPriceAssortment);
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                                ((BaseApp)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
+//                            }
+//                            //открываю окно с вводом кол-во
+//                            Intent count_activity_inventory = new Intent(ListAssortment.this,CountListOfAssortmentInventory.class);
+//                            count_activity_inventory.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
+//                            startActivityForResult(count_activity_inventory, REQUEST_CODE_COUNT_INVENTORY);
+//                        }
+//                    }
+//                    else if (id_intent == ACTIVITY_CHECK_PRICE){
+//                        setResult(RESULT_OK,count_activity);
+//                        finish();
+//                    }
+//                    else if (id_intent == ACTIVITY_SET_BARCODE){
+//                        Intent setBarcode = new Intent(ListAssortment.this,SetAssortmentBarcode.class);
+//                        setBarcode.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
+//                        startActivityForResult(setBarcode, REQUEST_SETBARCODE);
+//                    }
+//                }
+//                else {
+//                    /*
+//                    если это папка то ставлю в массив этапы нажатых папок и имя, для отображения в баре и для возврата на папку вверх
+//                    после чего получаю все итемы данной папке и отображаю на экран
+//                     */
+//                    mList_Clicked_item.add(index_clecked_item, ParentUid);
+//                    lastClickedItemName.add(index_clecked_item_name, mNameAssortment);
+//                    setTitle(mNameAssortment);
+//                    index_clecked_item += 1;
+//                    index_clecked_item_name +=1;
+//                    asl_list.clear();
+//                    asl_list = BaseApp.getInstance().get_AssortimentFromParent(mGUIDAssortment);
+//                    SortAssortmentList(asl_list);
+//                    simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
+//                            new String[]{"Name","icon","PriceWithText","Bar_code","Unit"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list,R.id.txt_unit});
+//                    list_assortments.setAdapter(simpleAdapterASL);
+//                }
             }
         });
 
@@ -498,87 +496,87 @@ public class ListAssortment extends AppCompatActivity {
                     mFoldersSelected = new JSONArray(selectedUidJSON);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
                 }
                 multi_folders = mFoldersSelected.length() > 0;
 
-                for (int i=0; i<assortmentListData.size();i++){
-                    HashMap<String, Object> asl_ = new HashMap<>();
-                    String asl_name= assortmentListData.get(i).getName();
-                    String uid_asl = assortmentListData.get(i).getAssortimentID();
-                    String parent_uid_asl = assortmentListData.get(i).getAssortimentParentID();
-                    String price =   assortmentListData.get(i).getPrice();
-                    String code_asl =  assortmentListData.get(i).getCode();
-                    String barcode_asl = assortmentListData.get(i).getBarCode();
-                    String allow_integer =  assortmentListData.get(i).getAllowNonIntegerSale();
-                    String incomePrice= assortmentListData.get(i).getIncomePrice();
-                    String marking = assortmentListData.get(i).getMarking();
-                    String unitary= assortmentListData.get(i).getUnit();
-                    String finalUnitPrice= assortmentListData.get(i).getUnitPrice();
-                    String UnitInPackage= assortmentListData.get(i).getUnitInPackage();
-                    boolean is_folder= assortmentListData.get(i).getIsFolder();
-
-                    double priceunit = Double.parseDouble(price);
-
-                    price = String.format("%.2f",priceunit);
-
-                    Variables.getInstance().add_AssortimentID(uid_asl,assortmentListData.get(i));
-
-                    if(multi_folders){
-                        for (int j = 0; j< mFoldersSelected.length(); j++) {
-                            String guidArray = null;
-                            try {
-                                guidArray = mFoldersSelected.getString(j);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
-                            }
-                            boolean contains_id = false;
-                            if (guidArray != null) {
-                                contains_id = uid_asl.contains(guidArray);
-                            }
-                            if (contains_id) {
-                                asl_.put("Folder_is", true);
-                                asl_.put("Parent_ID", parent_uid_asl);
-                                asl_.put("Name", asl_name);
-                                asl_.put("ID", uid_asl);
-                                asl_.put("icon", R.drawable.folder_open_black_48dp);
-                                asl_list.add(asl_);
-                            }
-                        }
-                    }
-                    else{
-                        if(parent_uid_asl.equals("00000000-0000-0000-0000-000000000000")) {
-                            if (!is_folder) {
-                                asl_.put("Folder_is", false);
-                                asl_.put("icon", R.drawable.assortiment_item);
-                                asl_.put("Name", asl_name);
-                                asl_.put("ID", uid_asl);
-                                asl_.put("Code", code_asl);
-                                asl_.put("Marking",marking);
-                                asl_.put("Bar_code", getResources().getString(R.string.txt_list_asl_view_barcode) + barcode_asl);
-                                asl_.put("BarCode", barcode_asl);
-                                asl_.put("AllowNonIntegerSale", allow_integer);
-                                asl_.put("Price", price);
-                                asl_.put("PriceWithText",getResources().getString(R.string.txt_list_asl_view_price)+ price + getResources().getString(R.string.txt_list_asl_view_valuta));
-                                asl_.put("IncomePrice", incomePrice);
-                                asl_.put("Unit",  " /"+  unitary);
-                                asl_.put("UnitPrice", finalUnitPrice);
-                                asl_.put("UnitInPackage", UnitInPackage);
-                                asl_list.add(asl_);
-                            } else {
-                                asl_.put("Folder_is", true);
-                                asl_.put("Parent_ID", parent_uid_asl);
-                                asl_.put("Name", asl_name);
-                                asl_.put("ID", uid_asl);
-                                asl_.put("Bar_code", "");
-                                asl_.put("icon", R.drawable.folder_open_black_48dp);
-                                asl_list.add(asl_);
-                            }
-                        }
-
-                    }
-                }
+//                for (int i=0; i<assortmentListData.size();i++){
+//                    HashMap<String, Object> asl_ = new HashMap<>();
+//                    String asl_name= assortmentListData.get(i).getName();
+//                    String uid_asl = assortmentListData.get(i).getAssortimentID();
+//                    String parent_uid_asl = assortmentListData.get(i).getAssortimentParentID();
+//                    String price =   assortmentListData.get(i).getPrice();
+//                    String code_asl =  assortmentListData.get(i).getCode();
+//                    String barcode_asl = assortmentListData.get(i).getBarCode();
+//                    String allow_integer =  assortmentListData.get(i).getAllowNonIntegerSale();
+//                    String incomePrice= assortmentListData.get(i).getIncomePrice();
+//                    String marking = assortmentListData.get(i).getMarking();
+//                    String unitary= assortmentListData.get(i).getUnit();
+//                    String finalUnitPrice= assortmentListData.get(i).getUnitPrice();
+//                    String UnitInPackage= assortmentListData.get(i).getUnitInPackage();
+//                    boolean is_folder= assortmentListData.get(i).getIsFolder();
+//
+//                    double priceunit = Double.parseDouble(price);
+//
+//                    price = String.format("%.2f",priceunit);
+//
+//                    BaseApp.getInstance().add_AssortimentID(uid_asl,assortmentListData.get(i));
+//
+//                    if(multi_folders){
+//                        for (int j = 0; j< mFoldersSelected.length(); j++) {
+//                            String guidArray = null;
+//                            try {
+//                                guidArray = mFoldersSelected.getString(j);
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                                ((BaseApp)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
+//                            }
+//                            boolean contains_id = false;
+//                            if (guidArray != null) {
+//                                contains_id = uid_asl.contains(guidArray);
+//                            }
+//                            if (contains_id) {
+//                                asl_.put("Folder_is", true);
+//                                asl_.put("Parent_ID", parent_uid_asl);
+//                                asl_.put("Name", asl_name);
+//                                asl_.put("ID", uid_asl);
+//                                asl_.put("icon", R.drawable.folder_open_black_48dp);
+//                                asl_list.add(asl_);
+//                            }
+//                        }
+//                    }
+//                    else{
+//                        if(parent_uid_asl.equals("00000000-0000-0000-0000-000000000000")) {
+//                            if (!is_folder) {
+//                                asl_.put("Folder_is", false);
+//                                asl_.put("icon", R.drawable.assortiment_item);
+//                                asl_.put("Name", asl_name);
+//                                asl_.put("ID", uid_asl);
+//                                asl_.put("Code", code_asl);
+//                                asl_.put("Marking",marking);
+//                                asl_.put("Bar_code", getResources().getString(R.string.txt_list_asl_view_barcode) + barcode_asl);
+//                                asl_.put("BarCode", barcode_asl);
+//                                asl_.put("AllowNonIntegerSale", allow_integer);
+//                                asl_.put("Price", price);
+//                                asl_.put("PriceWithText",getResources().getString(R.string.txt_list_asl_view_price)+ price + getResources().getString(R.string.txt_list_asl_view_valuta));
+//                                asl_.put("IncomePrice", incomePrice);
+//                                asl_.put("Unit",  " /"+  unitary);
+//                                asl_.put("UnitPrice", finalUnitPrice);
+//                                asl_.put("UnitInPackage", UnitInPackage);
+//                                asl_list.add(asl_);
+//                            } else {
+//                                asl_.put("Folder_is", true);
+//                                asl_.put("Parent_ID", parent_uid_asl);
+//                                asl_.put("Name", asl_name);
+//                                asl_.put("ID", uid_asl);
+//                                asl_.put("Bar_code", "");
+//                                asl_.put("icon", R.drawable.folder_open_black_48dp);
+//                                asl_list.add(asl_);
+//                            }
+//                        }
+//
+//                    }
+//                }
 
                 if (ListAssortment.this.isDestroyed()) { // or call isFinishing() if min sdk version < 17
                     return;
@@ -588,14 +586,14 @@ public class ListAssortment extends AppCompatActivity {
                 simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
                         new String[]{"Name","icon","PriceWithText","Bar_code","Unit"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list,R.id.txt_unit});
 
-                ((Variables)getApplication()).setDownloadASLVariable(true);
+                ((BaseApp)getApplication()).setDownloadASLVariable(true);
                 list_assortments.setAdapter(simpleAdapterASL);
             }
 
             @Override
             public void onFailure(Call<AssortmentListResult> call, Throwable t) {
                 pgH.dismiss();
-                ((Variables)getApplication()).appendLog(t.getMessage(), ListAssortment.this);
+                ((BaseApp)getApplication()).appendLog(t.getMessage(), ListAssortment.this);
                 AlertDialog.Builder failureAsl = new AlertDialog.Builder(ListAssortment.this);
                 failureAsl.setCancelable(false);
                 failureAsl.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
@@ -637,10 +635,10 @@ public class ListAssortment extends AppCompatActivity {
                     guidArray = mFoldersSelected.getString(j);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
                 }
                 HashMap<String, Object> asl_ = new HashMap<>();
-                Assortment asl_folder = Variables.getInstance().get_AssortimentFromID(guidArray);
+                Assortment asl_folder = BaseApp.getInstance().get_AssortimentFromID(guidArray);
 
                 asl_.put("Folder_is", true);
                 asl_.put("Parent_ID", asl_folder.getAssortimentParentID());
@@ -652,7 +650,7 @@ public class ListAssortment extends AppCompatActivity {
             }
         }
         else{
-            asl_list =  Variables.getInstance().get_AssortimentFromParent(id);
+            asl_list =  BaseApp.getInstance().get_AssortimentFromParent(id);
         }
         SortAssortmentList(asl_list);
         simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
@@ -661,7 +659,7 @@ public class ListAssortment extends AppCompatActivity {
     }
 
     private void searchAssortment(String search_text) {
-        asl_list =  Variables.getInstance().get_Search_Assortment(search_text);
+        asl_list =  BaseApp.getInstance().get_Search_Assortment(search_text);
         SortAssortmentList(asl_list);
         simpleAdapterASL = new SimpleAdapter(ListAssortment.this, asl_list,R.layout.list_assortiment_view,
                 new String[]{"Name","icon","PriceWithText","Bar_code","Unit"}, new int[]{R.id.text_view_asl,R.id.image_view_asl_xm,R.id.txt_price_asl_list,R.id.txt_barcode_asl_list,R.id.txt_unit});
@@ -820,7 +818,7 @@ public class ListAssortment extends AppCompatActivity {
             mNewAdd_Assortemnt.put("UnitInPackage",unitInPackage);
         } catch (JSONException e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
         }
     }
     private void saveCloseActivity(String nameKey,String value){
@@ -878,7 +876,7 @@ public class ListAssortment extends AppCompatActivity {
             mNewAdd_Assortemnt.put("WareName", workPlaceName);
         } catch (JSONException e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
         }
         mArrayAdded_Assortments.put(mNewAdd_Assortemnt);
     }
@@ -895,7 +893,7 @@ public class ListAssortment extends AppCompatActivity {
             mNewAdd_Assortemnt.put("Suma", Suma);
         } catch (JSONException e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(), ListAssortment.this);
         }
         mArrayAdded_Assortments.put(mNewAdd_Assortemnt);
     }

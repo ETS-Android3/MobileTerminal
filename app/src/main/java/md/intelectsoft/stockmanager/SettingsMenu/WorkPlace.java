@@ -47,7 +47,7 @@ import md.intelectsoft.stockmanager.NetworkUtils.Services.CommandService;
 import md.intelectsoft.stockmanager.R;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.AssortmentListResult;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.Assortment;
-import md.intelectsoft.stockmanager.Variables;
+import md.intelectsoft.stockmanager.BaseApp;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -191,10 +191,10 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         btn_add_folder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean dwnlASL =((Variables)getApplication()).getDownloadASLVariable();
+                boolean dwnlASL =((BaseApp)getApplication()).getDownloadASLVariable();
                 if(dwnlASL){
                     int mas=0;
-                    Variables myapp =(Variables)getApplication();
+                    BaseApp myapp =(BaseApp)getApplication();
                     asl_list =myapp.get_AssortimentFolders();
                     mas=asl_list.size();
                     kit_lists=new String[mas];
@@ -398,7 +398,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                     if (msg.arg1 == 12) {
                         pgH.dismiss();
                         int mas=0;
-                        Variables myapp =(Variables)getApplication();
+                        BaseApp myapp =(BaseApp)getApplication();
                         asl_list =myapp.get_AssortimentFolders();
                         mas=asl_list.size();
                         kit_lists=new String[mas];
@@ -482,7 +482,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                                             e.printStackTrace();
                                         }
                                     }
-                                    ((Variables)getApplication()).setDownloadASLVariable(true);
+                                    ((BaseApp)getApplication()).setDownloadASLVariable(true);
                                     SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
                                     SharedPreferences.Editor test = CheckUidFolder.edit();
                                     JSONArray booleab = new JSONArray();
@@ -504,7 +504,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                 }else{
                     String t = msg.obj.toString();
                     pgH.dismiss();
-                    ((Variables)getApplication()).setDownloadASLVariable(false);
+                    ((BaseApp)getApplication()).setDownloadASLVariable(false);
                     android.app.AlertDialog.Builder failureAsl = new android.app.AlertDialog.Builder(WorkPlace.this);
                     failureAsl.setCancelable(false);
                     failureAsl.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
@@ -692,7 +692,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                         if(assortiment_body != null){
                             List<Assortment> assortmentListData = assortiment_body.getAssortments();
 
-                            Variables myapp =((Variables)getApplication());
+                            BaseApp myapp =((BaseApp)getApplication());
 
                             //myapp.SaveAsortment(assortmentListData);
                             int mas=0;
@@ -752,7 +752,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                 response = Response_from_GetWareHouse(urls[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-                ((Variables)getApplication()).appendLog(e.getMessage(),WorkPlace.this);
+                ((BaseApp)getApplication()).appendLog(e.getMessage(),WorkPlace.this);
             }
             return response;
         }
@@ -804,7 +804,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            ((Variables)getApplication()).appendLog(e.getMessage(),WorkPlace.this);
+                            ((BaseApp)getApplication()).appendLog(e.getMessage(),WorkPlace.this);
                         }
                     }else{
                         pgH.dismiss();
@@ -812,7 +812,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(),WorkPlace.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(),WorkPlace.this);
                 }
             }else{
                 pgH.dismiss();

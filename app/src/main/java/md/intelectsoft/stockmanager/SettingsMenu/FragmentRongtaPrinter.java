@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import md.intelectsoft.stockmanager.R;
-import md.intelectsoft.stockmanager.Variables;
+import md.intelectsoft.stockmanager.BaseApp;
 import md.intelectsoft.stockmanager.app.utils.BaseEnum;
 import md.intelectsoft.stockmanager.app.utils.ToastUtil;
 
@@ -57,8 +57,8 @@ public class FragmentRongtaPrinter extends Fragment {
         mPrintImage = rongtaView.findViewById(R.id.btn_print_img);
         txt_header.setText("Information and option about " + mNameDevice);
 
-        rtPrinter = Variables.getInstance().getRtPrinter();
-        bmpPrintWidth = Variables.getInstance().getWidthPrinterPrint();
+        rtPrinter = BaseApp.getInstance().getRtPrinter();
+        bmpPrintWidth = BaseApp.getInstance().getWidthPrinterPrint();
 
         mSelfTest.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,11 +88,11 @@ public class FragmentRongtaPrinter extends Fragment {
 
                 mBitmap = bitmap;
 
-                if (Variables.getInstance().getCurrentCmdType() == BaseEnum.CMD_ESC) {
+                if (BaseApp.getInstance().getCurrentCmdType() == BaseEnum.CMD_ESC) {
                     if (mBitmap.getWidth() > 48 * 8) {
                         mBitmap = BitmapConvertUtil.decodeSampledBitmapFromBitmap(bitmap,48 * 8, 4000);
                     }
-                } else if (Variables.getInstance().getCurrentCmdType() == BaseEnum.CMD_PIN) {
+                } else if (BaseApp.getInstance().getCurrentCmdType() == BaseEnum.CMD_PIN) {
                     if (mBitmap.getWidth() > 210 * 8) {
                         mBitmap = BitmapConvertUtil.decodeSampledBitmapFromBitmap(bitmap,210 * 8, 4000);
                     }
@@ -136,7 +136,7 @@ public class FragmentRongtaPrinter extends Fragment {
             return;
         }
 
-        switch (Variables.getInstance().getCurrentCmdType()) {
+        switch (BaseApp.getInstance().getCurrentCmdType()) {
             case BaseEnum.CMD_ESC:
                 escPrint();
                 break;

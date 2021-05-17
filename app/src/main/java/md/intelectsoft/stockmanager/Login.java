@@ -131,7 +131,7 @@ public class Login extends AppCompatActivity {
         cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((Variables)getApplication()).setUserAuthentificate(false);
+                ((BaseApp)getApplication()).setUserAuthentificate(false);
                 finish();
             }
         });
@@ -200,7 +200,7 @@ public class Login extends AppCompatActivity {
                         sendCodeObj.put("Code", password.getText().toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        ((Variables)getApplication()).appendLog(e.getMessage(), Login.this);
+                        ((BaseApp)getApplication()).appendLog(e.getMessage(), Login.this);
                     }
                     URL Url_Autentificare = Autentificare(ip_, port_);
                     new AsyncTask_Autentificare().execute(Url_Autentificare);
@@ -271,7 +271,7 @@ public class Login extends AppCompatActivity {
                                 sendCodeObj.put("Code", password.getText().toString());
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                ((Variables)getApplication()).appendLog(e.getMessage(), Login.this);
+                                ((BaseApp)getApplication()).appendLog(e.getMessage(), Login.this);
                             }
                             URL Url_Autentificare = Autentificare(ip_, port_);
                             new AsyncTask_Autentificare().execute(Url_Autentificare);
@@ -337,7 +337,7 @@ public class Login extends AppCompatActivity {
                                     sendCodeObj.put("Code", password.getText().toString());
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                    ((Variables)getApplication()).appendLog(e.getMessage(), Login.this);
+                                    ((BaseApp)getApplication()).appendLog(e.getMessage(), Login.this);
                                 }
                                 URL Url_Autentificare = Autentificare(ip_, port_);
                                 new AsyncTask_Autentificare().execute(Url_Autentificare);
@@ -381,7 +381,7 @@ public class Login extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            ((Variables)getApplication()).appendLog(e.getMessage(), Login.this);
+            ((BaseApp)getApplication()).appendLog(e.getMessage(), Login.this);
         } finally {
             assert send_bill_Connection != null;
             send_bill_Connection.disconnect();
@@ -439,7 +439,7 @@ public class Login extends AppCompatActivity {
                         String Name = response_from_Autentificare.getString("Name");
                         String UserID = response_from_Autentificare.getString("UserID");
 
-                        ((Variables) getApplication()).setUserAuthentificate(true);
+                        ((BaseApp) getApplication()).setUserAuthentificate(true);
                         SharedPreferences LogIn = getSharedPreferences("User", MODE_PRIVATE);
                         SharedPreferences.Editor input_LogIn = LogIn.edit();
                         input_LogIn.putString("Name", Name);
@@ -532,7 +532,7 @@ public class Login extends AppCompatActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    ((Variables)getApplication()).appendLog(e.getMessage(), Login.this);
+                    ((BaseApp)getApplication()).appendLog(e.getMessage(), Login.this);
                 }
 
             }
