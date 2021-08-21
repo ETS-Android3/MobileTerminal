@@ -38,15 +38,15 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import md.intelectsoft.stockmanager.NetworkUtils.ApiRetrofit;
-import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.SaveRevisionLineBody;
+//import md.intelectsoft.stockmanager.NetworkUtils.ApiRetrofit;
+//import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.SaveRevisionLineBody;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.AssortmentListResult;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.Assortment;
-import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.ResponseSimple;
-import md.intelectsoft.stockmanager.NetworkUtils.Services.CommandService;
+//import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.ResponseSimple;
+//import md.intelectsoft.stockmanager.NetworkUtils.Services.CommandService;
 import md.intelectsoft.stockmanager.TerminalService.TerminalAPI;
 import md.intelectsoft.stockmanager.TerminalService.TerminalRetrofitClient;
-import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
+//import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
 import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -58,7 +58,7 @@ public class ListAssortment extends AppCompatActivity {
     FloatingActionButton save_assortments;
     ListView list_assortments;
     SearchView search_asl;
-    String ip_,port_, mGUIDAssortment;
+    String url_, mGUIDAssortment;
     ProgressDialog pgH;
     SimpleAdapter simpleAdapterASL;
     JSONObject mNewAdd_Assortemnt,sendRevision,json_item_added_inventory;
@@ -78,7 +78,7 @@ public class ListAssortment extends AppCompatActivity {
     Toolbar mToolbar;
     boolean multi_folders = false;
 
-    CommandService commandService;
+    //CommandService commandService;
 
     TerminalAPI terminalAPI;
 
@@ -155,7 +155,7 @@ public class ListAssortment extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        commandService = ApiRetrofit.getCommandService(ListAssortment.this);
+        //commandService = ApiRetrofit.getCommandService(ListAssortment.this);
 
         terminalAPI = TerminalRetrofitClient.getApiTerminalService(SPFHelp.getInstance().getString("URI", "0.0.0.0:1111"));
 

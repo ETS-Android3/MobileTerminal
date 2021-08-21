@@ -199,4 +199,12 @@
     <string name="tip_have_no_found_bluetooth_device">Нет устройства</string>
     <string name="paired_devices">Соединенный</string>
     <string name="cdata_delete"><![CDATA[<-]]></string>
+    <string name="articol">Артикул</string>
+    <string name="creare">Создать</string>
+    <string name="denumirea_produsului">Название</string>
+    <string name="barcode">Штрих код</string>
+    <string name="complete_this_filed">Completeaza acest cimp !</string>
+    <string name="item_created">Товар успешно создан !</string>
+    <string name="error_create_item">"Ошибка: "</string>
+    <string name="buttonCreate">Создать товар</string>
 </resources>

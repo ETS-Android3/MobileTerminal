@@ -54,6 +54,7 @@ import java.util.TimerTask;
 
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.Assortment;
 import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 
 import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSendIntent;
 import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.CreateRevision;
@@ -84,7 +85,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
     Integer WeightPrefix;
     Double countInRevision;
     final boolean[] show_keyboard = {false};
-    String Name,Price,Marking,Uid , UserId,ip_,port_,Remain,RevisionNumber,RevisionName,RevisionID, barcode,WareID;
+    String Name,Price,Marking,Uid , UserId,url_,Remain,RevisionNumber,RevisionName,RevisionID, barcode,WareID;
 
     AlertDialog.Builder builderType;
     ArrayList<HashMap<String, Object>> stock_List_array = new ArrayList<>();
@@ -143,7 +144,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
 
         final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
-        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
+        final String userId = SPFHelp.getInstance().getString("UserId","");
         final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
         final SharedPreferences WareHouse = getSharedPreferences("Ware House", MODE_PRIVATE);
 
@@ -166,7 +167,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
 
         View headerLayout = navigationView.getHeaderView(0);
         TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
-        useremail.setText(User.getString("Name",""));
+        useremail.setText(userId);
 
         TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
         user_workplace.setText(WorkPlace.getString("Name",""));
@@ -217,9 +218,10 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
         if (!ShowCode){
             txtCode.setVisibility(View.INVISIBLE);
         }
-        UserId = User.getString("UserID","Non");
-        ip_=Settings.getString("IP","");
-        port_=Settings.getString("Port","");
+        UserId = SPFHelp.getInstance().getString("UserId","");
+        url_ = SPFHelp.getInstance().getString("URI","0.0.0.0:1111");
+//        ip_=Settings.getString("IP","");
+//        port_=Settings.getString("Port","");
         
         json_array=new JSONArray();
         array_added_manual = new JSONArray();
@@ -235,9 +237,9 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 asl_list_added.clear();
                 list_added_touch.setAdapter(simpleAdapterASL);
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    getAssortment(User.getString("UserID", ""));
+                    getAssortment(SPFHelp.getInstance().getString("UserId",""));
                 }else if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER) {
-                    getAssortment(User.getString("UserID", ""));
+                    getAssortment(SPFHelp.getInstance().getString("UserId",""));
                 }
                 return false;
             }
@@ -346,7 +348,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
             txtInpBarcode.setText(inpBarcode.getText().toString());
             inpBarcode.setText("");
             inpBarcode.requestFocus();
-            URL getASL = GetAssortiment(ip_, port_);
+            URL getASL = GetAssortiment(url_);
             new AsyncTask_GetAssortiment().execute(getASL);
         }
         else{
@@ -435,7 +437,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                  Inventory.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        URL generatedURL =  Ping(ip_, port_);
+                        URL generatedURL =  Ping(url_);
                         new AsyncTask_Ping().execute(generatedURL);
                     }
                 });
@@ -572,7 +574,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                             }
                             txtCount.setText("1");
 
-                            URL generateSaveLine = SaveRevisionLine(ip_,port_);
+                            URL generateSaveLine = SaveRevisionLine(url_);
                             new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
                         }
                     } else {
@@ -828,10 +830,11 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.menu_conect) {
-            Intent MenuConnect = new Intent(".MenuConnect");
-            startActivity(MenuConnect);
-        } else if (id == R.id.menu_workplace) {
+//        if (id == R.id.menu_conect) {
+//            Intent MenuConnect = new Intent(".MenuConnect");
+//            startActivity(MenuConnect);
+//        } else
+            if (id == R.id.menu_workplace) {
             Intent Logins = new Intent(".LoginMobile");
             Logins.putExtra("Activity", 8);
             startActivity(Logins);
@@ -949,7 +952,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 pgH.setIndeterminate(true);
                 pgH.setCancelable(false);
                 pgH.show();
-                URL generateCreateRevision = CreateRevision(ip_,port_,UserId,WareGUid);
+                URL generateCreateRevision = CreateRevision(url_,UserId,WareGUid);
                 new AsyncTask_CreateRevison().execute(generateCreateRevision);
             }
         });
@@ -958,7 +961,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
         builderType.show();
     }
     public void getWareHouse(){
-        URL getWareHouse = GetWareHouseList(ip_,port_,UserId);
+        URL getWareHouse = GetWareHouseList(url_,UserId);
         new AsyncTask_WareHouse().execute(getWareHouse);
     }
     class AsyncTask_WareHouse extends AsyncTask<URL, String, String> {

@@ -329,11 +329,12 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.menu_conect) {
-            Intent MenuConnect = new Intent(".MenuConnect");
-            startActivity(MenuConnect);
-            finish();
-        } else if (id == R.id.menu_workplace) {
+//        if (id == R.id.menu_conect) {
+//            Intent MenuConnect = new Intent(".MenuConnect");
+//            startActivity(MenuConnect);
+//            finish();
+//        } else
+            if (id == R.id.menu_workplace) {
             Intent Logins = new Intent(".LoginMobile");
             Logins.putExtra("Activity", 8);
             startActivity(Logins);

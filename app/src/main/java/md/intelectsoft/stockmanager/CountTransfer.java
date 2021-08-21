@@ -98,11 +98,11 @@ public class CountTransfer extends AppCompatActivity {
         txt_price.setText(mPriceAssortment);
 
         et_count.requestFocus();
-        SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
+        SharedPreferences Settings = getSharedPreferences("Settings", MODE_PRIVATE);
 
-        boolean ShowCode = Sestting.getBoolean("ShowCode", false);
-        boolean showKB = Sestting.getBoolean("ShowKeyBoard",false);
-        final boolean checkStock = Sestting.getBoolean("CheckStockInput", false);
+        boolean ShowCode = Settings.getBoolean("ShowCode", false);
+        boolean showKB = Settings.getBoolean("ShowKeyBoard",false);
+        final boolean checkStock = Settings.getBoolean("CheckStockInput", false);
 
         if (!ShowCode) {
             txt_code.setVisibility(View.INVISIBLE);

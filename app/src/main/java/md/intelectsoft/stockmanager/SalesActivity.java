@@ -642,10 +642,11 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.menu_conect) {
-            Intent MenuConnect = new Intent(".MenuConnect");
-            startActivity(MenuConnect);
-        } else if (id == R.id.menu_workplace) {
+//        if (id == R.id.menu_conect) {
+//            Intent MenuConnect = new Intent(".MenuConnect");
+//            startActivity(MenuConnect);
+//        } else
+            if (id == R.id.menu_workplace) {
             Intent Logins = new Intent(".LoginMobile");
             Logins.putExtra("Activity", 8);
             startActivity(Logins);

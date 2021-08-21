@@ -60,6 +60,7 @@ import java.util.TimerTask;
 
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.Assortment;
 import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 
 import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSendIntent;
 import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.GetAssortiment;
@@ -82,7 +83,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
     ArrayList<HashMap<String, Object>> stock_List_array = new ArrayList<>();
     ArrayList<HashMap<String, Object>> asl_list = new ArrayList<>();
 
-    String ip_,port_,UserId,WareUid,WareName,laberl,uid_selected,barcode_introdus;
+    String url_,UserId,WareUid,WareName,laberl,uid_selected,barcode_introdus;
     ProgressDialog pgH;
     TimerTask timerTaskSync;
     Timer sync;
@@ -128,26 +129,28 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
         list_of_stock_assortment = findViewById(R.id.LL_list_stock_assortment);
         pgH=new ProgressDialog(StockAssortment.this);
 
-        final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
-        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
-        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
+       // final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
+//        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
+//        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
 
-        UserId = User.getString("UserID","");
-        ip_=Settings.getString("IP","");
-        port_=Settings.getString("Port","");
+        UserId = SPFHelp.getInstance().getString("UserId","");
+        String userName = SPFHelp.getInstance().getString("UserName","");
+        url_ = SPFHelp.getInstance().getString("URI","");
+//        ip_=Settings.getString("IP","");
+//        port_=Settings.getString("Port","");
 
         mArrayAssortment =new JSONArray();
         mArrayForEtichete =new JSONArray();
 
-        final String WorkPlaceID = WorkPlace.getString("Uid","0");
-        final String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
+        final String WorkPlaceID = SPFHelp.getInstance().getString("WorkPlaceId","");
+        final String WorkPlaceName = SPFHelp.getInstance().getString("WorkPlaceName","");
 
         View headerLayout = navigationView.getHeaderView(0);
         TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
-        useremail.setText(User.getString("Name",""));
+        useremail.setText(userName);
 
         TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
-        user_workplace.setText(WorkPlace.getString("Name",""));
+        user_workplace.setText(WorkPlaceName);
 
         if (WorkPlaceName.equals("Nedeterminat")|| WorkPlaceName.equals("")){
             pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
@@ -244,7 +247,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                 pgH.setCancelable(false);
                 pgH.setIndeterminate(true);
                 pgH.show();
-                URL generateSaveAccumulateAssortmentList = SaveAccumulateAssortmentList(ip_,port_);
+                URL generateSaveAccumulateAssortmentList = SaveAccumulateAssortmentList(url_);
                 new AsyncTask_SaveAccumulateAssortmentList().execute(generateSaveAccumulateAssortmentList);
             }
         });
@@ -440,10 +443,11 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.menu_conect) {
-            Intent MenuConnect = new Intent(".MenuConnect");
-            startActivity(MenuConnect);
-        } else if (id == R.id.menu_workplace) {
+//        if (id == R.id.menu_conect) {
+//            Intent MenuConnect = new Intent(".MenuConnect");
+//            startActivity(MenuConnect);
+//        } else
+            if (id == R.id.menu_workplace) {
             Intent Logins = new Intent(".LoginMobile");
             Logins.putExtra("Activity", 8);
             startActivity(Logins);
@@ -473,7 +477,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                 StockAssortment.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        URL generatedURL = Ping(ip_, port_);
+                        URL generatedURL = Ping(url_);
                         new AsyncTask_Ping().execute(generatedURL);
                     }
                 });
@@ -552,11 +556,11 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
         builderType.show();
     }
     public void getWareHouse(){
-        URL getWareHouse = GetWareHouseList(ip_,port_,UserId);
+        URL getWareHouse = GetWareHouseList(url_,UserId);
         new AsyncTask_WareHouse().execute(getWareHouse);
     }
     public void getWareHouseChange(){
-        URL getWareHouse = GetWareHouseList(ip_,port_,UserId);
+        URL getWareHouse = GetWareHouseList(url_,UserId);
         new AsyncTask_WareHouseChange().execute(getWareHouse);
     }
     public void showAssortment(){
@@ -599,7 +603,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
             }
             barcode_introdus = txt_input_barcode.getText().toString();
             txt_input_barcode.setText("");
-            URL getASL = GetAssortiment(ip_, port_);
+            URL getASL = GetAssortiment(url_);
             new AsyncTask_GetAssortiment().execute(getASL);
         }
     }

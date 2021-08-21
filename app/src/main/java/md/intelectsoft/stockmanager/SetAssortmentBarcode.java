@@ -26,9 +26,12 @@ import android.widget.Toast;
 
 import java.util.concurrent.TimeUnit;
 
-import md.intelectsoft.stockmanager.NetworkUtils.Services.CommandService;
+//import md.intelectsoft.stockmanager.NetworkUtils.Services.CommandService;
+import md.intelectsoft.stockmanager.TerminalService.TerminalAPI;
+import md.intelectsoft.stockmanager.TerminalService.TerminalRetrofitClient;
 import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.ResponseSimple;
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,7 +47,7 @@ public class SetAssortmentBarcode extends AppCompatActivity {
     TextView txtName, txtMarking,txtCode,txtPrice, txtUnit;
     EditText etBarcodeInput;
 
-    String ip, port, userId, assortmentId;
+    String url, userId, assortmentId;
     ProgressDialog pgH;
 
     @Override
@@ -71,8 +74,9 @@ public class SetAssortmentBarcode extends AppCompatActivity {
         pgH = new ProgressDialog(SetAssortmentBarcode.this);
 
         userId =  getSharedPreferences("User", MODE_PRIVATE).getString("UserID",null);
-        ip = getSharedPreferences("Settings", MODE_PRIVATE).getString("IP","");
-        port = getSharedPreferences("Settings", MODE_PRIVATE).getString("Port","");
+        url = SPFHelp.getInstance().getString("URI","0.0.0.0:1111");
+//        ip = getSharedPreferences("Settings", MODE_PRIVATE).getString("IP","");
+//        port = getSharedPreferences("Settings", MODE_PRIVATE).getString("Port","");
 
         Intent sales = getIntent();
         AssortmentParcelable assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
@@ -142,11 +146,11 @@ public class SetAssortmentBarcode extends AppCompatActivity {
                     .writeTimeout(2, TimeUnit.MINUTES)
                     .build();
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://"+ ip+ ":" +port)
+                    .baseUrl(url)
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(okHttpClient)
                     .build();
-            CommandService saveBarcodeService = retrofit.create(CommandService.class);
+            TerminalAPI saveBarcodeService = TerminalRetrofitClient.getApiTerminalService(url);
             Call<ResponseSimple> call = saveBarcodeService.saveBarcodeForAssortment(userId,barcode,assortmentId);
 
             call.enqueue(new Callback<ResponseSimple>() {

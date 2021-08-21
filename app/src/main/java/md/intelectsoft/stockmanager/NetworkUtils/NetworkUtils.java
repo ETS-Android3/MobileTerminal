@@ -10,9 +10,9 @@ import java.net.URL;
 import java.util.Scanner;
 
 public class NetworkUtils {
-    public static URL Ping (String ip, String port){
+    public static URL Ping (String url_){
         Uri builtUri;
-        builtUri = Uri.parse("http://" + ip + ":" + port + "/DataTerminalService/json/Ping")
+        builtUri = Uri.parse(url_+"json/Ping")
                 .buildUpon()
                 .build();
         URL url =null;
@@ -24,9 +24,9 @@ public class NetworkUtils {
         return url;
 
     }
-    public static URL Autentificare (String ip, String port){
+    public static URL Autentificare (String url_){
         Uri builtUri;
-        builtUri = Uri.parse("http://" + ip + ":" + port + "/DataTerminalService/json/AuthenticateUser")
+        builtUri = Uri.parse(url_+"json/AuthenticateUser")
                 .buildUpon()
                 .build();
         URL url =null;
@@ -50,9 +50,9 @@ public class NetworkUtils {
         }
         return url;
     }
-    public static URL GetAssortiment (String ip, String port){
+    public static URL GetAssortiment (String url_){
         Uri builtUri;
-        builtUri = Uri.parse("http://" + ip + ":" + port + "/DataTerminalService/json/GetAssortiment")
+        builtUri = Uri.parse(url_ + "json/GetAssortiment")
                 .buildUpon()
                 .build();
         URL url =null;
@@ -63,9 +63,9 @@ public class NetworkUtils {
         }
         return url;
     }
-    public static URL SavePurchaseInvoice (String ip, String port){
+    public static URL SavePurchaseInvoice (String url_){
         Uri builtUri;
-        builtUri = Uri.parse("http://" + ip + ":" + port + "/DataTerminalService/json/SavePurchaseInvoice")
+        builtUri = Uri.parse(url_+"json/SavePurchaseInvoice")
                 .buildUpon()
                 .build();
         URL url =null;
@@ -76,9 +76,9 @@ public class NetworkUtils {
         }
         return url;
     }
-    public static URL TransferFromOneWareHouseToAnother (String ip, String port){
+    public static URL TransferFromOneWareHouseToAnother (String url_){
         Uri builtUri;
-        builtUri = Uri.parse("http://" + ip + ":" + port + "/DataTerminalService/json/TransferFromOneWarehouseToAnother")
+        builtUri = Uri.parse(url_+"json/TransferFromOneWarehouseToAnother")
                 .buildUpon()
                 .build();
         URL url =null;
@@ -128,9 +128,9 @@ public class NetworkUtils {
         }
         return url;
     }
-    public static URL GetWareHouseList (String ip, String port,String userId)  {
+    public static URL GetWareHouseList (String url_,String userId)  {
         Uri builtUri;
-        builtUri = Uri.parse("http://" + ip + ":" + port + "/DataTerminalService/json/GetWarehousesList?UserID=" + userId)
+        builtUri = Uri.parse(url_+"json/GetWarehousesList?UserID=" + userId)
                 .buildUpon()
                 .build();
         URL url =null;
@@ -141,9 +141,9 @@ public class NetworkUtils {
         }
         return url;
     }
-    public static URL SaveAccumulateAssortmentList (String ip, String port){
+    public static URL SaveAccumulateAssortmentList (String url_){
         Uri builtUri;
-        builtUri = Uri.parse("http://" + ip + ":" + port + "/DataTerminalService/json/SaveAccumulateAssortmentList")
+        builtUri = Uri.parse(url_+"json/SaveAccumulateAssortmentList")
                 .buildUpon()
                 .build();
         URL url =null;
@@ -154,9 +154,9 @@ public class NetworkUtils {
         }
         return url;
     }
-    public static URL GetRevisions (String ip, String port){
+    public static URL GetRevisions (String url_){
         Uri builtUri;
-        builtUri = Uri.parse("http://" + ip + ":" + port + "/DataTerminalService/json/GetRevisions")
+        builtUri = Uri.parse(url_+"json/GetRevisions")
                 .buildUpon()
                 .build();
         URL url =null;
@@ -167,9 +167,9 @@ public class NetworkUtils {
         }
         return url;
     }
-    public static URL CreateRevision (String ip, String port,String UserID,String Warehouse){
+    public static URL CreateRevision (String url_,String UserID,String Warehouse){
         Uri builtUri;
-        builtUri = Uri.parse("http://" + ip + ":" + port + "/DataTerminalService/json/CreateRevisions?UserID="+ UserID + "&Warehouse=" + Warehouse)
+        builtUri = Uri.parse(url_+"json/CreateRevisions?UserID="+ UserID + "&Warehouse=" + Warehouse)
                 .buildUpon()
                 .build();
         URL url =null;
@@ -180,9 +180,9 @@ public class NetworkUtils {
         }
         return url;
     }
-    public static URL SaveRevisionLine (String ip, String port){
+    public static URL SaveRevisionLine (String url_){
         Uri builtUri;
-        builtUri = Uri.parse("http://" + ip + ":" + port + "/DataTerminalService/json/SaveRevisionLine")
+        builtUri = Uri.parse(url_+"json/SaveRevisionLine")
                 .buildUpon()
                 .build();
         URL url =null;

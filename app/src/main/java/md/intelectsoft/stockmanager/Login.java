@@ -36,12 +36,14 @@ import java.net.URL;
 
 import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Autentificare;
 
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
+
 public class Login extends AppCompatActivity {
     Button ok_btn, cancel_btn;
     EditText password;
     JSONObject sendCodeObj;
     ProgressDialog pgH;
-    String ip_,port_,PinCode;
+    String url_,PinCode;
     Boolean onedate =false;
     ImageView image_login;
 
@@ -61,8 +63,9 @@ public class Login extends AppCompatActivity {
         image_login = findViewById(R.id.imageLogin);
 
         final SharedPreferences Settings = getSharedPreferences("Settings", MODE_PRIVATE);
-        ip_=Settings.getString("IP","");
-        port_=Settings.getString("Port","");
+       url_= SPFHelp.getInstance().getString("URI","");
+//        ip_=Settings.getString("IP","");
+//        port_=Settings.getString("Port","");
         pgH=new ProgressDialog(Login.this);
 
         PinCode = Settings.getString("PinCode","");
@@ -202,7 +205,7 @@ public class Login extends AppCompatActivity {
                         e.printStackTrace();
                         ((BaseApp)getApplication()).appendLog(e.getMessage(), Login.this);
                     }
-                    URL Url_Autentificare = Autentificare(ip_, port_);
+                    URL Url_Autentificare = Autentificare(url_);
                     new AsyncTask_Autentificare().execute(Url_Autentificare);
                 }
             }
@@ -273,7 +276,7 @@ public class Login extends AppCompatActivity {
                                 e.printStackTrace();
                                 ((BaseApp)getApplication()).appendLog(e.getMessage(), Login.this);
                             }
-                            URL Url_Autentificare = Autentificare(ip_, port_);
+                            URL Url_Autentificare = Autentificare(url_);
                             new AsyncTask_Autentificare().execute(Url_Autentificare);
 
                             return true;
@@ -339,7 +342,7 @@ public class Login extends AppCompatActivity {
                                     e.printStackTrace();
                                     ((BaseApp)getApplication()).appendLog(e.getMessage(), Login.this);
                                 }
-                                URL Url_Autentificare = Autentificare(ip_, port_);
+                                URL Url_Autentificare = Autentificare(url_);
                                 new AsyncTask_Autentificare().execute(Url_Autentificare);
 
                                 return true;

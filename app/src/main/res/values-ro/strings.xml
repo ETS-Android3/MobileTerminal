@@ -200,4 +200,12 @@
     <string name="tip_have_no_paired_device">Niciun dispozitiv asociat</string>
     <string name="choose_bluetooth_device">Alegeți dispozitiv Bluetooth</string>
     <string name="cdata_delete"><![CDATA[<-]]></string>
+    <string name="articol">Articol</string>
+    <string name="creare">Creare</string>
+    <string name="denumirea_produsului">Denumirea Produsului</string>
+    <string name="barcode">Codul de bare</string>
+    <string name="complete_this_filed">Completeaza acest cip!</string>
+    <string name="item_created">Produsul a fost creat !</string>
+    <string name="error_create_item">"Eroare: "</string>
+    <string name="buttonCreate">Creare produs</string>
 </resources>

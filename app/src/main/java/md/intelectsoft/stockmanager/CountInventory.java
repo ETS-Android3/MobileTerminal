@@ -37,6 +37,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 
 import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSendIntent;
 import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.SaveRevisionLine;
@@ -52,7 +53,7 @@ public class CountInventory extends AppCompatActivity {
     boolean mAllowNotIntegerSales;
     JSONObject sendAssortiment;
 
-    String mNameAssortment,mMarkingAssortment,mIDAssortment , ip_,port_,UserId,mRemainAssortment,RevisionID,mCodeAssortment,mBarcodeAssortment,mPriceAssortment,mUnitAssortment;
+    String mNameAssortment,mMarkingAssortment,mIDAssortment , url_,UserId,mRemainAssortment,RevisionID,mCodeAssortment,mBarcodeAssortment,mPriceAssortment,mUnitAssortment;
 
 
     @Override
@@ -312,7 +313,7 @@ public class CountInventory extends AppCompatActivity {
                     e.printStackTrace();
                     ((BaseApp) getApplication()).appendLog(e.getMessage(), CountInventory.this);
                 }
-                URL generateSaveLine = SaveRevisionLine(ip_, port_);
+                URL generateSaveLine = SaveRevisionLine(url_);
                 new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
             }else{
                 inpCount.setError(getResources().getString(R.string.msg_format_number_incorect));
@@ -334,7 +335,7 @@ public class CountInventory extends AppCompatActivity {
                     e.printStackTrace();
                     ((BaseApp) getApplication()).appendLog(e.getMessage(), CountInventory.this);
                 }
-                URL generateSaveLine = SaveRevisionLine(ip_, port_);
+                URL generateSaveLine = SaveRevisionLine(url_);
                 new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
             }else{
                 inpCount.setError(getResources().getString(R.string.msg_only_number_integer));
@@ -359,7 +360,7 @@ public class CountInventory extends AppCompatActivity {
 
         final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
-        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
+       // final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
         final SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
 
         final Intent sales = getIntent();
@@ -377,9 +378,10 @@ public class CountInventory extends AppCompatActivity {
 
         boolean showKB = Settings.getBoolean("ShowKeyBoard",false);
         boolean ShowCode = Settings.getBoolean("ShowCode",false);
-        UserId = User.getString("UserID","Non");
-        ip_=Settings.getString("IP","");
-        port_=Settings.getString("Port","");
+        UserId = SPFHelp.getInstance().getString("UserId","");
+        url_ = SPFHelp.getInstance().getString("URI","");
+//        ip_=Settings.getString("IP","");
+//        port_=Settings.getString("Port","");
         RevisionID=getRevisions.getString("RevisionID","");
         String prefic = mBarcodeAssortment.substring(0,2);
         int toInt = Integer.valueOf(prefic);

@@ -8,10 +8,10 @@
 
     <item android:title="@string/item_menu_drawable_setari">
         <menu>
-            <item
-                android:id="@+id/menu_conect"
-                android:icon="@drawable/connect_black_36dp"
-                android:title="@string/header_conectare_activity" />
+<!--            <item-->
+<!--                android:id="@+id/menu_conect"-->
+<!--                android:icon="@drawable/connect_black_36dp"-->
+<!--                android:title="@string/header_conectare_activity" />-->
             <item
                 android:id="@+id/menu_workplace"
                 android:icon="@drawable/work_place_black_36dp"

@@ -202,4 +202,12 @@
     <string name="paired_devices">Paired</string>
     <string name="choose_bluetooth_device">Choose Bluetooth Device</string>
     <string name="cdata_delete"><![CDATA[<-]]></string>
+    <string name="articol">Articol</string>
+    <string name="creare">Create</string>
+    <string name="denumirea_produsului">Name</string>
+    <string name="barcode">Barcode</string>
+    <string name="complete_this_filed">Completeaza acest cimp !</string>
+    <string name="item_created">Assortment added!</string>
+    <string name="error_create_item">"Error: "</string>
+    <string name="buttonCreate">Create item</string>
 </resources>

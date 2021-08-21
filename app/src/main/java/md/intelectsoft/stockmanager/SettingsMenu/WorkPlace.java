@@ -43,11 +43,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import md.intelectsoft.stockmanager.NetworkUtils.Services.CommandService;
+//import md.intelectsoft.stockmanager.NetworkUtils.Services.CommandService;
 import md.intelectsoft.stockmanager.R;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.AssortmentListResult;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.Assortment;
 import md.intelectsoft.stockmanager.BaseApp;
+import md.intelectsoft.stockmanager.TerminalService.TerminalAPI;
+import md.intelectsoft.stockmanager.TerminalService.TerminalRetrofitClient;
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,7 +65,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
     Button btn_get_workplace,btn_add_folder,btn_delete_all_folder;
     Switch check_stock,show_cod,auto_confirm,show_keyboard, printSales, checkStock_added_assortment,checkInvoiceOnlyPrice;
     TextView txtFolders,txt_user;
-    String ip_,port_,UserId;
+    String url_,UserId;
     ProgressDialog pgH;
 
     ArrayList<HashMap<String, Object>> stock_List_array = new ArrayList<>();
@@ -114,7 +117,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         pgH=new ProgressDialog(WorkPlace.this);
 
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
-        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
+        final String userName = SPFHelp.getInstance().getString("UserName","");
         final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
         SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
         String selected = CheckUidFolder.getString("selected_Name_Array","[]");
@@ -126,14 +129,14 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         if(workplaceName.equals(""))
             workplaceName ="Nedeterminat";
         btn_get_workplace.setText(workplaceName);
+        url_ = SPFHelp.getInstance().getString("URI","");
+//        ip_ = Settings.getString("IP","");
+//        port_ = Settings.getString("Port","");
 
-        ip_ = Settings.getString("IP","");
-        port_ = Settings.getString("Port","");
-
-        txt_user.setText(User.getString("Name",""));
+        txt_user.setText(userName);
         View headerLayout = navigationView.getHeaderView(0);
         TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
-        useremail.setText(User.getString("Name",""));
+        useremail.setText(userName);
 
         TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
         user_workplace.setText(WorkPlace.getString("Name",""));
@@ -338,9 +341,10 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                 pgH.setIndeterminate(true);
                 pgH.setCancelable(false);
                 pgH.show();
-                UserId = User.getString("UserID","");
-                ip_=Settings.getString("IP","");
-                port_=Settings.getString("Port","");
+                UserId = SPFHelp.getInstance().getString("UserId","");
+                url_ = SPFHelp.getInstance().getString("URI","");
+//                ip_=Settings.getString("IP","");
+//                port_=Settings.getString("Port","");
                 if(UserId.equals("")){
                     Intent Logins = new Intent(".LoginMobile");
                     Logins.putExtra("Activity", 6);
@@ -534,9 +538,9 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==6){
             if(resultCode==RESULT_OK){
-                SharedPreferences LogIn = getSharedPreferences("User", MODE_PRIVATE);
-                UserId = LogIn.getString("UserID","");
-                txt_user.setText(LogIn.getString("Name",""));
+//                SharedPreferences LogIn = getSharedPreferences("User", MODE_PRIVATE);MODE_PRIVATE
+                UserId = SPFHelp.getInstance().getString("UserId","");
+                txt_user.setText(SPFHelp.getInstance().getString("UserName",""));
                 getWareHouse();
             }else{
                 pgH.dismiss();
@@ -544,8 +548,8 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         }
         if( requestCode == 11){
             if (resultCode == RESULT_OK){
-                SharedPreferences LogIn = getSharedPreferences("User", MODE_PRIVATE);
-                UserId = LogIn.getString("UserID","");
+
+                UserId = SPFHelp.getInstance().getString("UserId","");
                 DownloadASL();
             }
         }
@@ -585,11 +589,12 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.menu_conect) {
-            Intent MenuConnect = new Intent(".MenuConnect");
-            startActivity(MenuConnect);
-            finish();
-        } else if (id == R.id.menu_workplace) {
+//        if (id == R.id.menu_conect) {
+//            Intent MenuConnect = new Intent(".MenuConnect");
+//            startActivity(MenuConnect);
+//            finish();
+//        } else
+            if (id == R.id.menu_workplace) {
             Intent Logins = new Intent(".LoginMobile");
             Logins.putExtra("Activity", 8);
             startActivity(Logins);
@@ -653,7 +658,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         builderType.show();
     }
     public void getWareHouse(){
-        URL getWareHouse = GetWareHouseList(ip_,port_,UserId);
+        URL getWareHouse = GetWareHouseList(url_,UserId);
         new AsyncTask_WareHouse().execute(getWareHouse);
     }
     public void DownloadASL(){
@@ -678,11 +683,11 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                         .writeTimeout(2, TimeUnit.MINUTES)
                         .build();
                 Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("http://"+ ip_+ ":"+port_)
+                        .baseUrl(url_)
                         .addConverterFactory(GsonConverterFactory.create())
                         .client(okHttpClient)
                         .build();
-                final CommandService assortiment_API = retrofit.create(CommandService.class);
+                final TerminalAPI assortiment_API = TerminalRetrofitClient.getApiTerminalService(url_);
                 final Call<AssortmentListResult> assortiment = assortiment_API.getAssortimentListForStock(UserId,WareGUid);
                 assortiment.enqueue(new Callback<AssortmentListResult>() {
                     @Override

@@ -53,6 +53,7 @@ import java.util.TimerTask;
 
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.Assortment;
 import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 
 import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSendIntent;
 import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.GetAssortiment;
@@ -74,7 +75,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
     ArrayList<HashMap<String, Object>> stock_List_array = new ArrayList<>();
     ArrayList<HashMap<String, Object>> asl_list = new ArrayList<>();
 
-    String ip_,port_,UserId,WareUid,uid_selected,barcode_introdus,WareIDIn,WorkPlaceName;
+    String url_,UserId,WareUid,uid_selected,barcode_introdus,WareIDIn,WorkPlaceName;
     ProgressDialog pgH;
     TimerTask timerTaskSync;
     Timer sync;
@@ -123,8 +124,9 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
         final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
 
         UserId = User.getString("UserID","");
-        ip_=Settings.getString("IP","");
-        port_=Settings.getString("Port","");
+        url_ = SPFHelp.getInstance().getString("URI","");
+//        ip_=Settings.getString("IP","");
+//        port_=Settings.getString("Port","");
 
         final String WorkPlaceID = WorkPlace.getString("Uid","0");
         WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
@@ -256,7 +258,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                     e.printStackTrace();
                     ((BaseApp)getApplication()).appendLog(e.getMessage(),Transfer.this);
                 }
-                URL generateSave = TransferFromOneWareHouseToAnother(ip_,port_);
+                URL generateSave = TransferFromOneWareHouseToAnother(url_);
                 new AsyncTask_SaveTransfer().execute(generateSave);
             }
         });
@@ -451,19 +453,19 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
         builderType.show();
     }
     public void getWareHouse(){
-        URL getWareHouse = GetWareHouseList(ip_,port_,UserId);
+        URL getWareHouse = GetWareHouseList(url_,UserId);
         new AsyncTask_WareHouse().execute(getWareHouse);
     }
     public void getWareHouseIN(){
-        URL getWareHouse = GetWareHouseList(ip_,port_,UserId);
+        URL getWareHouse = GetWareHouseList(url_,UserId);
         new AsyncTask_WareHouseIN().execute(getWareHouse);
     }
     public void getWareHouseINCClick(){
-        URL getWareHouse = GetWareHouseList(ip_,port_,UserId);
+        URL getWareHouse = GetWareHouseList(url_,UserId);
         new AsyncTask_WareHouseINC().execute(getWareHouse);
     }
     public void getWareHouseOUTClick(){
-        URL getWareHouse = GetWareHouseList(ip_,port_,UserId);
+        URL getWareHouse = GetWareHouseList(url_,UserId);
         new AsyncTask_WareHouseOUT().execute(getWareHouse);
     }
     @Override
@@ -522,7 +524,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
             barcode_introdus = txt_input_barcode.getText().toString();
             txtBarcode_introdus.setText(barcode_introdus);
             txt_input_barcode.setText("");
-            URL getASL = GetAssortiment(ip_, port_);
+            URL getASL = GetAssortiment(url_);
             new AsyncTask_GetAssortiment().execute(getASL);
         }
     }
@@ -540,10 +542,11 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.menu_conect) {
-            Intent MenuConnect = new Intent(".MenuConnect");
-            startActivity(MenuConnect);
-        } else if (id == R.id.menu_workplace) {
+//        if (id == R.id.menu_conect) {
+//            Intent MenuConnect = new Intent(".MenuConnect");
+//            startActivity(MenuConnect);
+//        } else
+            if (id == R.id.menu_workplace) {
             Intent Logins = new Intent(".LoginMobile");
             Logins.putExtra("Activity", 8);
             startActivity(Logins);
@@ -572,7 +575,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                 Transfer.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        URL generatedURL = Ping(ip_, port_);
+                        URL generatedURL = Ping(url_);
                         new AsyncTask_Ping().execute(generatedURL);
                     }
                 });

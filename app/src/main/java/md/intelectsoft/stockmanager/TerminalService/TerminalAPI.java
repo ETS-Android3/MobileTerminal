@@ -1,6 +1,7 @@
 package md.intelectsoft.stockmanager.TerminalService;
 
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.AuthentificateUserBody;
+import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.CreateAssortmentBody;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.GetAssortmentItemBody;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.SaveInvoiceBody;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.AssortmentListResult;
@@ -37,6 +38,9 @@ public interface TerminalAPI {
     @GET("json/GetAssortimentRemains")
     Call<GetAssortmentRemainResults> getAssortimentRemains (@Query("AssortmentID") String assortmentID, @Query("WarehouseID") String warehouseID);
 
+    @GET("json/SetBarcode")
+    Call<ResponseSimple> saveBarcodeForAssortment (@Query("UserID") String userId, @Query("Barcode") String barcode, @Query("ID") String assortmentId);
+
     @GET("json/GetPrinters")
     Call<GetPrintersResult> getPrinters (@Query("WarehouseID") String warehouseId);
 
@@ -48,4 +52,8 @@ public interface TerminalAPI {
 
     @POST("json/SaveInvoice")
     Call<SaveInvoiceResult> saveInvoice (@Body SaveInvoiceBody saveInvoiceBody);
+    @GET("json/GetAssortimentListForStock")
+    Call<AssortmentListResult> getAssortimentListForStock (@Query("UserID") String param1, @Query("WarehouseID") String param2);
+    @POST("json/CreateAssortiment")
+    Call<ResponseSimple> createAssortment (@Body CreateAssortmentBody body);
 }

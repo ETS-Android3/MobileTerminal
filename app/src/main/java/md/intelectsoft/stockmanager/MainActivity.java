@@ -58,7 +58,7 @@ import java.util.TimerTask;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener , UpdateHelper.OnUpdateCheckListener {
-    Button btn_check_price,btn_sales,btn_invoice,btn_transfer,btn_inventory,btn_stock_asortment, btn_set_barcodes;
+    Button btn_check_price,btn_sales,btn_invoice,btn_transfer,btn_inventory,btn_stock_asortment, btn_set_barcodes,buttonCreateItem;
     Integer checkPrice = 1,salesDoc = 2, invoiceDoc = 3,transferIntern = 4,inventAr = 5,stock_asl = 7,workplaces = 8,printers = 9,securitate = 10, setBarcode = 147;
     TimerTask timerTaskSync;
     Timer sync;
@@ -106,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         btn_inventory = findViewById(R.id.btn_inventory);
         btn_stock_asortment = findViewById(R.id.btn_stock_assortment);
         btn_set_barcodes = findViewById(R.id.btn_set_assortment_barcode);
+        buttonCreateItem = findViewById(R.id.btn_create_assortment);
 
         View headerLayout = navigationView.getHeaderView(0);
         userNameView = (TextView) headerLayout.findViewById(R.id.txt_name_of_user_main);
@@ -175,6 +176,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Toast.makeText(MainActivity.this, "Nu este legatura cu serverul.", Toast.LENGTH_SHORT).show();
 
         });
+        buttonCreateItem.setOnClickListener(view -> {
+            Boolean keyLicense = false;
+            String license = SPFHelp.getInstance().getString("LicenseID","");
+            if(!license.isEmpty()){
+
+            keyLicense=true;
+            }
+            if(pingTest) {
+                if(keyLicense) {
+                    Boolean CheckLogin = !SPFHelp.getInstance().getString("UserId","").isEmpty();
+//                    if (CheckLogin == null) {
+//                        CheckLogin = false;
+//                        ((Variables) getApplication()).setUserAuthentificate(false);
+//                    }
+                    if (CheckLogin) {
+                        Intent invoice = new Intent(this, CreateAssortment.class);
+                        startActivity(invoice);
+                    } else {
+                        Intent Logins = new Intent(".LoginMobile");
+                        Logins.putExtra("Activity", 12);
+                        startActivity(Logins);
+                    }
+                }else{
+                    Toast.makeText(MainActivity.this, "Licenta gresita!", Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(MainActivity.this, "Nu este legatura cu serverul.", Toast.LENGTH_SHORT).show();
+            }
+        });
         btn_stock_asortment.setOnClickListener(v -> {
             if (pingTest) {
                 Intent invoice = new Intent(".StockAssortmentMobile");
@@ -199,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
     }
+
 
     private void getWareHousesList(String userID) {
         Call<GetWarehousesListResult> getWarehousesListResultCall = terminalAPI.getWareHousesList(userID);

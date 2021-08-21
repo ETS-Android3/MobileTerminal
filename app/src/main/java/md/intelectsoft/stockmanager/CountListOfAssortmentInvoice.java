@@ -30,7 +30,7 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
     Button btn_accept,btn_cancel;
     TextView txtTotalsale,txtNames,txtProfit;
     EditText etCant,etPriceInc,etPriceSales, txtTotalinc;
-    String mNameAssortment,mIDAssortment , ip_,port_,mPriceAssortment,mPriceIncomingAssortment;
+    String mNameAssortment,mIDAssortment , url_,mPriceAssortment,mPriceIncomingAssortment;
     boolean mAllowNotIntegerSales, invoiceOnlySum;
 
     @Override

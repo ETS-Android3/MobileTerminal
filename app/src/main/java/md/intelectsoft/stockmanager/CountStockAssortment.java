@@ -76,7 +76,7 @@ public class CountStockAssortment extends AppCompatActivity {
         btn_add = findViewById(R.id.btn_add_count_stock_assortment);
         btn_cancel = findViewById(R.id.btn_cancel_count_stock_assortment);
 
-        SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
+        SharedPreferences Settings = getSharedPreferences("Settings", MODE_PRIVATE);
 
         final Intent sales = getIntent();
         AssortmentParcelable assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
@@ -94,8 +94,8 @@ public class CountStockAssortment extends AppCompatActivity {
         txt_name.setText(mNameAssortment);
         txt_barcode.setText(mBarcodeAssortment);
         txt_price.setText(mPriceAssortment);
-        boolean ShowCode = Sestting.getBoolean("ShowCode", false);
-        boolean showKB = Sestting.getBoolean("ShowKeyBoard",false);
+        boolean ShowCode = Settings.getBoolean("ShowCode", false);
+        boolean showKB = Settings.getBoolean("ShowKeyBoard",false);
         et_count.requestFocus();
 
         if(mRemainAssortment == null || mRemainAssortment.equals("")){

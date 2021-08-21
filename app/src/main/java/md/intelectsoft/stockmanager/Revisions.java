@@ -36,6 +36,8 @@ import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_fr
 import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_from_GetRevision;
 import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_from_GetWareHouse;
 
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
+
 public class Revisions extends AppCompatActivity {
 
     Button btn_createRevision,btn_cancel,btn_accept;
@@ -43,7 +45,7 @@ public class Revisions extends AppCompatActivity {
     JSONArray json_array;
     ProgressDialog pgH;
 
-    String UserId,ip_,port_,uid_selected,NumberRevision,NameRevision,WorkPlaceName,WorkPlaceId;
+    String UserId,url_,uid_selected,NumberRevision,NameRevision,WorkPlaceName,WorkPlaceId;
     Integer WeightPrefix;
 
     AlertDialog.Builder builderType;
@@ -72,8 +74,10 @@ public class Revisions extends AppCompatActivity {
         final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
 
         UserId = User.getString("UserID","");
-        ip_=Settings.getString("IP","");
-        port_=Settings.getString("Port","");
+        url_ = SPFHelp.getInstance().getString("URI","0.0.0.0:1111");
+
+//        ip_=Settings.getString("IP","");
+//        port_=Settings.getString("Port","");
 
         WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
         WorkPlaceId = WorkPlace.getString("Uid",null);
@@ -84,7 +88,7 @@ public class Revisions extends AppCompatActivity {
         pgH.setCancelable(false);
         pgH.show();
 
-        URL generateGetRevision = GetRevisions(ip_,port_);
+        URL generateGetRevision = GetRevisions(url_);
         new AsyncTask_GetRevision().execute(generateGetRevision);
 
         btn_cancel.setOnClickListener(new View.OnClickListener() {
@@ -219,7 +223,7 @@ public class Revisions extends AppCompatActivity {
                 pgH.setIndeterminate(true);
                 pgH.setCancelable(false);
                 pgH.show();
-                URL generateCreateRevision = CreateRevision(ip_,port_,UserId,WareGUid);
+                URL generateCreateRevision = CreateRevision(url_,UserId,WareGUid);
                 new AsyncTask_CreateRevison().execute(generateCreateRevision);
             }
         });
@@ -228,7 +232,7 @@ public class Revisions extends AppCompatActivity {
         builderType.show();
     }
     public void getWareHouse(){
-        URL getWareHouse = GetWareHouseList(ip_,port_,UserId);
+        URL getWareHouse = GetWareHouseList(url_,UserId);
         new AsyncTask_WareHouse().execute(getWareHouse);
     }
     class AsyncTask_GetRevision extends AsyncTask<URL, String, String> {

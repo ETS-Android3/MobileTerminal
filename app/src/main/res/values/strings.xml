@@ -201,4 +201,12 @@
     <string name="search_device">Сăutare</string>
     <string name="tip_have_no_paired_device">Niciun dispozitiv asociat</string>
     <string name="cdata_delete"><![CDATA[<-]]></string>
+    <string name="articol">Articol</string>
+    <string name="creare">Create</string>
+    <string name="denumirea_produsului">Name</string>
+    <string name="barcode">Barcode</string>
+    <string name="complete_this_filed">Completeaza acest cimp</string>
+    <string name="item_created">Assortment added!</string>
+    <string name="error_create_item">"Error: "</string>
+    <string name="buttonCreate">Create item</string>
 </resources>

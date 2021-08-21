@@ -39,6 +39,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 
 import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSendIntent;
 import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.SaveRevisionLine;
@@ -53,7 +54,7 @@ public class CountListOfAssortmentInventory extends AppCompatActivity {
     JSONObject sendAssortiment;
 
     boolean mAllowNotIntegerSales;
-    String mNameAssortment,mMarkingAssortment,mIDAssortment , ip_,port_,UserId,mRemainAssortment,RevisionID,mCodeAssortment,mBarcodeAssortment,mPriceAssortment;
+    String mNameAssortment,mMarkingAssortment,mIDAssortment , url_,UserId,mRemainAssortment,RevisionID,mCodeAssortment,mBarcodeAssortment,mPriceAssortment;
 
     SharedPreferences revisionHistory;
 
@@ -137,7 +138,7 @@ public class CountListOfAssortmentInventory extends AppCompatActivity {
                     e.printStackTrace();
                     ((BaseApp) getApplication()).appendLog(e.getMessage(), CountListOfAssortmentInventory.this);
                 }
-                URL generateSaveLine = SaveRevisionLine(ip_, port_);
+                URL generateSaveLine = SaveRevisionLine(url_);
                 new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
             }else
                 inpCount.setError(getResources().getString(R.string.msg_format_number_incorect));
@@ -158,7 +159,7 @@ public class CountListOfAssortmentInventory extends AppCompatActivity {
                     e.printStackTrace();
                     ((BaseApp) getApplication()).appendLog(e.getMessage(), CountListOfAssortmentInventory.this);
                 }
-                URL generateSaveLine = SaveRevisionLine(ip_, port_);
+                URL generateSaveLine = SaveRevisionLine(url_);
                 new AsyncTask_SaveRevisionLine().execute(generateSaveLine);
             }else{
                 inpCount.setError(getResources().getString(R.string.msg_only_number_integer));
@@ -404,7 +405,7 @@ public class CountListOfAssortmentInventory extends AppCompatActivity {
 
         final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
-        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
+        //final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
         final SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
 
         boolean ShowCode = Settings.getBoolean("ShowCode",false);
@@ -418,9 +419,8 @@ public class CountListOfAssortmentInventory extends AppCompatActivity {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             inpCount.requestFocus();
         }
-        UserId = User.getString("UserID","Non");
-        ip_=Settings.getString("IP","");
-        port_=Settings.getString("Port","");
+        UserId = SPFHelp.getInstance().getString("UserId","");
+        url_ = SPFHelp.getInstance().getString("URI","0.0.0.0:1111");
         RevisionID=getRevisions.getString("RevisionID","");
 
         revisionHistory = getSharedPreferences(RevisionID, MODE_PRIVATE);

@@ -53,6 +53,7 @@ import java.util.TimerTask;
 
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.Assortment;
 import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 
 import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSendIntent;
 import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.GetAssortiment;
@@ -74,7 +75,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
     ArrayList<HashMap<String, Object>> stock_List_array = new ArrayList<>();
     ArrayList<HashMap<String, Object>> asl_list = new ArrayList<>();
 
-    String ip_,port_,UserId,WareUid,WareNames,uid_selected,barcode_introdus,mNrInvoice;
+    String url_,UserId,WareUid,WareNames,uid_selected,barcode_introdus,mNrInvoice;
     ProgressDialog pgH;
     TimerTask timerTaskSync;
     Timer sync;
@@ -119,25 +120,26 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
         navigationView.setNavigationItemSelectedListener(this);
 
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
-        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
-        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
+//        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
+//        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
 
-        UserId = User.getString("UserID","");
-        ip_=Settings.getString("IP","");
-        port_=Settings.getString("Port","");
+        UserId = SPFHelp.getInstance().getString("UserId","");
+        url_ = SPFHelp.getInstance().getString("URI","0.0.0.0:1111");
+//        ip_=Settings.getString("IP","");
+//        port_=Settings.getString("Port","");
 
         json_array=new JSONArray();
         json_asl=new JSONObject();
-
-        final String WorkPlaceID = WorkPlace.getString("Uid","0");
-        final String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
+        final String userName = SPFHelp.getInstance().getString("UserName","");
+        final String WorkPlaceID = SPFHelp.getInstance().getString("WorkPlaceId","");
+        final String WorkPlaceName =SPFHelp.getInstance().getString("WorkPlaceName","");
 
         View headerLayout = navigationView.getHeaderView(0);
         TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
-        useremail.setText(User.getString("Name",""));
+        useremail.setText(userName);
 
         TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
-        user_workplace.setText(WorkPlace.getString("Name",""));
+        user_workplace.setText(WorkPlaceName);
 
         AlertDialog.Builder input = new AlertDialog.Builder(this);
         input.setTitle(getResources().getString(R.string.msg_header_nr_factura));
@@ -283,7 +285,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                     e.printStackTrace();
                     ((BaseApp)getApplication()).appendLog(e.getMessage(),Invoice.this);
                 }
-                URL generateSave = SavePurchaseInvoice(ip_,port_);
+                URL generateSave = SavePurchaseInvoice(url_);
                 new AsyncTask_SaveInvoice().execute(generateSave);
             }
         });
@@ -330,7 +332,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
             }
             barcode_introdus = txt_input_barcode.getText().toString();
             txt_input_barcode.setText("");
-            URL getASL = GetAssortiment(ip_, port_);
+            URL getASL = GetAssortiment(url_);
             new AsyncTask_GetAssortiment().execute(getASL);
         }
     }
@@ -404,11 +406,11 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
         builderType.show();
     }
     public void getWareHouse(){
-        URL getWareHouse = GetWareHouseList(ip_,port_,UserId);
+        URL getWareHouse = GetWareHouseList(url_,UserId);
         new AsyncTask_WareHouse().execute(getWareHouse);
     }
     public void getWareHouseChange(){
-        URL getWareHouse = GetWareHouseList(ip_,port_,UserId);
+        URL getWareHouse = GetWareHouseList(url_,UserId);
         new AsyncTask_WareHouseChange().execute(getWareHouse);
     }
 
@@ -466,10 +468,11 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.menu_conect) {
-            Intent MenuConnect = new Intent(".MenuConnect");
-            startActivity(MenuConnect);
-        } else if (id == R.id.menu_workplace) {
+//        if (id == R.id.menu_conect) {
+//            Intent MenuConnect = new Intent(".MenuConnect");
+//            startActivity(MenuConnect);
+//        } else
+            if (id == R.id.menu_workplace) {
             Intent Logins = new Intent(".LoginMobile");
             Logins.putExtra("Activity", 8);
             startActivity(Logins);
@@ -500,7 +503,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                 Invoice.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        URL generatedURL = Ping(ip_, port_);
+                        URL generatedURL = Ping(url_);
                         new AsyncTask_Ping().execute(generatedURL);
                     }
                 });

@@ -23,11 +23,14 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import md.intelectsoft.stockmanager.NetworkUtils.ApiRetrofit;
+//import md.intelectsoft.stockmanager.NetworkUtils.ApiRetrofit;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.GetAssortmentRemainResults;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.Remain;
-import md.intelectsoft.stockmanager.NetworkUtils.Services.CommandService;
+//import md.intelectsoft.stockmanager.NetworkUtils.Services.CommandService;
+import md.intelectsoft.stockmanager.TerminalService.TerminalAPI;
+import md.intelectsoft.stockmanager.TerminalService.TerminalRetrofitClient;
 import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,7 +38,7 @@ import retrofit2.Response;
 import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSendIntent;
 
 public class CountListOfAssortmentStock extends AppCompatActivity {
-    String ip_,port_,mNameAssortment, WareUid;
+    String url_,mNameAssortment, WareUid;
     EditText Count_enter;
     ImageButton btn_plus,btn_del;
     TextView name_forasl,price_forasl,btn_save,btn_cancel,txtCode,txtBarCode,txtMarking,txtRemain;
@@ -88,9 +91,9 @@ public class CountListOfAssortmentStock extends AppCompatActivity {
 
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
         SharedPreferences sPref = getSharedPreferences("Save touch assortiment", MODE_PRIVATE);
-
-        ip_ = Settings.getString("IP","");
-        port_ = Settings.getString("Port","");
+        url_ = SPFHelp.getInstance().getString("URI","0.0.0.0:1111");
+//        ip_ = Settings.getString("IP","");
+//        port_ = Settings.getString("Port","");
 
 
         boolean showKB = Settings.getBoolean("ShowKeyBoard",false);
@@ -196,7 +199,7 @@ public class CountListOfAssortmentStock extends AppCompatActivity {
     private void checkStock(String mIDAssortment, String wareUid) {
         txtRemain.setVisibility(View.INVISIBLE);
         pgBar.setVisibility(View.VISIBLE);
-        CommandService commandService = ApiRetrofit.getCommandService(CountListOfAssortmentStock.this);
+        TerminalAPI commandService = TerminalRetrofitClient.getApiTerminalService(url_);
         Call<GetAssortmentRemainResults> call = commandService.getAssortimentRemains(mIDAssortment,wareUid);
 
         call.enqueue(new Callback<GetAssortmentRemainResults>() {
