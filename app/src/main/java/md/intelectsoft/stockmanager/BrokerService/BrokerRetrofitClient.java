@@ -29,7 +29,7 @@ public class BrokerRetrofitClient {
             BaseURL_BrokerService = "https://api.edi.md/";
         }
         else if(BuildConfig.BUILD_TYPE.equals("debug")){
-            BaseURL_BrokerService = "https://dev.edi.md/";
+            BaseURL_BrokerService = "https://api.edi.md/";
         }
         if(retrofit == null)
             retrofit = new Retrofit.Builder()

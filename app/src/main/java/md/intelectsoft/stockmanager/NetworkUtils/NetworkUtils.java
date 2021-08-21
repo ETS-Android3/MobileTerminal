@@ -37,9 +37,9 @@ public class NetworkUtils {
         }
         return url;
     }
-    public static URL GetClienta (String ip, String port,String ClientID){
+    public static URL GetClienta (String url_,String ClientID){
         Uri builtUri;
-        builtUri = Uri.parse("http://" + ip + ":" + port + "/DataTerminalService/json/GetClient?Identifier=" + ClientID)
+        builtUri = Uri.parse(url_+"json/GetClient?Identifier=" + ClientID)
                 .buildUpon()
                 .build();
         URL url =null;

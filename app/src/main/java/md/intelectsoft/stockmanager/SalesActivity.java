@@ -63,7 +63,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import md.intelectsoft.stockmanager.NetworkUtils.ApiRetrofit;
+// md.intelectsoft.stockmanager.NetworkUtils.ApiRetrofit;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.GetAssortmentItemBody;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.InvoiceLineBody;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.SaveInvoiceBody;
@@ -78,7 +78,7 @@ import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.Remain;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.ResponseSimple;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.SaveInvoiceResult;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.WarehouseList;
-import md.intelectsoft.stockmanager.NetworkUtils.Services.CommandService;
+//import md.intelectsoft.stockmanager.NetworkUtils.Services.CommandService;
 import md.intelectsoft.stockmanager.TerminalService.TerminalAPI;
 import md.intelectsoft.stockmanager.TerminalService.TerminalRetrofitClient;
 import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
@@ -116,7 +116,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
     Menu menu;
     JSONArray mAssortmentArray;
 
-    CommandService commandService;
+   // CommandService commandService;
 
     TerminalAPI terminalAPI;
 
@@ -171,7 +171,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
         TextView useremail = headerLayout.findViewById(R.id.txt_name_of_user);
         TextView user_workplace = headerLayout.findViewById(R.id.txt_workplace_user);
 
-        commandService = ApiRetrofit.getCommandService(this);
+        //commandService = ApiRetrofit.getCommandService(this);
 
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
         final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
@@ -315,8 +315,8 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                     pgH.setIndeterminate(true);
                     pgH.setCancelable(false);
                     pgH.show();
-                    commandService = ApiRetrofit.getCommandService(SalesActivity.this);
-                    Call<GetAssortmentRemainResults> call = commandService.getAssortimentRemains(uid_selected,WareUid);
+                    //commandService = ApiRetrofit.getCommandService(SalesActivity.this);
+                    Call<GetAssortmentRemainResults> call = terminalAPI.getAssortimentRemains(uid_selected,WareUid);
 
                     call.enqueue(new Callback<GetAssortmentRemainResults>() {
                         @Override
@@ -440,7 +440,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                         saveInvoiceBody.setWarehouse(WorkPlaceID);
                         saveInvoiceBody.setClientID(ClientID);
 
-                        Call<SaveInvoiceResult> call = commandService.saveInvoice(saveInvoiceBody);
+                        Call<SaveInvoiceResult> call = terminalAPI.saveInvoice(saveInvoiceBody);
 
                         call.enqueue(new Callback<SaveInvoiceResult>() {
                             @Override
@@ -895,7 +895,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                 barcode_introdus = txt_input_barcode.getText().toString();
                 txt_input_barcode.setText("");
 
-                Call<GetAssortmentItemResult> call = commandService.getAssortmentItem(assortmentItemBody);
+                Call<GetAssortmentItemResult> call = terminalAPI.getAssortmentItem(assortmentItemBody);
 
                 call.enqueue(new Callback<GetAssortmentItemResult>() {
                     @Override
@@ -980,7 +980,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
     }
 
     public void changeOrSelectWareHouse(boolean warehouseChanged){
-        Call<GetWarehousesListResult> call = commandService.getWareHousesList(UserId);
+        Call<GetWarehousesListResult> call = terminalAPI.getWareHousesList(UserId);
 
         call.enqueue(new Callback<GetWarehousesListResult>() {
             @Override
@@ -1088,7 +1088,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                 SalesActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Call<Boolean> call = commandService.pingService();
+                        Call<Boolean> call = terminalAPI.pingService();
 
                         call.enqueue(new Callback<Boolean>() {
                             @Override
@@ -1152,7 +1152,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
             if(width == 0){
                 width = SharedPrinters.getInt("WithDisplay",0);
             }
-            Call<GetPrintInvoiceResults> call = commandService.getPrintInvoice(InvoiceID);
+            Call<GetPrintInvoiceResults> call = terminalAPI.getPrintInvoice(InvoiceID);
 
             call.enqueue(new Callback<GetPrintInvoiceResults>() {
                 @Override
@@ -1203,11 +1203,11 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
         }
         else {
             printers_List_array.clear();
-            Call<GetPrintersResult> call = commandService.getPrinters(WorkPlaceGetPrinters);
+            Call<GetPrintersResult> call = terminalAPI.getPrinters(WorkPlaceGetPrinters);
 
             call.enqueue(new Callback<GetPrintersResult>() {
                 @Override
-                public void onResponse(Call<GetPrintersResult> call, Response<GetPrintersResult> response) {
+                public void onResponse(@NonNull Call<GetPrintersResult> call, @NonNull Response<GetPrintersResult> response) {
                     GetPrintersResult result = response.body();
                     if(result != null){
                         if(result.getErrorCode() == 0){
@@ -1282,7 +1282,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
     }
 
     private void printInvoiceToService(String printerId, String printerName){
-        Call<ResponseSimple> call = commandService.printInvoice(InvoiceID,printerId);
+        Call<ResponseSimple> call = terminalAPI.printInvoice(InvoiceID,printerId);
 
         call.enqueue(new Callback<ResponseSimple>() {
             @Override

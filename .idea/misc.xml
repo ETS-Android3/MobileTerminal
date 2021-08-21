@@ -5,6 +5,71 @@
       <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
     </configurations>
   </component>
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/auth_background_item_for_selected.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/ping_false_connect.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/ping_true_conect.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/layout/activity_about.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_authorize.xml" value="0.34427083333333336" />
+        <entry key="app/src/main/res/layout/activity_check_price.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_checkout.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_conect.xml" value="0.34427083333333336" />
+        <entry key="app/src/main/res/layout/activity_count_inventory.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_count_invoice.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_count_list_of_assortment.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_count_list_of_assortment_inventory.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_count_list_of_assortment_invoice.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_count_list_of_assortment_stock.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_count_sales.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_count_stock_assortment.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_count_transfer.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_get_client.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_inventory.xml" value="0.3383152173913043" />
+        <entry key="app/src/main/res/layout/activity_invoice.xml" value="0.3383152173913043" />
+        <entry key="app/src/main/res/layout/activity_list_added_assortment_inventory.xml" value="0.2609375" />
+        <entry key="app/src/main/res/layout/activity_list_assortment.xml" value="0.32864583333333336" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.26721014492753625" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.26721014492753625" />
+        <entry key="app/src/main/res/layout/activity_printers.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_revisions.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_sales.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_securitate.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_set_assortment_barcode.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_splash.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_stock_assortment.xml" value="0.2609375" />
+        <entry key="app/src/main/res/layout/activity_transfer.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_work_place.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/app_bar_about.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/app_bar_check_price.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/app_bar_inventory.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/app_bar_invoice.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/app_bar_main.xml" value="0.3428442028985507" />
+        <entry key="app/src/main/res/layout/app_bar_printers.xml" value="0.34427083333333336" />
+        <entry key="app/src/main/res/layout/app_bar_sales.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/app_bar_stock_assortment.xml" value="0.32864583333333336" />
+        <entry key="app/src/main/res/layout/bluetooth_device_item.xml" value="0.34427083333333336" />
+        <entry key="app/src/main/res/layout/content_inventory.xml" value="0.3383152173913043" />
+        <entry key="app/src/main/res/layout/content_main.xml" value="0.3428442028985507" />
+        <entry key="app/src/main/res/layout/content_stock_assortment.xml" value="0.2609375" />
+        <entry key="app/src/main/res/layout/fragment_rongta_printer.xml" value="0.34427083333333336" />
+        <entry key="app/src/main/res/layout/fragment_zebra_printer.xml" value="0.34427083333333336" />
+        <entry key="app/src/main/res/layout/list_assortiment_view.xml" value="0.34427083333333336" />
+        <entry key="app/src/main/res/layout/show_stock_acumulated_asl.xml" value="0.2609375" />
+        <entry key="app/src/main/res/menu/main.xml" value="0.34427083333333336" />
+        <entry key="app/src/main/res/menu/menu_conect.xml" value="0.34427083333333336" />
+        <entry key="app/src/main/res/menu/menu_inventory.xml" value="0.34427083333333336" />
+        <entry key="app/src/main/res/menu/menu_invoice.xml" value="0.34427083333333336" />
+        <entry key="app/src/main/res/menu/menu_list_add_asl_inventory.xml" value="0.34427083333333336" />
+        <entry key="app/src/main/res/menu/menu_printers.xml" value="0.34427083333333336" />
+        <entry key="app/src/main/res/menu/menu_revision.xml" value="0.34427083333333336" />
+        <entry key="app/src/main/res/menu/menu_sales.xml" value="0.34427083333333336" />
+      </map>
+    </option>
+  </component>
   <component name="PDMPlugin">
     <option name="skipTestSources" value="false" />
   </component>

@@ -1,5 +1,5 @@
 package md.intelectsoft.stockmanager;
-
+//192.168.1.182:6873
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
