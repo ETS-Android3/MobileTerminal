@@ -31,11 +31,13 @@ import java.net.URL;
 import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.GetClienta;
 import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_from_GetClient;
 
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
+
 
 public class GetClient extends AppCompatActivity {
     EditText codeClient;
     Button btnOk, btnCancel;
-    String ip_,port_,ClientID;
+    String url_,ClientID;
     ProgressDialog pgH;
     Boolean onedate =false;
 
@@ -57,8 +59,7 @@ public class GetClient extends AppCompatActivity {
         pgH =new ProgressDialog(GetClient.this);
 
         SharedPreferences Seting =getSharedPreferences("Settings", MODE_PRIVATE);
-        ip_=Seting.getString("IP","");
-        port_=Seting.getString("Port","");
+       url_= SPFHelp.getInstance().getString("URI","0.0.0.0:1111");
 
         codeClient.requestFocus();
 
@@ -78,7 +79,7 @@ public class GetClient extends AppCompatActivity {
                 pgH.setCancelable(false);
                 pgH.show();
                 ClientID = codeClient.getText().toString();
-                URL getClient =GetClienta(ip_,port_,ClientID);
+                URL getClient =GetClienta(url_,ClientID);
                 new AsyncTask_GetClient().execute(getClient);
             }
         });
@@ -98,13 +99,13 @@ public class GetClient extends AppCompatActivity {
 
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     ClientID = codeClient.getText().toString();
-                    URL getClient =GetClienta(ip_,port_,ClientID);
+                    URL getClient =GetClienta(url_,ClientID);
                     new AsyncTask_GetClient().execute(getClient);
                 }
                 else if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER){
                     if (!onedate) {
                         ClientID = codeClient.getText().toString();
-                        URL getClient =GetClienta(ip_,port_,ClientID);
+                        URL getClient =GetClienta(url_,ClientID);
                         new AsyncTask_GetClient().execute(getClient);
                         onedate = true;
                     }
