@@ -37,22 +37,35 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/btn_change_stock_invoice"
         app:layout_constraintStart_toStartOf="parent" />
-
+    <Button
+        android:id="@+id/btn_add_client_invoice"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/item_selector_button_blue"
+        android:text="@string/provider_button"
+        android:textAllCaps="false"
+        android:textColor="@android:color/background_light"
+        android:textSize="18sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_write_manual_invoice"/>
     <LinearLayout
         android:id="@+id/headerLV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginLeft="2dp"
         android:layout_marginTop="4dp"
+        android:layout_marginStart="2dp"
         android:layout_marginEnd="2dp"
-        android:layout_marginRight="2dp"
         android:background="@drawable/round_corners_yelow_header"
         android:orientation="horizontal"
         android:padding="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_write_manual_invoice">
+        app:layout_constraintTop_toBottomOf="@+id/btn_add_client_invoice">
 
         <TextView
             android:id="@+id/textView10"
@@ -216,13 +229,11 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="2dp"
-        android:layout_marginLeft="2dp"
         android:layout_marginEnd="2dp"
-        android:layout_marginRight="2dp"
         android:choiceMode="singleChoice"
         app:layout_constraintBottom_toTopOf="@+id/txtTotal_invoice"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerLV"
         app:layout_constraintVertical_bias="0.0" />

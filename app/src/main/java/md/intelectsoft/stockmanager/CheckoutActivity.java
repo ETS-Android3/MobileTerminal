@@ -25,6 +25,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.Assortment;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.AssortmentListResult;
 import md.intelectsoft.stockmanager.TerminalService.TerminalAPI;
@@ -106,6 +107,7 @@ public class CheckoutActivity extends AppCompatActivity {
             }
         });
     }
+//    @OnClick(R.id.btn_change_stock_sales2) void getDOC(){}
 
     private void showAssortment(List<Assortment> assortments, String s) {
         List<Assortment> toShow = new ArrayList<>();

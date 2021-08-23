@@ -209,4 +209,6 @@
     <string name="item_created">Assortment added!</string>
     <string name="error_create_item">"Error: "</string>
     <string name="buttonCreate">Create item</string>
+    <string name="provider_button">Provider</string>
+    <string name="hint_search_provider">Search provider</string>
 </resources>

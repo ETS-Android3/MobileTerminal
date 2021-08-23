@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
         btn_sales.setOnClickListener(v -> {
             if(pingTest) {
-                Intent invoice = new Intent(this, CheckoutActivity.class);
+                Intent invoice = new Intent(this, SalesActivity.class);
                 startActivity(invoice);
             }
             else
@@ -344,10 +344,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.menu_conect_main) {
-            Intent MenuConnect = new Intent(".MenuConnect");
-            startActivity(MenuConnect);
-        } else if (id == R.id.menu_workplace_main) {
+//        if (id == R.id.menu_conect_main) {
+//            Intent MenuConnect = new Intent(".MenuConnect");
+//            startActivity(MenuConnect);
+//        } else
+        if (id == R.id.menu_workplace_main) {
             Intent Logins = new Intent(".LoginMobile");
             Logins.putExtra("Activity", workplaces);
             startActivity(Logins);

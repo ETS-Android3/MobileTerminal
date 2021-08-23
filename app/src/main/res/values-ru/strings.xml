@@ -207,4 +207,7 @@
     <string name="item_created">Товар успешно создан !</string>
     <string name="error_create_item">"Ошибка: "</string>
     <string name="buttonCreate">Создать товар</string>
+    <string name="provider_button">Поставщик</string>
+    <string name="hint_search_provider">Search provider</string>
+    <string name="btn_adauga_client_search">Adauga client</string>
 </resources>

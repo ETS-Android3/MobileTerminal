@@ -1,6 +1,13 @@
 package md.intelectsoft.stockmanager;
 
-import androidx.appcompat.app.AlertDialog;
+import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSendIntent;
+import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.GetAssortiment;
+import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.GetWareHouseList;
+import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Ping;
+import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_from_GetWareHouse;
+import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_from_Ping;
+import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.SavePurchaseInvoice;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,15 +15,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
-import androidx.annotation.Nullable;
-import com.google.android.material.navigation.NavigationView;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.appcompat.widget.Toolbar;
 import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -36,6 +35,17 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.google.android.material.navigation.NavigationView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,22 +62,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.Assortment;
+import md.intelectsoft.stockmanager.TerminalService.TerminalAPI;
+import md.intelectsoft.stockmanager.TerminalService.TerminalRetrofitClient;
 import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
 import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 
-import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSendIntent;
-import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.GetAssortiment;
-import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.GetWareHouseList;
-import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Ping;
-import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_from_GetWareHouse;
-import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_from_Ping;
-import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.SavePurchaseInvoice;
-
-public class Invoice extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
-    ImageButton btn_write_barcode,btn_delete,btn_open_asl_list;
-    TextView txt_input_barcode,txt_total_invoice,txtBarcode_introdus;
+public class Invoice extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    ImageButton btn_write_barcode, btn_delete, btn_open_asl_list;
+    TextView txt_input_barcode, txt_total_invoice, txtBarcode_introdus;
     ProgressBar pgBar;
-    Button btn_ok,btn_cancel,btn_change_stock;
+    Button btn_ok, btn_cancel, btn_change_stock, btn_add_Client;
     ListView list_of_invoice;
 
     AlertDialog.Builder builderType;
@@ -75,17 +79,18 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
     ArrayList<HashMap<String, Object>> stock_List_array = new ArrayList<>();
     ArrayList<HashMap<String, Object>> asl_list = new ArrayList<>();
 
-    String url_,UserId,WareUid,WareNames,uid_selected,barcode_introdus,mNrInvoice;
+    String url_, UserId, WareUid, WareNames, uid_selected, barcode_introdus, mNrInvoice, clientID;
     ProgressDialog pgH;
     TimerTask timerTaskSync;
     Timer sync;
+    TerminalAPI terminalApi;
 
     Menu menu;
-    JSONObject json_asl,sendInvoice,sendAssortiment;
+    JSONObject json_asl, sendInvoice, sendAssortiment;
     JSONArray json_array;
     final boolean[] show_keyboard = {false};
-    
-    int REQUET_FROM_LIST_ASSORTMENT = 220,REQUEST_FROM_COUNT = 15;
+
+    int REQUEST_FROM_LIST_ASSORTMENT = 220, REQUEST_FROM_COUNT = 15, REQUEST_CLIENT = 1222;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +112,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
         btn_change_stock =findViewById(R.id.btn_change_stock_invoice);
         btn_cancel = findViewById(R.id.btn_cancel_invoice);
         btn_ok = findViewById(R.id.btn_ok_invoice);
+        btn_add_Client = findViewById(R.id.btn_add_client_invoice);
         list_of_invoice = findViewById(R.id.LL_list_invoice);
         pgH=new ProgressDialog(Invoice.this);
 
@@ -120,13 +126,11 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
         navigationView.setNavigationItemSelectedListener(this);
 
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
-//        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
-//        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
 
         UserId = SPFHelp.getInstance().getString("UserId","");
-        url_ = SPFHelp.getInstance().getString("URI","0.0.0.0:1111");
-//        ip_=Settings.getString("IP","");
-//        port_=Settings.getString("Port","");
+        url_ = SPFHelp.getInstance().getString("URI", "0.0.0.0:1111");
+        //clientID = SPFHelp.getInstance().getString("ClientID", "");
+        terminalApi = TerminalRetrofitClient.getApiTerminalService(url_);
 
         json_array=new JSONArray();
         json_asl=new JSONObject();
@@ -240,15 +244,27 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
             public void onClick(View v) {
                 Intent AddingASL = new Intent(".AssortmentMobile");
                 AddingASL.putExtra("ActivityCount", 191);
-                AddingASL.putExtra("WareID",WareUid);
-                AddingASL.putExtra("WareName",WareNames);
-                startActivityForResult(AddingASL, REQUET_FROM_LIST_ASSORTMENT);
+                AddingASL.putExtra("WareID", WareUid);
+                AddingASL.putExtra("WareName", WareNames);
+                startActivityForResult(AddingASL, REQUEST_FROM_LIST_ASSORTMENT);
+
+            }
+        });
+
+        btn_add_Client.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent providers = new Intent(".SearchProviders");
+
+                startActivityForResult(providers, REQUEST_CLIENT);
 
             }
         });
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                clientID = SPFHelp.getInstance().getString("ClientId","");
                 pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
                 pgH.setIndeterminate(true);
                 pgH.setCancelable(false);
@@ -280,7 +296,8 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                     sendInvoice.put("Lines",sendArr);
                     sendInvoice.put("UserID",UserId);
                     sendInvoice.put("TerminalCode","Android");
-                    sendInvoice.put("Warehouse",WareUid);
+                    sendInvoice.put("Warehouse", WareUid);
+                    sendInvoice.put("ClientID", clientID);
                 } catch (JSONException e) {
                     e.printStackTrace();
                     ((BaseApp)getApplication()).appendLog(e.getMessage(),Invoice.this);
@@ -384,20 +401,18 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
         builderType.setAdapter(simpleAdapterType, new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int wich) {
-                String WareGUid= String.valueOf(stock_List_array.get(wich).get("Uid"));
-                String WareName= String.valueOf(stock_List_array.get(wich).get("Name"));
-                String WareCode= String.valueOf(stock_List_array.get(wich).get("Code"));
+                String warehouseGUID = String.valueOf(stock_List_array.get(wich).get("Uid"));
+                String warehouseName = String.valueOf(stock_List_array.get(wich).get("Name"));
+                String warehouseCode = String.valueOf(stock_List_array.get(wich).get("Code"));
 
-                SharedPreferences WareHouse = getSharedPreferences("Ware House", MODE_PRIVATE);
-                SharedPreferences.Editor addWareHouse = WareHouse.edit();
-                addWareHouse.putString("WareName",WareName);
-                addWareHouse.putString("WareUid",WareGUid);
-                addWareHouse.putString("WareCode",WareCode);
-                addWareHouse.apply();
+                SPFHelp.getInstance().putString("WarehouseName", warehouseName);
+                SPFHelp.getInstance().putString("WarehouseGUID", warehouseGUID);
+                SPFHelp.getInstance().putString("WarehouseCode",warehouseCode);
 
-                btn_change_stock.setText(WareName);
-                WareUid = WareGUid;
-                WareNames = WareName;
+
+                btn_change_stock.setText(warehouseName);
+                WareUid = warehouseGUID;
+                WareNames = warehouseName;
                 stock_List_array.clear();
             }
         });
@@ -626,7 +641,7 @@ public class Invoice extends AppCompatActivity  implements NavigationView.OnNavi
                     ((BaseApp) getApplication()).appendLog(e.getMessage(), Invoice.this);
                 }
             }
-        } else if (requestCode == REQUET_FROM_LIST_ASSORTMENT) {
+        } else if (requestCode == REQUEST_FROM_LIST_ASSORTMENT) {
             if (resultCode == RESULT_CANCELED) {
                 txt_input_barcode.setText("");
                 txt_input_barcode.requestFocus();

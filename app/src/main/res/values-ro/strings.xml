@@ -208,4 +208,7 @@
     <string name="item_created">Produsul a fost creat !</string>
     <string name="error_create_item">"Eroare: "</string>
     <string name="buttonCreate">Creare produs</string>
+    <string name="provider_button">Furnizor</string>
+    <string name="hint_search_provider">Search provider</string>
+    <string name="btn_adauga_client_search">Adauga client</string>
 </resources>

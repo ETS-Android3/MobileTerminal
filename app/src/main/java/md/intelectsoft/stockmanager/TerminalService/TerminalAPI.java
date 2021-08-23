@@ -3,6 +3,7 @@ package md.intelectsoft.stockmanager.TerminalService;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.AuthentificateUserBody;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.CreateAssortmentBody;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.GetAssortmentItemBody;
+import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.GetClientsBody;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.SaveInvoiceBody;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.AssortmentListResult;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.AuthentificateUserResult;
@@ -56,4 +57,6 @@ public interface TerminalAPI {
     Call<AssortmentListResult> getAssortimentListForStock (@Query("UserID") String param1, @Query("WarehouseID") String param2);
     @POST("json/CreateAssortiment")
     Call<ResponseSimple> createAssortment (@Body CreateAssortmentBody body);
+    @GET("json/GetClients")
+    Call<GetClientsBody> getClients (@Query("Criteria")String criteria);
 }

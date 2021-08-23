@@ -29,6 +29,7 @@
         <entry key="app/src/main/res/layout/activity_count_transfer.xml" value="0.29891304347826086" />
         <entry key="app/src/main/res/layout/activity_create_asortment.xml" value="0.3220108695652174" />
         <entry key="app/src/main/res/layout/activity_get_client.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_help_sales.xml" value="0.3383152173913043" />
         <entry key="app/src/main/res/layout/activity_inventory.xml" value="0.3383152173913043" />
         <entry key="app/src/main/res/layout/activity_invoice.xml" value="0.3383152173913043" />
         <entry key="app/src/main/res/layout/activity_list_added_assortment_inventory.xml" value="0.2609375" />
@@ -38,6 +39,7 @@
         <entry key="app/src/main/res/layout/activity_printers.xml" value="0.29891304347826086" />
         <entry key="app/src/main/res/layout/activity_revisions.xml" value="0.29891304347826086" />
         <entry key="app/src/main/res/layout/activity_sales.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/activity_search_provider.xml" value="0.3383152173913043" />
         <entry key="app/src/main/res/layout/activity_securitate.xml" value="0.29891304347826086" />
         <entry key="app/src/main/res/layout/activity_set_assortment_barcode.xml" value="0.29891304347826086" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.29891304347826086" />
@@ -49,10 +51,14 @@
         <entry key="app/src/main/res/layout/app_bar_conect.xml" value="0.2418478260869565" />
         <entry key="app/src/main/res/layout/app_bar_inventory.xml" value="0.29891304347826086" />
         <entry key="app/src/main/res/layout/app_bar_invoice.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/app_bar_list_revision.xml" value="0.2994791666666667" />
         <entry key="app/src/main/res/layout/app_bar_main.xml" value="0.3428442028985507" />
         <entry key="app/src/main/res/layout/app_bar_printers.xml" value="0.34427083333333336" />
         <entry key="app/src/main/res/layout/app_bar_sales.xml" value="0.29891304347826086" />
+        <entry key="app/src/main/res/layout/app_bar_search.xml" value="0.3383152173913043" />
+        <entry key="app/src/main/res/layout/app_bar_securitate.xml" value="0.34427083333333336" />
         <entry key="app/src/main/res/layout/app_bar_stock_assortment.xml" value="0.32864583333333336" />
+        <entry key="app/src/main/res/layout/app_bar_workplace.xml" value="0.34427083333333336" />
         <entry key="app/src/main/res/layout/bluetooth_device_item.xml" value="0.34427083333333336" />
         <entry key="app/src/main/res/layout/content_about.xml" value="0.23596014492753623" />
         <entry key="app/src/main/res/layout/content_check_price.xml" value="0.23596014492753623" />
@@ -63,6 +69,7 @@
         <entry key="app/src/main/res/layout/content_main.xml" value="0.3428442028985507" />
         <entry key="app/src/main/res/layout/content_printers.xml" value="0.23596014492753623" />
         <entry key="app/src/main/res/layout/content_sales.xml" value="0.23596014492753623" />
+        <entry key="app/src/main/res/layout/content_search.xml" value="0.3383152173913043" />
         <entry key="app/src/main/res/layout/content_securitate.xml" value="0.23596014492753623" />
         <entry key="app/src/main/res/layout/content_stock_assortment.xml" value="0.2609375" />
         <entry key="app/src/main/res/layout/content_transfer.xml" value="0.23596014492753623" />
@@ -79,15 +86,18 @@
         <entry key="app/src/main/res/layout/msg_add_client_comment.xml" value="0.23596014492753623" />
         <entry key="app/src/main/res/layout/nav_header_main.xml" value="0.23596014492753623" />
         <entry key="app/src/main/res/layout/nav_header_main_main.xml" value="0.23596014492753623" />
+        <entry key="app/src/main/res/layout/provider_list_item.xml" value="0.3383152173913043" />
         <entry key="app/src/main/res/layout/show_asl_inventory.xml" value="0.23596014492753623" />
         <entry key="app/src/main/res/layout/show_asl_invoice.xml" value="0.327445652173913" />
         <entry key="app/src/main/res/layout/show_asl_sales.xml" value="0.23596014492753623" />
         <entry key="app/src/main/res/layout/show_revision_list.xml" value="0.23596014492753623" />
         <entry key="app/src/main/res/layout/show_stock_acumulated_asl.xml" value="0.2609375" />
         <entry key="app/src/main/res/menu/activity_main_drawer.xml" value="0.32864583333333336" />
+        <entry key="app/src/main/res/menu/activity_main_main_drawer.xml" value="0.34427083333333336" />
         <entry key="app/src/main/res/menu/main.xml" value="0.34427083333333336" />
         <entry key="app/src/main/res/menu/menu_about.xml" value="0.32864583333333336" />
         <entry key="app/src/main/res/menu/menu_assortment.xml" value="0.32864583333333336" />
+        <entry key="app/src/main/res/menu/menu_check_price.xml" value="0.2994791666666667" />
         <entry key="app/src/main/res/menu/menu_conect.xml" value="0.34427083333333336" />
         <entry key="app/src/main/res/menu/menu_inventory.xml" value="0.34427083333333336" />
         <entry key="app/src/main/res/menu/menu_invoice.xml" value="0.34427083333333336" />
@@ -95,6 +105,7 @@
         <entry key="app/src/main/res/menu/menu_printers.xml" value="0.34427083333333336" />
         <entry key="app/src/main/res/menu/menu_revision.xml" value="0.34427083333333336" />
         <entry key="app/src/main/res/menu/menu_sales.xml" value="0.34427083333333336" />
+        <entry key="app/src/main/res/menu/menu_securitate.xml" value="0.2994791666666667" />
       </map>
     </option>
   </component>
