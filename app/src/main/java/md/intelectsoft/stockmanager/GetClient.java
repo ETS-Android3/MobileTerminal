@@ -1,16 +1,15 @@
 package md.intelectsoft.stockmanager;
 
+import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.GetClienta;
+import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_from_GetClient;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,14 +21,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URL;
-
-import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.GetClienta;
-import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_from_GetClient;
 
 import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 
@@ -58,12 +58,12 @@ public class GetClient extends AppCompatActivity {
         btnOk=findViewById(R.id.btn_ok_getClient);
         pgH =new ProgressDialog(GetClient.this);
 
-        SharedPreferences Seting =getSharedPreferences("Settings", MODE_PRIVATE);
-       url_= SPFHelp.getInstance().getString("URI","0.0.0.0:1111");
+        SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+       url_= sharedPrefsInstance.getString("URI","0.0.0.0:1111");
 
         codeClient.requestFocus();
 
-        Boolean showKB = Seting.getBoolean("ShowKeyBoard",false);
+        Boolean showKB = sharedPrefsInstance.getBoolean("ShowKeyBoard",false);
         if (showKB){
             //InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             //imm.showSoftInput(password, InputMethodManager.SHOW_IMPLICIT);

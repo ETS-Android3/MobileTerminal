@@ -1,6 +1,13 @@
 package md.intelectsoft.stockmanager;
 
-import androidx.appcompat.app.AlertDialog;
+import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSendIntent;
+import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.GetAssortiment;
+import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.GetWareHouseList;
+import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Ping;
+import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_from_GetWareHouse;
+import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_from_Ping;
+import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.SaveAccumulateAssortmentList;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,17 +15,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.navigation.NavigationView;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.appcompat.widget.Toolbar;
+import android.os.Handler;
 import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -39,9 +37,17 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import com.zebrdk.a.sdk.comm.BluetoothConnection;
-//import com.zebra.sdk.comm.Connection;
-//import com.zebra.scomm.ConnectionException;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,14 +67,6 @@ import java.util.TimerTask;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.Assortment;
 import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
 import md.intelectsoft.stockmanager.app.utils.SPFHelp;
-
-import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSendIntent;
-import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.GetAssortiment;
-import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.GetWareHouseList;
-import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Ping;
-import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_from_GetWareHouse;
-import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_from_Ping;
-import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.SaveAccumulateAssortmentList;
 
 public class StockAssortment extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
@@ -255,6 +253,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
         btn_print_lable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: De verificat ca sa se salveze corect printerile si sa se obtina corect valorile date
                 SharedPreferences sPref =getSharedPreferences("Conected printers", MODE_PRIVATE);
                 SharedPreferences sPrefSetting =getSharedPreferences("Save setting", MODE_PRIVATE);
                 final String adresMAC = sPref.getString("AdressPrinters",null);
@@ -499,16 +498,15 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
         builderType.setAdapter(simpleAdapterType, new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int wich) {
-                String WareGUid= String.valueOf(stock_List_array.get(wich).get("Uid"));
-                String WareNames= String.valueOf(stock_List_array.get(wich).get("Name"));
-                String WareCode= String.valueOf(stock_List_array.get(wich).get("Code"));
+                String WareGUid = String.valueOf(stock_List_array.get(wich).get("Uid"));
+                String WareNames = String.valueOf(stock_List_array.get(wich).get("Name"));
+                String WareCode = String.valueOf(stock_List_array.get(wich).get("Code"));
+                SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
 
-                SharedPreferences WareHouse = getSharedPreferences("Ware House", MODE_PRIVATE);
-                SharedPreferences.Editor addWareHouse = WareHouse.edit();
-                addWareHouse.putString("WareName",WareNames);
-                addWareHouse.putString("WareUid",WareGUid);
-                addWareHouse.putString("WareCode",WareCode);
-                addWareHouse.apply();
+                sharedPrefsInstance.putString("WarehouseName", WareNames);
+                sharedPrefsInstance.putString("WarehouseGUID", WareGUid);
+                sharedPrefsInstance.putString("WarehouseCode", WareCode);
+
 
                 btn_change_stock.setText(WareNames);
                 WareUid = WareGUid;
@@ -538,12 +536,10 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                 String WareNames= String.valueOf(stock_List_array.get(wich).get("Name"));
                 String WareCode= String.valueOf(stock_List_array.get(wich).get("Code"));
 
-                SharedPreferences WareHouse = getSharedPreferences("Ware House", MODE_PRIVATE);
-                SharedPreferences.Editor addWareHouse = WareHouse.edit();
-                addWareHouse.putString("WareName",WareNames);
-                addWareHouse.putString("WareUid",WareGUid);
-                addWareHouse.putString("WareCode",WareCode);
-                addWareHouse.apply();
+                SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+                sharedPrefsInstance.putString("WarehouseName",WareNames);
+                sharedPrefsInstance.putString("WarehouseGUID",WareGUid);
+                sharedPrefsInstance.putString("WarehouseCode",WareCode);
 
                 btn_change_stock.setText(WareNames);
                 WareUid = WareGUid;
@@ -1217,9 +1213,9 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
     @Override
     protected void onResume() {
         super.onResume();
-        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
-        String WorkPlaceID = WorkPlace.getString("Uid","0");
-        String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
+        SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+        String WorkPlaceID = sharedPrefsInstance.getString("WorkPlaceId","0");
+        String WorkPlaceName = sharedPrefsInstance.getString("WorkPlaceName","Nedeterminat");
 
         if(!WorkPlaceID.equals(WareUid)){
             btn_change_stock.setText(WareName);

@@ -26,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 
 import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSendIntent;
 
@@ -80,11 +81,12 @@ public class CountSales extends AppCompatActivity {
         btn_cancel = findViewById(R.id.btn_cancel_count_sales);
         txt_unit = findViewById(R.id.txt_unit);
 
-        SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
+        SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+//        SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
 
-        boolean ShowCode = Sestting.getBoolean("ShowCode", false);
-        boolean showKB = Sestting.getBoolean("ShowKeyBoard",false);
-        final boolean mCheckStock = Sestting.getBoolean("CheckStockInput", false);
+        boolean ShowCode = sharedPrefsInstance.getBoolean("ShowCode", false);
+        boolean showKB = sharedPrefsInstance.getBoolean("ShowKeyBoard",false);
+        final boolean mCheckStock = sharedPrefsInstance.getBoolean("CheckStockInput", false);
 
         Intent sales = getIntent();
         WareHouse = sales.getStringExtra("WhareHouse");

@@ -1,13 +1,16 @@
 package md.intelectsoft.stockmanager;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -77,10 +80,11 @@ public class SearchProvider extends AppCompatActivity {
                     if (response != null) {
                         GetClientsBody clientsResponse = response.body();
                         if (clientsResponse != null)
-                            if (!clientsResponse.getClients().isEmpty())
+                            if (!clientsResponse.getClients().isEmpty()){
                                 getSearchClients(clientsResponse.getClients());
-                    } else {
-
+                            }else {
+                               getSearchClients(Collections.<Client>emptyList());
+                            }
                     }
                 }
 
@@ -97,10 +101,10 @@ public class SearchProvider extends AppCompatActivity {
     }
 
     void getSearchClients(List<Client> clients) {
+
         searchProviderList = findViewById(R.id.search_list);
 
         ProviderAdapter adapter = new ProviderAdapter(clients);
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
         searchProviderList.setLayoutManager(layoutManager);
@@ -111,34 +115,44 @@ public class SearchProvider extends AppCompatActivity {
 
     public class ProviderHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView providerName;
-        String clientId;
+        String mClientId, mClientName;
 
         public ProviderHolder(@NonNull View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
+
             providerName = itemView.findViewById(R.id.provider_name);
         }
 
         void setData(String name, String id) {
             providerName.setText(name);
-            clientId = id;
+            mClientName = name;
+            mClientId = id;
         }
 
 
         @Override
         public void onClick(View v) {
-            SPFHelp.getInstance().putString("ClientId", clientId);
-           finish();
+//            SPFHelp.getInstance().putString("ProviderId", mClientId);
+//            SPFHelp.getInstance().putString("ProviderName", mClientName);
+
+            Intent intent = new Intent();
+            intent.putExtra("ProviderName",mClientName);
+            intent.putExtra("ProviderId",mClientId);
+            setResult(RESULT_OK, intent);
+            finish();
         }
     }
 
     private class ProviderAdapter extends RecyclerView.Adapter<ProviderHolder> {
 
-        private List<Client> clients;
+        private List<Client> clients = null;
+
 
 
         public ProviderAdapter(List<Client> clients) {
             this.clients = clients;
+
         }
 
 
@@ -158,6 +172,17 @@ public class SearchProvider extends AppCompatActivity {
             return clients.size();
         }
     }
+    public boolean dispatchTouchEvent(@NonNull MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (v instanceof EditText) {
+                v.clearFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
+            }
+        }
 
+        return super.dispatchTouchEvent(event);
+    }
 }

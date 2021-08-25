@@ -54,6 +54,7 @@ import java.util.UUID;
 import md.intelectsoft.stockmanager.R;
 import md.intelectsoft.stockmanager.BaseApp;
 import md.intelectsoft.stockmanager.app.utils.BaseEnum;
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 
 import static md.intelectsoft.stockmanager.BaseApp.mLablePrinters;
 import static md.intelectsoft.stockmanager.BaseApp.mPOSPrinters;
@@ -86,7 +87,7 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
     String[] mTypePrinterList = {"NoN", mPOSPrinters, mLablePrinters};
 
     Button btn_select_device, btn_connected_toDevice;
-    String adressConectoin,ip_,port_;
+    String adressConectoin,url_;
     private ConnectedThread mConnectedThread;
     private BluetoothSocket mBTSocket = null;
     ArrayAdapter<String> adapterModel ;
@@ -242,16 +243,13 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
             public void onNothingSelected(AdapterView<?> arg0) {
             }
         });
-
-        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
+SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
         View headerLayout = navigationView.getHeaderView(0);
         TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
-        useremail.setText(User.getString("Name",""));
+        useremail.setText(sharedPrefsInstance.getString("UserName",""));
 
 
-        SharedPreferences sPref = getSharedPreferences("Settings", MODE_PRIVATE);
-        ip_=sPref.getString("IP","");
-        port_=sPref.getString("Port","");
+        url_ = SPFHelp.getInstance().getString("URI","");
 
         PrinterObserverManager.getInstance().add(this);
 
@@ -646,11 +644,11 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
             return;
         }
         if(position == 1){
-            Bundle bundl = new Bundle();
-            bundl.putString("BTName",BTName);
+            Bundle bundle = new Bundle();
+            bundle.putString("BTName",BTName);
 
             if(!mRongtaPrinterFragment.isAdded())
-                mRongtaPrinterFragment.setArguments(bundl);
+                mRongtaPrinterFragment.setArguments(bundle);
 
             fTrans = getFragmentManager().beginTransaction();
             fTrans.replace(R.id.container_fragment, mRongtaPrinterFragment);

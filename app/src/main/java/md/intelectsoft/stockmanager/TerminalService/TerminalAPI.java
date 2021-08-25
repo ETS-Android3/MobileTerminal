@@ -5,6 +5,7 @@ import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.CreateAssortmentBo
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.GetAssortmentItemBody;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.GetClientsBody;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.SaveInvoiceBody;
+import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.SaveRevisionLineBody;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.AssortmentListResult;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.AuthentificateUserResult;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.GetAssortmentItemResult;
@@ -59,4 +60,6 @@ public interface TerminalAPI {
     Call<ResponseSimple> createAssortment (@Body CreateAssortmentBody body);
     @GET("json/GetClients")
     Call<GetClientsBody> getClients (@Query("Criteria")String criteria);
+    @POST("json/SaveRevisionLine")
+    Call<ResponseSimple> saveRevisionLine (@Body SaveRevisionLineBody saveRevisionLineBody);
 }

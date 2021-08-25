@@ -71,4 +71,9 @@ public class SPFHelp {
     public void putLong(String key, long value){
         sharedPreferences.edit().putLong(key, value).apply();
     }
+    public void deleteKey(String key){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(key);
+        editor.apply();
+    }
 }

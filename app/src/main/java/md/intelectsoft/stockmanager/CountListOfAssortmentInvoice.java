@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 
 import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSendIntent;
 
@@ -56,13 +57,13 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
         etCant=findViewById(R.id.et_count_invoice2);
         etPriceInc=findViewById(R.id.et_price_inc_invoice_touch);
         etPriceSales=findViewById(R.id.et_price_sales_invoice_touch);
+        SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+//        SharedPreferences settings =getSharedPreferences("Settings", MODE_PRIVATE);
 
-        SharedPreferences settings =getSharedPreferences("Settings", MODE_PRIVATE);
-
-        SharedPreferences save_touch_assortiment = getSharedPreferences("Save touch assortiment", MODE_PRIVATE);
+//        SharedPreferences save_touch_assortiment = getSharedPreferences("Save touch assortiment", MODE_PRIVATE);
         etCant.requestFocus();
 
-        boolean showKB = settings.getBoolean("ShowKeyBoard",false);
+        boolean showKB = sharedPrefsInstance.getBoolean("ShowKeyBoard",false);
         if (showKB){
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             etCant.requestFocus();
@@ -86,7 +87,7 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
             etPriceInc.setText("0");
         }
 
-        invoiceOnlySum = settings.getBoolean("InvoiceOnlySum",false);
+        invoiceOnlySum = sharedPrefsInstance.getBoolean("InvoiceOnlySum",false);
 
         if(invoiceOnlySum){
             etPriceInc.setClickable(false);

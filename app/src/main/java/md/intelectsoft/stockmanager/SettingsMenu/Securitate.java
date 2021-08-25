@@ -66,6 +66,7 @@ import md.intelectsoft.stockmanager.R;
 import md.intelectsoft.stockmanager.Utils.UpdateHelper;
 import md.intelectsoft.stockmanager.Utils.UpdateInformation;
 import md.intelectsoft.stockmanager.BaseApp;
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 
 public class Securitate extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,  UpdateHelper.OnUpdateCheckListener  {
 
@@ -119,15 +120,12 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-        final SharedPreferences Setting = getSharedPreferences("Settings", MODE_PRIVATE);
-        final SharedPreferences.Editor inpSet = Setting.edit();
-
-        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
+        final SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
         View headerLayout = navigationView.getHeaderView(0);
         TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
-        useremail.setText(User.getString("Name",""));
+        useremail.setText(sharedPrefsInstance.getString("Name",""));
 
-        et_pin.setText(Setting.getString("PinCod",""));
+        et_pin.setText(sharedPrefsInstance.getString("PinCod",""));
 
         pgH = new ProgressDialog(this,R.style.ThemeOverlay_AppCompat_Dialog_Alert_TestDialogTheme);
 
@@ -148,8 +146,8 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         deviceId=deviceId.replace("1","t");
         deviceId=deviceId.replace("3","s");
         deviceId=deviceId.replace("6","a");
-
-        String code =  Setting.getString("CodeLicense","");
+//TODO:this not working !!!
+        String code =  sharedPrefsInstance.getString("LicenseCode","");
         if(code.equals("")){
             for (int k = 0; k < deviceId.length(); k++) {
                 if (Character.isLetter(deviceId.charAt(k))) {
@@ -159,33 +157,29 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
             code = code.substring(0, 8);
             txtCod.setText(code.toUpperCase());
 
-            SharedPreferences.Editor keyEdit = Setting.edit();
-            keyEdit.putString("CodeLicense",code.toUpperCase());
-            keyEdit.apply();
+
+            sharedPrefsInstance.putString("LicenseCode",code.toUpperCase());
         }
         else{
             txtCod.setText(code.toUpperCase());
         }
-        key_input.setText(Setting.getString("KeyText",""));
-        et_limit.setText(Setting.getString("LimitSales","0"));
+        key_input.setText(sharedPrefsInstance.getString("KeyText",""));
+        et_limit.setText(sharedPrefsInstance.getString("LimitSales","0"));
 
         final String internKey = md5(code.toUpperCase() + "ENCEFALOMIELOPOLIRADICULONEVRITA");
         btn_verific.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String key = key_input.getText().toString().toUpperCase();
-                SharedPreferences.Editor ed = Setting.edit();
                 if (Test(key,internKey)){
                     key_input.setBackgroundResource(R.drawable.ping_true_conect);
-                    ed.putBoolean("Key",true);
-                    ed.putString("KeyText",key);
-                    ed.apply();
+                    sharedPrefsInstance.putBoolean("Key",true);
+                    sharedPrefsInstance.putString("KeyText",key);
                 }
                 else{
                     key_input.setBackgroundResource(R.drawable.ping_false_connect);
-                    ed.putBoolean("Key",false);
-                    ed.putString("KeyText",key_input.getText().toString().toUpperCase());
-                    ed.apply();
+                    sharedPrefsInstance.putBoolean("Key",false);
+                    sharedPrefsInstance.putString("KeyText",key_input.getText().toString().toUpperCase());
                 }
             }
         });
@@ -198,13 +192,10 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(et_limit.getText().toString().equals("")) {
-                    final SharedPreferences.Editor sPrefInput = Setting.edit();
-                    sPrefInput.putString("LimitSales", "0");
-                    sPrefInput.apply();
+
+                    sharedPrefsInstance.putString("LimitSales", "0");
                 }else{
-                    final SharedPreferences.Editor sPrefInput = Setting.edit();
-                    sPrefInput.putString("LimitSales", et_limit.getText().toString());
-                    sPrefInput.apply();
+                    sharedPrefsInstance.putString("LimitSales", et_limit.getText().toString());
                 }
             }
 
@@ -222,8 +213,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                inpSet.putString("PinCod",et_pin.getText().toString());
-                inpSet.apply();
+                sharedPrefsInstance.putString("PinCod",et_pin.getText().toString());
             }
 
             @Override
@@ -250,8 +240,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
                 if(btn_ro.isSelected()){
                     btn_ro.setSelected(false);
                 }
-                inpSet.putString("Language","ru");
-                inpSet.apply();
+                sharedPrefsInstance.putString("Language","ru");
                 btn_ru.setSelected(true);
                 ((BaseApp) getApplication()).setRecreate(true);
                 changeLang("ru");
@@ -266,8 +255,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
                 if(btn_ru.isSelected()){
                     btn_ru.setSelected(false);
                 }
-                inpSet.putString("Language","ro");
-                inpSet.apply();
+                sharedPrefsInstance.putString("Language","ro");
                 btn_ro.setSelected(true);
                 ((BaseApp) getApplication()).setRecreate(true);
                 changeLang("ro");
@@ -282,8 +270,7 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
                 if(btn_ro.isSelected()){
                     btn_ro.setSelected(false);
                 }
-                inpSet.putString("Language","en");
-                inpSet.apply();
+                sharedPrefsInstance.putString("Language","en");
                 btn_en.setSelected(true);
                 ((BaseApp) getApplication()).setRecreate(true);
                 changeLang("en");

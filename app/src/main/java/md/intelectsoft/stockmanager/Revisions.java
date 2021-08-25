@@ -1,5 +1,7 @@
 package md.intelectsoft.stockmanager;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -9,6 +11,9 @@ import android.os.AsyncTask;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -36,14 +42,17 @@ import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_fr
 import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_from_GetRevision;
 import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_from_GetWareHouse;
 
+import com.google.android.material.navigation.NavigationView;
+
 import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 
-public class Revisions extends AppCompatActivity {
+public class Revisions extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     Button btn_createRevision,btn_cancel,btn_accept;
     ListView listView;
     JSONArray json_array;
     ProgressDialog pgH;
+    TextView userName,workPlaceName;
 
     String UserId,url_,uid_selected,NumberRevision,NameRevision,WorkPlaceName,WorkPlaceId;
     Integer WeightPrefix;
@@ -61,28 +70,37 @@ public class Revisions extends AppCompatActivity {
         setContentView(R.layout.activity_revisions);
         Toolbar toolbar = findViewById(R.id.toolbar_list_revision);
         setSupportActionBar(toolbar);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout_list_revision);
+        NavigationView navigationView = findViewById(R.id.nav_view_list_revision);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        navigationView.setNavigationItemSelectedListener(this);
+        View headerLayout = navigationView.getHeaderView(0);
 
         btn_accept=findViewById(R.id.btn_accept_revision);
         btn_cancel=findViewById(R.id.btn_cancel_list_revision);
         btn_createRevision =findViewById(R.id.btn_new_revision);
         listView=findViewById(R.id.LL_list_revision);
+
+        userName = headerLayout.findViewById(R.id.txt_name_of_user);
+        workPlaceName = headerLayout.findViewById(R.id.txt_workplace_user);
+
         pgH =new ProgressDialog(Revisions.this);
 
-        final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
-        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
-        final SharedPreferences Revision = getSharedPreferences("Revision", MODE_PRIVATE);
-        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
+        SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
 
-        UserId = User.getString("UserID","");
+        final SharedPreferences Revision = getSharedPreferences("Revision", MODE_PRIVATE);
+
+        UserId = sharedPrefsInstance.getString("UserId","");
         url_ = SPFHelp.getInstance().getString("URI","0.0.0.0:1111");
 
-//        ip_=Settings.getString("IP","");
-//        port_=Settings.getString("Port","");
-
-        WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
-        WorkPlaceId = WorkPlace.getString("Uid",null);
-
-
+        WorkPlaceName = sharedPrefsInstance.getString("WorkPlaceName","Nedeterminat");
+        WorkPlaceId = sharedPrefsInstance.getString("WorkPlaceId",null);
+        userName.setText(sharedPrefsInstance.getString("UserName",""));
+        workPlaceName.setText(WorkPlaceName);
         pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
         pgH.setIndeterminate(true);
         pgH.setCancelable(false);
@@ -209,13 +227,13 @@ public class Revisions extends AppCompatActivity {
                 String WareGUid= String.valueOf(stock_List_array.get(wich).get("Uid"));
                 String WareName= String.valueOf(stock_List_array.get(wich).get("Name"));
                 String WareCode= String.valueOf(stock_List_array.get(wich).get("Code"));
+                SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+//                SharedPreferences WareHouse = getSharedPreferences("Ware House", MODE_PRIVATE);
+//                SharedPreferences.Editor addWareHouse = WareHouse.edit();
+                sharedPrefsInstance.putString("WarehouseName",WareName);
+                sharedPrefsInstance.putString("WarehouseGUID",WareGUid);
+                sharedPrefsInstance.putString("WarehouseCode",WareCode);
 
-                SharedPreferences WareHouse = getSharedPreferences("Ware House", MODE_PRIVATE);
-                SharedPreferences.Editor addWareHouse = WareHouse.edit();
-                addWareHouse.putString("WareName",WareName);
-                addWareHouse.putString("WareUid",WareGUid);
-                addWareHouse.putString("WareCode",WareCode);
-                addWareHouse.apply();
 
                 stock_List_array.clear();
                 pgH.setTitle(getResources().getString(R.string.msg_create_new_revision));
@@ -235,6 +253,71 @@ public class Revisions extends AppCompatActivity {
         URL getWareHouse = GetWareHouseList(url_,UserId);
         new AsyncTask_WareHouse().execute(getWareHouse);
     }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_workplace) {
+            Intent Logins = new Intent(".LoginMobile");
+            Logins.putExtra("Activity", 8);
+            startActivity(Logins);
+        } else if (id == R.id.menu_printers) {
+            Intent Logins = new Intent(".LoginMobile");
+            Logins.putExtra("Activity", 9);
+            startActivity(Logins);
+        } else if (id == R.id.menu_securitate) {
+            Intent Logins = new Intent(".LoginMobile");
+            Logins.putExtra("Activity", 10);
+            startActivity(Logins);
+        } else if (id == R.id.menu_about) {
+            Intent MenuConnect = new Intent(".MenuAbout");
+            startActivity(MenuConnect);
+        } else if (id == R.id.menu_exit) {
+            exitDialog();
+        }
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout_invoice);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout_invoice);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            exitDialog();
+        }
+    }
+    private void exitDialog(){
+        if(json_array.length()==0){
+            finish();
+        }else{
+            AlertDialog.Builder dialog = new AlertDialog.Builder(Revisions.this);
+            dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+            dialog.setCancelable(false);
+            dialog.setMessage(getResources().getString(R.string.txt_waring_documentul_nusalvat_doriti_salvati));
+            dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            dialog.setNegativeButton(getResources().getString(R.string.msg_dialog_close_ramine), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    }
+
     class AsyncTask_GetRevision extends AsyncTask<URL, String, String> {
         @Override
         protected String doInBackground(URL... urls) {

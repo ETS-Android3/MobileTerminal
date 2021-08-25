@@ -75,8 +75,6 @@ public class SetAssortmentBarcode extends AppCompatActivity {
 
         userId =  getSharedPreferences("User", MODE_PRIVATE).getString("UserID",null);
         url = SPFHelp.getInstance().getString("URI","0.0.0.0:1111");
-//        ip = getSharedPreferences("Settings", MODE_PRIVATE).getString("IP","");
-//        port = getSharedPreferences("Settings", MODE_PRIVATE).getString("Port","");
 
         Intent sales = getIntent();
         AssortmentParcelable assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);

@@ -1,5 +1,6 @@
 package md.intelectsoft.stockmanager.SettingsMenu;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -30,6 +31,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 import md.intelectsoft.stockmanager.R;
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 
 import static android.content.Context.MODE_PRIVATE;
 import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.GetLabel;
@@ -37,7 +39,7 @@ import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.Response_fr
 
 public class FragmentZebraPrinter extends Fragment {
    Button btn_download_lable,btn_calibrate_printer;
-   String ip_,port_,mNamePrinter,mMACPrinter;
+   String url,mNamePrinter,mMACPrinter;
    TextView txt_status, txtNamePrinter;
 
     // Message types sent from the BluetoothChatService Handler
@@ -55,6 +57,7 @@ public class FragmentZebraPrinter extends Fragment {
     private final static int  isHeadOpen_Zebra = 8;
     private final static int  isPaperOut_Zebra = 9;
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View zebraView = inflater.inflate(R.layout.fragment_zebra_printer, null);
@@ -62,11 +65,10 @@ public class FragmentZebraPrinter extends Fragment {
         btn_download_lable = zebraView.findViewById(R.id.btn_download_label);
         txt_status = zebraView.findViewById(R.id.txt_status_printers);
         txtNamePrinter = zebraView.findViewById(R.id.txtNameZebraPrinters);
-        SharedPreferences sPref = getActivity().getSharedPreferences("Settings", MODE_PRIVATE);
-        SharedPreferences SPrefPrinters = getActivity().getSharedPreferences("Printers", MODE_PRIVATE);
+        SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
 
-        ip_=sPref.getString("IP","");
-        port_=sPref.getString("Port","");
+        SharedPreferences SPrefPrinters = getActivity().getSharedPreferences("Printers", MODE_PRIVATE);
+        url = sharedPrefsInstance.getString("URI","");
         mNamePrinter =SPrefPrinters.getString("Name_ZebraPrinters","Non");
         mMACPrinter = SPrefPrinters.getString("MAC_ZebraPrinters", null);
 
@@ -77,7 +79,7 @@ public class FragmentZebraPrinter extends Fragment {
         btn_download_lable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                URL getWareHouse = GetLabel(ip_,port_,"1");
+                URL getWareHouse = GetLabel(url,"1");
                 new AsyncTask_getLable().execute(getWareHouse);
             }
         });

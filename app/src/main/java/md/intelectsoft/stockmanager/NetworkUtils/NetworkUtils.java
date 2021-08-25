@@ -89,9 +89,9 @@ public class NetworkUtils {
         }
         return url;
     }
-    public static URL GetPrinters (String ip, String port,String ware){
+    public static URL GetPrinters (String url_,String ware){
         Uri builtUri;
-        builtUri = Uri.parse("http://" + ip + ":" + port + "/DataTerminalService/json/GetPrinters?WarehouseID="+ware)
+        builtUri = Uri.parse(url_+"json/GetPrinters?WarehouseID="+ware)
                 .buildUpon()
                 .build();
         URL url =null;
@@ -102,9 +102,9 @@ public class NetworkUtils {
         }
         return url;
     }
-    public static URL PrintInvoice (String ip, String port,String InvoiceID,String PrinterID){
+    public static URL PrintInvoice (String url_,String InvoiceID,String PrinterID){
         Uri builtUri;
-        builtUri = Uri.parse("http://" + ip + ":" + port + "/DataTerminalService/json/PrintInvoice?InvoiceID="+InvoiceID + "&PrinterID=" + PrinterID)
+        builtUri = Uri.parse(url_+"json/PrintInvoice?InvoiceID="+InvoiceID + "&PrinterID=" + PrinterID)
                 .buildUpon()
                 .build();
         URL url =null;
@@ -115,9 +115,9 @@ public class NetworkUtils {
         }
         return url;
     }
-    public static URL SaveInvoice (String ip, String port){
+    public static URL SaveInvoice (String url_){
         Uri builtUri;
-        builtUri = Uri.parse("http://" + ip + ":" + port + "/DataTerminalService/json/SaveInvoice")
+        builtUri = Uri.parse(url_+"json/SaveInvoice")
                 .buildUpon()
                 .build();
         URL url =null;
@@ -193,9 +193,9 @@ public class NetworkUtils {
         }
         return url;
     }
-    public static URL GetAssortimentListForStock (String ip, String port,String UserID,String WareHouse){
+    public static URL GetAssortimentListForStock (String url_,String UserID,String WareHouse){
         Uri builtUri;
-        builtUri = Uri.parse("http://" + ip + ":" + port + "/DataTerminalService/json/GetAssortimentListForStock?UserID="+ UserID+ "&WarehouseID="+WareHouse)
+        builtUri = Uri.parse(url_+"json/GetAssortimentListForStock?UserID="+ UserID+ "&WarehouseID="+WareHouse)
                 .buildUpon()
                 .build();
         URL url =null;
@@ -206,9 +206,9 @@ public class NetworkUtils {
         }
         return url;
     }
-    public static URL GetLabel (String ip, String port,String typeLable){
+    public static URL GetLabel (String url_,String typeLable){
         Uri builtUri;
-        builtUri = Uri.parse("http://" + ip + ":" + port + "/DataTerminalService/json/GetLableTemplate?LableType="+typeLable)
+        builtUri = Uri.parse(url_+"json/GetLableTemplate?LableType="+typeLable)
                 .buildUpon()
                 .build();
         URL url =null;

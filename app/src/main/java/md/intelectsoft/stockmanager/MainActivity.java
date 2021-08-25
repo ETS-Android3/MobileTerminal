@@ -81,8 +81,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        SharedPreferences Setting = getSharedPreferences("Settings", MODE_PRIVATE);
-        String lang = Setting.getString("Language", "ru");
+        SPFHelp sharedPreferences = SPFHelp.getInstance();
+        String lang = sharedPreferences.getString("Language", "ru");
         Locale locale = new Locale(lang);
         Locale.setDefault(locale);
         Configuration config = new Configuration();
@@ -112,11 +112,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         userNameView = (TextView) headerLayout.findViewById(R.id.txt_name_of_user_main);
         textWorkplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user_main);
         progressDialog = new ProgressDialog(this,R.style.ThemeOverlay_AppCompat_Dialog_Alert_TestDialogTheme);
-
-        String uri = SPFHelp.getInstance().getString("URI", "0.0.0.0:1111");
-        String workPlaceName = SPFHelp.getInstance().getString("WorkPlaceName", null);
-        String userName = SPFHelp.getInstance().getString("UserName","");
-        userID = SPFHelp.getInstance().getString("UserId","");
+        SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+        String uri = sharedPrefsInstance.getString("URI", "0.0.0.0:1111");
+        String workPlaceName = sharedPrefsInstance.getString("WorkPlaceName", null);
+        String userName = sharedPrefsInstance.getString("UserName","");
+        userID = sharedPrefsInstance.getString("UserId","");
 
         terminalAPI = TerminalRetrofitClient.getApiTerminalService(uri);
 
@@ -364,8 +364,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Intent MenuConnect = new Intent(".MenuAbout");
             startActivity(MenuConnect);
         }else if(id == R.id.menu_help_main) {
-//            Intent MenuHelp = new Intent(MainActivity.this, HelpMain.class);
-//            startActivity(MenuHelp);
+            Intent MenuHelp = new Intent(MainActivity.this, HelpMain.class);
+            startActivity(MenuHelp);
         }
         else if (id == R.id.menu_exit_main) {
             finishAffinity();
@@ -419,6 +419,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onResume() {
+        SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+        userNameView.setText(sharedPrefsInstance.getString("UserName",""));
+        textWorkplace.setText(sharedPrefsInstance.getString("WorkPlaceName",""));
         super.onResume();
         sync = new Timer();
         startTimetaskSync();

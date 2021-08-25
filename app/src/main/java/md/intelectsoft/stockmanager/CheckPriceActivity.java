@@ -178,20 +178,20 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
         });
         print.setOnClickListener(v -> {
             SharedPreferences sPref = getSharedPreferences("Printers", MODE_PRIVATE);
-            final String adresMAC = sPref.getString("MAC_ZebraPrinters",null);
-            final int number_etichete = Integer.parseInt(count_lable.getText().toString());
+            final String printerMACAddress = sPref.getString("MAC_ZebraPrinters",null);
+            final int labelsNumber = Integer.parseInt(count_lable.getText().toString());
             labelPrint = sPref.getString("Lable",null);
 
-            if(adresMAC != null) {
+            if(printerMACAddress != null) {
                 if (assortmentItemResult != null) {
-                    progressDialog.setMessage(getResources().getString(R.string.btn_imprimare_sales) + " " + assortmentItemResult.getName() + " to " + adresMAC);
+                    progressDialog.setMessage(getResources().getString(R.string.btn_imprimare_sales) + " " + assortmentItemResult.getName() + " to " + printerMACAddress);
                     progressDialog.setCancelable(false);
                     progressDialog.setIndeterminate(true);
                     progressDialog.show();
 
                     new Thread() {
                         public void run() {
-                            Connection connection = new BluetoothConnection(adresMAC);
+                            Connection connection = new BluetoothConnection(printerMACAddress);
                             try {
                                 connection.open();
                                 String price_unit;
@@ -220,8 +220,8 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
                                     labelPrint = labelPrint.replace(price_imprim, String.format("%.2f", assortmentItemResult.getPrice()));
                                     labelPrint = labelPrint.replace(price_unit_imprim,price_unit);
                                     labelPrint = labelPrint.replace(barcode_imprim, assortmentItemResult.getBarCode());
-                                    if (number_etichete>1){
-                                        for (int i=0;i<number_etichete;i++){
+                                    if (labelsNumber>1){
+                                        for (int i=0;i<labelsNumber;i++){
                                             connection.write(labelPrint.getBytes("UTF-8"));
                                         }
                                     }else{
@@ -397,9 +397,9 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
             Intent MenuConnect = new Intent(".MenuAbout");
             startActivity(MenuConnect);
         }else if(id == R.id.menu_help) {
-//            Intent openHelpPage = new Intent(this,Help.class);
-//            openHelpPage.putExtra("Page",901);
-//            startActivity(openHelpPage);
+            Intent openHelpPage = new Intent(this,Help.class);
+            openHelpPage.putExtra("Page",901);
+            startActivity(openHelpPage);
         }
         else if (id == R.id.menu_exit) {
             finish();

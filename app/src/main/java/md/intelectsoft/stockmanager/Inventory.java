@@ -68,7 +68,7 @@ import static md.intelectsoft.stockmanager.NetworkUtils.NetworkUtils.SaveRevisio
 
 public class Inventory extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     TextView txtArticol,txtCountInit,txtCount,txtTotal,txtNames,txtInpBarcode,txtCode,inpBarcode;
-    TextView textLastProductScanned, textLastProductScannedCount, lastScannedTitle;
+    TextView textLastProductScanned, textLastProductScannedCount, lastScannedTitle, userName, workPlaceName;
     ImageButton btn_showKeyboard,btn_addTouch,btn_open_list;
     ToggleButton auto_input_count;
     Button btn_ok;
@@ -131,23 +131,19 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
         txtNames=findViewById(R.id.txtName_assortment_inventory);
         txtCode=findViewById(R.id.txtcode_assortment_inventory);
         inpBarcode=findViewById(R.id.txt_input_barcode_inventory);
-        txtInpBarcode=findViewById(R.id.txtBarcode_assortment_inventory);
-
-        pgH =new ProgressDialog(Inventory.this);
-        btn_ok=findViewById(R.id.btn_accept_inventory);
-        pgB=findViewById(R.id.progressBar_inventory);
         btn_showKeyboard=findViewById(R.id.btn_write_manual_inventory);
         btn_addTouch=findViewById(R.id.btn_touch_open_asl_inventory);
         auto_input_count=findViewById(R.id.btn_auto_cant_inventory);
         list_added_touch = findViewById(R.id.LW_asl_added_inventory);
         btn_open_list = findViewById(R.id.btn_touch_open_asl_inventory_listAdded);
+        txtInpBarcode=findViewById(R.id.txtBarcode_assortment_inventory);
+        btn_ok=findViewById(R.id.btn_accept_inventory);
+        pgB=findViewById(R.id.progressBar_inventory);
 
+        pgH =new ProgressDialog(Inventory.this);
+        final SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
         final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
-        final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
-        final String userId = SPFHelp.getInstance().getString("UserId","");
-        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
-        final SharedPreferences WareHouse = getSharedPreferences("Ware House", MODE_PRIVATE);
-
+        final String userId = sharedPrefsInstance.getString("UserId","");
         simpleAdapterASL = new SimpleAdapter(this, asl_list_added,R.layout.show_asl_inventory, new String[]{"Name","Cant"}, new int[]{R.id.textName,R.id.textCantitate});
 
         RevisionName = getRevisions.getString("RevisionName","");
@@ -167,14 +163,14 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
 
         View headerLayout = navigationView.getHeaderView(0);
         TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
-        useremail.setText(userId);
+        useremail.setText(sharedPrefsInstance.getString("UserName",""));
 
         TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
-        user_workplace.setText(WorkPlace.getString("Name",""));
+        user_workplace.setText(sharedPrefsInstance.getString("WorkPlaceName",""));
 
         switch (type){
             case 1: {
-                WareID = WorkPlace.getString("Uid", "0");
+                WareID = sharedPrefsInstance.getString("WarehouseGUID", "0");
                 onCreat = true;
                 if(WareID.equals("0") || WareID.equals("")){
                     AlertDialog.Builder dialog = new AlertDialog.Builder(Inventory.this);
@@ -210,18 +206,16 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 }
             }break;
             case 0 :{
-                WareID = WareHouse.getString("WareUid", "");
+                WareID = sharedPrefsInstance.getString("WarehouseGUID", "");
             }break;
         }
 
-        boolean ShowCode = Settings.getBoolean("ShowCode",false);
+        boolean ShowCode = sharedPrefsInstance.getBoolean("ShowCode",false);
         if (!ShowCode){
             txtCode.setVisibility(View.INVISIBLE);
         }
-        UserId = SPFHelp.getInstance().getString("UserId","");
-        url_ = SPFHelp.getInstance().getString("URI","0.0.0.0:1111");
-//        ip_=Settings.getString("IP","");
-//        port_=Settings.getString("Port","");
+        UserId = sharedPrefsInstance.getString("UserId","");
+        url_ = sharedPrefsInstance.getString("URI","0.0.0.0:1111");
         
         json_array=new JSONArray();
         array_added_manual = new JSONArray();
@@ -237,9 +231,9 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 asl_list_added.clear();
                 list_added_touch.setAdapter(simpleAdapterASL);
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    getAssortment(SPFHelp.getInstance().getString("UserId",""));
+                    getAssortment(sharedPrefsInstance.getString("UserId",""));
                 }else if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER) {
-                    getAssortment(SPFHelp.getInstance().getString("UserId",""));
+                    getAssortment(sharedPrefsInstance.getString("UserId",""));
                 }
                 return false;
             }
@@ -259,6 +253,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 dialog_accept.setNeutralButton("Inchide", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        //TODO:Need to delete this keys from shared preference
                         SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
                         SharedPreferences SaveCountName = getSharedPreferences("SaveNameInventory", MODE_PRIVATE);
                         SaveCount.edit().clear().apply();
@@ -378,6 +373,7 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 dialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        //TODO: need to delete keys from shared preferences
                         SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
                         SaveCount.edit().clear().apply();
                         finish();
@@ -878,9 +874,10 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
     @Override
     protected void onResume() {
         super.onResume();
-        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
-        String WorkPlaceID = WorkPlace.getString("Uid","0");
-        String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
+        SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+//        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
+        String WorkPlaceID = sharedPrefsInstance.getString("WorkPlaceId","0");
+        String WorkPlaceName = sharedPrefsInstance.getString("WorkPlaceName","Nedeterminat");
 
         if(!WorkPlaceID.equals("0") && !WorkPlaceID.equals("")){
            WareID = WorkPlaceID;
@@ -938,12 +935,12 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                 String WareGUid= String.valueOf(stock_List_array.get(wich).get("Uid"));
                 String WareName= String.valueOf(stock_List_array.get(wich).get("Name"));
                 String WareCode= String.valueOf(stock_List_array.get(wich).get("Code"));
-
+                SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
 //                SharedPreferences WareHouse = getSharedPreferences("Ware House", MODE_PRIVATE);
 //                SharedPreferences.Editor addWareHouse = WareHouse.edit();
-//                addWareHouse.putString("WareName",WareName);
-//                addWareHouse.putString("WareUid",WareGUid);
-//                addWareHouse.putString("WareCode",WareCode);
+                sharedPrefsInstance.putString("WarehouseName",WareName);
+                sharedPrefsInstance.putString("WarehouseGUID",WareGUid);
+                sharedPrefsInstance.putString("WarehouseCode",WareCode);
 //                addWareHouse.apply();
 
                 stock_List_array.clear();

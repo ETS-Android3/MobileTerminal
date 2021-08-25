@@ -359,7 +359,7 @@ public class CountInventory extends AppCompatActivity {
         pgH =new ProgressDialog(CountInventory.this);
 
         final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
-        final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
+        final SPFHelp sharedPrefsInstance =SPFHelp.getInstance();
        // final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
         final SharedPreferences SaveCount = getSharedPreferences("SaveCountInventory", MODE_PRIVATE);
 
@@ -376,10 +376,10 @@ public class CountInventory extends AppCompatActivity {
         mAllowNotIntegerSales =Boolean.parseBoolean(assortment.getAllowNonIntegerSale());
         WeightPrefix= sales.getIntExtra("WeightPrefix",0);
 
-        boolean showKB = Settings.getBoolean("ShowKeyBoard",false);
-        boolean ShowCode = Settings.getBoolean("ShowCode",false);
-        UserId = SPFHelp.getInstance().getString("UserId","");
-        url_ = SPFHelp.getInstance().getString("URI","");
+        boolean showKB = sharedPrefsInstance.getBoolean("ShowKeyBoard",false);
+        boolean ShowCode = sharedPrefsInstance.getBoolean("ShowCode",false);
+        UserId = sharedPrefsInstance.getString("UserId","");
+        url_ = sharedPrefsInstance.getString("URI","");
 //        ip_=Settings.getString("IP","");
 //        port_=Settings.getString("Port","");
         RevisionID=getRevisions.getString("RevisionID","");

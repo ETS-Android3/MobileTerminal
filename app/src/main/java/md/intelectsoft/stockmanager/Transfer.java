@@ -118,27 +118,22 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+        SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
 
-        final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
-        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
-        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
+        UserId = sharedPrefsInstance.getString("UserId","");
+        url_ = sharedPrefsInstance.getString("URI","");
 
-        UserId = User.getString("UserID","");
-        url_ = SPFHelp.getInstance().getString("URI","");
-//        ip_=Settings.getString("IP","");
-//        port_=Settings.getString("Port","");
-
-        final String WorkPlaceID = WorkPlace.getString("Uid","0");
-        WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
+        final String WorkPlaceID = sharedPrefsInstance.getString("WorkPlaceId","0");
+        WorkPlaceName = sharedPrefsInstance.getString("WorkPlaceName","Nedeterminat");
 
         mAddedAssortmentArray =new JSONArray();
 
         View headerLayout = navigationView.getHeaderView(0);
         TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
-        useremail.setText(User.getString("Name",""));
+        useremail.setText(sharedPrefsInstance.getString("UserName",""));
 
         TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
-        user_workplace.setText(WorkPlace.getString("Name",""));
+        user_workplace.setText(sharedPrefsInstance.getString("WorkPlaceName",""));
 
         if (WorkPlaceName.equals("Nedeterminat") || WorkPlaceName.equals("")){
             pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
@@ -246,7 +241,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                     }
                 }
                 sendInvoice = new JSONObject();
-                Boolean autoConfirm = Settings.getBoolean("AutoConfirmTransfer",false);
+                Boolean autoConfirm = sharedPrefsInstance.getBoolean("AutoConfirmTransfer",false);
                 try {
                     sendInvoice.put("Confirm",autoConfirm);
                     sendInvoice.put("Lines",sendArr);
@@ -304,13 +299,12 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                 String WareGUid= String.valueOf(stock_List_array.get(wich).get("Uid"));
                 String WareName= String.valueOf(stock_List_array.get(wich).get("Name"));
                 String WareCode= String.valueOf(stock_List_array.get(wich).get("Code"));
-
-                SharedPreferences WareHouse = getSharedPreferences("Ware House Out", MODE_PRIVATE);
-                SharedPreferences.Editor addWareHouse = WareHouse.edit();
-                addWareHouse.putString("WareName",WareName);
-                addWareHouse.putString("WareUid",WareGUid);
-                addWareHouse.putString("WareCode",WareCode);
-                addWareHouse.apply();
+            SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+//                SharedPreferences WareHouse = getSharedPreferences("Ware House Out", MODE_PRIVATE);
+//                SharedPreferences.Editor addWareHouse = WareHouse.edit();
+                sharedPrefsInstance.putString("OutWarehouseName",WareName);
+                sharedPrefsInstance.putString("OutWarehouseGUID",WareGUid);
+                sharedPrefsInstance.putString("OutWarehouseCode",WareCode);
 
                 txt_out.setText(WareName);
                 WareUid = WareGUid;
@@ -345,13 +339,10 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                 String WareGUid= String.valueOf(stock_List_array.get(wich).get("Uid"));
                 String WareName= String.valueOf(stock_List_array.get(wich).get("Name"));
                 String WareCode= String.valueOf(stock_List_array.get(wich).get("Code"));
-
-                SharedPreferences WareHouse = getSharedPreferences("Ware House Out", MODE_PRIVATE);
-                SharedPreferences.Editor addWareHouse = WareHouse.edit();
-                addWareHouse.putString("WareName",WareName);
-                addWareHouse.putString("WareUid",WareGUid);
-                addWareHouse.putString("WareCode",WareCode);
-                addWareHouse.apply();
+                SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+                sharedPrefsInstance.putString("OutWarehouseName",WareName);
+                sharedPrefsInstance.putString("OutWarehouseGUID",WareGUid);
+                sharedPrefsInstance.putString("OutWarehouseCode",WareCode);
 
                 txt_out.setText(WareName);
                 WareUid = WareGUid;
@@ -397,13 +388,10 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                     String WareGUid= String.valueOf(stock_List_array.get(wich).get("Uid"));
                     String WareName= String.valueOf(stock_List_array.get(wich).get("Name"));
                     String WareCode= String.valueOf(stock_List_array.get(wich).get("Code"));
-
-                    SharedPreferences WareHouse = getSharedPreferences("Ware House In", MODE_PRIVATE);
-                    SharedPreferences.Editor addWareHouse = WareHouse.edit();
-                    addWareHouse.putString("WareName",WareName);
-                    addWareHouse.putString("WareUid",WareGUid);
-                    addWareHouse.putString("WareCode",WareCode);
-                    addWareHouse.apply();
+                    SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+                    sharedPrefsInstance.putString("InWarehouseName",WareName);
+                    sharedPrefsInstance.putString("InWarehouseGUID",WareGUid);
+                    sharedPrefsInstance.putString("InWarehouseCode",WareCode);
                     txt_inc.setText(WareName);
                     WareIDIn = WareGUid;
                     stock_List_array.clear();
@@ -437,12 +425,12 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                 String WareName= String.valueOf(stock_List_array.get(wich).get("Name"));
                 String WareCode= String.valueOf(stock_List_array.get(wich).get("Code"));
 
-                SharedPreferences WareHouse = getSharedPreferences("Ware House In", MODE_PRIVATE);
-                SharedPreferences.Editor addWareHouse = WareHouse.edit();
-                addWareHouse.putString("WareName",WareName);
-                addWareHouse.putString("WareUid",WareGUid);
-                addWareHouse.putString("WareCode",WareCode);
-                addWareHouse.apply();
+                SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+//                SharedPreferences WareHouse = getSharedPreferences("Ware House In", MODE_PRIVATE);
+//                SharedPreferences.Editor addWareHouse = WareHouse.edit();
+                sharedPrefsInstance.putString("InWarehouseName",WareName);
+                sharedPrefsInstance.putString("InWarehouseGUID",WareGUid);
+                sharedPrefsInstance.putString("InWarehouseCode",WareCode);
                 txt_inc.setText(WareName);
                 WareIDIn = WareGUid;
                 stock_List_array.clear();

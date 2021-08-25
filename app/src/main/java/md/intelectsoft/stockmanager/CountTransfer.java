@@ -27,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 
 import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSendIntent;
 
@@ -98,11 +99,11 @@ public class CountTransfer extends AppCompatActivity {
         txt_price.setText(mPriceAssortment);
 
         et_count.requestFocus();
-        SharedPreferences Settings = getSharedPreferences("Settings", MODE_PRIVATE);
+        SPFHelp shredPrefsInstance = SPFHelp.getInstance();
 
-        boolean ShowCode = Settings.getBoolean("ShowCode", false);
-        boolean showKB = Settings.getBoolean("ShowKeyBoard",false);
-        final boolean checkStock = Settings.getBoolean("CheckStockInput", false);
+        boolean ShowCode = shredPrefsInstance.getBoolean("ShowCode", false);
+        boolean showKB = shredPrefsInstance.getBoolean("ShowKeyBoard",false);
+        final boolean checkStock = shredPrefsInstance.getBoolean("CheckStockInput", false);
 
         if (!ShowCode) {
             txt_code.setVisibility(View.INVISIBLE);

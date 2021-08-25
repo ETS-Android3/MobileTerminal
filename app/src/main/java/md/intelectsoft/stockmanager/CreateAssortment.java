@@ -62,6 +62,7 @@ public class CreateAssortment extends AppCompatActivity {
         inputEditTextName = findViewById(R.id.inputName);
         inputEditTextBarcode = findViewById(R.id.inputBarcode);
         inputEditTextMarking = findViewById(R.id.inputMarking);
+
         String url = SPFHelp.getInstance().getString("URI","");
         terminalApi = TerminalRetrofitClient.getApiTerminalService(url);
         pgH=new ProgressDialog(this);

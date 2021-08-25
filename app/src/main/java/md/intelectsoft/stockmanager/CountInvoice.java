@@ -26,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
+import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 
 import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSendIntent;
 
@@ -60,7 +61,7 @@ public class CountInvoice extends AppCompatActivity {
         etPriceInc=findViewById(R.id.et_price_inc_invoice);
         etPriceSales=findViewById(R.id.et_price_sales_invoice);
 
-        SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
+        SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
 
         final Intent Invoice = getIntent();
         AssortmentParcelable assortment = Invoice.getParcelableExtra(AssortimentClickentSendIntent);
@@ -74,7 +75,7 @@ public class CountInvoice extends AppCompatActivity {
         etPriceInc.setText(mIncomePrice);
         etPriceSales.setText(mPriceAssortment);
 
-        invoiceOnlySum = Sestting.getBoolean("InvoiceOnlySum",false);
+        invoiceOnlySum = sharedPrefsInstance.getBoolean("InvoiceOnlySum",false);
 
         if(invoiceOnlySum){
             etPriceInc.setClickable(false);
@@ -212,7 +213,7 @@ public class CountInvoice extends AppCompatActivity {
         }
 
         etCant.requestFocus();
-        boolean showKB = Sestting.getBoolean("ShowKeyBoard",false);
+        boolean showKB = sharedPrefsInstance.getBoolean("ShowKeyBoard",false);
         if (showKB){
             etCant.requestFocus();
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);

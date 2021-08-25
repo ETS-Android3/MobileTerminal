@@ -79,7 +79,7 @@ public class Invoice extends AppCompatActivity implements NavigationView.OnNavig
     ArrayList<HashMap<String, Object>> stock_List_array = new ArrayList<>();
     ArrayList<HashMap<String, Object>> asl_list = new ArrayList<>();
 
-    String url_, UserId, WareUid, WareNames, uid_selected, barcode_introdus, mNrInvoice, clientID;
+    String url_, UserId, WareUid, WareNames, uid_selected, barcode_introdus, mNrInvoice, mClientID,mClientName;
     ProgressDialog pgH;
     TimerTask timerTaskSync;
     Timer sync;
@@ -134,6 +134,7 @@ public class Invoice extends AppCompatActivity implements NavigationView.OnNavig
 
         json_array=new JSONArray();
         json_asl=new JSONObject();
+        WareNames = SPFHelp.getInstance().getString("WarehouseName","");
         final String userName = SPFHelp.getInstance().getString("UserName","");
         final String WorkPlaceID = SPFHelp.getInstance().getString("WorkPlaceId","");
         final String WorkPlaceName =SPFHelp.getInstance().getString("WorkPlaceName","");
@@ -168,6 +169,7 @@ public class Invoice extends AppCompatActivity implements NavigationView.OnNavig
                 else{
                     btn_change_stock.setText(WorkPlaceName);
                     WareUid = WorkPlaceID;
+                    WareNames = WorkPlaceName;
                 }
             }
         });
@@ -263,8 +265,8 @@ public class Invoice extends AppCompatActivity implements NavigationView.OnNavig
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
 
-                clientID = SPFHelp.getInstance().getString("ClientId","");
                 pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
                 pgH.setIndeterminate(true);
                 pgH.setCancelable(false);
@@ -297,13 +299,15 @@ public class Invoice extends AppCompatActivity implements NavigationView.OnNavig
                     sendInvoice.put("UserID",UserId);
                     sendInvoice.put("TerminalCode","Android");
                     sendInvoice.put("Warehouse", WareUid);
-                    sendInvoice.put("ClientID", clientID);
+                    sendInvoice.put("ClientID", mClientID);
                 } catch (JSONException e) {
                     e.printStackTrace();
                     ((BaseApp)getApplication()).appendLog(e.getMessage(),Invoice.this);
                 }
                 URL generateSave = SavePurchaseInvoice(url_);
                 new AsyncTask_SaveInvoice().execute(generateSave);
+                sharedPrefsInstance.deleteKey("ProviderName");
+                sharedPrefsInstance.deleteKey("ProviderId");
             }
         });
         btn_delete.setOnClickListener(new View.OnClickListener() {
@@ -590,6 +594,10 @@ public class Invoice extends AppCompatActivity implements NavigationView.OnNavig
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+//        mClientID = SPFHelp.getInstance().getString("ProviderId","");
+//        mClientName = SPFHelp.getInstance().getString("ProviderName","");
+
+
         if (requestCode == REQUEST_FROM_COUNT) {
             if (resultCode == RESULT_CANCELED) {
                 txt_input_barcode.setText("");
@@ -686,6 +694,12 @@ public class Invoice extends AppCompatActivity implements NavigationView.OnNavig
                     ((BaseApp) getApplication()).appendLog(e.getMessage(), Invoice.this);
                 }
             }
+        }else if(requestCode == REQUEST_CLIENT){
+            if(resultCode==RESULT_OK){
+                btn_add_Client.setText(data.getStringExtra("ProviderName"));
+                mClientID = data.getStringExtra("ProviderID");
+            }
+
         }
     }
     @Override

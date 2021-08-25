@@ -88,20 +88,20 @@ public class CountListOfAssortmentStock extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
-        SharedPreferences sPref = getSharedPreferences("Save touch assortiment", MODE_PRIVATE);
-        url_ = SPFHelp.getInstance().getString("URI","0.0.0.0:1111");
+        SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+//        final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
+//        SharedPreferences sPref = getSharedPreferences("Save touch assortiment", MODE_PRIVATE);
+        url_ = sharedPrefsInstance.getString("URI","0.0.0.0:1111");
 //        ip_ = Settings.getString("IP","");
 //        port_ = Settings.getString("Port","");
 
 
-        boolean showKB = Settings.getBoolean("ShowKeyBoard",false);
+        boolean showKB = sharedPrefsInstance.getBoolean("ShowKeyBoard",false);
         if (showKB){
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             Count_enter.requestFocus();
         }
-        boolean ShowCode = Settings.getBoolean("ShowCode", false);
+        boolean ShowCode = sharedPrefsInstance.getBoolean("ShowCode", false);
 
         Intent sales = getIntent();
         AssortmentParcelable assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
@@ -142,7 +142,7 @@ public class CountListOfAssortmentStock extends AppCompatActivity {
             txtBarCode.setText(mBarcodeAssortment);
         }
 
-        boolean verifyStock = Settings.getBoolean("CheckStockToServer", false);
+        boolean verifyStock = sharedPrefsInstance.getBoolean("CheckStockToServer", false);
 
         if(verifyStock){
             checkStock(mIDAssortment,WareUid);

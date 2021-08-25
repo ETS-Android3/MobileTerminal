@@ -116,8 +116,6 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
     Menu menu;
     JSONArray mAssortmentArray;
 
-   // CommandService commandService;
-
     TerminalAPI terminalAPI;
 
     int limit_sales, REQUEST_FROM_COUNT_ACTIVITY = 110,REQUEST_FROM_LIST_ASSORTMENT = 210,REQUEST_FROM_GET_CLIENT = 30, width;
@@ -173,10 +171,10 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
 
         //commandService = ApiRetrofit.getCommandService(this);
 
-        final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
-        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
-        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
-
+//        final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
+//        final SharedPreferences User = getSharedPreferences("User", MODE_PRIVATE);
+//        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
+        SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
         UserId = SPFHelp.getInstance().getString("UserId","");
         String uri = SPFHelp.getInstance().getString("URI","0.0.0.0:1111");
         terminalAPI = TerminalRetrofitClient.getApiTerminalService(uri);
@@ -184,14 +182,14 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
         mAssortmentArray = new JSONArray();
 
 
-        useremail.setText(User.getString("Name",""));
+        useremail.setText(sharedPrefsInstance.getString("UserName",""));
 
 
-        user_workplace.setText(WorkPlace.getString("Name",""));
+        user_workplace.setText(sharedPrefsInstance.getString("WorkPlaceName",""));
 
-        WorkPlaceID = WorkPlace.getString("Uid","0");
-        WorkPlaceGetPrinters = WorkPlace.getString("Uid","0");
-        final String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
+        WorkPlaceID = sharedPrefsInstance.getString("WorkPlaceId","0");
+       // WorkPlaceGetPrinters = sharedPrefsInstance.getString("Uid","0");
+        final String WorkPlaceName = sharedPrefsInstance.getString("WorkPlaceName","Nedeterminat");
 
         if (WorkPlaceName.equals("Nedeterminat") || WorkPlaceName.equals("")){
             pgH.setMessage(getResources().getString(R.string.msg_dialog_loading));
@@ -207,7 +205,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
             WareName = WorkPlaceName;
         }
 
-        String limit = Settings.getString("LimitSales","0");
+        String limit = sharedPrefsInstance.getString("LimitSales","0");
         limit_sales = Integer.valueOf(limit);
         if(limit_sales == 0){
             limit_sales = 1000;
@@ -315,7 +313,6 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                     pgH.setIndeterminate(true);
                     pgH.setCancelable(false);
                     pgH.show();
-                    //commandService = ApiRetrofit.getCommandService(SalesActivity.this);
                     Call<GetAssortmentRemainResults> call = terminalAPI.getAssortimentRemains(uid_selected,WareUid);
 
                     call.enqueue(new Callback<GetAssortmentRemainResults>() {
@@ -459,7 +456,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                                         btn_add_Client.setEnabled(false);
 
                                         Toast.makeText(SalesActivity.this, getResources().getString(R.string.txt_sales_invoice_saved) + InvoiceCode, Toast.LENGTH_SHORT).show();
-                                        boolean print = getSharedPreferences("Settings",MODE_PRIVATE).getBoolean("PrintSales",false);
+                                        boolean print = sharedPrefsInstance.getBoolean("PrintSales",false);
                                         if(print) {
                                             printSales();
                                         }
@@ -511,7 +508,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
         btn_print.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean print = getSharedPreferences("Settings",MODE_PRIVATE).getBoolean("PrintSales",false);
+                boolean print = sharedPrefsInstance.getBoolean("PrintSales",false);
                 if(print) {
                     printSales();
                 }
@@ -1133,9 +1130,9 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
     @Override
     protected void onResume() {
         super.onResume();
-        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
-        String WorkPlaceID = WorkPlace.getString("Uid","0");
-        String WorkPlaceName = WorkPlace.getString("Name","Nedeterminat");
+        final SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+        String WorkPlaceID = sharedPrefsInstance.getString("WorkPlaceId","0");
+        String WorkPlaceName = sharedPrefsInstance.getString("WorkPlaceName","Nedeterminat");
         if(!WorkPlaceID.equals(WareUid)){
             btn_change_stock.setText(WareName);
         }

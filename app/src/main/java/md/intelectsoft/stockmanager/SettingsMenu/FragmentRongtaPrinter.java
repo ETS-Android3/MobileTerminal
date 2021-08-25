@@ -49,8 +49,8 @@ public class FragmentRongtaPrinter extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rongtaView = inflater.inflate(R.layout.fragment_rongta_printer, null);
-        Bundle bundl = getArguments();
-        String mNameDevice = bundl.getString("BTName");
+        Bundle bundle = getArguments();
+        String mNameDevice = bundle.getString("BTName");
 
         mSelfTest = rongtaView.findViewById(R.id.btn_test_print);
         txt_header = rongtaView.findViewById(R.id.txt_header_fragment_rongta);

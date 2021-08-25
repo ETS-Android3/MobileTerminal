@@ -25,7 +25,7 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateVisible">
             <intent-filter>
                 <action android:name=".SearchProviders" />
 
@@ -36,10 +36,10 @@
         <activity
             android:name=".CreateAssortment"
             android:exported="true" />
-        <activity
-            android:name=".CheckoutActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+<!--        <activity-->
+<!--            android:name=".CheckoutActivity"-->
+<!--            android:configChanges="orientation"-->
+<!--            android:screenOrientation="portrait" />-->
         <activity
             android:name=".AuthorizeActivity"
             android:configChanges="orientation"
@@ -281,9 +281,9 @@
         </activity>
         <activity
             android:name=".SettingsMenu.Securitate"
-            android:configChanges="orientation|screenSize"
+            android:configChanges="orientation"
             android:label="@string/header_securitate_activity"
-            android:screenOrientation="fullSensor"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -318,19 +318,19 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".SettingsMenu.Conect"
-            android:configChanges="orientation"
-            android:label="@string/header_conectare_activity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden">
-            <intent-filter>
-                <action android:name=".MenuConnect" />
+<!--        <activity-->
+<!--            android:name=".SettingsMenu.Conect"-->
+<!--            android:configChanges="orientation"-->
+<!--            android:label="@string/header_conectare_activity"-->
+<!--            android:screenOrientation="portrait"-->
+<!--            android:theme="@style/AppTheme.NoActionBar"-->
+<!--            android:windowSoftInputMode="stateHidden">-->
+<!--            <intent-filter>-->
+<!--                <action android:name=".MenuConnect" />-->
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
         <activity
             android:name=".SalesActivity"
             android:configChanges="orientation"

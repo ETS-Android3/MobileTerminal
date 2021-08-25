@@ -10,9 +10,43 @@
       <map>
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.36041666666666666" />
         <entry key="app/src/main/res/drawable/auth_background_item_for_selected.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/back_login_et.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/background_splash_activity.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/button_gray_theme_pressed.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/button_main_gray_theme.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/button_side_theme_pressed.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/ic_ellipse_splash_background.xml" value="0.36041666666666666" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/item_selector_button.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/item_selector_button_actions.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/item_selector_button_auth.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/item_selector_button_blue.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/item_selector_button_gray_theme.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/item_selector_button_side_theme.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/item_selector_language.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/item_selector_sales.xml" value="0.36041666666666666" />
         <entry key="app/src/main/res/drawable/ping_false_connect.xml" value="0.36041666666666666" />
         <entry key="app/src/main/res/drawable/ping_true_conect.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/round_corners_blue.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/round_corners_blue_button.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/round_corners_blue_inactive.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/round_corners_blue_pressed_action.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/round_corners_red_button.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/round_corners_red_button_inactive.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/round_corners_red_button_pressed.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/round_corners_red_edit_text.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/round_corners_transparent.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/round_corners_transparent_dark_theme.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/round_corners_transparent_img_help.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/round_corners_yelow_header.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/round_flags_selector.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/round_flags_selector_nonpressed.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/search_style.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/side_nav_bar.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/side_tree_theme.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/side_tree_theme_background.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/side_tree_theme_background_item_for_selected.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/drawable/side_tree_theme_background_main.xml" value="0.36041666666666666" />
         <entry key="app/src/main/res/layout/activity_about.xml" value="0.29891304347826086" />
         <entry key="app/src/main/res/layout/activity_authorize.xml" value="0.34427083333333336" />
         <entry key="app/src/main/res/layout/activity_check_price.xml" value="0.29891304347826086" />
@@ -30,6 +64,7 @@
         <entry key="app/src/main/res/layout/activity_create_asortment.xml" value="0.3220108695652174" />
         <entry key="app/src/main/res/layout/activity_get_client.xml" value="0.29891304347826086" />
         <entry key="app/src/main/res/layout/activity_help_sales.xml" value="0.3383152173913043" />
+        <entry key="app/src/main/res/layout/activity_help_security.xml" value="0.16742654508611957" />
         <entry key="app/src/main/res/layout/activity_inventory.xml" value="0.3383152173913043" />
         <entry key="app/src/main/res/layout/activity_invoice.xml" value="0.3383152173913043" />
         <entry key="app/src/main/res/layout/activity_list_added_assortment_inventory.xml" value="0.2609375" />
@@ -106,6 +141,9 @@
         <entry key="app/src/main/res/menu/menu_revision.xml" value="0.34427083333333336" />
         <entry key="app/src/main/res/menu/menu_sales.xml" value="0.34427083333333336" />
         <entry key="app/src/main/res/menu/menu_securitate.xml" value="0.2994791666666667" />
+        <entry key="app/src/main/res/menu/menu_stock_assortment.xml" value="0.34427083333333336" />
+        <entry key="app/src/main/res/menu/menu_transfer.xml" value="0.34427083333333336" />
+        <entry key="app/src/main/res/menu/menu_workplace.xml" value="0.34427083333333336" />
       </map>
     </option>
   </component>
