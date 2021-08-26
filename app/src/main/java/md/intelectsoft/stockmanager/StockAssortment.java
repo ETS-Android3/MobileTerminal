@@ -350,7 +350,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                 Intent AddingASL = new Intent(".AssortmentMobile");
                 AddingASL.putExtra("ActivityCount", 151);
                 if(WorkPlaceID.equals("0")){
-                    AddingASL.putExtra("WareID",WareUid);
+                    AddingASL.putExtra("WarehouseId",WareUid);
                 }
                 startActivityForResult(AddingASL, REQUEST_FROM_LIST_ASSORTMENT);
             }

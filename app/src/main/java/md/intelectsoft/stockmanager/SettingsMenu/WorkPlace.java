@@ -1,5 +1,6 @@
 package md.intelectsoft.stockmanager.SettingsMenu;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -79,7 +80,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
     JSONArray myJSONArray=new JSONArray();
     JSONArray myJSONArrayBool=new JSONArray();
     JSONArray myJSONArrayUid=new JSONArray();
-    String WareGUid;
+    String mWarehouseGUID;
 
 
     @Override
@@ -116,22 +117,16 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
 
         pgH=new ProgressDialog(WorkPlace.this);
 
-        final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
-        final String userName = SPFHelp.getInstance().getString("UserName","");
-        final SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
-        SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
-        String selected = CheckUidFolder.getString("selected_Name_Array","[]");
-
-        final SharedPreferences.Editor inpSet = Settings.edit();
-        String workplaceName = WorkPlace.getString("Name","Nedeterminat");
-        WareGUid = WorkPlace.getString("Uid",null);
+        final SPFHelp sharedPrefsInstance =SPFHelp.getInstance();
+        final String userName = sharedPrefsInstance.getString("UserName","");
+        String selected = sharedPrefsInstance.getString("selected_Name_Array","[]");
+        String workplaceName = sharedPrefsInstance.getString("WorkPlaceName","Nedeterminat");
+        mWarehouseGUID = sharedPrefsInstance.getString("WorkPlaceId",null);
 
         if(workplaceName.equals(""))
             workplaceName ="Nedeterminat";
         btn_get_workplace.setText(workplaceName);
         url_ = SPFHelp.getInstance().getString("URI","");
-//        ip_ = Settings.getString("IP","");
-//        port_ = Settings.getString("Port","");
 
         txt_user.setText(userName);
         View headerLayout = navigationView.getHeaderView(0);
@@ -139,22 +134,22 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         useremail.setText(userName);
 
         TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
-        user_workplace.setText(WorkPlace.getString("Name",""));
+        user_workplace.setText(sharedPrefsInstance.getString("WorkPlaceName","Nedeterminat"));
 
-        boolean autoConfirm = Settings.getBoolean("AutoConfirmTransfer",false);
-        boolean show = Settings.getBoolean("ShowKeyBoard",false);
-        boolean CheckStock = Settings.getBoolean("CheckStockInput",false);
-        boolean ShowCode = Settings.getBoolean("ShowCode",false);
-        boolean printSale = Settings.getBoolean("PrintSales",false);
-        boolean verifyStockAddAsortment = Settings.getBoolean("CheckStockToServer",false);
-        boolean invoiceOnlyPrice = Settings.getBoolean("InvoiceOnlySum",false);
+        boolean autoConfirm = sharedPrefsInstance.getBoolean("AutoConfirmTransfer",false);
+        boolean show = sharedPrefsInstance.getBoolean("ShowKeyBoard",false);
+        boolean CheckStock = sharedPrefsInstance.getBoolean("CheckStockInput",false);
+        boolean ShowCode = sharedPrefsInstance.getBoolean("ShowCode",false);
+        boolean printSale = sharedPrefsInstance.getBoolean("PrintSales",false);
+        boolean verifyStockAddAssortment = sharedPrefsInstance.getBoolean("CheckStockToServer",false);
+        boolean invoiceOnlyPrice = sharedPrefsInstance.getBoolean("InvoiceOnlySum",false);
 
         show_keyboard.setChecked(show);
         auto_confirm.setChecked(autoConfirm);
         check_stock.setChecked(CheckStock);
         show_cod.setChecked(ShowCode);
         printSales.setChecked(printSale);
-        checkStock_added_assortment.setChecked(verifyStockAddAsortment);
+        checkStock_added_assortment.setChecked(verifyStockAddAssortment);
         checkInvoiceOnlyPrice.setChecked(invoiceOnlyPrice);
 
         try {
@@ -180,15 +175,12 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
             @Override
             public void onClick(View v) {
                 txtFolders.setText("");
-                SharedPreferences SaveFolders =getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
-                SharedPreferences.Editor test = SaveFolders.edit();
-                test.putString("b" +
+                sharedPrefsInstance.putString("b" +
                         "" +
                         "" +
                         "oolean_Array", "[]");//boolJSON
-                test.putString("selected_Uid_Array","[]");//selectedUidJSON
-                test.putString("selected_Name_Array", "[]");//selectedJSON
-                test.apply();
+                sharedPrefsInstance.putString("selected_Uid_Array","[]");//selectedUidJSON
+                sharedPrefsInstance.putString("selected_Name_Array", "[]");
             }
         });
         btn_add_folder.setOnClickListener(new View.OnClickListener() {
@@ -207,12 +199,11 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                         kit_lists[i]=(String)asl_list.get(i).get("Name");
                     }
                     if(asl_list.size()>0){
-                        SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
                         AlertDialog.Builder builder = new AlertDialog.Builder(WorkPlace.this);
                         builder.setTitle("Choose items");
-                        String selected = CheckUidFolder.getString("selected_Name_Array","[]");
-                        String bolrns = CheckUidFolder.getString("boolean_Array","[]");
-                        String selectedUidJSON = CheckUidFolder.getString("selected_Uid_Array","[]");
+                        String selected = sharedPrefsInstance.getString("selected_Name_Array","[]");
+                        String bolrns = sharedPrefsInstance.getString("boolean_Array","[]");
+                        String selectedUidJSON = sharedPrefsInstance.getString("selected_Uid_Array","[]");
 
                         try {
                             myJSONArrayBool = new JSONArray(bolrns);
@@ -281,16 +272,13 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                                         e.printStackTrace();
                                     }
                                 }
-                                SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
-                                SharedPreferences.Editor test = CheckUidFolder.edit();
                                 JSONArray booleab = new JSONArray();
                                 for (boolean checkedItem : checkedItems) {
                                     booleab.put(checkedItem);
                                 }
-                                test.putString("boolean_Array", booleab.toString());
-                                test.putString("selected_Uid_Array", myJSONArrayUid.toString());
-                                test.putString("selected_Name_Array", myJSONArray.toString());
-                                test.apply();
+                                sharedPrefsInstance.putString("boolean_Array", booleab.toString());
+                                sharedPrefsInstance.putString("selected_Uid_Array", myJSONArrayUid.toString());
+                                sharedPrefsInstance.putString("selected_Name_Array", myJSONArray.toString());
                                 dialog.dismiss();
                             }
                         });
@@ -299,10 +287,10 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                         dialog.show();
                     }
                 }else{
-                    if (UserId != null && WareGUid!=null){
+                    if (UserId != null && mWarehouseGUID!=null){
                         DownloadASL();
                     }
-                    else if( UserId == null && WareGUid == null){
+                    else if( UserId == null && mWarehouseGUID == null){
                         AlertDialog.Builder selectWorkPlace = new AlertDialog.Builder(WorkPlace.this);
                         selectWorkPlace.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
                         selectWorkPlace.setMessage("Nu este ales locul de munca!\nAlegeti locul de munca!");
@@ -319,7 +307,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                             Logins.putExtra("Activity", 11);
                             startActivityForResult(Logins,11);
                     }
-                    else if(WareGUid == null){
+                    else if(mWarehouseGUID == null){
                         AlertDialog.Builder selectWorkPlace = new AlertDialog.Builder(WorkPlace.this);
                         selectWorkPlace.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
                         selectWorkPlace.setMessage("Nu este ales locul de munca!\nAlegeti locul de munca!");
@@ -343,8 +331,6 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                 pgH.show();
                 UserId = SPFHelp.getInstance().getString("UserId","");
                 url_ = SPFHelp.getInstance().getString("URI","");
-//                ip_=Settings.getString("IP","");
-//                port_=Settings.getString("Port","");
                 if(UserId.equals("")){
                     Intent Logins = new Intent(".LoginMobile");
                     Logins.putExtra("Activity", 6);
@@ -358,45 +344,44 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         show_keyboard.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                inpSet.putBoolean("ShowKeyBoard",isChecked).apply();
+                sharedPrefsInstance.putBoolean("ShowKeyBoard",isChecked);
             }
         });
         auto_confirm.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                inpSet.putBoolean("AutoConfirmTransfer",isChecked).apply();
+                sharedPrefsInstance.putBoolean("AutoConfirmTransfer",isChecked);
             }
         });
         check_stock.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                inpSet.putBoolean("CheckStockInput",isChecked).apply();
+                sharedPrefsInstance.putBoolean("CheckStockInput",isChecked);
             }
         });
         show_cod.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                inpSet.putBoolean("ShowCode",isChecked).apply();
+                sharedPrefsInstance.putBoolean("ShowCode",isChecked);
             }
         });
         printSales.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            inpSet.putBoolean("PrintSales",isChecked).apply();
+            sharedPrefsInstance.putBoolean("PrintSales",isChecked);
         });
         checkStock_added_assortment.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                inpSet.putBoolean("CheckStockToServer",isChecked).apply();
+                sharedPrefsInstance.putBoolean("CheckStockToServer",isChecked);
             }
         });
         checkInvoiceOnlyPrice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                inpSet.putBoolean("InvoiceOnlySum",isChecked);
-                inpSet.apply();
+                sharedPrefsInstance.putBoolean("InvoiceOnlySum",isChecked);
             }
         });
-
         handler = new Handler() {
+            @SuppressLint("HandlerLeak")
             public void handleMessage(android.os.Message msg) {
                 if(msg.what == 10) {
                     if (msg.arg1 == 12) {
@@ -412,12 +397,12 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                             kit_lists[i]=(String)asl_list.get(i).get("Name");
                         }
                         if(asl_list.size()>0){
-                            SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
+//                            SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
                             AlertDialog.Builder builder = new AlertDialog.Builder(WorkPlace.this);
                             builder.setTitle("Choose items");
-                            String selected = CheckUidFolder.getString("selected_Name_Array","[]");
-                            String bolrns = CheckUidFolder.getString("boolean_Array","[]");
-                            String selectedUidJSON = CheckUidFolder.getString("selected_Uid_Array","[]");
+                            String selected = sharedPrefsInstance.getString("selected_Name_Array","[]");
+                            String bolrns = sharedPrefsInstance.getString("boolean_Array","[]");
+                            String selectedUidJSON = sharedPrefsInstance.getString("selected_Uid_Array","[]");
 
                             try {
                                 myJSONArrayBool = new JSONArray(bolrns);
@@ -487,16 +472,13 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                                         }
                                     }
                                     ((BaseApp)getApplication()).setDownloadASLVariable(true);
-                                    SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
-                                    SharedPreferences.Editor test = CheckUidFolder.edit();
-                                    JSONArray booleab = new JSONArray();
+                                    JSONArray bool = new JSONArray();
                                     for (boolean checkedItem : checkedItems) {
-                                        booleab.put(checkedItem);
+                                        bool.put(checkedItem);
                                     }
-                                    test.putString("boolean_Array", booleab.toString());
-                                    test.putString("selected_Uid_Array", myJSONArrayUid.toString());
-                                    test.putString("selected_Name_Array", myJSONArray.toString());
-                                    test.apply();
+                                    sharedPrefsInstance.putString("boolean_Array", bool.toString());
+                                    sharedPrefsInstance.putString("selected_Uid_Array", myJSONArrayUid.toString());
+                                    sharedPrefsInstance.putString("selected_Name_Array", myJSONArray.toString());
                                     dialog.dismiss();
                                 }
                             });
@@ -637,19 +619,17 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         builderType.setAdapter(simpleAdapterType, new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int wich) {
-                String WareUid= String.valueOf(stock_List_array.get(wich).get("Uid"));
-                String WareName= String.valueOf(stock_List_array.get(wich).get("Name"));
-                String WareCode= String.valueOf(stock_List_array.get(wich).get("Code"));
+                String WarehouseGUID= String.valueOf(stock_List_array.get(wich).get("Uid"));
+                String WarehouseName= String.valueOf(stock_List_array.get(wich).get("Name"));
+                String WarehouseCode= String.valueOf(stock_List_array.get(wich).get("Code"));
 
-                SharedPreferences WareHouse = getSharedPreferences("Work Place", MODE_PRIVATE);
-                SharedPreferences.Editor addWareHouse = WareHouse.edit();
-                addWareHouse.putString("Name",WareName);
-                addWareHouse.putString("Uid",WareUid);
-                addWareHouse.putString("Code",WareCode);
-                addWareHouse.apply();
-                WareGUid=WareUid;
+                SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+                sharedPrefsInstance.putString("WorkPlaceName",WarehouseName);
+                sharedPrefsInstance.putString("WorkPlaceId",WarehouseGUID);
+                sharedPrefsInstance.putString("WorkplaceCode",WarehouseCode);
+                mWarehouseGUID=WarehouseGUID;
 
-                btn_get_workplace.setText(WareName);
+                btn_get_workplace.setText(WarehouseName);
                 stock_List_array.clear();
             }
         });
@@ -668,12 +648,10 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
         pgH.show();
 
         txtFolders.setText("");
-        SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
-        SharedPreferences.Editor test = CheckUidFolder.edit();
-        test.putString("boolean_Array", "[]");
-        test.putString("selected_Uid_Array","[]");
-        test.putString("selected_Name_Array", "[]");
-        test.apply();
+          SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+        sharedPrefsInstance.putString("boolean_Array", "[]");
+        sharedPrefsInstance.putString("selected_Uid_Array","[]");
+        sharedPrefsInstance.putString("selected_Name_Array", "[]");
 
         Thread t = new Thread(new Runnable() {
             public void run() {
@@ -688,7 +666,7 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                         .client(okHttpClient)
                         .build();
                 final TerminalAPI assortiment_API = TerminalRetrofitClient.getApiTerminalService(url_);
-                final Call<AssortmentListResult> assortiment = assortiment_API.getAssortimentListForStock(UserId,WareGUid);
+                final Call<AssortmentListResult> assortiment = assortiment_API.getAssortimentListForStock(UserId,mWarehouseGUID);
                 assortiment.enqueue(new Callback<AssortmentListResult>() {
                     @Override
                     public void onResponse(Call<AssortmentListResult> call, Response<AssortmentListResult> response) {
@@ -780,8 +758,8 @@ public class WorkPlace extends AppCompatActivity implements NavigationView.OnNav
                                 alertDialog.setPositiveButton(getResources().getString(R.string.msg_dialog_close), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
-                                        WorkPlace.edit().clear().apply();
+//                                        SharedPreferences WorkPlace = getSharedPreferences("Work Place", MODE_PRIVATE);
+//                                        WorkPlace.edit().clear().apply();
                                         finishAffinity();
                                     }
                                 });

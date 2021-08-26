@@ -70,9 +70,9 @@ import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 
 public class Securitate extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,  UpdateHelper.OnUpdateCheckListener  {
 
-    TextView txtCod,limba;
-    EditText key_input,et_limit,et_pin;
-    Button btn_verific,btn_check_update;
+    TextView txtCod;//limba;
+    EditText et_limit;//et_pin,key_input;
+    Button btn_check_update;//btn_verific,
     ProgressDialog pDialog;
     ImageButton btn_ro,btn_ru,btn_en;
     public static final int progress_bar_type = 11;
@@ -98,10 +98,10 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         setSupportActionBar(toolbar);
 
         txtCod= findViewById(R.id.txt_cod_licenta);
-        key_input = findViewById(R.id.et_input_licenta);
-        btn_verific = findViewById(R.id.btn_verific_licenta);
+        //key_input = findViewById(R.id.et_input_licenta);
+       // btn_verific = findViewById(R.id.btn_verific_licenta);
         et_limit = findViewById(R.id.et_limit_count_sales_securitate);
-        et_pin = findViewById(R.id.et_input_pin_securitate);
+        //et_pin = findViewById(R.id.et_input_pin_securitate);
         btn_check_update = findViewById(R.id.btn_chek_update2);
 
         btn_en = findViewById(R.id.select_lng_en);
@@ -123,9 +123,12 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         final SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
         View headerLayout = navigationView.getHeaderView(0);
         TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
-        useremail.setText(sharedPrefsInstance.getString("Name",""));
+        useremail.setText(sharedPrefsInstance.getString("UserName",""));
 
-        et_pin.setText(sharedPrefsInstance.getString("PinCod",""));
+
+        TextView user_workplace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
+        user_workplace.setText(sharedPrefsInstance.getString("WorkPlaceName",""));
+        //et_pin.setText(sharedPrefsInstance.getString("PinCod",""));
 
         pgH = new ProgressDialog(this,R.style.ThemeOverlay_AppCompat_Dialog_Alert_TestDialogTheme);
 
@@ -148,41 +151,42 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         deviceId=deviceId.replace("6","a");
 //TODO:this not working !!!
         String code =  sharedPrefsInstance.getString("LicenseCode","");
-        if(code.equals("")){
-            for (int k = 0; k < deviceId.length(); k++) {
-                if (Character.isLetter(deviceId.charAt(k))) {
-                    code = code + deviceId.charAt(k);
-                }
-            }
-            code = code.substring(0, 8);
+//        if(code.equals("")){
+//            for (int k = 0; k < deviceId.length(); k++) {
+//                if (Character.isLetter(deviceId.charAt(k))) {
+//                    code = code + deviceId.charAt(k);
+//                }
+//            }
+//            code = code.substring(0, 8);
+//            txtCod.setText(code.toUpperCase());
+//
+//
+//            sharedPrefsInstance.putString("LicenseCode",code.toUpperCase());
+//        }
+//        else{
             txtCod.setText(code.toUpperCase());
-
-
-            sharedPrefsInstance.putString("LicenseCode",code.toUpperCase());
-        }
-        else{
-            txtCod.setText(code.toUpperCase());
-        }
-        key_input.setText(sharedPrefsInstance.getString("KeyText",""));
+//        }
+       // key_input.setText(sharedPrefsInstance.getString("KeyText",""));
         et_limit.setText(sharedPrefsInstance.getString("LimitSales","0"));
 
-        final String internKey = md5(code.toUpperCase() + "ENCEFALOMIELOPOLIRADICULONEVRITA");
-        btn_verific.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String key = key_input.getText().toString().toUpperCase();
-                if (Test(key,internKey)){
-                    key_input.setBackgroundResource(R.drawable.ping_true_conect);
-                    sharedPrefsInstance.putBoolean("Key",true);
-                    sharedPrefsInstance.putString("KeyText",key);
-                }
-                else{
-                    key_input.setBackgroundResource(R.drawable.ping_false_connect);
-                    sharedPrefsInstance.putBoolean("Key",false);
-                    sharedPrefsInstance.putString("KeyText",key_input.getText().toString().toUpperCase());
-                }
-            }
-        });
+       // final String internKey = md5(code.toUpperCase() + "ENCEFALOMIELOPOLIRADICULONEVRITA");
+//        btn_verific.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String key = key_input.getText().toString().toUpperCase();
+//                if (Test(code,key_input.getText().toString().toUpperCase())){
+//                    txtCod.setText(code);
+//                    key_input.setBackgroundResource(R.drawable.ping_true_conect);
+//                    sharedPrefsInstance.putBoolean("Key",true);
+//                    sharedPrefsInstance.putString("KeyText",key);
+//                }
+//                else{
+//                    key_input.setBackgroundResource(R.drawable.ping_false_connect);
+//                    sharedPrefsInstance.putBoolean("Key",false);
+//                    sharedPrefsInstance.putString("KeyText",key_input.getText().toString().toUpperCase());
+//                }
+//            }
+//        });
         et_limit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -205,22 +209,22 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
             }
         });
 
-        et_pin.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                sharedPrefsInstance.putString("PinCod",et_pin.getText().toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+//        et_pin.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                sharedPrefsInstance.putString("PinCod",et_pin.getText().toString());
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
 
         btn_check_update.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -350,44 +354,44 @@ public class Securitate extends AppCompatActivity implements NavigationView.OnNa
         return true;
     }
 
-    public static String md5(final String s) {
-        final String MD5 = "MD5";
-        try {
-            // Create MD5 Hash
-            MessageDigest digest = java.security.MessageDigest
-                    .getInstance(MD5);
-            digest.update(s.getBytes());
-            byte messageDigest[] = digest.digest();
-            byte[] encode = Base64.encode(messageDigest,0);
-            String respencode = new String(encode).toUpperCase();
-            // Create String
-            String digits="";
-            for (int i = 0; i < respencode.length(); i++) {
-                char chrs = respencode.charAt(i);
-                if (!Character.isDigit(chrs))
-                    digits = digits+chrs;
-            }
-            String keyLic = "";
-            for (int k=0;k<digits.length();k++){
-                if (Character.isLetter(digits.charAt(k))){
-                    keyLic=keyLic + digits.charAt(k);
-                }
-            }
-            keyLic=keyLic.substring(0,8);
-
-            return keyLic;
-
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
-    public boolean Test (String key,String entern_key){
-        if (key.equals(entern_key)){
-            return true;
-        }
-        return false;
-    }
+//    public static String md5(final String s) {
+//        final String MD5 = "MD5";
+//        try {
+//            // Create MD5 Hash
+//            MessageDigest digest = java.security.MessageDigest
+//                    .getInstance(MD5);
+//            digest.update(s.getBytes());
+//            byte messageDigest[] = digest.digest();
+//            byte[] encode = Base64.encode(messageDigest,0);
+//            String respencode = new String(encode).toUpperCase();
+//            // Create String
+//            String digits="";
+//            for (int i = 0; i < respencode.length(); i++) {
+//                char chrs = respencode.charAt(i);
+//                if (!Character.isDigit(chrs))
+//                    digits = digits+chrs;
+//            }
+//            String keyLic = "";
+//            for (int k=0;k<digits.length();k++){
+//                if (Character.isLetter(digits.charAt(k))){
+//                    keyLic=keyLic + digits.charAt(k);
+//                }
+//            }
+//            keyLic=keyLic.substring(0,8);
+//
+//            return keyLic;
+//
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        }
+//        return "";
+//    }
+//    public boolean Test (String key,String entern_key){
+//        if (key.equals(entern_key)){
+//            return true;
+//        }
+//        return false;
+//    }
     @Override
     protected Dialog onCreateDialog(int id) {
         switch (id) {

@@ -82,7 +82,7 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
     Spinner mTypePrinter , mModelPrinter;
     FragmentTransaction fTrans;
     Fragment mRongtaPrinterFragment,mZebraPrinterFragment;
-    TextView tv_device_selected;
+    TextView tv_device_selected,useremail,user_workplace;
 
     String[] mTypePrinterList = {"NoN", mPOSPrinters, mLablePrinters};
 
@@ -120,6 +120,7 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+        View headerLayout = navigationView.getHeaderView(0);
         btn_select_device = findViewById(R.id.btn_connect_device);
         mTypePrinter = findViewById(R.id.spinner_type_printer);
         mModelPrinter = findViewById(R.id.spinner_model_printer);
@@ -128,6 +129,12 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
 
         mZebraPrinterFragment = new FragmentZebraPrinter();
         mRongtaPrinterFragment = new FragmentRongtaPrinter();
+        useremail = headerLayout.findViewById(R.id.txt_name_of_user);
+        user_workplace = headerLayout.findViewById(R.id.txt_workplace_user);
+
+        SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+        useremail.setText(sharedPrefsInstance.getString("UserName",""));
+        user_workplace.setText(sharedPrefsInstance.getString("WorkPlaceName",""));
 
         final SharedPreferences SharedPrinters = getSharedPreferences("Printers", MODE_PRIVATE);
         final SharedPreferences.Editor SharedPrintersEditor = SharedPrinters.edit();
@@ -243,10 +250,10 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
             public void onNothingSelected(AdapterView<?> arg0) {
             }
         });
-SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
-        View headerLayout = navigationView.getHeaderView(0);
-        TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
-        useremail.setText(sharedPrefsInstance.getString("UserName",""));
+//SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
+//        View headerLayout = navigationView.getHeaderView(0);
+//        TextView useremail = (TextView) headerLayout.findViewById(R.id.txt_name_of_user);
+//        useremail.setText(sharedPrefsInstance.getString("UserName",""));
 
 
         url_ = SPFHelp.getInstance().getString("URI","");
@@ -310,6 +317,7 @@ SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
 
                         try {
                             mBTSocket = createBluetoothSocket(bluetoothDevice);
+
                         } catch (IOException e) {
                             fail = true;
                             Toast.makeText(Printers.this, "Socket creation failed", Toast.LENGTH_SHORT).show();

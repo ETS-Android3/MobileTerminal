@@ -56,11 +56,13 @@ import com.zebra.sdk.comm.Connection;
 import com.zebra.sdk.comm.ConnectionException;
 
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.GetAssortmentItemBody;
+import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.Assortment;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.GetAssortmentItemResult;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.GetWarehousesListResult;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.WarehouseList;
 import md.intelectsoft.stockmanager.TerminalService.TerminalAPI;
 import md.intelectsoft.stockmanager.TerminalService.TerminalRetrofitClient;
+import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
 import md.intelectsoft.stockmanager.app.utils.SPFHelp;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -415,31 +417,33 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
         if (requestCode == REQUEST_FROM_LIST_ASSORTMENT){
             if(resultCode == RESULT_OK){
                 if (data != null) {
-                    assortmentItemResult = new GetAssortmentItemResult();
-                    assortmentItemResult.setName(data.getStringExtra("Name"));
-                    assortmentItemResult.setUnit(data.getStringExtra("Unit"));
-                    assortmentItemResult.setUnitInPackage(data.getStringExtra("UnitInPackage"));
-                    assortmentItemResult.setUnitPrice(data.getDoubleExtra("UnitPrice", 0));
-                    assortmentItemResult.setCode(data.getStringExtra("Code"));
-                    assortmentItemResult.setBarCode(data.getStringExtra("BarCode"));
-                    assortmentItemResult.setAssortimentID(data.getStringExtra("Id"));
-                    assortmentItemResult.setMarking(data.getStringExtra("Marking"));
-                    assortmentItemResult.setPrice(data.getDoubleExtra("Price", 0));
-                    assortmentItemResult.setRemain(data.getDoubleExtra("Remain", 0));
+                    AssortmentParcelable result = data.getParcelableExtra("AssortimentClicked");
 
-                    txtNameAsortment.setText(assortmentItemResult.getName());
-                    txtUnit.setText(assortmentItemResult.getUnit());
-                    double price = assortmentItemResult.getPrice();
-                    txtPriceAssortment.setText(String.valueOf(price).replace(",","."));
+//                    assortmentItemResult = new GetAssortmentItemResult();
+//                    assortmentItemResult.setName(data.getStringExtra("Name"));
+//                    assortmentItemResult.setUnit(data.getStringExtra("Unit"));
+//                    assortmentItemResult.setUnitInPackage(data.getStringExtra("UnitInPackage"));
+//                    assortmentItemResult.setUnitPrice(data.getDoubleExtra("UnitPrice", 0));
+//                    assortmentItemResult.setCode(data.getStringExtra("Code"));
+//                    assortmentItemResult.setBarCode(data.getStringExtra("BarCode"));
+//                    assortmentItemResult.setAssortimentID(data.getStringExtra("Id"));
+//                    assortmentItemResult.setMarking(data.getStringExtra("Marking"));
+//                    assortmentItemResult.setPrice(data.getDoubleExtra("Price", 0));
+//                    assortmentItemResult.setRemain(data.getDoubleExtra("Remain", 0));
 
-                    if (assortmentItemResult.getMarking() != null) {
-                        txtMarkingAssortment.setText(assortmentItemResult.getMarking());
+                    txtNameAsortment.setText(result.getName());
+                    txtUnit.setText(result.getUnit());
+                   // double price = Double.valueOf(result.getPrice());
+                    txtPriceAssortment.setText(result.getPrice().replace(",","."));
+
+                    if (result.getMarking() != null) {
+                        txtMarkingAssortment.setText(result.getMarking());
                     } else {
                         txtMarkingAssortment.setText("-");
                     }
-                    txtCodeAssortment.setText(assortmentItemResult.getCode());
-                    txtBarcodeAssortment.setText(assortmentItemResult.getBarCode());
-                    if(assortmentItemResult.getRemain() != null)
+                    txtCodeAssortment.setText(result.getCode());
+                    txtBarcodeAssortment.setText(result.getBarCode());
+                    if(result.getRemain() != null)
                         txtStockAssortment.setText(String.format("%.2f",assortmentItemResult.getRemain()));
                     else
                         txtStockAssortment.setText("0");

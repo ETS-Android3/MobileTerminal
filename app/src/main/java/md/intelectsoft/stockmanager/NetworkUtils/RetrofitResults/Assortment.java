@@ -22,7 +22,7 @@ public class Assortment {
     private String code;
     @SerializedName("IncomePrice")
     @Expose
-    private double incomePrice;
+    private String incomePrice;
     @SerializedName("IsFolder")
     @Expose
     private Boolean isFolder;
@@ -34,16 +34,16 @@ public class Assortment {
     private String name;
     @SerializedName("Price")
     @Expose
-    private double price;
+    private String price;
     @SerializedName("PriceLineID")
     @Expose
     private String priceLineID;
     @SerializedName("Remain")
     @Expose
-    private double remain;
+    private String remain;
     @SerializedName("RequestedCount")
     @Expose
-    private double requestedCount;
+    private String requestedCount;
     @SerializedName("Unit")
     @Expose
     private String unit;
@@ -52,7 +52,7 @@ public class Assortment {
     private String unitInPackage;
     @SerializedName("UnitPrice")
     @Expose
-    private double unitPrice;
+    private String unitPrice;
     @SerializedName("VATCode")
     @Expose
     private String vATCode;
@@ -99,11 +99,11 @@ public class Assortment {
         this.code = code;
     }
 
-    public double getIncomePrice() {
+    public String getIncomePrice() {
         return incomePrice;
     }
 
-    public void setIncomePrice(double incomePrice) {
+    public void setIncomePrice(String incomePrice) {
         this.incomePrice = incomePrice;
     }
 
@@ -131,11 +131,11 @@ public class Assortment {
         this.name = name;
     }
 
-    public double getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 
@@ -147,19 +147,19 @@ public class Assortment {
         this.priceLineID = priceLineID;
     }
 
-    public double getRemain() {
+    public String getRemain() {
         return remain;
     }
 
-    public void setRemain(double remain) {
+    public void setRemain(String remain) {
         this.remain = remain;
     }
 
-    public double getRequestedCount() {
+    public String getRequestedCount() {
         return requestedCount;
     }
 
-    public void setRequestedCount(double requestedCount) {
+    public void setRequestedCount(String requestedCount) {
         this.requestedCount = requestedCount;
     }
 
@@ -179,11 +179,11 @@ public class Assortment {
         this.unitInPackage = unitInPackage;
     }
 
-    public double getUnitPrice() {
+    public String getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(double unitPrice) {
+    public void setUnitPrice(String unitPrice) {
         this.unitPrice = unitPrice;
     }
 
