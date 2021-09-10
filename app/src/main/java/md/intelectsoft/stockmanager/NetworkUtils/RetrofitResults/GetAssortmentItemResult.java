@@ -36,13 +36,13 @@ public class GetAssortmentItemResult {
     private String name;
     @SerializedName("Price")
     @Expose
-    private Double price;
+    private String price;
     @SerializedName("PriceLineID")
     @Expose
     private String priceLineID;
     @SerializedName("Remain")
     @Expose
-    private Double remain;
+    private String remain;
     @SerializedName("RequestedCount")
     @Expose
     private Double requestedCount;
@@ -54,7 +54,7 @@ public class GetAssortmentItemResult {
     private String unitInPackage;
     @SerializedName("UnitPrice")
     @Expose
-    private Double unitPrice;
+    private String unitPrice;
     @SerializedName("VATCode")
     @Expose
     private String vATCode;
@@ -131,11 +131,11 @@ public class GetAssortmentItemResult {
         this.name = name;
     }
 
-    public Double getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 
@@ -147,11 +147,11 @@ public class GetAssortmentItemResult {
         this.priceLineID = priceLineID;
     }
 
-    public Double getRemain() {
+    public String getRemain() {
         return remain;
     }
 
-    public void setRemain(Double remain) {
+    public void setRemain(String remain) {
         this.remain = remain;
     }
 
@@ -179,11 +179,11 @@ public class GetAssortmentItemResult {
         this.unitInPackage = unitInPackage;
     }
 
-    public Double getUnitPrice() {
+    public String getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(Double unitPrice) {
+    public void setUnitPrice(String unitPrice) {
         this.unitPrice = unitPrice;
     }
 

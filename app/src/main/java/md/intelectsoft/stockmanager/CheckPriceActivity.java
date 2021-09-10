@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,6 +25,8 @@ import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 
 import android.text.InputType;
+import android.text.TextUtils;
+import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,6 +55,16 @@ import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.rt.printerlibrary.cmd.Cmd;
+import com.rt.printerlibrary.cmd.EscFactory;
+import com.rt.printerlibrary.enumerate.BmpPrintMode;
+import com.rt.printerlibrary.enumerate.CommonEnum;
+import com.rt.printerlibrary.exception.SdkException;
+import com.rt.printerlibrary.factory.cmd.CmdFactory;
+import com.rt.printerlibrary.printer.RTPrinter;
+import com.rt.printerlibrary.setting.BitmapSetting;
+import com.rt.printerlibrary.setting.CommonSetting;
+import com.rt.printerlibrary.utils.BitmapConvertUtil;
 import com.zebra.sdk.comm.BluetoothConnection;
 import com.zebra.sdk.comm.Connection;
 import com.zebra.sdk.comm.ConnectionException;
@@ -58,12 +72,17 @@ import com.zebra.sdk.comm.ConnectionException;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.GetAssortmentItemBody;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.Assortment;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.GetAssortmentItemResult;
+import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.GetPrintInvoiceResults;
+import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.GetPrintersResult;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.GetWarehousesListResult;
+import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.PrinterResults;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.WarehouseList;
 import md.intelectsoft.stockmanager.TerminalService.TerminalAPI;
 import md.intelectsoft.stockmanager.TerminalService.TerminalRetrofitClient;
 import md.intelectsoft.stockmanager.Utils.AssortmentParcelable;
+import md.intelectsoft.stockmanager.app.utils.BaseEnum;
 import md.intelectsoft.stockmanager.app.utils.SPFHelp;
+import md.intelectsoft.stockmanager.app.utils.ToastUtil;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -77,17 +96,23 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
     TimerTask timerTaskSync;
     Timer sync;
     EditText count_lable;
-    AlertDialog.Builder builderType;
+
+    AlertDialog.Builder builderType,builderTypePrinters;
     ArrayList<HashMap<String, Object>> stock_List_array = new ArrayList<>();
+    ArrayList<HashMap<String, Object>> printers_List_array = new ArrayList<>();
     String UserId, labelPrint, workPlaceId, workPlaceName;
-    
-    int REQUEST_FROM_LIST_ASSORTMENT = 666;
+
+    private RTPrinter rtPrinter = null;
+    Bitmap mBitmap = null;
+
+    int REQUEST_FROM_LIST_ASSORTMENT = 666, width;
     Menu menu;
     final boolean[] show_keyboard = {false};
 
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd");
     TimeZone timeZone = TimeZone.getTimeZone("Europe/Chisinau");
+    AssortmentParcelable result;
     GetAssortmentItemResult assortmentItemResult;
     TerminalAPI terminalAPI;
 
@@ -179,77 +204,78 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
             startActivityForResult(AddingASL, REQUEST_FROM_LIST_ASSORTMENT);
         });
         print.setOnClickListener(v -> {
-            SharedPreferences sPref = getSharedPreferences("Printers", MODE_PRIVATE);
-            final String printerMACAddress = sPref.getString("MAC_ZebraPrinters",null);
-            final int labelsNumber = Integer.parseInt(count_lable.getText().toString());
-            labelPrint = sPref.getString("Lable",null);
-
-            if(printerMACAddress != null) {
-                if (assortmentItemResult != null) {
-                    progressDialog.setMessage(getResources().getString(R.string.btn_imprimare_sales) + " " + assortmentItemResult.getName() + " to " + printerMACAddress);
-                    progressDialog.setCancelable(false);
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.show();
-
-                    new Thread() {
-                        public void run() {
-                            Connection connection = new BluetoothConnection(printerMACAddress);
-                            try {
-                                connection.open();
-                                String price_unit;
-                                if (assortmentItemResult.getUnitInPackage() == null || assortmentItemResult.getUnitInPackage().equals("")){
-                                    price_unit = assortmentItemResult.getUnitPrice() + "/" + assortmentItemResult.getUnit();
-                                }else{
-                                    price_unit = assortmentItemResult.getUnitPrice() + "/" + assortmentItemResult.getUnitInPackage();
-                                }
-                                //String api_key_yandex = "trnsl.1.1.20190401T113033Z.81c7241519eea2f0.a881247269077361cbd5b905400518b250efe00b";
-                                Date dateNow = new Date();
-                                String sDateInChisinau = simpleDateFormat.format(dateNow); // Convert to String first
-
-                                String codes = "codes_imprim";
-                                String data_imprim = "data_imprim";
-                                String name_imprim = "name_imprim";
-                                String rus_name_imprim = "rus_imprim";
-                                String price_imprim = "price_imprim";
-                                String price_unit_imprim = "price_unit_imprim";
-                                String barcode_imprim = "barcode_imprim";
-
-                                if(labelPrint != null){
-                                    labelPrint = labelPrint.replace(codes, assortmentItemResult.getCode());
-                                    labelPrint = labelPrint.replace(data_imprim, sDateInChisinau);
-                                    labelPrint = labelPrint.replace(name_imprim, assortmentItemResult.getName());
-                                    labelPrint = labelPrint.replace(rus_name_imprim,"");
-                                    labelPrint = labelPrint.replace(price_imprim, String.format("%.2f", assortmentItemResult.getPrice()));
-                                    labelPrint = labelPrint.replace(price_unit_imprim,price_unit);
-                                    labelPrint = labelPrint.replace(barcode_imprim, assortmentItemResult.getBarCode());
-                                    if (labelsNumber>1){
-                                        for (int i=0;i<labelsNumber;i++){
-                                            connection.write(labelPrint.getBytes("UTF-8"));
-                                        }
-                                    }else{
-                                        connection.write(labelPrint.getBytes());
-                                    }
-
-                                    mHandler.obtainMessage(10, 12, -1)
-                                            .sendToTarget();
-                                }else{
-                                    mHandler.obtainMessage(20, 12, -1, "Eticheta lipseste!")
-                                            .sendToTarget();
-                                }
-                            } catch (ConnectionException e) {
-                                mHandler.obtainMessage(201, 14, -1,e.toString())
-                                        .sendToTarget();
-                            } catch (UnsupportedEncodingException e) {
-                                e.printStackTrace();
-                                ((BaseApp)getApplication()).appendLog(e.getMessage(), CheckPriceActivity.this);
-                            }
-                        }
-                    }.start();
-                }
-            }
-            else{
-                Toast.makeText(CheckPriceActivity.this,getResources().getString(R.string.txt_not_conected_printers), Toast.LENGTH_SHORT).show();
-            }
+            printPrices();
+//            SharedPreferences sPref = getSharedPreferences("Printers", MODE_PRIVATE);
+//            final String printerMACAddress = sPref.getString("MAC_ZebraPrinters",null);
+//            final int labelsNumber = Integer.parseInt(count_lable.getText().toString());
+//            labelPrint = sPref.getString("Lable",null);
+//
+//            if(printerMACAddress != null) {
+//                if (result != null) {
+//                    progressDialog.setMessage(getResources().getString(R.string.btn_imprimare_sales) + " " + result.getName() + " to " + printerMACAddress);
+//                    progressDialog.setCancelable(false);
+//                    progressDialog.setIndeterminate(true);
+//                    progressDialog.show();
+//
+//                    new Thread() {
+//                        public void run() {
+//                            Connection connection = new BluetoothConnection(printerMACAddress);
+//                            try {
+//                                connection.open();
+//                                String price_unit;
+//                                if (result.getUnitInPackage() == null || result.getUnitInPackage().equals("")){
+//                                    price_unit = result.getUnitPrice() + "/" + result.getUnit();
+//                                }else{
+//                                    price_unit = result.getUnitPrice() + "/" + result.getUnitInPackage();
+//                                }
+//                                //String api_key_yandex = "trnsl.1.1.20190401T113033Z.81c7241519eea2f0.a881247269077361cbd5b905400518b250efe00b";
+//                                Date dateNow = new Date();
+//                                String sDateInChisinau = simpleDateFormat.format(dateNow); // Convert to String first
+//
+//                                String codes = "codes_imprim";
+//                                String data_imprim = "data_imprim";
+//                                String name_imprim = "name_imprim";
+//                                String rus_name_imprim = "rus_imprim";
+//                                String price_imprim = "price_imprim";
+//                                String price_unit_imprim = "price_unit_imprim";
+//                                String barcode_imprim = "barcode_imprim";
+//
+//                                if(labelPrint != null){
+//                                    labelPrint = labelPrint.replace(codes, result.getCode());
+//                                    labelPrint = labelPrint.replace(data_imprim, sDateInChisinau);
+//                                    labelPrint = labelPrint.replace(name_imprim, result.getName());
+//                                    labelPrint = labelPrint.replace(rus_name_imprim,"");
+//                                    labelPrint = labelPrint.replace(price_imprim, String.format("%.2f", result.getPrice()));
+//                                    labelPrint = labelPrint.replace(price_unit_imprim,price_unit);
+//                                    labelPrint = labelPrint.replace(barcode_imprim, result.getBarCode());
+//                                    if (labelsNumber>1){
+//                                        for (int i=0;i<labelsNumber;i++){
+//                                            connection.write(labelPrint.getBytes("UTF-8"));
+//                                        }
+//                                    }else{
+//                                        connection.write(labelPrint.getBytes());
+//                                    }
+//
+//                                    mHandler.obtainMessage(10, 12, -1)
+//                                            .sendToTarget();
+//                                }else{
+//                                    mHandler.obtainMessage(20, 12, -1, "Eticheta lipseste!")
+//                                            .sendToTarget();
+//                                }
+//                            } catch (ConnectionException e) {
+//                                mHandler.obtainMessage(201, 14, -1,e.toString())
+//                                        .sendToTarget();
+//                            } catch (UnsupportedEncodingException e) {
+//                                e.printStackTrace();
+//                                ((BaseApp)getApplication()).appendLog(e.getMessage(), CheckPriceActivity.this);
+//                            }
+//                        }
+//                    }.start();
+//                }
+//            }
+//            else{
+//                Toast.makeText(CheckPriceActivity.this,getResources().getString(R.string.txt_not_conected_printers), Toast.LENGTH_SHORT).show();
+//            }
         });
         addCount.setOnClickListener(v -> {
             int curr = Integer.parseInt(count_lable.getText().toString());
@@ -264,6 +290,240 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
             count_lable.setText(String.valueOf(curr));
         });
     }
+    private void printPrices() {
+        final SharedPreferences SharedPrinters = getSharedPreferences("Printers", MODE_PRIVATE);
+        int positionType = SharedPrinters.getInt("Type",0);
+
+        if(positionType == BaseEnum.POS_PRINTER){
+            width = BaseApp.getInstance().getWidthPrinterPrint();
+            if(width == 0){
+                width = SharedPrinters.getInt("WithDisplay",0);
+            }
+            Call<GetPrintInvoiceResults> call = terminalAPI.getPrintAssortmentPrice(assortmentItemResult.getAssortimentID(),workPlaceId);
+
+            call.enqueue(new Callback<GetPrintInvoiceResults>() {
+                @Override
+                public void onResponse(Call<GetPrintInvoiceResults> call, Response<GetPrintInvoiceResults> response) {
+                    GetPrintInvoiceResults results = response.body();
+
+                    if(results != null){
+                        if(results.getErrorCode() == 0)
+                            printToBluetoothPrinter(results.getImageFile());
+
+                        else{
+                            AlertDialog.Builder dialog = new AlertDialog.Builder(CheckPriceActivity.this);
+                            dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+                            dialog.setCancelable(false);
+                            dialog.setMessage("Eroare la descarcarea imaginei: " + results.getErrorCode());
+                            dialog.setPositiveButton(getResources().getString(R.string.txt_accept_all), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            dialog.show();
+                        }
+
+                    }
+                    else{
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(CheckPriceActivity.this);
+                        dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+                        dialog.setCancelable(false);
+                        dialog.setMessage("Nici o imprimanta de la server");
+                        dialog.setPositiveButton(getResources().getString(R.string.txt_accept_all), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        dialog.show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<GetPrintInvoiceResults> call, Throwable t) {
+                    Toast.makeText(CheckPriceActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
+        }
+//        else {
+//            printers_List_array.clear();
+//            Call<GetPrintersResult> call = terminalAPI.getPrinters(WorkPlaceGetPrinters);
+//
+//            call.enqueue(new Callback<GetPrintersResult>() {
+//                @Override
+//                public void onResponse(@NonNull Call<GetPrintersResult> call, @NonNull Response<GetPrintersResult> response) {
+//                    GetPrintersResult result = response.body();
+//                    if(result != null){
+//                        if(result.getErrorCode() == 0){
+//                            List<PrinterResults> printers = result.getPrinters();
+//                            if(result.getPrinters() == null){
+//                                AlertDialog.Builder dialog = new AlertDialog.Builder(CheckPriceActivity.this);
+//                                dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+//                                dialog.setCancelable(false);
+//                                dialog.setMessage(getResources().getString(R.string.txt_not_printers_check_back_office));
+//                                dialog.setPositiveButton(getResources().getString(R.string.txt_save_document), new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+//                                        dialog.dismiss();
+//                                    }
+//                                });
+//                                if (CheckPriceActivity.this.isDestroyed()) { // or call isFinishing() if min sdk version < 17
+//                                    return;
+//                                }
+//                                dialog.show();
+//                            }
+//
+//                            if(printers.size() == 1){
+//                                PrinterResults printerResults = printers.get(0);
+//                                printInvoiceToService(printerResults.getID(), printerResults.getName());
+//                            }
+//                            else if (printers.size() > 1) {
+//                                for (PrinterResults printer : printers) {
+//                                    HashMap<String, Object> Printers = new HashMap<>();
+//                                    Printers.put("Name", printer.getName());
+//                                    Printers.put("Code", printer.getCode());
+//                                    Printers.put("ID", printer.getID());
+//                                    printers_List_array.add(Printers);
+//                                }
+//                                show_printers();
+//                            }
+//                        }
+//                        else{
+//                            AlertDialog.Builder dialog = new AlertDialog.Builder(CheckPriceActivity.this);
+//                            dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+//                            dialog.setCancelable(false);
+//                            dialog.setMessage("Eroare la descarcarea imprimatelor: " + result.getErrorCode());
+//                            dialog.setPositiveButton(getResources().getString(R.string.txt_accept_all), new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    dialog.dismiss();
+//                                }
+//                            });
+//                            dialog.show();
+//                        }
+//                    }
+//                    else{
+//                        AlertDialog.Builder dialog = new AlertDialog.Builder(CheckPriceActivity.this);
+//                        dialog.setTitle(getResources().getString(R.string.msg_dialog_title_atentie));
+//                        dialog.setCancelable(false);
+//                        dialog.setMessage("Eroare la descarcarea imprimatelor! Nici un raspuns!");
+//                        dialog.setPositiveButton(getResources().getString(R.string.txt_accept_all), new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//                            }
+//                        });
+//                        dialog.show();
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(Call<GetPrintersResult> call, Throwable t) {
+//                    Toast.makeText(CheckPriceActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//        }
+    }
+    private void printToBluetoothPrinter(String imageId){
+        rtPrinter = BaseApp.getInstance().getRtPrinter();
+
+        byte[] decodedString = Base64.decode(imageId, Base64.DEFAULT );
+
+        Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+        mBitmap = bitmap;
+
+        if (BaseApp.getInstance().getCurrentCmdType() == BaseEnum.CMD_ESC) {
+            if (mBitmap.getWidth() > 48 * 8) {
+                mBitmap = BitmapConvertUtil.decodeSampledBitmapFromBitmap(bitmap,48 * 8, 4000);
+            }
+        }
+        else {
+            if (mBitmap.getWidth() > 72 * 8) {
+                mBitmap = BitmapConvertUtil.decodeSampledBitmapFromBitmap(bitmap, 72 * 8, 4000);
+            }
+        }
+
+        try {
+            print();
+        } catch (SdkException e) {
+            e.printStackTrace();
+        }
+    }
+    private void print() throws SdkException {
+        if (mBitmap == null) {
+            ToastUtil.show(this, "No image,Firstly Upload a image");
+            return;
+        }
+        escPrint();
+    }
+
+    private void escPrint() throws SdkException {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                showProgressDialog("Loading...");
+
+                CmdFactory cmdFactory = new EscFactory();
+                Cmd cmd = cmdFactory.create();
+                cmd.append(cmd.getHeaderCmd());
+
+                CommonSetting commonSetting = new CommonSetting();
+                commonSetting.setAlign(CommonEnum.ALIGN_MIDDLE);
+                cmd.append(cmd.getCommonSettingCmd(commonSetting));
+
+                BitmapSetting bitmapSetting = new BitmapSetting();
+
+                bitmapSetting.setBmpPrintMode(BmpPrintMode.MODE_MULTI_COLOR);
+
+                bitmapSetting.setBimtapLimitWidth(width * 8);
+                try {
+                    cmd.append(cmd.getBitmapCmd(bitmapSetting, mBitmap));
+                } catch (SdkException e) {
+                    e.printStackTrace();
+                }
+                cmd.append(cmd.getLFCRCmd());
+                cmd.append(cmd.getLFCRCmd());
+                cmd.append(cmd.getLFCRCmd());
+                cmd.append(cmd.getLFCRCmd());
+                cmd.append(cmd.getLFCRCmd());
+                if (rtPrinter != null) {
+                    rtPrinter.writeMsg(cmd.getAppendCmds());//Sync Write
+                }
+
+                hideProgressDialog();
+            }
+        }).start();
+    }
+//    public void show_printers(){
+//        SimpleAdapter simpleAdapterType = new SimpleAdapter(CheckPriceActivity.this, printers_List_array,android.R.layout.simple_list_item_1, new String[]{"Name"}, new int[]{android.R.id.text1});
+//        builderTypePrinters = new AlertDialog.Builder(CheckPriceActivity.this);
+//        builderTypePrinters.setTitle(getResources().getString(R.string.txt_header_msg_sales_printers));
+//        builderTypePrinters.setNegativeButton(R.string.txt_renunt_all, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//                printers_List_array.clear();
+//                dialogInterface.dismiss();
+//            }
+//        });
+//        builderTypePrinters.setAdapter(simpleAdapterType, new DialogInterface.OnClickListener(){
+//            @Override
+//            public void onClick(DialogInterface dialog, int wich) {
+//                String ID = String.valueOf(printers_List_array.get(wich).get("ID"));
+//                String Name = String.valueOf(printers_List_array.get(wich).get("Name"));
+//                printInvoiceToService(ID,Name);
+//            }
+//        });
+//        builderTypePrinters.setCancelable(false);
+//        if(isDestroyed())
+//            return;
+//        else
+//            builderTypePrinters.show();
+//    }
 
     private void getWareHousesList(String userID) {
         Call<GetWarehousesListResult> getWarehousesListResultCall = terminalAPI.getWareHousesList(userID);
@@ -417,23 +677,23 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
         if (requestCode == REQUEST_FROM_LIST_ASSORTMENT){
             if(resultCode == RESULT_OK){
                 if (data != null) {
-                    AssortmentParcelable result = data.getParcelableExtra("AssortimentClicked");
+                     result = data.getParcelableExtra("AssortimentClicked");
 
-//                    assortmentItemResult = new GetAssortmentItemResult();
-//                    assortmentItemResult.setName(data.getStringExtra("Name"));
-//                    assortmentItemResult.setUnit(data.getStringExtra("Unit"));
-//                    assortmentItemResult.setUnitInPackage(data.getStringExtra("UnitInPackage"));
-//                    assortmentItemResult.setUnitPrice(data.getDoubleExtra("UnitPrice", 0));
-//                    assortmentItemResult.setCode(data.getStringExtra("Code"));
-//                    assortmentItemResult.setBarCode(data.getStringExtra("BarCode"));
-//                    assortmentItemResult.setAssortimentID(data.getStringExtra("Id"));
-//                    assortmentItemResult.setMarking(data.getStringExtra("Marking"));
-//                    assortmentItemResult.setPrice(data.getDoubleExtra("Price", 0));
-//                    assortmentItemResult.setRemain(data.getDoubleExtra("Remain", 0));
+                    assortmentItemResult = new GetAssortmentItemResult();
+                    assortmentItemResult.setName(result.getName());
+                    assortmentItemResult.setUnit(result.getUnit());
+                    assortmentItemResult.setUnitInPackage(result.getUnitInPackage());
+                    assortmentItemResult.setUnitPrice(result.getUnitPrice());
+                    assortmentItemResult.setCode(result.getCode());
+                    assortmentItemResult.setBarCode(result.getBarCode());
+                    assortmentItemResult.setAssortimentID(result.getAssortimentID());
+                    assortmentItemResult.setMarking(result.getMarking());
+                    assortmentItemResult.setPrice(result.getPrice());
+                    assortmentItemResult.setRemain(result.getRemain());
 
                     txtNameAsortment.setText(result.getName());
                     txtUnit.setText(result.getUnit());
-                   // double price = Double.valueOf(result.getPrice());
+                    double price = Double.valueOf(result.getPrice());
                     txtPriceAssortment.setText(result.getPrice().replace(",","."));
 
                     if (result.getMarking() != null) {
@@ -444,7 +704,7 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
                     txtCodeAssortment.setText(result.getCode());
                     txtBarcodeAssortment.setText(result.getBarCode());
                     if(result.getRemain() != null)
-                        txtStockAssortment.setText(String.format("%.2f",assortmentItemResult.getRemain()));
+                        txtStockAssortment.setText(String.format("%.2f",result.getRemain()));
                     else
                         txtStockAssortment.setText("0");
                     txtInput_barcode.requestFocus();
@@ -650,4 +910,31 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
             }
         }
     };
+    public void showProgressDialog(final String str){
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(progressDialog == null){
+                    progressDialog = new ProgressDialog(CheckPriceActivity.this);
+                }
+                if(!TextUtils.isEmpty(str)){
+                    progressDialog.setMessage(str);
+                }else{
+                    progressDialog.setMessage("Loading...");
+                }
+                progressDialog.show();
+            }
+        });
+    }
+    public void hideProgressDialog(){
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(progressDialog != null && progressDialog.isShowing()){
+                    progressDialog.hide();
+                }
+            }
+        });
+
+    }
 }

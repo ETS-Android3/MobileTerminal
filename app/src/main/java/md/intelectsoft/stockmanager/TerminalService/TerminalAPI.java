@@ -48,6 +48,8 @@ public interface TerminalAPI {
 
     @GET("json/GetPrintInvoice")
     Call<GetPrintInvoiceResults> getPrintInvoice (@Query("InvoiceID") String invoiceID);
+    @GET("json/GetPrintAssortmentPrice")
+    Call<GetPrintInvoiceResults> getPrintAssortmentPrice(@Query("AssortmentID") String assortmentID, @Query("WarehouseID") String warehouseID);
 
     @GET("json/PrintInvoice")
     Call<ResponseSimple> printInvoice (@Query("InvoiceID") String invoiceId, @Query("PrinterID") String printerId);
