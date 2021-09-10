@@ -908,11 +908,11 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                                 assortment.setCode(assortmentItemResult.getCode());
                                 assortment.setName(assortmentItemResult.getName());
                                 assortment.setUnit(assortmentItemResult.getUnit());
-//                                assortment.setPrice(String.format("%.2f", assortmentItemResult.getPrice()).replace(",","."));
+                               assortment.setPrice(String.format("%.2f", assortmentItemResult.getPrice()).replace(",","."));
                                 assortment.setMarking(assortmentItemResult.getMarking());
-//                                assortment.setRemain(String.format("%.2f", assortmentItemResult.getRemain()).replace(",","."));
+                                assortment.setRemain(String.format("%.2f", assortmentItemResult.getRemain()).replace(",","."));
                                 assortment.setAssortimentID(assortmentItemResult.getAssortimentID());
-//                                assortment.setAllowNonIntegerSale(String.valueOf(assortmentItemResult.getAllowNonIntegerSale()));
+                                assortment.setAllowNonIntegerSale(assortmentItemResult.getAllowNonIntegerSale());
                                 final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);
 
                                 Intent sales = new Intent(".CountSalesMobile");

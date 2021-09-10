@@ -311,8 +311,8 @@ public class Printers extends AppCompatActivity implements NavigationView.OnNavi
                 adressConectoin = bluetoothDevice.getAddress();
                 // Spawn a new thread to avoid blocking the GUI one
                 new Thread()
-                {
-                    public void run() {
+                    {
+                        public void run() {
                         boolean fail = false;
 
                         try {

@@ -605,7 +605,6 @@ public class ListAssortment extends AppCompatActivity {
         });
     }
     private void showAssortmentFromID(String id) {
-        //TODO:Chenge to SPFhelp instance
         asl_list.clear();
         SharedPreferences CheckUidFolder = getSharedPreferences("SaveFolderFilter", MODE_PRIVATE);
         String selectedUidJSON = CheckUidFolder.getString("selected_Uid_Array","[]");

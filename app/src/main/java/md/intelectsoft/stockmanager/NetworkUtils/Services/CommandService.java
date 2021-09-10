@@ -77,7 +77,7 @@ import retrofit2.http.Query;
 //    Call<ResponseSimple> createRevision (@Query("UserID") String userId, @Query("Warehouse") String wareHouse);
 //
 //    @POST("/DataTerminalService/json/SaveRevisionLine")
-//    Call<ResponseSimple> saveRevisionLine (@Body SaveRevisionLineBody saveRevisionLineBody);
+//    Call<ResponseSimple> savateReveRevisionLine (@Body SaveRevisionLineBody saveRevisionLineBody);
 //
 //    @GET("/DataTerminalService/json/GetLableTemplate")
 //    Call<ResponseSimple> getLableTemplate (@Query("LableType") String lableType);
