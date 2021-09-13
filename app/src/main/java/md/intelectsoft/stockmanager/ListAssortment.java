@@ -159,8 +159,8 @@ public class ListAssortment extends AppCompatActivity {
         mArrayAdded_Assortments = new JSONArray();
         array_added_items_inventroy = new JSONArray();
 
-        workPlaceName = SPFHelp.getInstance().getString("WarehouseName",""); //getIntent().getStringExtra("WarehouseName");
-        workPlaceID =SPFHelp.getInstance().getString("WarehouseGUID",""); //getIntent().getStringExtra("WarehouseId");
+        workPlaceName = SPFHelp.getInstance().getString("WorkPlaceName",""); //getIntent().getStringExtra("WarehouseName");
+        workPlaceID = SPFHelp.getInstance().getString("WorkPlaceId",""); //getIntent().getStringExtra("WarehouseId");
 
         lastClickedItemName.add(0,getResources().getString(R.string.header_list_assortment));
         setTitle(getResources().getString(R.string.header_list_assortment));

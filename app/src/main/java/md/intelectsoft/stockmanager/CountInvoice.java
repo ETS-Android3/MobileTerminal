@@ -37,6 +37,7 @@ public class CountInvoice extends AppCompatActivity {
     EditText etCant,etPriceInc,etPriceSales,txtTotalinc;
     String mNameAssortment,mPriceAssortment,mIncomePrice,mIDAssortment;
     boolean mAllowNotIntegerSales,invoiceOnlySum;
+    Double PrSales;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -235,7 +236,6 @@ public class CountInvoice extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 double cant,PrInc;
-
                 if (mAllowNotIntegerSales) {
                     if (!isDouble(String.valueOf(s))) etCant.setError(getResources().getString(R.string.msg_format_number_incorect));
                     else{
@@ -278,7 +278,12 @@ public class CountInvoice extends AppCompatActivity {
                         }else{
                             PrInc = Double.valueOf(etPriceInc.getText().toString());
                         }
-                        Double PrSales=Double.valueOf(etPriceSales.getText().toString());
+
+                        if(etPriceSales.getText().toString().equals("")){
+                            PrSales = Double.valueOf("0.0");
+                        }else{
+                            PrSales=Double.parseDouble(etPriceSales.getText().toString());
+                        }
 
                         Double totalInc = cant * PrInc;
                         Double totalSales = cant * PrSales;
@@ -293,8 +298,6 @@ public class CountInvoice extends AppCompatActivity {
                         txtProfit.setText(String.format("%.2f",profit));
                     }
                 }
-
-
             }
 
             @Override

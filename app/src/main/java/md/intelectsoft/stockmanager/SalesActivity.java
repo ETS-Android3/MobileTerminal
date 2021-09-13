@@ -53,6 +53,7 @@ import com.rt.printerlibrary.setting.BitmapSetting;
 import com.rt.printerlibrary.setting.CommonSetting;
 import com.rt.printerlibrary.utils.BitmapConvertUtil;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -908,9 +909,9 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                                 assortment.setCode(assortmentItemResult.getCode());
                                 assortment.setName(assortmentItemResult.getName());
                                 assortment.setUnit(assortmentItemResult.getUnit());
-                               assortment.setPrice(String.format("%.2f", assortmentItemResult.getPrice()).replace(",","."));
+                               assortment.setPrice(StringUtils.substring(assortmentItemResult.getPrice(), 0, assortmentItemResult.getPrice().length() - 6));
                                 assortment.setMarking(assortmentItemResult.getMarking());
-                                assortment.setRemain(String.format("%.2f", assortmentItemResult.getRemain()).replace(",","."));
+                                assortment.setRemain(StringUtils.substring(assortmentItemResult.getRemain(), 0, assortmentItemResult.getRemain().length() - 5));
                                 assortment.setAssortimentID(assortmentItemResult.getAssortimentID());
                                 assortment.setAllowNonIntegerSale(assortmentItemResult.getAllowNonIntegerSale());
                                 final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);

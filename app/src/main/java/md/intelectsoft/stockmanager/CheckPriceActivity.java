@@ -69,6 +69,8 @@ import com.zebra.sdk.comm.BluetoothConnection;
 import com.zebra.sdk.comm.Connection;
 import com.zebra.sdk.comm.ConnectionException;
 
+import org.apache.commons.lang3.StringUtils;
+
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitBody.GetAssortmentItemBody;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.Assortment;
 import md.intelectsoft.stockmanager.NetworkUtils.RetrofitResults.GetAssortmentItemResult;
@@ -842,10 +844,10 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
                 pgBar.setVisibility(ProgressBar.INVISIBLE);
                 if(assortmentItemResult != null){
                     if(assortmentItemResult.getErrorCode() == 0){
-                        txtPriceAssortment.setText(String.format("%.2f", assortmentItemResult.getPrice()).replace(",","."));
+                        txtPriceAssortment.setText(StringUtils.substring(assortmentItemResult.getPrice(), 0, assortmentItemResult.getPrice().length() - 6));
                         txtNameAsortment.setText(assortmentItemResult.getName());
                         txtMarkingAssortment.setText(assortmentItemResult.getMarking());
-                        txtStockAssortment.setText(String.format("%.2f", assortmentItemResult.getRemain()).replace(",","."));
+                        txtStockAssortment.setText(StringUtils.substring(assortmentItemResult.getRemain(), 0, assortmentItemResult.getRemain().length() - 5));
                         txtCodeAssortment.setText(assortmentItemResult.getCode());
                         txtUnit.setText("/" + assortmentItemResult.getUnit());
 
