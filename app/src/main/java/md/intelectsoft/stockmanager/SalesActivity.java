@@ -457,7 +457,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                                         btn_add_Client.setEnabled(false);
 
                                         Toast.makeText(SalesActivity.this, getResources().getString(R.string.txt_sales_invoice_saved) + InvoiceCode, Toast.LENGTH_SHORT).show();
-                                        boolean print = sharedPrefsInstance.getBoolean("PrintSales",false);
+                                        boolean print = getSharedPreferences("Settings",MODE_PRIVATE).getBoolean("PrintSales",true);
                                         if(print) {
                                             printSales();
                                         }
@@ -623,6 +623,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menus) {
+
         getMenuInflater().inflate(R.menu.menu_sales, menus);
         this.menu = menus;
         return true;
