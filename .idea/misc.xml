@@ -5,32 +5,6 @@
       <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
     </configurations>
   </component>
-  <component name="DesignSurface">
-    <option name="filePathToZoomLevelMap">
-      <map>
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/activity_about.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/activity_authorize.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/activity_check_price.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/activity_checkout.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/activity_conect.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/activity_count_inventory.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/activity_count_invoice.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/activity_count_list_of_assortment.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/activity_count_list_of_assortment_inventory.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/activity_count_stock_assortment.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/activity_count_transfer.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/activity_search_provider.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/activity_set_assortment_barcode.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/activity_stock_assortment.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/activity_work_place.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/app_bar_check_price.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/app_bar_list_revision.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/nav_header_main.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/show_asl_inventory.xml" value="0.20885416666666667" />
-        <entry key="..\:/Android/MobileTerminal/app/src/main/res/layout/show_revision_list.xml" value="0.20885416666666667" />
-      </map>
-    </option>
-  </component>
   <component name="PDMPlugin">
     <option name="skipTestSources" value="false" />
   </component>

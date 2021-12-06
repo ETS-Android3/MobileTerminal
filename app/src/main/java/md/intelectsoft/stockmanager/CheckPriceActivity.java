@@ -695,7 +695,7 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
 
                     txtNameAsortment.setText(result.getName());
                     txtUnit.setText(result.getUnit());
-                    double price = Double.valueOf(result.getPrice());
+                    double price = Double.valueOf(result.getPrice().replace(",","."));
                     txtPriceAssortment.setText(result.getPrice().replace(",","."));
 
                     if (result.getMarking() != null) {
