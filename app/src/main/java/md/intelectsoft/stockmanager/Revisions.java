@@ -182,7 +182,13 @@ public class Revisions extends AppCompatActivity implements NavigationView.OnNav
                 String RevisionNumber = json.getString("RevisionNumber");
                 String Uid = json.getString("RevisionID");
                 String prefix = json.getString("WeightPrefix");
-                WeightPrefix = Integer.valueOf(prefix);
+                if(Integer.valueOf(prefix) == null){
+
+                }
+                else{
+                    WeightPrefix = Integer.valueOf(prefix);
+
+                }
                 if(WorkPlaceName != null && !WorkPlaceName.equals("Nedeterminat")){
                     if(Name.contains(WorkPlaceName)){
                         asl_.put("Name",Name);

@@ -71,6 +71,10 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
         Intent sales = getIntent();
         AssortmentParcelable assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
         mNameAssortment = assortment.getName();
+        String test = assortment.getPrice();
+        String test2 = assortment.getIncomePrice();
+        String test3 = assortment.getUnitPrice();
+
         mPriceAssortment = assortment.getPrice();
         final String mMarkingAssortment = assortment.getMarking();
         final String mCodeAssortment = assortment.getCode();
@@ -243,7 +247,6 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(mAllowNotIntegerSales){
