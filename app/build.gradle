@@ -7,16 +7,25 @@ apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.jakewharton.butterknife'
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('D:\\AndroidKeyStores\\MobileTerminal\\mobileTerminal.jks')
+            storePassword 'android'
+            keyAlias 'Mobile'
+            keyPassword 'android'
+        }
+    }
     compileSdkVersion 30
     defaultConfig {
         applicationId "md.intelectsoft.stockmanager"
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 43
-        versionName "4.3.1130"
+        versionName '4.3.1131'
         multiDexEnabled true
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         setProperty("archivesBaseName", "StockManager v$versionName")
+        signingConfig signingConfigs.release
     }
     buildTypes {
         release {
