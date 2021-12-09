@@ -5,6 +5,18 @@
       <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
     </configurations>
   </component>
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/WorkRepos/MobileTerminal/app/src/main/res/layout/activity_conect.xml" value="0.20885416666666667" />
+        <entry key="..\:/WorkRepos/MobileTerminal/app/src/main/res/layout/activity_securitate.xml" value="0.20885416666666667" />
+        <entry key="..\:/WorkRepos/MobileTerminal/app/src/main/res/layout/app_bar_securitate.xml" value="0.20885416666666667" />
+        <entry key="..\:/WorkRepos/MobileTerminal/app/src/main/res/layout/content_check_price.xml" value="0.20520833333333333" />
+        <entry key="..\:/WorkRepos/MobileTerminal/app/src/main/res/layout/content_printers.xml" value="0.371875" />
+        <entry key="..\:/WorkRepos/MobileTerminal/app/src/main/res/layout/content_securitate.xml" value="0.20885416666666667" />
+      </map>
+    </option>
+  </component>
   <component name="PDMPlugin">
     <option name="skipTestSources" value="false" />
   </component>

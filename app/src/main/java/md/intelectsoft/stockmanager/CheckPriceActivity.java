@@ -159,7 +159,7 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
         navigationView.setNavigationItemSelectedListener(this);
 
         if (!SPFHelp.getInstance().getBoolean("ShowCode",false))
-            txtCodeAssortment.setVisibility(View.INVISIBLE);
+//            txtCodeAssortment.setVisibility(View.INVISIBLE);
         simpleDateFormat.setTimeZone(timeZone);
 
         workPlaceName = SPFHelp.getInstance().getString("WorkPlaceName", "");
@@ -716,6 +716,9 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
     }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        KeyEvent test2 = event;
+        int test3 = event.getKeyCode();
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             txtInput_barcode.requestFocus();
             switch (event.getKeyCode()) {
@@ -757,6 +760,10 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
                 break;
                 case KeyEvent.KEYCODE_0: {
                     txtInput_barcode.append("0");
+                }
+                break;
+                case  KeyEvent.KEYCODE_F9: {
+
                 }
                 break;
                 case KeyEvent.KEYCODE_DEL: {

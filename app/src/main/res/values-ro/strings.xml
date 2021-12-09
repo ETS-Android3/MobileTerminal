@@ -210,5 +210,5 @@
     <string name="buttonCreate">Creare produs</string>
     <string name="provider_button">Furnizor</string>
     <string name="hint_search_provider">Search provider</string>
-    <string name="btn_adauga_client_search">Adauga client</string>
+     <string name="btn_adauga_client_search">Adauga client</string>
 </resources>
