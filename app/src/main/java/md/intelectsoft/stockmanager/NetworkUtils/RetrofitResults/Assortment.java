@@ -56,6 +56,9 @@ public class Assortment {
     @SerializedName("VATCode")
     @Expose
     private String vATCode;
+    @SerializedName("Weight")
+    @Expose
+    private String weight;
 
     private String mCount;
 
@@ -193,6 +196,12 @@ public class Assortment {
 
     public void setVATCode(String vATCode) {
         this.vATCode = vATCode;
+    }
+
+    public String getWeight() { return weight; }
+
+    public void setWeight(String weight){
+        this.weight = weight;
     }
 
     public String getCount() {
