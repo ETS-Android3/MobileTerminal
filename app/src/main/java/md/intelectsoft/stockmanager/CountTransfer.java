@@ -225,8 +225,10 @@ public class CountTransfer extends AppCompatActivity {
 
     }
     private void saveCount(){
-        String test = et_count.getText().toString();
-        if (!et_count.getText().toString().equals("")) {
+        String barcode = et_count.getText().toString();
+        String aftercur = barcode.substring(0,2);
+
+        if (!et_count.getText().toString().equals("") && !barcode.contains(aftercur)) {
 
             if (!isDouble(et_count.getText().toString()))
                 et_count.setError(getResources().getString(R.string.msg_format_number_incorect));

@@ -108,6 +108,15 @@ public class CountSales extends AppCompatActivity {
         txt_stoc.setText(mRemainAssortment);
         txt_price.setText(mPriceAssortment);
         txt_unit.setText("/" + assortment.getUnit());
+
+        String weightCode = mBarcodeAssortment.substring(7, 12);
+        String weightKg = weightCode.substring(0,2);
+        String weightGrams =weightCode.substring(2,5);
+        String quantity = weightKg + "." + weightGrams;
+
+        Double quantityDouble = Double.parseDouble(quantity);
+
+        et_count.setText(quantityDouble.toString());
         et_count.requestFocus();
 
 

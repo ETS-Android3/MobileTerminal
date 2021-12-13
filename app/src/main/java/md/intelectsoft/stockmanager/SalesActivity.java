@@ -886,7 +886,10 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                 show_keyboard[0] = false;
 
                 GetAssortmentItemBody assortmentItemBody = new GetAssortmentItemBody();
-                assortmentItemBody.setAssortmentIdentifier(txt_input_barcode.getText().toString());
+                String barcode = txt_input_barcode.getText().toString();
+                String code = barcode.substring(0, 7);
+
+                assortmentItemBody.setAssortmentIdentifier(code);
                 assortmentItemBody.setShowStocks(true);
                 assortmentItemBody.setUserID(UserId);
                 assortmentItemBody.setWarehouseID(WareUid);
@@ -906,7 +909,8 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                             if(assortmentItemResult.getErrorCode() == 0){
                                 pgBar.setVisibility(ProgressBar.INVISIBLE);
                                 Assortment assortment = new Assortment();
-                                assortment.setBarCode(assortmentItemResult.getBarCode());
+                                String barcode = txtBarcode_introdus.getText().toString();
+                                assortment.setBarCode(barcode);
                                 assortment.setCode(assortmentItemResult.getCode());
                                 assortment.setName(assortmentItemResult.getName());
                                 assortment.setUnit(assortmentItemResult.getUnit());
