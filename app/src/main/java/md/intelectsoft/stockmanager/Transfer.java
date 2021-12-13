@@ -538,6 +538,11 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                     sendAssortiment.put("WarehouseID", WareUid);
                     sendAssortiment.put("Weight", weightString);
 
+//                        Intent sales = new Intent(".CountTransferMobile");
+//                        sales.putExtra(AssortimentClickentSendIntent,assortmentParcelable);
+//                        startActivityForResult(sales, REQUEST_COUNT_TRANSFER);
+
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                     ((BaseApp)getApplication()).appendLog(e.getMessage(),Transfer.this);
@@ -560,6 +565,7 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
 
         }
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -1181,6 +1187,15 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
         protected void onPostExecute(String response) {
             if(!response.equals("")) {
                 try {
+                    final Intent transfer = getIntent();
+                    txtBarcode_introdus.requestFocus();
+                    String test = txtBarcode_introdus.getText().toString();
+                    String weightCode = barcode.substring(7, 12);
+                    String weightKg = weightCode.substring(0,1);
+                    String weightGrams =weightCode.substring(2,5);
+                    weightString = weightKg + "." + weightGrams;
+
+
                     JSONObject responseAssortiment = new JSONObject(response);
                     int ErrorCode = responseAssortiment.getInt("ErrorCode");
                     if (ErrorCode == 0) {
@@ -1191,20 +1206,22 @@ public class Transfer extends AppCompatActivity implements NavigationView.OnNavi
                         String Codes = responseAssortiment.getString("Code");
                         String Uid = responseAssortiment.getString("AssortimentID");
                         String Barcodes = responseAssortiment.getString("BarCode");
-//                        String Weight = responseAssortiment.getString("Weight");
                         boolean allowInteger = responseAssortiment.getBoolean("AllowNonIntegerSale");
 
                         pgBar.setVisibility(ProgressBar.INVISIBLE);
+                        String weight= weightString;
 
                         Assortment assortment = new Assortment();
-                        assortment.setBarCode(Barcodes);
+                        String bar = txtBarcode_introdus.getText().toString();
+                        assortment.setBarCode(bar);
                         assortment.setCode(Codes);
                         assortment.setName(Names);
-//                        assortment.setPrice(Price);
+                        assortment.setPrice(Price);
                         assortment.setMarking(Marking);
-//                        assortment.setRemain(Remain);
+                        assortment.setRemain(Remain);
                         assortment.setAssortimentID(Uid);
-//                        assortment.setWeight(Weight);
+
+                        assortment.setWeight(weight);
                         assortment.setUnit(responseAssortiment.getString("Unit"));
 //                        assortment.setAllowNonIntegerSale(String.valueOf(allowInteger));
                         final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);

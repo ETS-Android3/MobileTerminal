@@ -70,6 +70,9 @@ public class AssortmentParcelable implements Parcelable {
     @SerializedName("VATCode")
     @Expose
     private String vATCode;
+    @SerializedName("Weight")
+    @Expose
+    private String weight;
     private String mCount;
 
     public AssortmentParcelable(Parcel in) {
@@ -98,6 +101,7 @@ public class AssortmentParcelable implements Parcelable {
         unitPrice = in.readString();
         vATCode = in.readString();
         mCount = in.readString();
+        weight = in.readString();
     }
 
     public AssortmentParcelable(Assortment asl) {
@@ -119,6 +123,7 @@ public class AssortmentParcelable implements Parcelable {
 //        unitPrice = asl.getUnitPrice();
         vATCode = asl.getVATCode();
         mCount = asl.getCount();
+        weight = asl.getWeight();
     }
 
     public static final Creator<AssortmentParcelable> CREATOR = new Creator<AssortmentParcelable>() {
@@ -277,6 +282,12 @@ public class AssortmentParcelable implements Parcelable {
         this.unitPrice = unitPrice;
     }
 
+    public String getWeight() { return weight; }
+
+    public void setWeight(String weight){
+        this.weight = weight;
+    }
+
     public String getVATCode() {
         return vATCode;
     }
@@ -323,5 +334,6 @@ public class AssortmentParcelable implements Parcelable {
         dest.writeString(unitInPackage);
         dest.writeString(unitPrice);
         dest.writeString(vATCode);
+        dest.writeString(weight);
     }
 }

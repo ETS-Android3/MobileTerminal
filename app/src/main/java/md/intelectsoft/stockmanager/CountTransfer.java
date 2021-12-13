@@ -33,7 +33,8 @@ import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSen
 
 public class CountTransfer extends AppCompatActivity {
     TextView txt_barcode,txt_code,txt_articul,txt_stoc,txt_price,txt_name;
-    TextView et_count,txtUnit;
+    TextView txtUnit;
+    EditText et_count;
     Button btn_add, btn_cancel;
     boolean adauga_Count=false,mAllowNotIntegerSales;
     String mNameAssortment,mIDAssortment,mPriceAssortment,mMarkingAssortment,mCodeAssortment,mBarcodeAssortment,mRemainAssortment;
@@ -98,20 +99,29 @@ public class CountTransfer extends AppCompatActivity {
         txt_stoc.setText(mRemainAssortment);
         txt_price.setText(mPriceAssortment);
 
+        String weightCode = mBarcodeAssortment.substring(7, 12);
+        String weightKg = weightCode.substring(0,2);
+        String weightGrams =weightCode.substring(2,5);
+        String weightString = weightKg + "." + weightGrams;
+
+        Double weight = Double.parseDouble(weightString);
+
         et_count.requestFocus();
+        et_count.setText(weight.toString());
+
         SPFHelp shredPrefsInstance = SPFHelp.getInstance();
 
         boolean ShowCode = shredPrefsInstance.getBoolean("ShowCode", false);
         boolean showKB = shredPrefsInstance.getBoolean("ShowKeyBoard",false);
         final boolean checkStock = shredPrefsInstance.getBoolean("CheckStockInput", false);
 
-        if (!ShowCode) {
-            txt_code.setVisibility(View.INVISIBLE);
-        }
-        if (showKB){
-            et_count.requestFocus();
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        }
+//        if (!ShowCode) {
+//            txt_code.setVisibility(View.INVISIBLE);
+//        }
+//        if (showKB){
+//            et_count.requestFocus();
+//            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+//        }
         et_count.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int keyCode, KeyEvent event) {
@@ -215,8 +225,9 @@ public class CountTransfer extends AppCompatActivity {
 
     }
     private void saveCount(){
-        if (adauga_Count && !et_count.getText().toString().equals("")) {
-        if (mAllowNotIntegerSales) {
+        String test = et_count.getText().toString();
+        if (!et_count.getText().toString().equals("")) {
+
             if (!isDouble(et_count.getText().toString()))
                 et_count.setError(getResources().getString(R.string.msg_format_number_incorect));
             else if (isDouble(et_count.getText().toString())){
@@ -234,26 +245,7 @@ public class CountTransfer extends AppCompatActivity {
                 setResult(RESULT_OK, transfer);
                 finish();
             }
-        }
-        else {
-            if (!isInteger(et_count.getText().toString()))
-                et_count.setError(getResources().getString(R.string.msg_only_number_integer));
-            else if (isInteger(et_count.getText().toString())){
-                JSONObject asl = new JSONObject();
-                try {
-                    asl.put("AssortimentName",mNameAssortment);
-                    asl.put("AssortimentUid", mIDAssortment);
-                    asl.put("Count", et_count.getText().toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    ((BaseApp)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
-                }
-                Intent transfer = new Intent();
-                transfer.putExtra("AssortmentTransferAdded",asl.toString());
-                setResult(RESULT_OK, transfer);
-                finish();
-            }
-        }
+
         }else{
             Toast.makeText(CountTransfer.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
             et_count.requestFocus();
