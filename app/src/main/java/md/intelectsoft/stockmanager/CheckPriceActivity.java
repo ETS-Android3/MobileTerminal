@@ -98,6 +98,7 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
     TimerTask timerTaskSync;
     Timer sync;
     EditText count_lable;
+    Integer WeightPrefix;
 
     AlertDialog.Builder builderType,builderTypePrinters;
     ArrayList<HashMap<String, Object>> stock_List_array = new ArrayList<>();
@@ -148,6 +149,9 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
         pgBar = findViewById(R.id.progressBar_check_price);
         count_lable = findViewById(R.id.count_etichete_check_price);
         progressDialog = new ProgressDialog(CheckPriceActivity.this);
+
+        final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
+        WeightPrefix = getRevisions.getInt("WeightPrefix",0);
 
         View headerLayout = navigationView.getHeaderView(0);
         TextView textWorkPlace = (TextView) headerLayout.findViewById(R.id.txt_workplace_user);
@@ -834,7 +838,25 @@ public class CheckPriceActivity extends AppCompatActivity implements NavigationV
         show_keyboard[0] = false;
 
         GetAssortmentItemBody assortmentItemBody = new GetAssortmentItemBody();
-        assortmentItemBody.setAssortmentIdentifier(txtInput_barcode.getText().toString());
+        String barcode;
+        String code = txtInput_barcode.getText().toString();
+        if (code.length() >= 7){
+            String prefix = code.substring(0,2);
+            if (WeightPrefix.toString().equals(prefix)){
+                barcode = code.substring(0,7);
+
+            }else
+            {
+                barcode = txtInput_barcode.getText().toString();
+            }
+        }
+        else
+        {
+            barcode = txtInput_barcode.getText().toString();
+        }
+
+
+        assortmentItemBody.setAssortmentIdentifier(barcode);
         assortmentItemBody.setShowStocks(true);
         assortmentItemBody.setUserID(UserId);
         assortmentItemBody.setWarehouseID(workPlaceId);
