@@ -38,6 +38,7 @@ public class CountTransfer extends AppCompatActivity {
     Button btn_add, btn_cancel;
     boolean adauga_Count=false,mAllowNotIntegerSales;
     String mNameAssortment,mIDAssortment,mPriceAssortment,mMarkingAssortment,mCodeAssortment,mBarcodeAssortment,mRemainAssortment;
+    Integer WeightPrefix;
 
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -90,6 +91,9 @@ public class CountTransfer extends AppCompatActivity {
         mRemainAssortment = assortment.getRemain();
         mIDAssortment = assortment.getAssortimentID();
         mAllowNotIntegerSales =Boolean.parseBoolean(assortment.getAllowNonIntegerSale());
+
+        final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
+        WeightPrefix = getRevisions.getInt("WeightPrefix",0);
 
         txtUnit.setText("/" + assortment.getUnit());
         txt_name.setText(mNameAssortment);
@@ -225,10 +229,10 @@ public class CountTransfer extends AppCompatActivity {
 
     }
     private void saveCount(){
-        String barcode = et_count.getText().toString();
+        String barcode = mBarcodeAssortment.toString();
         String aftercur = barcode.substring(0,2);
 
-        if (!et_count.getText().toString().equals("") && !barcode.contains(aftercur)) {
+        if (!et_count.getText().toString().equals("") || WeightPrefix.toString().equals(aftercur)) {
 
             if (!isDouble(et_count.getText().toString()))
                 et_count.setError(getResources().getString(R.string.msg_format_number_incorect));

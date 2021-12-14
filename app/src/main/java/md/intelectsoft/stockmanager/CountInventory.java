@@ -64,6 +64,9 @@ public class CountInventory extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_count_inventory);
 
+        final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
+        WeightPrefix = getRevisions.getInt("WeightPrefix",0);
+
         Toolbar toolbar = findViewById(R.id.toolbar_count_inventory);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -320,7 +323,10 @@ public class CountInventory extends AppCompatActivity {
             }
         }
         else {
-            if (isInteger(inpCount.getText().toString())) {
+
+            String prefix = mBarcodeAssortment.substring(0,2);
+            String weightPrefix = String.valueOf(WeightPrefix);
+            if (isInteger(inpCount.getText().toString()) || weightPrefix.equals(prefix)) {
                 pgH.setMessage("loading..");
                 pgH.setIndeterminate(true);
                 pgH.setCancelable(false);
