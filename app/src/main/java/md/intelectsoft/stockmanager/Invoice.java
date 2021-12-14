@@ -46,6 +46,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
 
+import org.apache.commons.validator.Var;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,6 +85,7 @@ public class Invoice extends AppCompatActivity implements NavigationView.OnNavig
     TimerTask timerTaskSync;
     Timer sync;
     TerminalAPI terminalApi;
+    Integer WeightPrefix;
 
     Menu menu;
     JSONObject json_asl, sendInvoice, sendAssortiment;
@@ -126,6 +128,9 @@ public class Invoice extends AppCompatActivity implements NavigationView.OnNavig
         navigationView.setNavigationItemSelectedListener(this);
 
         final SharedPreferences Settings =getSharedPreferences("Settings", MODE_PRIVATE);
+
+        final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
+        WeightPrefix = getRevisions.getInt("WeightPrefix",0);
 
         UserId = SPFHelp.getInstance().getString("UserId","");
         url_ = SPFHelp.getInstance().getString("URI", "0.0.0.0:1111");
@@ -340,11 +345,24 @@ public class Invoice extends AppCompatActivity implements NavigationView.OnNavig
         txt_input_barcode.requestFocus();
         if (!txt_input_barcode.getText().toString().equals("")) {
             txt_input_barcode.requestFocus();
+
+            String barcode = null;
+
+            if (txt_input_barcode.getText().toString().length() >= 7){
+                String prefix = txt_input_barcode.getText().toString().substring(0, 2);
+                if (WeightPrefix.toString().equals(prefix)){
+                    barcode = txt_input_barcode.getText().toString().substring(0, 7);
+                }
+                else{
+                    barcode = txt_input_barcode.getText().toString();
+                }
+            }
+
             pgBar.setVisibility(ProgressBar.VISIBLE);
             show_keyboard[0] = false;
             sendAssortiment = new JSONObject();
             try {
-                sendAssortiment.put("AssortmentIdentifier", txt_input_barcode.getText().toString());
+                sendAssortiment.put("AssortmentIdentifier", barcode);
                 sendAssortiment.put("UserID", UserId);
                 sendAssortiment.put("WarehouseID", WareUid);
             } catch (JSONException e) {
@@ -995,8 +1013,8 @@ public class Invoice extends AppCompatActivity implements NavigationView.OnNavig
 
                         Assortment assortment = new Assortment();
                         assortment.setName(Names);
-//                        assortment.setPrice(Price);
-//                        assortment.setIncomePrice(PriceIncoming);
+                        assortment.setPrice(Price);
+                        assortment.setIncomePrice(PriceIncoming);
                         assortment.setAssortimentID(Uid);
 //                        assortment.setAllowNonIntegerSale(String.valueOf(allowInteger));
                         final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);
