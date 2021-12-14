@@ -113,7 +113,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
     Timer sync;
     Boolean invoiceSaved = false;
     boolean createNewInvoice = false;
-
+    Integer WeightPrefix;
     Menu menu;
     JSONArray mAssortmentArray;
 
@@ -158,6 +158,8 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
         btn_check_remain_for_assortment = findViewById(R.id.btn_check_remain_assortment);
         pgH = new ProgressDialog(SalesActivity.this);
 
+        final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
+        WeightPrefix = getRevisions.getInt("WeightPrefix",0);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout_sales);
         NavigationView navigationView = findViewById(R.id.nav_view_sales);
@@ -879,7 +881,7 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
 
     private void getAssortmentSales(){
         txt_input_barcode.requestFocus();
-        if (!txt_input_barcode.getText().toString().equals("")) {
+        if (!txt_input_barcode.getText().toString().equals("") || txt_input_barcode.getText().toString().length() >= 7) {
             if (!invoiceSaved) {
                 txt_input_barcode.requestFocus();
                 pgBar.setVisibility(ProgressBar.VISIBLE);

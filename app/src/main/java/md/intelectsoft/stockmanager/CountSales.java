@@ -37,6 +37,7 @@ public class CountSales extends AppCompatActivity {
     Button btn_add, btn_cancel;
     Boolean mAllowNotIntegerSales;
     String mNameAssortment,mPriceAssortment,mIDAssortment,mRemainAssortment,mMarkingAssortment,mCodeAssortment,mBarcodeAssortment,WareHouse,WareName;
+    Integer WeightPrefix;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -83,6 +84,9 @@ public class CountSales extends AppCompatActivity {
 
         SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
 //        SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
+
+        final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
+        WeightPrefix = getRevisions.getInt("WeightPrefix",0);
 
         boolean ShowCode = sharedPrefsInstance.getBoolean("ShowCode", false);
         boolean showKB = sharedPrefsInstance.getBoolean("ShowKeyBoard",false);
@@ -355,52 +359,80 @@ public class CountSales extends AppCompatActivity {
             }
         }
         else{
-            if(!mAllowNotIntegerSales){
-                if (isInteger(et_count.getText().toString())) {
+            String prefixString = txt_barcode.getText().toString().substring(0, 2);
+            if (!mAllowNotIntegerSales || prefixString == WeightPrefix.toString()) {
+                String prefix = WeightPrefix.toString();
+
+                if (prefixString.equals(prefix)){
                     JSONObject asl = new JSONObject();
                     try {
                         double count = 0;
-                        try{
+                        try {
                             count = Double.valueOf(et_count.getText().toString());
-                        }catch (Exception e){
-                            count = Double.valueOf(et_count.getText().toString().replace(",","."));
+                        } catch (Exception e) {
+                            count = Double.valueOf(et_count.getText().toString().replace(",", "."));
                         }
 
                         asl.put("AssortimentName", mNameAssortment);
-                        asl.put("AssortimentUid",mIDAssortment);
+                        asl.put("AssortimentUid", mIDAssortment);
                         asl.put("Count", count);
                         asl.put("Price", mPriceAssortment);
-                        asl.put("Warehouse",WareHouse);
-                        asl.put("WareName",WareName);
+                        asl.put("Warehouse", WareHouse);
+                        asl.put("WareName", WareName);
                     } catch (JSONException e) {
-                        ((BaseApp)getApplication()).appendLog(e.getMessage(),CountSales.this);
+                        ((BaseApp) getApplication()).appendLog(e.getMessage(), CountSales.this);
                         e.printStackTrace();
                     }
                     Intent sales = new Intent();
                     sales.putExtra("AssortmentSalesAdded", asl.toString());
                     setResult(RESULT_OK, sales);
                     finish();
-                }else{
+                }
+                else if (isInteger(et_count.getText().toString())) {
+                    JSONObject asl = new JSONObject();
+                    try {
+                        double count = 0;
+                        try {
+                            count = Double.valueOf(et_count.getText().toString());
+                        } catch (Exception e) {
+                            count = Double.valueOf(et_count.getText().toString().replace(",", "."));
+                        }
+
+                        asl.put("AssortimentName", mNameAssortment);
+                        asl.put("AssortimentUid", mIDAssortment);
+                        asl.put("Count", count);
+                        asl.put("Price", mPriceAssortment);
+                        asl.put("Warehouse", WareHouse);
+                        asl.put("WareName", WareName);
+                    } catch (JSONException e) {
+                        ((BaseApp) getApplication()).appendLog(e.getMessage(), CountSales.this);
+                        e.printStackTrace();
+                    }
+                    Intent sales = new Intent();
+                    sales.putExtra("AssortmentSalesAdded", asl.toString());
+                    setResult(RESULT_OK, sales);
+                    finish();
+                } else {
                     et_count.setError(getResources().getString(R.string.sales_count_only_integer));
                     et_count.requestFocus();
                 }
-            }else{
+            } else {
                 JSONObject asl = new JSONObject();
                 try {
                     double count = 0;
-                    try{
+                    try {
                         count = Double.valueOf(et_count.getText().toString());
-                    }catch (Exception e){
-                        count = Double.valueOf(et_count.getText().toString().replace(",","."));
+                    } catch (Exception e) {
+                        count = Double.valueOf(et_count.getText().toString().replace(",", "."));
                     }
                     asl.put("AssortimentName", mNameAssortment);
-                    asl.put("AssortimentUid",mIDAssortment);
+                    asl.put("AssortimentUid", mIDAssortment);
                     asl.put("Count", count);
                     asl.put("Price", mPriceAssortment);
-                    asl.put("Warehouse",WareHouse);
-                    asl.put("WareName",WareName);
+                    asl.put("Warehouse", WareHouse);
+                    asl.put("WareName", WareName);
                 } catch (JSONException e) {
-                    ((BaseApp)getApplication()).appendLog(e.getMessage(),CountSales.this);
+                    ((BaseApp) getApplication()).appendLog(e.getMessage(), CountSales.this);
                     e.printStackTrace();
                 }
                 Intent sales = new Intent();
