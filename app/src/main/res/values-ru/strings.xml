@@ -1,9 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">Stock Manager</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_open">Открыть панель навигации</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_desc">Navigation header</string>
+    <string name="nav_header_title">Android</string>
+    <string name="nav_header_desc">Заголовок навигации</string>
 
     <string name="connection_failed_bluethoot">Ошибка подключение</string>
     <string name="bluetooth_not_found">Bluetooth не найден</string>
@@ -13,14 +13,12 @@
     <string name="conected_device_bluetooth">Подключено к устройству:</string>
     <string name="status_created_socket_bluetooth">Ошибка создание сокета</string>
     <string name="status_conection_bluetooth_handler">Ошибка подключение.</string>
-
     <string name="btn_check_price">Проверка цен</string>
     <string name="btn_sales_main_activity">Продажа</string>
     <string name="btn_invoice_main_activity">Приходный документ</string>
     <string name="btn_transfer_main_activity">Внутрение перемещение</string>
     <string name="btn_inventariere_main_activity">Инвентаризация</string>
     <string name="btn_stock_asl_main_activity">Хранение ассортимента</string>
-
     <string name="txt_con_intern_licenta">Внутрений код:</string>
     <string name="txt_licenta_licenta">Лицензия:</string>
     <string name="btn_verificare_licenta">Проверить</string>
@@ -31,7 +29,6 @@
     <string name="btn_donload_install_new_version">Проверить обновления</string>
     <string name="btn_donload_install_old_version">Откатить</string>
     <string name="txt_hint_input_licenta_securitate">Ключ лицензий</string>
-
     <string name="txt_header_inp_count">Введите кол-во:</string>
     <string name="header_of_lista_reviziilor">Список ревизий</string>
     <string name="header_obout_program">О программе</string>
@@ -43,7 +40,6 @@
     <string name="header_login_user_settings">Аутентификация локально:</string>
     <string name="header_login_client_activity">Аутентификация клиента:</string>
     <string name="todo">TODO</string>
-
     <string name="item_menu_drawable_generale">Общие</string>
     <string name="item_menu_drawable_exit">Выход</string>
     <string name="item_menu_drawable_setari">Настройки</string>
@@ -109,7 +105,6 @@
     <string name="txt_suma_de_vinzare_invoice">Сумма прод.:</string>
     <string name="txt_profit_invoice">Прибыль:</string>
     <string name="txt_utilizator_workplace">Пользователь:</string>
-
     <string name="txt_header_msg_sales_printers">Список принтеров:</string>
     <string name="txt_header_msg_list_depozitelor">Список складов</string>
     <string name="msg_depasirea_limitei_vinzare">Привышено лимит кол-во при продаже!</string>
@@ -126,7 +121,6 @@
     <string name="txt_sales_invoice_saved">Продажа была сохранена!\nНомер счёта:</string>
     <string name="msg_document_notsaved_cod_error">Документ не был сохранён!Код ошибки:</string>
     <string name="msg_document_not_saved_nu_raspuns_serviciu">Документ не был сохранён! Нет ответа от сервера.</string>
-
     <string name="msg_errore_label_printer">Ошибка у принтер для печати этикеток!</string>
     <string name="msg_erroare_la_imrpimare">Ошибка при печати:</string>
     <string name="msg_verifica_imprimantele_bluetooth">Проверьте принтер, если он включен, подключен или у вас есть правильный принтер в настройках.</string>
@@ -203,11 +197,13 @@
     <string name="creare">Создать</string>
     <string name="denumirea_produsului">Название</string>
     <string name="barcode">Штрих код</string>
-    <string name="complete_this_filed">Completeaza acest cimp !</string>
+    <string name="complete_this_filed">Заполните это поле !</string>
     <string name="item_created">Товар успешно создан !</string>
     <string name="error_create_item">"Ошибка: "</string>
     <string name="buttonCreate">Создать товар</string>
     <string name="provider_button">Поставщик</string>
-    <string name="hint_search_provider">Search provider</string>
-    <string name="btn_adauga_client_search">Adauga client</string>
+    <string name="hint_search_provider">Поиск</string>
+    <string name="btn_adauga_client_search">Добавить клиента</string>
+    <string name="btn_adauga_produs">Создание товара</string>
+
 </resources>

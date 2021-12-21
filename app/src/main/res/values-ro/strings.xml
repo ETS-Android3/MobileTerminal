@@ -1,9 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">Stock Manager</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_desc">Navigation header</string>
+    <string name="navigation_drawer_open">Deschideți sertarul de navigare</string>
+    <string name="navigation_drawer_close">Închideți sertarul de navigare</string>
+    <string name="nav_header_title">Android</string>
+    <string name="nav_header_desc">Antet de navigare</string>
 
     <string name="connection_failed_bluethoot">Conexiune eșuată</string>
     <string name="bluetooth_not_found">Status: Bluetooth nu a fost găsit</string>
@@ -13,14 +13,12 @@
     <string name="conected_device_bluetooth">Conectat la device-ul:</string>
     <string name="status_created_socket_bluetooth">Crearea socket-ului eșuat</string>
     <string name="status_conection_bluetooth_handler">Conexiune eșuată.</string>
-
     <string name="btn_check_price">Verificare preț</string>
     <string name="btn_sales_main_activity">Vânzare</string>
     <string name="btn_invoice_main_activity">Factură de intrare</string>
     <string name="btn_transfer_main_activity">Act de transfer</string>
     <string name="btn_inventariere_main_activity">Inventariere</string>
     <string name="btn_stock_asl_main_activity">Stocare asortiment</string>
-
     <string name="txt_con_intern_licenta">Codul intern:</string>
     <string name="txt_licenta_licenta">Licența:</string>
     <string name="btn_verificare_licenta">Verificare</string>
@@ -32,7 +30,6 @@
     <string name="btn_donload_install_new_version">Verifica versiunea</string>
     <string name="btn_donload_install_old_version">Downgrade</string>
     <string name="txt_hint_input_licenta_securitate">Licența primită</string>
-
     <string name="txt_header_inp_count">Introduceți cantitatea:</string>
     <string name="header_of_lista_reviziilor">Lista reviziilor</string>
     <string name="header_obout_program">Despre program</string>
@@ -44,7 +41,6 @@
     <string name="header_login_user_settings">Autentificare locală:</string>
     <string name="header_login_client_activity">Autentificare client:</string>
     <string name="todo">TODO</string>
-
     <string name="item_menu_drawable_generale">Generale</string>
     <string name="item_menu_drawable_exit">Ieșire</string>
     <string name="item_menu_drawable_setari">Setări</string>
@@ -64,15 +60,15 @@
     <string name="btn_test_conection">Test</string>
     <string name="btn_select_count_inventory">Manual</string>
     <string name="btn_select_auto_count_inventory">Auto (+1)</string>
-    <string name="txt_cant_initiala_inventory">Cant. inițială</string>
-    <string name="txt_cant_adaugata_inventory">Cant. adaugată</string>
+    <string name="txt_cant_initiala_inventory">Cantitatea inițială</string>
+    <string name="txt_cant_adaugata_inventory">Cantitatea adaugată</string>
     <string name="txt_total_all">Total</string>
     <string name="txt_accept_all">Accept</string>
     <string name="txt_factura_invoice">Factura:</string>
     <string name="txt_save_document">OK</string>
     <string name="txt_renunt_all">Renunț</string>
     <string name="txt_header_list_denumirea">Denumirea</string>
-    <string name="txt_header_list_cant">Cant.</string>
+    <string name="txt_header_list_cant">Cantitate</string>
     <string name="txt_header_list_revision_depozit">Depozit</string>
     <string name="txt_header_list_revision_numarul">Numărul</string>
     <string name="txt_creare_revizie_noua_revision">Creare revizie nouă</string>
@@ -109,7 +105,6 @@
     <string name="txt_suma_de_vinzare_invoice">Suma de vânzare</string>
     <string name="txt_profit_invoice">Profit:</string>
     <string name="txt_utilizator_workplace">Utilizator:</string>
-
     <string name="txt_header_msg_sales_printers">Lista de imprimante</string>
     <string name="txt_header_msg_list_depozitelor">Lista de depozite</string>
     <string name="msg_depasirea_limitei_vinzare">Depasiti limita pozitiilor!</string>
@@ -126,7 +121,6 @@
     <string name="txt_sales_invoice_saved">Contul de plată a fost salvată!\nComanda nr:</string>
     <string name="msg_document_notsaved_cod_error">Documentul nu a fost salvat! Codul erorii:</string>
     <string name="msg_document_not_saved_nu_raspuns_serviciu">Documentul nu a fost salvat! Nu există niciun răspuns din partea serviciului.</string>
-
     <string name="msg_errore_label_printer">Eroare la imprimanta cu etichete!</string>
     <string name="msg_erroare_la_imrpimare">Eroare la imprimare:</string>
     <string name="msg_verifica_imprimantele_bluetooth">Verificați imprimanta dacă este aprinsă,conectată sau dacă v-ați conectat la imprimanta corectă in setări.</string>
@@ -172,7 +166,6 @@
     <string name="sales_count_only_integer">Doar numere intregi</string>
     <string name="help">Ajutor</string>
     <string name="information_print_sales">Bluetooth printer nu este conectat</string>
-
     <string name="enter_barcode_">Introduceți codul de bare!</string>
     <string name="responseNothing">Raspunsul este gol</string>
     <string name="Barcode_not_saved">Codul de bare nu a fost salvat! </string>
@@ -209,6 +202,8 @@
     <string name="error_create_item">"Eroare: "</string>
     <string name="buttonCreate">Creare produs</string>
     <string name="provider_button">Furnizor</string>
-    <string name="hint_search_provider">Search provider</string>
+    <string name="hint_search_provider">Cautare</string>
      <string name="btn_adauga_client_search">Adauga client</string>
+    <string name="btn_adauga_produs">Crearea produsului</string>
+
 </resources>

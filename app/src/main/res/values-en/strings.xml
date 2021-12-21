@@ -13,15 +13,12 @@
     <string name="conected_device_bluetooth">Connected to Device:</string>
     <string name="status_created_socket_bluetooth">Socket creation failed</string>
     <string name="status_conection_bluetooth_handler">Connection failed.</string>
-
-
     <string name="btn_check_price">Check price</string>
     <string name="btn_sales_main_activity">Sales invoice</string>
     <string name="btn_invoice_main_activity">Incoming invoice</string>
     <string name="btn_transfer_main_activity">Transfer</string>
     <string name="btn_inventariere_main_activity">Inventory</string>
     <string name="btn_stock_asl_main_activity">Assortment storage</string>
-
     <string name="txt_con_intern_licenta">Internal code:</string>
     <string name="txt_licenta_licenta">License:</string>
     <string name="btn_verificare_licenta">Check</string>
@@ -33,7 +30,6 @@
     <string name="btn_donload_install_new_version">Check updates</string>
     <string name="btn_donload_install_old_version">Downgrade</string>
     <string name="txt_hint_input_licenta_securitate">Key lic</string>
-
     <string name="txt_header_inp_count">Enter the quantity:</string>
     <string name="header_of_lista_reviziilor">List of revisions</string>
     <string name="header_obout_program">About</string>
@@ -45,8 +41,6 @@
     <string name="header_login_user_settings">Authentication local:</string>
     <string name="header_login_client_activity">Client Authentication:</string>
     <string name="todo">TODO</string>
-
-
     <string name="item_menu_drawable_generale">General</string>
     <string name="item_menu_drawable_exit">Exit</string>
     <string name="item_menu_drawable_setari">Settings</string>
@@ -111,7 +105,6 @@
     <string name="txt_suma_de_vinzare_invoice">Sales amount:</string>
     <string name="txt_profit_invoice">Profit:</string>
     <string name="txt_utilizator_workplace">User:</string>
-
     <string name="txt_header_msg_sales_printers">Printer list:</string>
     <string name="txt_header_msg_list_depozitelor">List of the warehouses</string>
     <string name="msg_depasirea_limitei_vinzare">Exceed the limit of positions!</string>
@@ -128,7 +121,6 @@
     <string name="txt_sales_invoice_saved">The sale invoice has been saved! Order no:</string>
     <string name="msg_document_notsaved_cod_error">Document is not saved! Error code:</string>
     <string name="msg_document_not_saved_nu_raspuns_serviciu">Document is not saved! There is no response from the service.</string>
-
     <string name="msg_errore_label_printer">Error lable printer!</string>
     <string name="msg_erroare_la_imrpimare">Print error:</string>
     <string name="msg_verifica_imprimantele_bluetooth">Check the printer if it is on, connected or if you have the correct printer in settings.</string>
@@ -146,7 +138,7 @@
     <string name="msg_dialog_inventroy_select_workplace">Select the workpalce</string>
     <string name="msg_dialog_inchide_revizia">You want to finish the revision?</string>
     <string name="msg_count_added_inventory">Added.</string>
-    <string name="msg_login_cod_incorect">Code incorrect!</string>
+    <string name="msg_login_cod_incorect">Incorrect code!</string>
     <string name="msg_dialog_list_asl_document_not_saved">You want to save the added positions?\nIf you want to stay, click anywhere on the screen.</string>
     <string name="header_list_assortment">Assortment for sale</string>
     <string name="msg_eroare_download_asl">Error downloading assortment.Error message:</string>
@@ -156,12 +148,12 @@
     <string name="msg_count_greath_like_remain">Quantity more than in stock</string>
     <string name="msg_input_count_greath_nul">Enter the quantity greater than 0!</string>
     <string name="msg_input_incoming_price_invoice">Enter the entry price!</string>
-    <string name="msg_format_number_incorect">Format incorrect!</string>
+    <string name="msg_format_number_incorect">Incorrect format!</string>
     <string name="txt_list_asl_view_barcode">Bar-code:</string>
     <string name="txt_list_asl_view_valuta"> lei</string>
     <string name="txt_list_asl_view_price">Price: </string>
     <string name="txt_not_conected_printers">You have not connected any printers!</string>
-    <string name="msg_document_save_stock_asl">Documentul a fost salvat! Numarul:</string>
+    <string name="msg_document_save_stock_asl">The document has been saved! Nr:</string>
     <string name="txt_designe_theme">Theme</string>
     <string name="txt_language_securitate">Language</string>
     <string name="assortment_possible_not_download">Maybe the assortment are not loaded from the database.</string>
@@ -174,7 +166,6 @@
     <string name="sales_count_only_integer">Only integer number</string>
     <string name="help">Help</string>
     <string name="information_print_sales">Bluetooth printer is not conect</string>
-
     <string name="enter_barcode_">Input barcode</string>
     <string name="responseNothing">Response is nothing</string>
     <string name="Barcode_not_saved">Barcode is not saved! </string>
@@ -202,15 +193,17 @@
     <string name="paired_devices">Paired</string>
     <string name="choose_bluetooth_device">Choose Bluetooth Device</string>
     <string name="cdata_delete"><![CDATA[<-]]></string>
-    <string name="articol">Articol</string>
+    <string name="articol">Article</string>
     <string name="creare">Create</string>
     <string name="denumirea_produsului">Name</string>
     <string name="barcode">Barcode</string>
-    <string name="complete_this_filed">Completeaza acest cimp !</string>
+    <string name="complete_this_filed">Complete this field!</string>
     <string name="item_created">Assortment added!</string>
     <string name="error_create_item">"Error: "</string>
     <string name="buttonCreate">Create item</string>
     <string name="provider_button">Provider</string>
-    <string name="hint_search_provider">Search provider</string>
-    <string name="btn_adauga_client_search">Adauga client</string>
+    <string name="hint_search_provider">Search</string>
+    <string name="btn_adauga_client_search">Add client</string>
+    <string name="btn_adauga_produs">Create product</string>
+
 </resources>
