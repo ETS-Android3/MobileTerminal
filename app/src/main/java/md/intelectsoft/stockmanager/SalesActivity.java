@@ -889,7 +889,16 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
 
                 GetAssortmentItemBody assortmentItemBody = new GetAssortmentItemBody();
                 String barcode = txt_input_barcode.getText().toString();
-                String code = barcode.substring(0, 7);
+                String code;
+
+                if(barcode.substring(0,2) == WeightPrefix.toString()){
+                    code = barcode.substring(0, 7);
+
+                }
+                else
+                {
+                    code = barcode;
+                }
 
                 assortmentItemBody.setAssortmentIdentifier(code);
                 assortmentItemBody.setShowStocks(true);

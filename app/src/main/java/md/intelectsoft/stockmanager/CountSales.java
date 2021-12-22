@@ -120,7 +120,10 @@ public class CountSales extends AppCompatActivity {
 
         Double quantityDouble = Double.parseDouble(quantity);
 
-        et_count.setText(quantityDouble.toString());
+        if (mBarcodeAssortment.substring(0,2) == WeightPrefix.toString()){
+            et_count.setText(quantityDouble.toString());
+
+        }
         et_count.requestFocus();
 
 
