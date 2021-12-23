@@ -839,7 +839,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                         txtBarcode_introdus.setText(barcode_introdus);
 
                         Assortment assortment = new Assortment();
-                        assortment.setBarCode(Barcodes);
+                        assortment.setBarCode(barcode_introdus);
                         assortment.setCode(Codes);
                         assortment.setName(Names);
                         assortment.setPrice(Price);

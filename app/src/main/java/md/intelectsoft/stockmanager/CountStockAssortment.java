@@ -37,6 +37,7 @@ public class CountStockAssortment extends AppCompatActivity {
     Button btn_add, btn_cancel;
     Boolean adauga_Count=false;
     String mUnit,mUnitPrice,mUnitInPackage, mIDAssortment,mNameAssortment,mPriceAssortment,mMarkingAssortment,mCodeAssortment,mBarcodeAssortment,mRemainAssortment;
+    Integer WeightPrefix;
 
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -77,6 +78,9 @@ public class CountStockAssortment extends AppCompatActivity {
         btn_add = findViewById(R.id.btn_add_count_stock_assortment);
         btn_cancel = findViewById(R.id.btn_cancel_count_stock_assortment);
 
+        final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
+        WeightPrefix = getRevisions.getInt("WeightPrefix",0);
+
         SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
 
         final Intent sales = getIntent();
@@ -93,6 +97,11 @@ public class CountStockAssortment extends AppCompatActivity {
         mUnitInPackage = assortment.getUnitInPackage();
 
         txt_name.setText(mNameAssortment);
+
+        if (WeightPrefix.toString().equals(mMarkingAssortment.substring(0,2))){
+            et_count.setText(mMarkingAssortment.substring(7,12));
+        }
+
         txt_barcode.setText(mBarcodeAssortment);
         txt_price.setText(mPriceAssortment);
         boolean ShowCode = sharedPrefsInstance.getBoolean("ShowCode", false);
