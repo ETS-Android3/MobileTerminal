@@ -211,6 +211,12 @@ public class CountStockAssortment extends AppCompatActivity {
             Intent stock_asl = new Intent();
             stock_asl.putExtra("AssortmentStockAdded", asl.toString());
             setResult(RESULT_OK, stock_asl);
+
+//            Intent intent = new Intent();
+//            intent.putExtra("Name", mNameAssortment);
+//            intent.putExtra("count", et_count.getText().toString());
+//            setResult(RESULT_OK, intent);
+
             finish();
         }else {
             Toast.makeText(CountStockAssortment.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();

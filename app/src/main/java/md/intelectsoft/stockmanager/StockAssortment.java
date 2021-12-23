@@ -94,6 +94,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
     final boolean[] show_keyboard = {false};
     
     int REQUEST_FROM_LIST_ASSORTMENT = 225,REQUEST_FROM_COUNT_STOCK = 40;
+    Integer WeightPrefix;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +140,9 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
 
         mArrayAssortment =new JSONArray();
         mArrayForEtichete =new JSONArray();
+
+        final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
+        WeightPrefix = getRevisions.getInt("WeightPrefix",0);
 
         final String WorkPlaceID = SPFHelp.getInstance().getString("WorkPlaceId","");
         final String WorkPlaceName = SPFHelp.getInstance().getString("WorkPlaceName","");
@@ -584,12 +588,20 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
     }
     private void getAssortment(){
         txt_input_barcode.requestFocus();
+        String barcode;
+        if (WeightPrefix.toString().equals(txt_input_barcode.getText().toString().substring(0,2))){
+            barcode = txt_input_barcode.getText().toString().substring(0,7);
+        }else
+        {
+            barcode = txt_input_barcode.getText().toString();
+        }
+
         if (!txt_input_barcode.getText().toString().equals("")) {
             pgBar.setVisibility(ProgressBar.VISIBLE);
             show_keyboard[0] = false;
             sendAssortiment = new JSONObject();
             try {
-                sendAssortiment.put("AssortmentIdentifier", txt_input_barcode.getText().toString());
+                sendAssortiment.put("AssortmentIdentifier", barcode);
                 sendAssortiment.put("ShowStocks", true);
                 sendAssortiment.put("UserID", UserId);
                 sendAssortiment.put("WarehouseID", WareUid);
@@ -830,11 +842,11 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                         assortment.setBarCode(Barcodes);
                         assortment.setCode(Codes);
                         assortment.setName(Names);
-//                        assortment.setPrice(Price);
+                        assortment.setPrice(Price);
                         assortment.setMarking(Marking);
-//                        assortment.setRemain(Remain);
+                        assortment.setRemain(Remain);
                         assortment.setAssortimentID(Uid);
-//                        assortment.setUnitPrice(UnitPrice);
+                        assortment.setUnitPrice(UnitPrice);
                         assortment.setUnit(Unit);
                         assortment.setUnitInPackage(UnitInPackage);
                         final AssortmentParcelable assortmentParcelable = new AssortmentParcelable(assortment);
@@ -1000,7 +1012,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                     Price = String.format("%.2f",priceDouble);
                     Price=Price.replace(".",",");
 
-                    String UnitPrice  = json.getString("UnitPrice");
+//                    String UnitPrice  = json.getString("UnitPrice");
                     String UnitInPackage  = json.getString("UnitInPackage");
                     String Code  = json.getString("Code");
                     String Barcode  = json.getString("Barcode");
@@ -1019,7 +1031,7 @@ public class StockAssortment extends AppCompatActivity implements NavigationView
                     document_etichete.put("Barcode",Barcode);
                     document_etichete.put("Price",Price);
                     document_etichete.put("Unit",Unit);
-                    document_etichete.put("UnitPrice",UnitPrice);
+//                    document_etichete.put("UnitPrice",UnitPrice);
                     document_etichete.put("UnitInPackage",UnitInPackage);
 
                     boolean isExtist = false;
