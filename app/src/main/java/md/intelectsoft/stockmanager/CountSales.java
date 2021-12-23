@@ -111,7 +111,14 @@ public class CountSales extends AppCompatActivity {
 
         txt_name.setText(mNameAssortment);
         txt_barcode.setText(mBarcodeAssortment);
-        txt_stoc.setText(mRemainAssortment);
+
+        if(mRemainAssortment.equals("")){
+            txt_stoc.setText("0");
+            mRemainAssortment = "0";
+        }else
+        {
+            txt_stoc.setText(mRemainAssortment);
+        }
         txt_price.setText(mPriceAssortment);
         txt_unit.setText("/" + assortment.getUnit());
 
