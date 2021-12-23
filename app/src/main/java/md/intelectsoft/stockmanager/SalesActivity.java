@@ -891,9 +891,8 @@ public class SalesActivity extends AppCompatActivity implements NavigationView.O
                 String barcode = txt_input_barcode.getText().toString();
                 String code;
 
-                if(barcode.substring(0,2) == WeightPrefix.toString()){
+                if(WeightPrefix.toString().equals(barcode.substring(0,2))){
                     code = barcode.substring(0, 7);
-
                 }
                 else
                 {

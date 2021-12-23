@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
+
+import android.renderscript.ScriptGroup;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -120,7 +122,7 @@ public class CountSales extends AppCompatActivity {
 
         Double quantityDouble = Double.parseDouble(quantity);
 
-        if (mBarcodeAssortment.substring(0,2) == WeightPrefix.toString()){
+        if (WeightPrefix.toString().equals(mBarcodeAssortment.substring(0,2))){
             et_count.setText(quantityDouble.toString());
 
         }
@@ -172,7 +174,14 @@ public class CountSales extends AppCompatActivity {
                             try{
                                 input = Double.valueOf(et_count.getText().toString().replace(",","."));
                             }catch (Exception e){
-                                input = Double.valueOf(et_count.getText().toString().replace(".",","));
+                                String text = et_count.getText().toString();
+                                if (text.equals(".")){
+                                    input = Double.valueOf(before + text + "00");
+                                }
+                                else
+                                {
+                                    input = Double.valueOf(et_count.getText().toString().replace(".",","));
+                                }
                             }
                         }
                         Double Stock = 0.00;
@@ -334,8 +343,35 @@ public class CountSales extends AppCompatActivity {
                         setResult(RESULT_OK, sales);
                         finish();
                     }else{
-                        et_count.setError(getResources().getString(R.string.sales_count_only_integer));
-                        et_count.requestFocus();
+                        if (WeightPrefix.toString().equals(mBarcodeAssortment.substring(0,2))){
+                            JSONObject asl = new JSONObject();
+                            try {
+                                double count = 0;
+                                try{
+                                    count = Double.valueOf(et_count.getText().toString());
+                                }catch (Exception e){
+                                    count = Double.valueOf(et_count.getText().toString().replace(",","."));
+                                }
+                                asl.put("AssortimentName", mNameAssortment);
+                                asl.put("AssortimentUid",mIDAssortment);
+                                asl.put("Count", count);
+                                asl.put("Price", mPriceAssortment);
+                                asl.put("Warehouse",WareHouse);
+                                asl.put("WareName",WareName);
+                            } catch (JSONException e) {
+                                ((BaseApp)getApplication()).appendLog(e.getMessage(),CountSales.this);
+                                e.printStackTrace();
+                            }
+                            Intent sales = new Intent();
+                            sales.putExtra("AssortmentSalesAdded", asl.toString());
+                            setResult(RESULT_OK, sales);
+                            finish();
+                        }
+                        else {
+                            et_count.setError(getResources().getString(R.string.sales_count_only_integer));
+                            et_count.requestFocus();
+                        }
+
                     }
                 }else{
                     JSONObject asl = new JSONObject();

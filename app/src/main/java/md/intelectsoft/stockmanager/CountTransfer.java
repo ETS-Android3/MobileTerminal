@@ -102,8 +102,9 @@ public class CountTransfer extends AppCompatActivity {
         txt_articul.setText(mMarkingAssortment);
         txt_stoc.setText(mRemainAssortment);
         txt_price.setText(mPriceAssortment);
+        String weightPrefixString = mBarcodeAssortment.substring(0, 2);
 
-        if (mBarcodeAssortment.substring(0, 2) == WeightPrefix.toString()){
+        if (WeightPrefix.toString().equals(weightPrefixString)){
             String weightCode = mBarcodeAssortment.substring(7, 12);
             String weightKg = weightCode.substring(0,2);
             String weightGrams =weightCode.substring(2,5);
@@ -117,7 +118,6 @@ public class CountTransfer extends AppCompatActivity {
         {
             et_count.requestFocus();
         }
-
         SPFHelp shredPrefsInstance = SPFHelp.getInstance();
 
         boolean ShowCode = shredPrefsInstance.getBoolean("ShowCode", false);
@@ -234,31 +234,66 @@ public class CountTransfer extends AppCompatActivity {
 
     }
     private void saveCount(){
-        String barcode = mBarcodeAssortment.toString();
-        String aftercur = barcode.substring(0,2);
-
-        if (!et_count.getText().toString().equals("") || WeightPrefix.toString().equals(aftercur)) {
-
-            if (!isDouble(et_count.getText().toString()))
-                et_count.setError(getResources().getString(R.string.msg_format_number_incorect));
-            else if (isDouble(et_count.getText().toString())){
-                JSONObject asl = new JSONObject();
-                try {
-                    asl.put("AssortimentName",mNameAssortment);
-                    asl.put("AssortimentUid", mIDAssortment);
-                    asl.put("Count", et_count.getText().toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    ((BaseApp)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
+        if (!et_count.getText().toString().equals("")) {
+            if (mAllowNotIntegerSales) {
+                if (!isDouble(et_count.getText().toString()))
+                    et_count.setError(getResources().getString(R.string.msg_format_number_incorect));
+                else if (isDouble(et_count.getText().toString())){
+                    JSONObject asl = new JSONObject();
+                    try {
+                        asl.put("AssortimentName",mNameAssortment);
+                        asl.put("AssortimentUid", mIDAssortment);
+                        asl.put("Count", et_count.getText().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        ((BaseApp)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
+                    }
+                    Intent transfer = new Intent();
+                    transfer.putExtra("AssortmentTransferAdded",asl.toString());
+                    setResult(RESULT_OK, transfer);
+                    finish();
                 }
-                Intent transfer = new Intent();
-                transfer.putExtra("AssortmentTransferAdded",asl.toString());
-                setResult(RESULT_OK, transfer);
-                finish();
             }
+            else {
+                if (!isInteger(et_count.getText().toString())) {
+                    if (WeightPrefix.toString().equals(mBarcodeAssortment.substring(0,2))){
+                        JSONObject asl = new JSONObject();
+                        try {
+                            asl.put("AssortimentName", mNameAssortment);
+                            asl.put("AssortimentUid", mIDAssortment);
+                            asl.put("Count", et_count.getText().toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            ((BaseApp) getApplication()).appendLog(e.getMessage(), CountTransfer.this);
+                        }
+                        Intent transfer = new Intent();
+                        transfer.putExtra("AssortmentTransferAdded", asl.toString());
+                        setResult(RESULT_OK, transfer);
+                        finish();
+                    }else {
+                        et_count.setError(getResources().getString(R.string.msg_only_number_integer));
 
+                    }
+
+                } else if (isInteger(et_count.getText().toString())) {
+                    JSONObject asl = new JSONObject();
+                    try {
+                        asl.put("AssortimentName", mNameAssortment);
+                        asl.put("AssortimentUid", mIDAssortment);
+                        asl.put("Count", et_count.getText().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        ((BaseApp) getApplication()).appendLog(e.getMessage(), CountTransfer.this);
+                    }
+                    Intent transfer = new Intent();
+                    transfer.putExtra("AssortmentTransferAdded", asl.toString());
+                    setResult(RESULT_OK, transfer);
+                    finish();
+                }
+            }
         }else{
             Toast.makeText(CountTransfer.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
+            et_count.setError(getResources().getString(R.string.sales_count_only_integer));
             et_count.requestFocus();
         }
     }
