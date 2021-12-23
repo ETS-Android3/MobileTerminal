@@ -177,9 +177,12 @@ public class CountSales extends AppCompatActivity {
                         }
                         Double Stock = 0.00;
                         try{
-                            Stock = Double.valueOf(mRemainAssortment);
+                            Stock = Double.parseDouble(mRemainAssortment);
                         }catch (Exception e){
-                            Stock = Double.valueOf(mRemainAssortment.replace(",","."));
+                            if (!mRemainAssortment.isEmpty()){
+                                Stock = Double.valueOf(mRemainAssortment.replace(",","."));
+
+                            }
                         }
 
                         if (input > Stock) {

@@ -103,15 +103,20 @@ public class CountTransfer extends AppCompatActivity {
         txt_stoc.setText(mRemainAssortment);
         txt_price.setText(mPriceAssortment);
 
-        String weightCode = mBarcodeAssortment.substring(7, 12);
-        String weightKg = weightCode.substring(0,2);
-        String weightGrams =weightCode.substring(2,5);
-        String weightString = weightKg + "." + weightGrams;
+        if (mBarcodeAssortment.substring(0, 2) == WeightPrefix.toString()){
+            String weightCode = mBarcodeAssortment.substring(7, 12);
+            String weightKg = weightCode.substring(0,2);
+            String weightGrams =weightCode.substring(2,5);
+            String weightString = weightKg + "." + weightGrams;
 
-        Double weight = Double.parseDouble(weightString);
+            Double weight = Double.parseDouble(weightString);
 
-        et_count.requestFocus();
-        et_count.setText(weight.toString());
+            et_count.requestFocus();
+            et_count.setText(weight.toString());
+        }else
+        {
+            et_count.requestFocus();
+        }
 
         SPFHelp shredPrefsInstance = SPFHelp.getInstance();
 
