@@ -233,30 +233,35 @@ public class CountTransfer extends AppCompatActivity {
         });
 
     }
-    private void saveCount(){
+
+    private void saveCount() {
         if (!et_count.getText().toString().equals("")) {
-            if (mAllowNotIntegerSales) {
-                if (!isDouble(et_count.getText().toString()))
-                    et_count.setError(getResources().getString(R.string.msg_format_number_incorect));
-                else if (isDouble(et_count.getText().toString())){
-                    JSONObject asl = new JSONObject();
-                    try {
-                        asl.put("AssortimentName",mNameAssortment);
-                        asl.put("AssortimentUid", mIDAssortment);
-                        asl.put("Count", et_count.getText().toString());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        ((BaseApp)getApplication()).appendLog(e.getMessage(),CountTransfer.this);
-                    }
-                    Intent transfer = new Intent();
-                    transfer.putExtra("AssortmentTransferAdded",asl.toString());
-                    setResult(RESULT_OK, transfer);
-                    finish();
-                }
+            Double remain;
+            Double count;
+
+            try {
+                remain = Double.parseDouble(mRemainAssortment);
             }
-            else {
-                if (!isInteger(et_count.getText().toString())) {
-                    if (WeightPrefix.toString().equals(mBarcodeAssortment.substring(0,2))){
+            catch (Exception ex){
+                remain = 0.0;
+            }
+            try {
+                count = Double.parseDouble(et_count.getText().toString());
+            }
+            catch (Exception ex){
+                count = 0.0;
+            }
+
+            if ( remain < count ){
+                et_count.setError(getResources().getString(R.string.msg_count_greath_like_remain));
+                et_count.requestFocus();
+            }
+            else
+            {
+                if (mAllowNotIntegerSales) {
+                    if (!isDouble(et_count.getText().toString()))
+                        et_count.setError(getResources().getString(R.string.msg_format_number_incorect));
+                    else if (isDouble(et_count.getText().toString())) {
                         JSONObject asl = new JSONObject();
                         try {
                             asl.put("AssortimentName", mNameAssortment);
@@ -270,28 +275,47 @@ public class CountTransfer extends AppCompatActivity {
                         transfer.putExtra("AssortmentTransferAdded", asl.toString());
                         setResult(RESULT_OK, transfer);
                         finish();
-                    }else {
-                        et_count.setError(getResources().getString(R.string.msg_only_number_integer));
-
                     }
+                } else {
+                    if (!isInteger(et_count.getText().toString())) {
+                        if (WeightPrefix.toString().equals(mBarcodeAssortment.substring(0, 2))) {
+                            JSONObject asl = new JSONObject();
+                            try {
+                                asl.put("AssortimentName", mNameAssortment);
+                                asl.put("AssortimentUid", mIDAssortment);
+                                asl.put("Count", et_count.getText().toString());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                ((BaseApp) getApplication()).appendLog(e.getMessage(), CountTransfer.this);
+                            }
+                            Intent transfer = new Intent();
+                            transfer.putExtra("AssortmentTransferAdded", asl.toString());
+                            setResult(RESULT_OK, transfer);
+                            finish();
+                        } else {
+                            et_count.setError(getResources().getString(R.string.msg_only_number_integer));
 
-                } else if (isInteger(et_count.getText().toString())) {
-                    JSONObject asl = new JSONObject();
-                    try {
-                        asl.put("AssortimentName", mNameAssortment);
-                        asl.put("AssortimentUid", mIDAssortment);
-                        asl.put("Count", et_count.getText().toString());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        ((BaseApp) getApplication()).appendLog(e.getMessage(), CountTransfer.this);
+                        }
+
+                    } else if (isInteger(et_count.getText().toString())) {
+                        JSONObject asl = new JSONObject();
+                        try {
+                            asl.put("AssortimentName", mNameAssortment);
+                            asl.put("AssortimentUid", mIDAssortment);
+                            asl.put("Count", et_count.getText().toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            ((BaseApp) getApplication()).appendLog(e.getMessage(), CountTransfer.this);
+                        }
+                        Intent transfer = new Intent();
+                        transfer.putExtra("AssortmentTransferAdded", asl.toString());
+                        setResult(RESULT_OK, transfer);
+                        finish();
                     }
-                    Intent transfer = new Intent();
-                    transfer.putExtra("AssortmentTransferAdded", asl.toString());
-                    setResult(RESULT_OK, transfer);
-                    finish();
                 }
             }
-        }else{
+
+        } else {
             Toast.makeText(CountTransfer.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();
             et_count.setError(getResources().getString(R.string.sales_count_only_integer));
             et_count.requestFocus();

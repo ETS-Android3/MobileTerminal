@@ -6,10 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import androidx.appcompat.widget.Toolbar;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -53,11 +57,11 @@ import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSen
 
 public class CountListOfAssortment extends AppCompatActivity {
     final Context context = this;
-    String url_,mNameAssortment,WareUid;
+    String url_, mNameAssortment, WareUid;
     boolean mIntegerSales;
     EditText Count_enter;
-    ImageButton btn_plus,btn_del;
-    TextView name_forasl,price_forasl,btn_save,btn_cancel,txtCode,txtBarCode,txtMarking,txtRemain, txtUnit;
+    ImageButton btn_plus, btn_del;
+    TextView name_forasl, price_forasl, btn_save, btn_cancel, txtCode, txtBarCode, txtMarking, txtRemain, txtUnit;
     JSONObject sendRevision;
     ProgressDialog pgH;
     ProgressBar pgBarStock;
@@ -66,9 +70,9 @@ public class CountListOfAssortment extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id){
-            case android.R.id.home : {
-                Activity activity=CountListOfAssortment.this;
+        switch (id) {
+            case android.R.id.home: {
+                Activity activity = CountListOfAssortment.this;
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 View view = activity.getCurrentFocus();
                 if (view == null) {
@@ -76,10 +80,12 @@ public class CountListOfAssortment extends AppCompatActivity {
                 }
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 finish();
-            }break;
+            }
+            break;
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,13 +115,13 @@ public class CountListOfAssortment extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        final SPFHelp sharedPrefsInstance =SPFHelp.getInstance();
+        final SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
 //        SharedPreferences sPref = getSharedPreferences("Save touch assortiment", MODE_PRIVATE);
 
-        url_ = sharedPrefsInstance.getString("URI","0.0.0.0:1111");
+        url_ = sharedPrefsInstance.getString("URI", "0.0.0.0:1111");
 
-        boolean showKB = sharedPrefsInstance.getBoolean("ShowKeyBoard",false);
-        if (showKB){
+        boolean showKB = sharedPrefsInstance.getBoolean("ShowKeyBoard", false);
+        if (showKB) {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             Count_enter.requestFocus();
         }
@@ -130,10 +136,10 @@ public class CountListOfAssortment extends AppCompatActivity {
         final String mBarcodeAssortment = assortment.getBarCode();
         final String mRemainAssortment = assortment.getRemain();
         final String mIDAssortment = assortment.getAssortimentID();
-        final boolean mAllowNotIntegerSales =Boolean.parseBoolean(assortment.getAllowNonIntegerSale());
+        final boolean mAllowNotIntegerSales = Boolean.parseBoolean(assortment.getAllowNonIntegerSale());
         txtUnit.setText(assortment.getUnit());
 
-        if(mAllowNotIntegerSales)
+        if (mAllowNotIntegerSales)
             mIntegerSales = true;
         else
             mIntegerSales = false;
@@ -142,35 +148,35 @@ public class CountListOfAssortment extends AppCompatActivity {
 
         boolean verifyStock = sharedPrefsInstance.getBoolean("CheckStockToServer", false);
 
-        if(verifyStock){
-            checkStock(mIDAssortment,WareUid);
+        if (verifyStock) {
+            checkStock(mIDAssortment, WareUid);
         }
 
         name_forasl.setText(mNameAssortment);
         price_forasl.setText(mPriceAssortment);
 
 
-        if(mCodeAssortment==null || mCodeAssortment.equals("") || mCodeAssortment.equals("null") ){
+        if (mCodeAssortment == null || mCodeAssortment.equals("") || mCodeAssortment.equals("null")) {
             txtCode.setText("-");
-        }else{
+        } else {
             if (!ShowCode)
                 txtCode.setText("--------");
             else
                 txtCode.setText(mCodeAssortment);
         }
-        if(mMarkingAssortment==null || mMarkingAssortment.equals("") || mMarkingAssortment.equals("null") ){
+        if (mMarkingAssortment == null || mMarkingAssortment.equals("") || mMarkingAssortment.equals("null")) {
             txtMarking.setText("-");
-        }else{
+        } else {
             txtMarking.setText(mMarkingAssortment);
         }
-        if(mRemainAssortment==null || mRemainAssortment.equals("") || mRemainAssortment.equals("null") ){
+        if (mRemainAssortment == null || mRemainAssortment.equals("") || mRemainAssortment.equals("null")) {
             txtRemain.setText("-");
-        }else{
+        } else {
             txtRemain.setText(mRemainAssortment);
         }
-        if(mBarcodeAssortment==null || mBarcodeAssortment.equals("") || mBarcodeAssortment.equals("null")){
+        if (mBarcodeAssortment == null || mBarcodeAssortment.equals("") || mBarcodeAssortment.equals("null")) {
             txtBarCode.setText("-");
-        }else{
+        } else {
             txtBarCode.setText(mBarcodeAssortment);
         }
 
@@ -182,10 +188,11 @@ public class CountListOfAssortment extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (mIntegerSales) {
-                    if (!isDouble(Count_enter.getText().toString())) Count_enter.setError(getResources().getString(R.string.msg_format_number_incorect));
-                }
-                else {
-                    if (!isInteger(Count_enter.getText().toString())) Count_enter.setError(getResources().getString(R.string.msg_only_number_integer));
+                    if (!isDouble(Count_enter.getText().toString()))
+                        Count_enter.setError(getResources().getString(R.string.msg_format_number_incorect));
+                } else {
+                    if (!isInteger(Count_enter.getText().toString()))
+                        Count_enter.setError(getResources().getString(R.string.msg_only_number_integer));
                 }
             }
 
@@ -197,7 +204,7 @@ public class CountListOfAssortment extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) saveCount();
-                else if(event.getKeyCode() == KeyEvent.KEYCODE_ENTER) saveCount();
+                else if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) saveCount();
                 return false;
             }
         });
@@ -226,8 +233,7 @@ public class CountListOfAssortment extends AppCompatActivity {
                         curr += 1;
                         Count_enter.setText(String.valueOf(curr));
                     }
-                }
-                else {
+                } else {
                     if (isInteger(Count_enter.getText().toString())) {
                         Integer curr = Integer.valueOf(Count_enter.getText().toString());
                         curr += 1;
@@ -250,8 +256,7 @@ public class CountListOfAssortment extends AppCompatActivity {
                         }
                         Count_enter.setText(String.valueOf(curr));
                     }
-                }
-                else {
+                } else {
                     if (isInteger(Count_enter.getText().toString())) {
                         Integer curr = Integer.valueOf(Count_enter.getText().toString());
                         if (curr - 1 <= 0) {
@@ -270,38 +275,35 @@ public class CountListOfAssortment extends AppCompatActivity {
         txtRemain.setVisibility(View.INVISIBLE);
         pgBarStock.setVisibility(View.VISIBLE);
         TerminalAPI commandService = TerminalRetrofitClient.getApiTerminalService(url_);
-        Call<GetAssortmentRemainResults> call = commandService.getAssortimentRemains(mIDAssortment,wareUid);
+        Call<GetAssortmentRemainResults> call = commandService.getAssortimentRemains(mIDAssortment, wareUid);
 
         call.enqueue(new Callback<GetAssortmentRemainResults>() {
             @Override
             public void onResponse(Call<GetAssortmentRemainResults> call, Response<GetAssortmentRemainResults> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     GetAssortmentRemainResults remain = response.body();
-                    if(remain != null && remain.getErrorCode() == 0){
+                    if (remain != null && remain.getErrorCode() == 0) {
                         List<Remain> remains = remain.getRemains();
-                        if(remains.size() > 0){
+                        if (remains.size() > 0) {
 
-                            for(Remain remain1 : remains){
+                            for (Remain remain1 : remains) {
                                 String remaiId = remain1.getWarehouseID();
-                                if(remaiId.equals(wareUid)){
-                                    txtRemain.setText(String.format("%.2f",remain1.getRemain()));
+                                if (remaiId.equals(wareUid)) {
+                                    txtRemain.setText(String.format("%.2f", remain1.getRemain()));
                                     txtRemain.setVisibility(View.VISIBLE);
                                     pgBarStock.setVisibility(View.INVISIBLE);
                                     break;
                                 }
                             }
-                        }
-                        else{
+                        } else {
                             txtRemain.setVisibility(View.VISIBLE);
                             pgBarStock.setVisibility(View.INVISIBLE);
                         }
-                    }
-                    else{
+                    } else {
                         txtRemain.setVisibility(View.VISIBLE);
                         pgBarStock.setVisibility(View.INVISIBLE);
                     }
-                }
-                else{
+                } else {
                     txtRemain.setVisibility(View.VISIBLE);
                     pgBarStock.setVisibility(View.INVISIBLE);
                 }
@@ -315,44 +317,67 @@ public class CountListOfAssortment extends AppCompatActivity {
         });
     }
 
-    private void saveCount(){
-        if (mIntegerSales) {
-            if (isDouble(Count_enter.getText().toString())) {
-                Intent intent = new Intent();
-                intent.putExtra("Name", mNameAssortment);
-                intent.putExtra("count", String.valueOf(Count_enter.getText()));
-                setResult(RESULT_OK, intent);
-                finish();
-            }
-        } else {
-            if (isInteger(Count_enter.getText().toString())) {
-                Intent intent = new Intent();
-                intent.putExtra("Name",mNameAssortment);
-                intent.putExtra("count", String.valueOf(Count_enter.getText()));
-                setResult(RESULT_OK, intent);
-                finish();
+    private void saveCount() {
+        Double count;
+        Double remains;
+        try {
+            count = Double.parseDouble(Count_enter.getText().toString());
+        } catch (Exception ex) {
+            count = 0.0;
+        }
+
+        try {
+            remains = Double.parseDouble(txtRemain.getText().toString());
+        } catch (Exception ex) {
+            remains = 0.0;
+        }
+        if (count < remains) {
+            if (mIntegerSales) {
+                if (isDouble(Count_enter.getText().toString())) {
+                    Intent intent = new Intent();
+                    intent.putExtra("Name", mNameAssortment);
+                    intent.putExtra("count", String.valueOf(Count_enter.getText()));
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+            } else {
+                if (isInteger(Count_enter.getText().toString())) {
+                    Intent intent = new Intent();
+                    intent.putExtra("Name", mNameAssortment);
+                    intent.putExtra("count", String.valueOf(Count_enter.getText()));
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
             }
         }
+        else
+        {
+            Count_enter.setError(getResources().getString(R.string.msg_count_greath_like_remain));
+            Count_enter.requestFocus();
+        }
     }
+
     private boolean isDouble(String s) throws NumberFormatException {
         try {
             Double.parseDouble(s);
             return true;
         } catch (NumberFormatException e) {
 
-            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
+            ((BaseApp) getApplication()).appendLog(e.getMessage(), CountListOfAssortment.this);
             return false;
         }
     }
+
     private boolean isInteger(String s) throws NumberFormatException {
         try {
             Integer.parseInt(s);
             return true;
         } catch (NumberFormatException e) {
-            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
+            ((BaseApp) getApplication()).appendLog(e.getMessage(), CountListOfAssortment.this);
             return false;
         }
     }
+
     public String getResponseFromURLSaveRevisionLineAdd(URL send_bills) throws IOException {
         String data = "";
         HttpURLConnection send_bill_Connection = null;
@@ -379,12 +404,13 @@ public class CountListOfAssortment extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountListOfAssortment.this);
+            ((BaseApp) getApplication()).appendLog(e.getMessage(), CountListOfAssortment.this);
         } finally {
             send_bill_Connection.disconnect();
         }
         return data;
     }
+
     public boolean dispatchTouchEvent(@NonNull MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
@@ -446,53 +472,67 @@ public class CountListOfAssortment extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        switch (event.getAction()){
-            case KeyEvent.ACTION_DOWN :{
+        switch (event.getAction()) {
+            case KeyEvent.ACTION_DOWN: {
                 Count_enter.requestFocus();
                 switch (event.getKeyCode()) {
-                    case KeyEvent.KEYCODE_1 : {
+                    case KeyEvent.KEYCODE_1: {
                         Count_enter.append("1");
-                    }break;
-                    case KeyEvent.KEYCODE_2 : {
+                    }
+                    break;
+                    case KeyEvent.KEYCODE_2: {
                         Count_enter.append("2");
-                    }break;
-                    case KeyEvent.KEYCODE_3 : {
+                    }
+                    break;
+                    case KeyEvent.KEYCODE_3: {
                         Count_enter.append("3");
-                    }break;
-                    case KeyEvent.KEYCODE_4 : {
+                    }
+                    break;
+                    case KeyEvent.KEYCODE_4: {
                         Count_enter.append("4");
-                    }break;
-                    case KeyEvent.KEYCODE_5 : {
+                    }
+                    break;
+                    case KeyEvent.KEYCODE_5: {
                         Count_enter.append("5");
-                    }break;
-                    case KeyEvent.KEYCODE_6 : {
+                    }
+                    break;
+                    case KeyEvent.KEYCODE_6: {
                         Count_enter.append("6");
-                    }break;
-                    case KeyEvent.KEYCODE_7 : {
+                    }
+                    break;
+                    case KeyEvent.KEYCODE_7: {
                         Count_enter.append("7");
-                    }break;
-                    case KeyEvent.KEYCODE_8 : {
+                    }
+                    break;
+                    case KeyEvent.KEYCODE_8: {
                         Count_enter.append("8");
-                    }break;
-                    case KeyEvent.KEYCODE_9 : {
+                    }
+                    break;
+                    case KeyEvent.KEYCODE_9: {
                         Count_enter.append("9");
-                    }break;
-                    case KeyEvent.KEYCODE_0 : {
+                    }
+                    break;
+                    case KeyEvent.KEYCODE_0: {
                         Count_enter.append("0");
-                    }break;
-                    case KeyEvent.KEYCODE_STAR : {
+                    }
+                    break;
+                    case KeyEvent.KEYCODE_STAR: {
                         Count_enter.append(".");
-                    }break;
-                    case KeyEvent.KEYCODE_DEL : {
+                    }
+                    break;
+                    case KeyEvent.KEYCODE_DEL: {
                         String test = Count_enter.getText().toString();
-                        if(!Count_enter.getText().toString().equals("")) {
+                        if (!Count_enter.getText().toString().equals("")) {
                             Count_enter.setText(test.substring(0, test.length() - 1));
                             Count_enter.requestFocus();
                         }
-                    }break;
-                    default:break;
+                    }
+                    break;
+                    default:
+                        break;
                 }
-            }break;
+            }
+            break;
         }
         return super.onKeyDown(keyCode, event);
     }
