@@ -71,9 +71,6 @@ public class CountListOfAssortmentInvoice extends AppCompatActivity {
         Intent sales = getIntent();
         AssortmentParcelable assortment = sales.getParcelableExtra(AssortimentClickentSendIntent);
         mNameAssortment = assortment.getName();
-        String test = assortment.getPrice();
-        String test2 = assortment.getIncomePrice();
-        String test3 = assortment.getUnitPrice();
 
         mPriceAssortment = assortment.getPrice();
         final String mMarkingAssortment = assortment.getMarking();

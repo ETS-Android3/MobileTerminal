@@ -36,7 +36,7 @@ public class CountTransfer extends AppCompatActivity {
     TextView txtUnit;
     EditText et_count;
     Button btn_add, btn_cancel;
-    boolean adauga_Count=false,mAllowNotIntegerSales;
+    boolean adauga_Count=false,mAllowNotIntegerSales, mAllowsSalesWithoutStock;
     String mNameAssortment,mIDAssortment,mPriceAssortment,mMarkingAssortment,mCodeAssortment,mBarcodeAssortment,mRemainAssortment;
     Integer WeightPrefix;
 
@@ -120,6 +120,7 @@ public class CountTransfer extends AppCompatActivity {
         }
         SPFHelp shredPrefsInstance = SPFHelp.getInstance();
 
+        mAllowsSalesWithoutStock = shredPrefsInstance.getBoolean("CheckStockInput", false);
         boolean ShowCode = shredPrefsInstance.getBoolean("ShowCode", false);
         boolean showKB = shredPrefsInstance.getBoolean("ShowKeyBoard",false);
         final boolean checkStock = shredPrefsInstance.getBoolean("CheckStockInput", false);
@@ -252,12 +253,6 @@ public class CountTransfer extends AppCompatActivity {
                 count = 0.0;
             }
 
-            if ( remain < count ){
-                et_count.setError(getResources().getString(R.string.msg_count_greath_like_remain));
-                et_count.requestFocus();
-            }
-            else
-            {
                 if (mAllowNotIntegerSales) {
                     if (!isDouble(et_count.getText().toString()))
                         et_count.setError(getResources().getString(R.string.msg_format_number_incorect));
@@ -313,7 +308,8 @@ public class CountTransfer extends AppCompatActivity {
                         finish();
                     }
                 }
-            }
+
+
 
         } else {
             Toast.makeText(CountTransfer.this, getResources().getString(R.string.txt_header_inp_count), Toast.LENGTH_SHORT).show();

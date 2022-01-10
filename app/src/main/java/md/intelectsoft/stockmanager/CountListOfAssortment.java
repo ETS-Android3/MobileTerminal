@@ -58,7 +58,7 @@ import static md.intelectsoft.stockmanager.ListAssortment.AssortimentClickentSen
 public class CountListOfAssortment extends AppCompatActivity {
     final Context context = this;
     String url_, mNameAssortment, WareUid;
-    boolean mIntegerSales;
+    boolean mIntegerSales, mAllowsSalesWithoutStock;
     EditText Count_enter;
     ImageButton btn_plus, btn_del;
     TextView name_forasl, price_forasl, btn_save, btn_cancel, txtCode, txtBarCode, txtMarking, txtRemain, txtUnit;
@@ -117,6 +117,7 @@ public class CountListOfAssortment extends AppCompatActivity {
 
         final SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
 //        SharedPreferences sPref = getSharedPreferences("Save touch assortiment", MODE_PRIVATE);
+        mAllowsSalesWithoutStock = sharedPrefsInstance.getBoolean("CheckStockInput", false);
 
         url_ = sharedPrefsInstance.getString("URI", "0.0.0.0:1111");
 
@@ -331,7 +332,7 @@ public class CountListOfAssortment extends AppCompatActivity {
         } catch (Exception ex) {
             remains = 0.0;
         }
-        if (count < remains) {
+        if (mAllowsSalesWithoutStock){
             if (mIntegerSales) {
                 if (isDouble(Count_enter.getText().toString())) {
                     Intent intent = new Intent();
@@ -350,11 +351,33 @@ public class CountListOfAssortment extends AppCompatActivity {
                 }
             }
         }
-        else
-        {
-            Count_enter.setError(getResources().getString(R.string.msg_count_greath_like_remain));
-            Count_enter.requestFocus();
+        else{
+            if (count < remains) {
+                if (mIntegerSales) {
+                    if (isDouble(Count_enter.getText().toString())) {
+                        Intent intent = new Intent();
+                        intent.putExtra("Name", mNameAssortment);
+                        intent.putExtra("count", String.valueOf(Count_enter.getText()));
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    }
+                } else {
+                    if (isInteger(Count_enter.getText().toString())) {
+                        Intent intent = new Intent();
+                        intent.putExtra("Name", mNameAssortment);
+                        intent.putExtra("count", String.valueOf(Count_enter.getText()));
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    }
+                }
+            }
+            else
+            {
+                Count_enter.setError(getResources().getString(R.string.msg_count_greath_like_remain));
+                Count_enter.requestFocus();
+            }
         }
+
     }
 
     private boolean isDouble(String s) throws NumberFormatException {

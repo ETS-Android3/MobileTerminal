@@ -37,7 +37,7 @@ public class CountSales extends AppCompatActivity {
     TextView txt_barcode,txt_code,txt_articul,txt_stoc,txt_price,txt_name;
     TextView et_count,txt_unit;
     Button btn_add, btn_cancel;
-    Boolean mAllowNotIntegerSales;
+    Boolean mAllowNotIntegerSales, mAllowsSalesWithoutStock;
     String mNameAssortment,mPriceAssortment,mIDAssortment,mRemainAssortment,mMarkingAssortment,mCodeAssortment,mBarcodeAssortment,WareHouse,WareName;
     Integer WeightPrefix;
 
@@ -85,10 +85,12 @@ public class CountSales extends AppCompatActivity {
         txt_unit = findViewById(R.id.txt_unit);
 
         SPFHelp sharedPrefsInstance = SPFHelp.getInstance();
-//        SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
+        SharedPreferences Sestting = getSharedPreferences("Settings", MODE_PRIVATE);
 
         final SharedPreferences getRevisions = getSharedPreferences("Revision", MODE_PRIVATE);
         WeightPrefix = getRevisions.getInt("WeightPrefix",0);
+
+        mAllowsSalesWithoutStock = sharedPrefsInstance.getBoolean("CheckStockInput", false);
 
         boolean ShowCode = sharedPrefsInstance.getBoolean("ShowCode", false);
         boolean showKB = sharedPrefsInstance.getBoolean("ShowKeyBoard",false);
@@ -302,7 +304,8 @@ public class CountSales extends AppCompatActivity {
         return super.dispatchTouchEvent(event);
     }
     private void saveCountSales(boolean checkStock){
-        if (checkStock) {
+
+//        if (checkStock) {
             Double input = 0.0;
             if (et_count.getText().toString().equals("")) {
                 input = 0.0;
@@ -320,11 +323,7 @@ public class CountSales extends AppCompatActivity {
                 Stock = Double.valueOf(mRemainAssortment.replace(",","."));
             }
 
-            if (input > Stock) {
-                et_count.setError(getResources().getString(R.string.msg_count_greath_like_remain));
-            } else if (input == 0.0) {
-                et_count.setError(getResources().getString(R.string.msg_input_count_greath_nul));
-            } else {
+            if (mAllowsSalesWithoutStock){
                 if(!mAllowNotIntegerSales){
                     if (isInteger(et_count.getText().toString())) {
                         JSONObject asl = new JSONObject();
@@ -405,32 +404,87 @@ public class CountSales extends AppCompatActivity {
                     setResult(RESULT_OK, sales);
                     finish();
                 }
-            }
-        }
-        else{
-            if (checkStock){
-                String prefixString = txt_barcode.getText().toString().substring(0, 2);
-                if (!mAllowNotIntegerSales || prefixString == WeightPrefix.toString()) {
-                    String prefix = WeightPrefix.toString();
+            }else{
+                if (input > Stock) {
+                    et_count.setError(getResources().getString(R.string.msg_count_greath_like_remain));
+                } else if (input == 0.0) {
+                    et_count.setError(getResources().getString(R.string.msg_input_count_greath_nul));
+                }
+                else
+                {
+                    if(!mAllowNotIntegerSales){
+                        if (isInteger(et_count.getText().toString())) {
+                            JSONObject asl = new JSONObject();
+                            try {
+                                double count = 0;
+                                try{
+                                    count = Double.valueOf(et_count.getText().toString());
+                                }catch (Exception e){
+                                    count = Double.valueOf(et_count.getText().toString().replace(",","."));
+                                }
+                                asl.put("AssortimentName", mNameAssortment);
+                                asl.put("AssortimentUid",mIDAssortment);
+                                asl.put("Count", count);
+                                asl.put("Price", mPriceAssortment);
+                                asl.put("Warehouse",WareHouse);
+                                asl.put("WareName",WareName);
+                            } catch (JSONException e) {
+                                ((BaseApp)getApplication()).appendLog(e.getMessage(),CountSales.this);
+                                e.printStackTrace();
+                            }
+                            Intent sales = new Intent();
+                            sales.putExtra("AssortmentSalesAdded", asl.toString());
+                            setResult(RESULT_OK, sales);
+                            finish();
+                        }else{
+                            if (WeightPrefix.toString().equals(mBarcodeAssortment.substring(0,2))){
+                                JSONObject asl = new JSONObject();
+                                try {
+                                    double count = 0;
+                                    try{
+                                        count = Double.valueOf(et_count.getText().toString());
+                                    }catch (Exception e){
+                                        count = Double.valueOf(et_count.getText().toString().replace(",","."));
+                                    }
+                                    asl.put("AssortimentName", mNameAssortment);
+                                    asl.put("AssortimentUid",mIDAssortment);
+                                    asl.put("Count", count);
+                                    asl.put("Price", mPriceAssortment);
+                                    asl.put("Warehouse",WareHouse);
+                                    asl.put("WareName",WareName);
+                                } catch (JSONException e) {
+                                    ((BaseApp)getApplication()).appendLog(e.getMessage(),CountSales.this);
+                                    e.printStackTrace();
+                                }
+                                Intent sales = new Intent();
+                                sales.putExtra("AssortmentSalesAdded", asl.toString());
+                                setResult(RESULT_OK, sales);
+                                finish();
+                            }
+                            else {
+                                et_count.setError(getResources().getString(R.string.sales_count_only_integer));
+                                et_count.requestFocus();
+                            }
 
-                    if (prefixString.equals(prefix)){
+                        }
+                    }else{
                         JSONObject asl = new JSONObject();
                         try {
                             double count = 0;
-                            try {
+                            try{
                                 count = Double.valueOf(et_count.getText().toString());
-                            } catch (Exception e) {
-                                count = Double.valueOf(et_count.getText().toString().replace(",", "."));
+                            }catch (Exception e){
+                                count = Double.valueOf(et_count.getText().toString().replace(",","."));
                             }
 
                             asl.put("AssortimentName", mNameAssortment);
-                            asl.put("AssortimentUid", mIDAssortment);
+                            asl.put("AssortimentUid",mIDAssortment);
                             asl.put("Count", count);
                             asl.put("Price", mPriceAssortment);
-                            asl.put("Warehouse", WareHouse);
-                            asl.put("WareName", WareName);
+                            asl.put("Warehouse",WareHouse);
+                            asl.put("WareName",WareName);
                         } catch (JSONException e) {
-                            ((BaseApp) getApplication()).appendLog(e.getMessage(), CountSales.this);
+                            ((BaseApp)getApplication()).appendLog(e.getMessage(),CountSales.this);
                             e.printStackTrace();
                         }
                         Intent sales = new Intent();
@@ -438,65 +492,101 @@ public class CountSales extends AppCompatActivity {
                         setResult(RESULT_OK, sales);
                         finish();
                     }
-                    else if (isInteger(et_count.getText().toString())) {
-                        JSONObject asl = new JSONObject();
-                        try {
-                            double count = 0;
-                            try {
-                                count = Double.valueOf(et_count.getText().toString());
-                            } catch (Exception e) {
-                                count = Double.valueOf(et_count.getText().toString().replace(",", "."));
-                            }
-
-                            asl.put("AssortimentName", mNameAssortment);
-                            asl.put("AssortimentUid", mIDAssortment);
-                            asl.put("Count", count);
-                            asl.put("Price", mPriceAssortment);
-                            asl.put("Warehouse", WareHouse);
-                            asl.put("WareName", WareName);
-                        } catch (JSONException e) {
-                            ((BaseApp) getApplication()).appendLog(e.getMessage(), CountSales.this);
-                            e.printStackTrace();
-                        }
-                        Intent sales = new Intent();
-                        sales.putExtra("AssortmentSalesAdded", asl.toString());
-                        setResult(RESULT_OK, sales);
-                        finish();
-                    } else {
-                        et_count.setError(getResources().getString(R.string.sales_count_only_integer));
-                        et_count.requestFocus();
-                    }
-                } else {
-                    JSONObject asl = new JSONObject();
-                    try {
-                        double count = 0;
-                        try {
-                            count = Double.valueOf(et_count.getText().toString());
-                        } catch (Exception e) {
-                            count = Double.valueOf(et_count.getText().toString().replace(",", "."));
-                        }
-                        asl.put("AssortimentName", mNameAssortment);
-                        asl.put("AssortimentUid", mIDAssortment);
-                        asl.put("Count", count);
-                        asl.put("Price", mPriceAssortment);
-                        asl.put("Warehouse", WareHouse);
-                        asl.put("WareName", WareName);
-                    } catch (JSONException e) {
-                        ((BaseApp) getApplication()).appendLog(e.getMessage(), CountSales.this);
-                        e.printStackTrace();
-                    }
-                    Intent sales = new Intent();
-                    sales.putExtra("AssortmentSalesAdded", asl.toString());
-                    setResult(RESULT_OK, sales);
-                    finish();
                 }
             }
-            else
-            {
-                et_count.setError(getResources().getString(R.string.msg_count_greath_like_remain));
-                et_count.requestFocus();
-            }
-        }
+
+
+//        }
+//        else{
+//            if (checkStock){
+//                String prefixString = txt_barcode.getText().toString().substring(0, 2);
+//                if (!mAllowNotIntegerSales || prefixString == WeightPrefix.toString()) {
+//                    String prefix = WeightPrefix.toString();
+//
+//                    if (prefixString.equals(prefix)){
+//                        JSONObject asl = new JSONObject();
+//                        try {
+//                            double count = 0;
+//                            try {
+//                                count = Double.valueOf(et_count.getText().toString());
+//                            } catch (Exception e) {
+//                                count = Double.valueOf(et_count.getText().toString().replace(",", "."));
+//                            }
+//
+//                            asl.put("AssortimentName", mNameAssortment);
+//                            asl.put("AssortimentUid", mIDAssortment);
+//                            asl.put("Count", count);
+//                            asl.put("Price", mPriceAssortment);
+//                            asl.put("Warehouse", WareHouse);
+//                            asl.put("WareName", WareName);
+//                        } catch (JSONException e) {
+//                            ((BaseApp) getApplication()).appendLog(e.getMessage(), CountSales.this);
+//                            e.printStackTrace();
+//                        }
+//                        Intent sales = new Intent();
+//                        sales.putExtra("AssortmentSalesAdded", asl.toString());
+//                        setResult(RESULT_OK, sales);
+//                        finish();
+//                    }
+//                    else if (isInteger(et_count.getText().toString())) {
+//                        JSONObject asl = new JSONObject();
+//                        try {
+//                            double count = 0;
+//                            try {
+//                                count = Double.valueOf(et_count.getText().toString());
+//                            } catch (Exception e) {
+//                                count = Double.valueOf(et_count.getText().toString().replace(",", "."));
+//                            }
+//
+//                            asl.put("AssortimentName", mNameAssortment);
+//                            asl.put("AssortimentUid", mIDAssortment);
+//                            asl.put("Count", count);
+//                            asl.put("Price", mPriceAssortment);
+//                            asl.put("Warehouse", WareHouse);
+//                            asl.put("WareName", WareName);
+//                        } catch (JSONException e) {
+//                            ((BaseApp) getApplication()).appendLog(e.getMessage(), CountSales.this);
+//                            e.printStackTrace();
+//                        }
+//                        Intent sales = new Intent();
+//                        sales.putExtra("AssortmentSalesAdded", asl.toString());
+//                        setResult(RESULT_OK, sales);
+//                        finish();
+//                    } else {
+//                        et_count.setError(getResources().getString(R.string.sales_count_only_integer));
+//                        et_count.requestFocus();
+//                    }
+//                } else {
+//                    JSONObject asl = new JSONObject();
+//                    try {
+//                        double count = 0;
+//                        try {
+//                            count = Double.valueOf(et_count.getText().toString());
+//                        } catch (Exception e) {
+//                            count = Double.valueOf(et_count.getText().toString().replace(",", "."));
+//                        }
+//                        asl.put("AssortimentName", mNameAssortment);
+//                        asl.put("AssortimentUid", mIDAssortment);
+//                        asl.put("Count", count);
+//                        asl.put("Price", mPriceAssortment);
+//                        asl.put("Warehouse", WareHouse);
+//                        asl.put("WareName", WareName);
+//                    } catch (JSONException e) {
+//                        ((BaseApp) getApplication()).appendLog(e.getMessage(), CountSales.this);
+//                        e.printStackTrace();
+//                    }
+//                    Intent sales = new Intent();
+//                    sales.putExtra("AssortmentSalesAdded", asl.toString());
+//                    setResult(RESULT_OK, sales);
+//                    finish();
+//                }
+//            }
+//            else
+//            {
+//                et_count.setError(getResources().getString(R.string.msg_count_greath_like_remain));
+//                et_count.requestFocus();
+//            }
+//        }
     }
     private boolean isInteger(String s) throws NumberFormatException {
         try {

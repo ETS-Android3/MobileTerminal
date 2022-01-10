@@ -538,9 +538,9 @@ public class Inventory extends AppCompatActivity implements NavigationView.OnNav
                             assortment.setBarCode(barcode);
                             assortment.setCode(Code);
                             assortment.setName(Name);
-//                            assortment.setPrice(Price);
+                            assortment.setPrice(Price);
                             assortment.setMarking(Marking);
-//                            assortment.setRemain(Remain);
+                            assortment.setRemain(Remain);
                             assortment.setAssortimentID(Uid);
 //                            assortment.setAllowNonIntegerSale(String.valueOf(allowInteger));
                             assortment.setUnit(Unit);
